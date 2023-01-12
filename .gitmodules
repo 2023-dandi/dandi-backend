@@ -1,0 +1,3 @@
+[submodule "src/main/resources/dandi-backend-config"]
+	path = src/main/resources/dandi-backend-config
+	url = https://github.com/2023-dandi/dandi-backend-config

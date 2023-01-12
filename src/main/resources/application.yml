@@ -1,0 +1,4 @@
+spring:
+  config:
+    import:
+      - classpath:/dandi-backend-config/application.yml
