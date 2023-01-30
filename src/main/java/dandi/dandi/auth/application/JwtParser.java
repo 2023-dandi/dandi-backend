@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Base64Utils;
 
 @Component
-public class JwtTokenDecoder {
+public class JwtParser {
 
     private static final String TOKEN_VALUE_DELIMITER = "\\.";
     private static final int HEADER_INDEX = 0;
