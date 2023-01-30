@@ -34,9 +34,7 @@ class JwtParserTest {
     @Test
     void parseHeaders() {
         Map<String, String> headers = jwtParser.parseHeaders(TOKEN);
-        System.out.println(TOKEN);
 
-        System.out.println(headers);
         assertThat(headers).containsKeys("alg", "kid");
     }
 
