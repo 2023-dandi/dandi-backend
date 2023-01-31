@@ -57,7 +57,7 @@ class AppleOAuthClientTest {
     @Test
     void getMemberIdentifier_ExpiredToken() {
         // given
-        mockExternalDependancy();
+        mockExternalDependency();
 
         when(appleJwtClaimValidator.isExpired(any()))
                 .thenReturn(true);
@@ -70,7 +70,7 @@ class AppleOAuthClientTest {
                 .hasMessage("만료된 토큰입니다.");
     }
 
-    private void mockExternalDependancy() {
+    private void mockExternalDependency() {
         mockPublicKey();
         when(jwtParser.parseClaims(anyString(), any(PublicKey.class)))
                 .thenReturn(Mockito.mock(Claims.class));
@@ -80,7 +80,7 @@ class AppleOAuthClientTest {
     @Test
     void getMemberIdentifier_InvalidToken() {
         // given
-        mockExternalDependancy();
+        mockExternalDependency();
 
         when(appleJwtClaimValidator.isExpired(any()))
                 .thenReturn(false);
