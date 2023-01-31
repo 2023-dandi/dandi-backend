@@ -35,7 +35,7 @@ public class AppleOAuthPublicKeyGenerator {
                 .filter(key -> key.getAlg().equals(tokenHeaders.get(ALG_HEADER_KEY)))
                 .filter(key -> key.getKid().equals(tokenHeaders.get(KID_HEADER_KEY)))
                 .findAny()
-                .orElseThrow(() -> new UnauthorizedException("유효하지 않은 토큰입니다."));
+                .orElseThrow(UnauthorizedException::invalid);
 
         return generatePublicKeyWithApplePublicKey(publicKey);
     }
