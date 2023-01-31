@@ -25,7 +25,7 @@ public class AppleOAuthClient implements OAuthClient {
         PublicKey publicKey = appleOAuthPublicKeyGenerator.generatePublicKey(tokenHeaders);
         Claims claims = jwtParser.parseClaims(idToken, publicKey);
         validateClaims(claims);
-        return null;
+        return claims.getSubject();
     }
 
     private void validateClaims(Claims claims) {
