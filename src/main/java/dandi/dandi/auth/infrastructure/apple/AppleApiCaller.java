@@ -1,5 +1,6 @@
-package dandi.dandi.auth.application.api;
+package dandi.dandi.auth.infrastructure.apple;
 
+import dandi.dandi.auth.infrastructure.apple.dto.ApplePublicKeys;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 

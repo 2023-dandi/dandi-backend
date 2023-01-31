@@ -1,4 +1,4 @@
-package dandi.dandi.auth.application;
+package dandi.dandi.auth.infrastructure.apple;
 
 import io.jsonwebtoken.Claims;
 import java.util.Date;

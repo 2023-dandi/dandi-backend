@@ -1,13 +1,12 @@
-package dandi.dandi.auth.application;
+package dandi.dandi.auth.infrastructure.apple;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
 import dandi.dandi.advice.ExternalServerException;
-import dandi.dandi.auth.application.api.AppleApiCaller;
-import dandi.dandi.auth.application.api.ApplePublicKey;
-import dandi.dandi.auth.application.api.ApplePublicKeys;
 import dandi.dandi.auth.exception.UnauthorizedException;
+import dandi.dandi.auth.infrastructure.apple.dto.ApplePublicKey;
+import dandi.dandi.auth.infrastructure.apple.dto.ApplePublicKeys;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;

@@ -1,4 +1,4 @@
-package dandi.dandi.auth.application;
+package dandi.dandi.auth.infrastructure.apple;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 

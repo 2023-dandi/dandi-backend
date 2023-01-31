@@ -1,9 +1,8 @@
-package dandi.dandi.auth.application;
+package dandi.dandi.auth.infrastructure.apple;
 
 import dandi.dandi.advice.ExternalServerException;
-import dandi.dandi.auth.application.api.AppleApiCaller;
-import dandi.dandi.auth.application.api.ApplePublicKey;
 import dandi.dandi.auth.exception.UnauthorizedException;
+import dandi.dandi.auth.infrastructure.apple.dto.ApplePublicKey;
 import java.math.BigInteger;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
