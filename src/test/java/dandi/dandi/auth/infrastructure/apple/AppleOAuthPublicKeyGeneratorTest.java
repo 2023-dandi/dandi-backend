@@ -1,7 +1,6 @@
 package dandi.dandi.auth.infrastructure.apple;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.mockito.Mockito.when;
 
 import dandi.dandi.advice.ExternalServerException;
 import dandi.dandi.auth.exception.UnauthorizedException;
@@ -15,7 +14,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.Mockito;
 
 class AppleOAuthPublicKeyGeneratorTest {
 
@@ -29,9 +27,7 @@ class AppleOAuthPublicKeyGeneratorTest {
             + "B4jVejW9TuZDtPtsNadXTr9I5NjxPdIYMORj9XKEh44Z73yfv0gtw";
     private static final String E = "AOAB";
 
-    private final AppleApiCaller appleApiCaller = Mockito.mock(AppleApiCaller.class);
-    private final AppleOAuthPublicKeyGenerator appleOAuthPublicKeyGenerator =
-            new AppleOAuthPublicKeyGenerator(appleApiCaller);
+    private final AppleOAuthPublicKeyGenerator appleOAuthPublicKeyGenerator = new AppleOAuthPublicKeyGenerator();
 
     @DisplayName("token의 header와 Apple Public Key의 동일한 kid와 alg 값이 없는데 PublicKey를 생성하려 하면 예외를 발생시킨다.")
     @ParameterizedTest
@@ -39,11 +35,9 @@ class AppleOAuthPublicKeyGeneratorTest {
     void generatePublicKey_InvalidKidOrInvalidAlg(String kid, String alg) {
         List<ApplePublicKey> applePublicKeys = List.of(new ApplePublicKey(KTY, KID, USE, ALG, N, E));
         ApplePublicKeys publicKeys = new ApplePublicKeys(applePublicKeys);
-        when(appleApiCaller.getPublicKeys())
-                .thenReturn(publicKeys);
         Map<String, String> invalidTokenHeaders = Map.of("kid", kid, "alg", alg);
 
-        assertThatThrownBy(() -> appleOAuthPublicKeyGenerator.generatePublicKey(invalidTokenHeaders))
+        assertThatThrownBy(() -> appleOAuthPublicKeyGenerator.generatePublicKey(invalidTokenHeaders, publicKeys))
                 .isInstanceOf(UnauthorizedException.class)
                 .hasMessage("유효하지 않은 토큰입니다.");
     }
@@ -54,11 +48,9 @@ class AppleOAuthPublicKeyGeneratorTest {
     void generatePublicKey_InvalidKty(String kty, String n, String e) {
         List<ApplePublicKey> applePublicKeys = List.of(new ApplePublicKey(kty, KID, USE, ALG, n, e));
         ApplePublicKeys publicKeys = new ApplePublicKeys(applePublicKeys);
-        when(appleApiCaller.getPublicKeys())
-                .thenReturn(publicKeys);
         Map<String, String> tokenHeaders = Map.of("kid", KID, "alg", ALG);
 
-        assertThatThrownBy(() -> appleOAuthPublicKeyGenerator.generatePublicKey(tokenHeaders))
+        assertThatThrownBy(() -> appleOAuthPublicKeyGenerator.generatePublicKey(tokenHeaders, publicKeys))
                 .isInstanceOf(ExternalServerException.class)
                 .hasMessage("응답 받은 Apple Public Key로 PublicKey를 생성할 수 없습니다.");
     }
