@@ -35,12 +35,7 @@ class AppleOAuthClientTest {
     void getMemberIdentifier() {
         // given
         String memberIdentifier = "memberId";
-        when(jwtParser.parseHeaders(anyString()))
-                .thenReturn(Mockito.mock(Map.class));
-        when(appleApiCaller.getPublicKeys())
-                .thenReturn(Mockito.mock(ApplePublicKeys.class));
-        when(oAuthPublicKeyGenerator.generatePublicKey(any(), any()))
-                .thenReturn(Mockito.mock(PublicKey.class));
+        mockPublicKey();
         Claims claims = Jwts.claims()
                 .setSubject(memberIdentifier);
         when(jwtParser.parseClaims(anyString(), any(PublicKey.class)))
@@ -62,14 +57,7 @@ class AppleOAuthClientTest {
     @Test
     void getMemberIdentifier_ExpiredToken() {
         // given
-        when(jwtParser.parseHeaders(anyString()))
-                .thenReturn(Mockito.mock(Map.class));
-        when(appleApiCaller.getPublicKeys())
-                .thenReturn(Mockito.mock(ApplePublicKeys.class));
-        when(oAuthPublicKeyGenerator.generatePublicKey(any(), any()))
-                .thenReturn(Mockito.mock(PublicKey.class));
-        when(jwtParser.parseClaims(anyString(), any(PublicKey.class)))
-                .thenReturn(Mockito.mock(Claims.class));
+        mockExternalDependancy();
 
         when(appleJwtClaimValidator.isExpired(any()))
                 .thenReturn(true);
@@ -82,18 +70,17 @@ class AppleOAuthClientTest {
                 .hasMessage("만료된 토큰입니다.");
     }
 
+    private void mockExternalDependancy() {
+        mockPublicKey();
+        when(jwtParser.parseClaims(anyString(), any(PublicKey.class)))
+                .thenReturn(Mockito.mock(Claims.class));
+    }
+
     @DisplayName("iss, sub, nonce 값이 유효하지 않은 토큰으로 사용자 식별 값을 반환받으려 하면 예외를 발생시킨다.")
     @Test
     void getMemberIdentifier_InvalidToken() {
         // given
-        when(jwtParser.parseHeaders(anyString()))
-                .thenReturn(Mockito.mock(Map.class));
-        when(appleApiCaller.getPublicKeys())
-                .thenReturn(Mockito.mock(ApplePublicKeys.class));
-        when(oAuthPublicKeyGenerator.generatePublicKey(any(), any()))
-                .thenReturn(Mockito.mock(PublicKey.class));
-        when(jwtParser.parseClaims(anyString(), any(PublicKey.class)))
-                .thenReturn(Mockito.mock(Claims.class));
+        mockExternalDependancy();
 
         when(appleJwtClaimValidator.isExpired(any()))
                 .thenReturn(false);
@@ -104,5 +91,14 @@ class AppleOAuthClientTest {
         assertThatThrownBy(() -> appleOAuthClient.getMemberIdentifier(ANY_TOKEN))
                 .isInstanceOf(UnauthorizedException.class)
                 .hasMessage("유효하지 않은 토큰입니다.");
+    }
+
+    private void mockPublicKey() {
+        when(jwtParser.parseHeaders(anyString()))
+                .thenReturn(Mockito.mock(Map.class));
+        when(appleApiCaller.getPublicKeys())
+                .thenReturn(Mockito.mock(ApplePublicKeys.class));
+        when(oAuthPublicKeyGenerator.generatePublicKey(any(), any()))
+                .thenReturn(Mockito.mock(PublicKey.class));
     }
 }
