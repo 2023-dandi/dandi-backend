@@ -3,6 +3,7 @@ package dandi.dandi.auth.infrastructure.apple;
 import dandi.dandi.advice.ExternalServerException;
 import dandi.dandi.auth.exception.UnauthorizedException;
 import dandi.dandi.auth.infrastructure.apple.dto.ApplePublicKey;
+import dandi.dandi.auth.infrastructure.apple.dto.ApplePublicKeys;
 import java.math.BigInteger;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
@@ -21,15 +22,8 @@ public class AppleOAuthPublicKeyGenerator {
     private static final String KID_HEADER_KEY = "kid";
     private static final int POSITIVE_SIGNUM = 1;
 
-    private final AppleApiCaller appleApiCaller;
-
-    public AppleOAuthPublicKeyGenerator(AppleApiCaller appleApiCaller) {
-        this.appleApiCaller = appleApiCaller;
-    }
-
-    public PublicKey generatePublicKey(Map<String, String> tokenHeaders) {
-        List<ApplePublicKey> publicKeys = appleApiCaller.getPublicKeys()
-                .getKeys();
+    public PublicKey generatePublicKey(Map<String, String> tokenHeaders, ApplePublicKeys applePublicKeys) {
+        List<ApplePublicKey> publicKeys = applePublicKeys.getKeys();
         ApplePublicKey publicKey = publicKeys.stream()
                 .filter(key -> key.getAlg().equals(tokenHeaders.get(ALG_HEADER_KEY)))
                 .filter(key -> key.getKid().equals(tokenHeaders.get(KID_HEADER_KEY)))

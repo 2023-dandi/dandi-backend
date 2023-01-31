@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 
 import dandi.dandi.auth.domain.JwtParser;
 import dandi.dandi.auth.exception.UnauthorizedException;
+import dandi.dandi.auth.infrastructure.apple.dto.ApplePublicKeys;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import java.security.PublicKey;
@@ -21,12 +22,13 @@ class AppleOAuthClientTest {
     private static final String ANY_TOKEN = "anyToken";
 
     private final JwtParser jwtParser = Mockito.mock(JwtParser.class);
+    private final AppleApiCaller appleApiCaller = Mockito.mock(AppleApiCaller.class);
     private final AppleOAuthPublicKeyGenerator oAuthPublicKeyGenerator = Mockito.mock(
             AppleOAuthPublicKeyGenerator.class);
     private final AppleJwtClaimValidator appleJwtClaimValidator = Mockito.mock(AppleJwtClaimValidator.class);
 
     private final AppleOAuthClient appleOAuthClient =
-            new AppleOAuthClient(jwtParser, oAuthPublicKeyGenerator, appleJwtClaimValidator);
+            new AppleOAuthClient(jwtParser, appleApiCaller, oAuthPublicKeyGenerator, appleJwtClaimValidator);
 
     @DisplayName("토큰을 받아 사용자 식별 값을 반환할 수 있다.")
     @Test
@@ -35,7 +37,9 @@ class AppleOAuthClientTest {
         String memberIdentifier = "memberId";
         when(jwtParser.parseHeaders(anyString()))
                 .thenReturn(Mockito.mock(Map.class));
-        when(oAuthPublicKeyGenerator.generatePublicKey(any()))
+        when(appleApiCaller.getPublicKeys())
+                .thenReturn(Mockito.mock(ApplePublicKeys.class));
+        when(oAuthPublicKeyGenerator.generatePublicKey(any(), any()))
                 .thenReturn(Mockito.mock(PublicKey.class));
         Claims claims = Jwts.claims()
                 .setSubject(memberIdentifier);
@@ -60,7 +64,9 @@ class AppleOAuthClientTest {
         // given
         when(jwtParser.parseHeaders(anyString()))
                 .thenReturn(Mockito.mock(Map.class));
-        when(oAuthPublicKeyGenerator.generatePublicKey(any()))
+        when(appleApiCaller.getPublicKeys())
+                .thenReturn(Mockito.mock(ApplePublicKeys.class));
+        when(oAuthPublicKeyGenerator.generatePublicKey(any(), any()))
                 .thenReturn(Mockito.mock(PublicKey.class));
         when(jwtParser.parseClaims(anyString(), any(PublicKey.class)))
                 .thenReturn(Mockito.mock(Claims.class));
@@ -82,7 +88,9 @@ class AppleOAuthClientTest {
         // given
         when(jwtParser.parseHeaders(anyString()))
                 .thenReturn(Mockito.mock(Map.class));
-        when(oAuthPublicKeyGenerator.generatePublicKey(any()))
+        when(appleApiCaller.getPublicKeys())
+                .thenReturn(Mockito.mock(ApplePublicKeys.class));
+        when(oAuthPublicKeyGenerator.generatePublicKey(any(), any()))
                 .thenReturn(Mockito.mock(PublicKey.class));
         when(jwtParser.parseClaims(anyString(), any(PublicKey.class)))
                 .thenReturn(Mockito.mock(Claims.class));
