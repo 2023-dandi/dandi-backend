@@ -27,7 +27,7 @@ public class JwtParser {
             String decodedHeader = new String(Base64Utils.decodeFromUrlSafeString(encodedHeader));
             return OBJECT_MAPPER.readValue(decodedHeader, Map.class);
         } catch (JsonProcessingException | ArrayIndexOutOfBoundsException e) {
-            throw new UnauthorizedException("유효하지 않은 토큰입니다.");
+            throw UnauthorizedException.invalid();
         }
     }
 
@@ -39,9 +39,9 @@ public class JwtParser {
                     .parseClaimsJws(idToken)
                     .getBody();
         } catch (ExpiredJwtException e) {
-            throw new UnauthorizedException("만료된 토큰입니다.");
+            throw UnauthorizedException.expired();
         } catch (UnsupportedJwtException | MalformedJwtException | SignatureException | IllegalArgumentException e) {
-            throw new UnauthorizedException("유효하지 않은 토큰입니다.");
+            throw UnauthorizedException.invalid();
         }
     }
 }

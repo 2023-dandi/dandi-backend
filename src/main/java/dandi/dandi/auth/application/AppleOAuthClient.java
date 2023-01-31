@@ -30,10 +30,10 @@ public class AppleOAuthClient implements OAuthClient {
 
     private void validateClaims(Claims claims) {
         if (appleJwtClaimValidator.isExpired(claims)) {
-            throw new UnauthorizedException("만료된 토큰입니다.");
+            throw UnauthorizedException.expired();
         }
         if (!appleJwtClaimValidator.isValid(claims)) {
-            throw new UnauthorizedException("유효하지 않은 토큰입니다.");
+            throw UnauthorizedException.invalid();
         }
     }
 }
