@@ -1,7 +1,9 @@
-package dandi.dandi.auth.application.api;
+package dandi.dandi.auth.infrastructure.apple;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import dandi.dandi.auth.infrastructure.apple.dto.ApplePublicKey;
+import dandi.dandi.auth.infrastructure.apple.dto.ApplePublicKeys;
 import java.util.List;
 import java.util.Objects;
 import org.junit.jupiter.api.DisplayName;

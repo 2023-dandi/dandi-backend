@@ -1,5 +1,7 @@
-package dandi.dandi.auth.application;
+package dandi.dandi.auth.infrastructure.apple;
 
+import dandi.dandi.auth.domain.JwtParser;
+import dandi.dandi.auth.domain.OAuthClient;
 import dandi.dandi.auth.exception.UnauthorizedException;
 import io.jsonwebtoken.Claims;
 import java.security.PublicKey;

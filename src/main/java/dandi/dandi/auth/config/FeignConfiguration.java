@@ -1,4 +1,4 @@
-package dandi.dandi.config;
+package dandi.dandi.auth.config;
 
 import dandi.dandi.DandiApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;

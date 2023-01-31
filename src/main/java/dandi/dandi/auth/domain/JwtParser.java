@@ -1,4 +1,4 @@
-package dandi.dandi.auth.application;
+package dandi.dandi.auth.domain;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

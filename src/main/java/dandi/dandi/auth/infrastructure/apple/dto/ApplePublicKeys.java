@@ -1,4 +1,4 @@
-package dandi.dandi.auth.application.api;
+package dandi.dandi.auth.infrastructure.apple.dto;
 
 import java.util.List;
 

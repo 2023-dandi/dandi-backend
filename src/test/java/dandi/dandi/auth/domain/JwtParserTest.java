@@ -1,4 +1,4 @@
-package dandi.dandi.auth.application;
+package dandi.dandi.auth.domain;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
