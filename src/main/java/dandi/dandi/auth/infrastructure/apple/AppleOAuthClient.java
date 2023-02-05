@@ -26,6 +26,7 @@ public class AppleOAuthClient implements OAuthClient {
         this.appleJwtClaimValidator = appleJwtClaimValidator;
     }
 
+    @Override
     public String getMemberIdentifier(String idToken) {
         Map<String, String> tokenHeaders = jwtParser.parseHeaders(idToken);
         ApplePublicKeys applePublicKeys = appleApiCaller.getPublicKeys();
