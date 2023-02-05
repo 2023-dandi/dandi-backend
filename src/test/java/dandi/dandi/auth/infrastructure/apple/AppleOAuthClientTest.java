@@ -32,7 +32,7 @@ class AppleOAuthClientTest {
 
     @DisplayName("토큰을 받아 사용자 식별 값을 반환할 수 있다.")
     @Test
-    void getMemberIdentifier() {
+    void getOAuthMemberId() {
         // given
         String memberIdentifier = "memberId";
         mockPublicKey();
@@ -47,7 +47,7 @@ class AppleOAuthClientTest {
                 .thenReturn(true);
 
         // when
-        String actual = appleOAuthClient.getMemberIdentifier(ANY_TOKEN);
+        String actual = appleOAuthClient.getOAuthMemberId(ANY_TOKEN);
 
         // then
         assertThat(actual).isEqualTo(memberIdentifier);
@@ -55,7 +55,7 @@ class AppleOAuthClientTest {
 
     @DisplayName("만료된 토큰으로 사용자 식별 값을 반환받으려 하면 예외를 발생시킨다.")
     @Test
-    void getMemberIdentifier_ExpiredToken() {
+    void getOAuthMemberId_ExpiredToken() {
         // given
         mockExternalDependency();
 
@@ -65,7 +65,7 @@ class AppleOAuthClientTest {
                 .thenReturn(true);
 
         // when, then
-        assertThatThrownBy(() -> appleOAuthClient.getMemberIdentifier(ANY_TOKEN))
+        assertThatThrownBy(() -> appleOAuthClient.getOAuthMemberId(ANY_TOKEN))
                 .isInstanceOf(UnauthorizedException.class)
                 .hasMessage("만료된 토큰입니다.");
     }
@@ -78,7 +78,7 @@ class AppleOAuthClientTest {
 
     @DisplayName("iss, sub, nonce 값이 유효하지 않은 토큰으로 사용자 식별 값을 반환받으려 하면 예외를 발생시킨다.")
     @Test
-    void getMemberIdentifier_InvalidToken() {
+    void getOAuthMemberId_InvalidToken() {
         // given
         mockExternalDependency();
 
@@ -88,7 +88,7 @@ class AppleOAuthClientTest {
                 .thenReturn(false);
 
         // when, then
-        assertThatThrownBy(() -> appleOAuthClient.getMemberIdentifier(ANY_TOKEN))
+        assertThatThrownBy(() -> appleOAuthClient.getOAuthMemberId(ANY_TOKEN))
                 .isInstanceOf(UnauthorizedException.class)
                 .hasMessage("유효하지 않은 토큰입니다.");
     }
