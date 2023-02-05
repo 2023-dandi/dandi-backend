@@ -27,7 +27,7 @@ public class AppleOAuthClient implements OAuthClient {
     }
 
     @Override
-    public String getMemberIdentifier(String idToken) {
+    public String getOAuthMemberId(String idToken) {
         Map<String, String> tokenHeaders = jwtParser.parseHeaders(idToken);
         ApplePublicKeys applePublicKeys = appleApiCaller.getPublicKeys();
         PublicKey publicKey = appleOAuthPublicKeyGenerator.generatePublicKey(tokenHeaders, applePublicKeys);
