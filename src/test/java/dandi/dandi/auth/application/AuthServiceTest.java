@@ -15,31 +15,18 @@ import dandi.dandi.member.domain.MemberRepository;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.mockito.Mockito;
 
-@SpringBootTest
-@EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class})
 class AuthServiceTest {
 
     private static final String ID_TOKEN = "idToken";
     private static final String OAUTH_MEMBER_ID = "oAuthMemberId";
     private static final String TOKEN = "token";
 
-    @MockBean
-    private MemberRepository memberRepository;
-
-    @MockBean
-    private OAuthClient oAuthClient;
-
-    @MockBean
-    private JwtTokenManager jwtTokenManager;
-
-    @Autowired
-    private AuthService authService;
+    private final MemberRepository memberRepository = Mockito.mock(MemberRepository.class);
+    private final OAuthClient oAuthClient = Mockito.mock(OAuthClient.class);
+    private final JwtTokenManager jwtTokenManager = Mockito.mock(JwtTokenManager.class);
+    private final AuthService authService = new AuthService(oAuthClient, memberRepository, jwtTokenManager);
 
     @DisplayName("oAuthId를 받아, 새 회원이라면 회원 가입을 시키고 토큰과 새 회원 여부를 반환한다.")
     @Test
