@@ -1,0 +1,51 @@
+Configuration:
+  name: Dev-Logger
+  status: info
+
+  Properties:
+    Property:
+      name: log-dir
+      value: "logs"
+
+  Appenders:
+    RollingFile:
+      name: RollingFile_Appender
+      fileName: ${log-dir}/logfile.log
+      filePattern: "${log-dir}logfile-%d{yyyy-MM-dd}.%i.txt"
+      PatternLayout:
+        pattern: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{35} - %msg%n"
+      immediateFlush: false
+      append: false
+      Policies:
+        SizeBasedTriggeringPolicy:
+          size: "10 MB"
+        TimeBasedTriggeringPolicy:
+          Interval: 1
+          modulate: true
+      DefaultRollOverStrategy:
+        max: 10
+        Delete:
+          basePath: "${log-dir}"
+          maxDepth: "1"
+          IfLastModified:
+            age: "P7D"
+    Console:
+      name: Console_Appender
+      target: SYSTEM_OUT
+      PatternLayout:
+        pattern: "%style{%d{yyyy-MM-dd HH:mm:ss.SSS}}{cyan} %highlight{[%-5p]}{FATAL=bg_red,
+            ERROR=red, INFO=green, DEBUG=blue, TRACE=bg_yellow} [%C] %style{[%t]}{yellow}- %m%n"
+  Loggers:
+    Root:
+      level: info
+      AppenderRef:
+        - ref: RollingFile_Appender
+    Logger:
+      name: dandi.dandi
+      additivity: false
+      level: debug
+      includeLocation: false
+      AppenderRef:
+        - ref: RollingFile_Appender
+
+
