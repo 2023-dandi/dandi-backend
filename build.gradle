@@ -24,6 +24,7 @@ dependencies {
 	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
 	implementation 'org.springframework.boot:spring-boot-starter-log4j2'
+	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'io.rest-assured:rest-assured:4.4.0'
