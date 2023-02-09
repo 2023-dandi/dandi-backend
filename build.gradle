@@ -29,6 +29,8 @@ dependencies {
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'io.rest-assured:rest-assured:4.4.0'
+
+	implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.6.14'
 }
 
 configurations {
