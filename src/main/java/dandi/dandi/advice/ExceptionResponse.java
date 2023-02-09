@@ -5,7 +5,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public class ExceptionResponse {
 
     @Schema(example = "Exception Message")
-    private final String message;
+    private String message;
+
+    public ExceptionResponse() {
+    }
 
     public ExceptionResponse(String message) {
         this.message = message;
