@@ -74,4 +74,24 @@ class AuthAcceptanceTest extends AcceptanceTest {
                 () -> assertThat(exceptionMessage).isEqualTo(unauthorizedException.getMessage())
         );
     }
+
+    @DisplayName("유효하지 않은 iss, client-id, nonce의 Apple Identity Token으로 로그인/회원가입을 요청하면 401을 반환한다.")
+    @Test
+    void login_Unauthorized_InvalidAppleIdToken() {
+        String invalidToken = "invalidToken";
+        UnauthorizedException unauthorizedException = UnauthorizedException.invalid();
+        when(oAuthClient.getOAuthMemberId(invalidToken))
+                .thenThrow(unauthorizedException);
+
+        ExtractableResponse<Response> response = HttpMethodFixture.httpPost(new LoginRequest(invalidToken),
+                LOGIN_REQUEST_URI);
+
+        String exceptionMessage = response.jsonPath()
+                .getObject(".", ExceptionResponse.class)
+                .getMessage();
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value()),
+                () -> assertThat(exceptionMessage).isEqualTo(unauthorizedException.getMessage())
+        );
+    }
 }
