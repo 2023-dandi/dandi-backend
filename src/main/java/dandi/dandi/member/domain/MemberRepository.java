@@ -8,4 +8,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     @Query("SELECT m FROM Member m WHERE m.oAuthId = :oAuthId")
     Optional<Member> findByOAuthId(String oAuthId);
+
+    boolean existsMemberByNicknameValue(String nickname);
 }
