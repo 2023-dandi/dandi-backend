@@ -1,6 +1,7 @@
 package dandi.dandi.member.domain;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -16,16 +17,21 @@ public class Member {
 
     private String oAuthId;
 
+    @Embedded
+    @Column(nullable = false)
+    private Nickname nickname;
+
     protected Member() {
     }
 
-    private Member(Long id, String oAuthId) {
+    private Member(Long id, String oAuthId, Nickname nickname) {
         this.id = id;
         this.oAuthId = oAuthId;
+        this.nickname = nickname;
     }
 
-    public Member(String oAuthId) {
-        this(null, oAuthId);
+    public Member(String oAuthId, String nickname) {
+        this(null, oAuthId, Nickname.from(nickname));
     }
 
     public Long getId() {

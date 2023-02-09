@@ -13,6 +13,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class MemberRepositoryTest {
 
+    private static final String NICKNAME = "abcd123";
+
     @Autowired
     private MemberRepository memberRepository;
 
@@ -20,7 +22,7 @@ class MemberRepositoryTest {
     @Test
     void findByOAuthId() {
         String oAuthId = "oAuthId";
-        memberRepository.save(new Member(oAuthId));
+        memberRepository.save(new Member(oAuthId, NICKNAME));
 
         Optional<Member> member = memberRepository.findByOAuthId(oAuthId);
 
