@@ -12,6 +12,7 @@ import dandi.dandi.auth.domain.OAuthClient;
 import dandi.dandi.auth.infrastructure.token.JwtTokenManager;
 import dandi.dandi.member.domain.Member;
 import dandi.dandi.member.domain.MemberRepository;
+import dandi.dandi.member.domain.nicknamegenerator.NicknameGenerator;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,13 +21,16 @@ import org.mockito.Mockito;
 class AuthServiceTest {
 
     private static final String ID_TOKEN = "idToken";
-    private static final String OAUTH_MEMBER_ID = "oAuthMemberId";
     private static final String TOKEN = "token";
+    private static final String OAUTH_MEMBER_ID = "oAuthMemberId";
+    private static final String NICKNAME = "nickname";
 
     private final MemberRepository memberRepository = Mockito.mock(MemberRepository.class);
     private final OAuthClient oAuthClient = Mockito.mock(OAuthClient.class);
     private final JwtTokenManager jwtTokenManager = Mockito.mock(JwtTokenManager.class);
-    private final AuthService authService = new AuthService(oAuthClient, memberRepository, jwtTokenManager);
+    private final NicknameGenerator nicknameGenerator = Mockito.mock(NicknameGenerator.class);
+    private final AuthService authService =
+            new AuthService(oAuthClient, memberRepository, jwtTokenManager, nicknameGenerator);
 
     @DisplayName("oAuthId를 받아, 새 회원이라면 회원 가입을 시키고 토큰과 새 회원 여부를 반환한다.")
     @Test
@@ -37,8 +41,12 @@ class AuthServiceTest {
                 .thenReturn(Optional.empty());
         when(jwtTokenManager.generateToken(anyString()))
                 .thenReturn(TOKEN);
+        when(nicknameGenerator.generate())
+                .thenReturn(NICKNAME);
+        when(memberRepository.existsMemberByNicknameValue(NICKNAME))
+                .thenReturn(false);
         when(memberRepository.save(any()))
-                .thenReturn(new Member(OAUTH_MEMBER_ID));
+                .thenReturn(new Member(OAUTH_MEMBER_ID, NICKNAME));
 
         LoginResponse loginResponse = authService.getAccessToken(new LoginRequest(ID_TOKEN));
 
@@ -54,7 +62,7 @@ class AuthServiceTest {
         when(oAuthClient.getOAuthMemberId(anyString()))
                 .thenReturn(OAUTH_MEMBER_ID);
         when(memberRepository.findByOAuthId(OAUTH_MEMBER_ID))
-                .thenReturn(Optional.of(new Member(OAUTH_MEMBER_ID)));
+                .thenReturn(Optional.of(new Member(OAUTH_MEMBER_ID, NICKNAME)));
         when(jwtTokenManager.generateToken(anyString()))
                 .thenReturn(TOKEN);
 
