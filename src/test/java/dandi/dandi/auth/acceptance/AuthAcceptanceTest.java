@@ -4,7 +4,9 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.when;
 
+import dandi.dandi.advice.ExceptionResponse;
 import dandi.dandi.auth.application.dto.LoginRequest;
+import dandi.dandi.auth.exception.UnauthorizedException;
 import dandi.dandi.common.AcceptanceTest;
 import dandi.dandi.common.HttpMethodFixture;
 import io.restassured.response.ExtractableResponse;
@@ -50,6 +52,26 @@ class AuthAcceptanceTest extends AcceptanceTest {
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
                 () -> assertThat(token).isNotNull()
+        );
+    }
+
+    @DisplayName("만료된 Apple Identity Token으로 로그인/회원가입을 요청하면 401을 반환한다.")
+    @Test
+    void login_Unauthorized_ExpiredAppleIdToken() {
+        String expiredToken = "expiredToken";
+        UnauthorizedException unauthorizedException = UnauthorizedException.expired();
+        when(oAuthClient.getOAuthMemberId(expiredToken))
+                .thenThrow(unauthorizedException);
+
+        ExtractableResponse<Response> response = HttpMethodFixture.httpPost(new LoginRequest(expiredToken),
+                LOGIN_REQUEST_URI);
+
+        String exceptionMessage = response.jsonPath()
+                .getObject(".", ExceptionResponse.class)
+                .getMessage();
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value()),
+                () -> assertThat(exceptionMessage).isEqualTo(unauthorizedException.getMessage())
         );
     }
 }
