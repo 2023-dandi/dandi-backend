@@ -1,8 +1,8 @@
 ---
 name: BUILD
-about: 빌드 관련 작업
-title: "[BUILD]"
-labels: build
+about: 문서 관련 작업
+title: "[DOCS]"
+labels: documentation
 assignees: ''
 
 ---
