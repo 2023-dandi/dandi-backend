@@ -33,4 +33,14 @@ public class JwtTokenManager {
                 .signWith(key, HS256)
                 .compact();
     }
+
+    public Object getPayload(String token) {
+        String payload = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
+        return Long.parseLong(payload);
+    }
 }
