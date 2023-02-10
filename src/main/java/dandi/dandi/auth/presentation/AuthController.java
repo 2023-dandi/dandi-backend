@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class AuthController implements AuthControllerDocs {
 
+    private static final String AUTHENTICATION_TYPE = "Bearer ";
+
     private final AuthService authService;
 
     public AuthController(AuthService authService) {
@@ -24,11 +26,11 @@ public class AuthController implements AuthControllerDocs {
         LoginResponse loginResponse = authService.getAccessToken(loginRequest);
         if (loginResponse.isNewUser()) {
             return ResponseEntity.status(HttpStatus.CREATED)
-                    .header(HttpHeaders.AUTHORIZATION, loginResponse.getToken())
+                    .header(HttpHeaders.AUTHORIZATION, AUTHENTICATION_TYPE + loginResponse.getToken())
                     .build();
         }
         return ResponseEntity.ok()
-                .header(HttpHeaders.AUTHORIZATION, loginResponse.getToken())
+                .header(HttpHeaders.AUTHORIZATION, AUTHENTICATION_TYPE + loginResponse.getToken())
                 .build();
     }
 }
