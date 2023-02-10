@@ -11,15 +11,15 @@ import org.junit.jupiter.api.Test;
 
 class JwtTokenManagerTest {
 
+    private static final String PAYLOAD = "123";
     private static final String SECRET = "secretSecretSecretSecretSecretSecretSecretSecretSecret";
     private static final long VALID_DURATION = 3600000;
     private final JwtTokenManager jwtTokenManager = new JwtTokenManager(SECRET, VALID_DURATION);
 
-    @DisplayName("payload를 받아 토큰을 생성할 수 있다.")
+    @DisplayName("payload를 받아 token을 생성할 수 있다.")
     @Test
-    void a() {
-        String payload = "123";
-        String token = jwtTokenManager.generateToken(payload);
+    void generateToken() {
+        String token = jwtTokenManager.generateToken(PAYLOAD);
         SecretKey key = Keys.hmacShaKeyFor(SECRET.getBytes(UTF_8));
 
         String payloadFromToken = Jwts.parserBuilder()
@@ -29,6 +29,16 @@ class JwtTokenManagerTest {
                 .getBody()
                 .getSubject();
 
-        assertThat(payload).isEqualTo(payloadFromToken);
+        assertThat(PAYLOAD).isEqualTo(payloadFromToken);
+    }
+
+    @DisplayName("token을 받아 payload를 반환할 수 있다.")
+    @Test
+    void getPayload() {
+        String token = jwtTokenManager.generateToken(PAYLOAD);
+
+        Long payload = (Long) jwtTokenManager.getPayload(token);
+
+        assertThat(payload).isEqualTo(Long.parseLong(PAYLOAD));
     }
 }
