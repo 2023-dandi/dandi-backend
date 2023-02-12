@@ -50,6 +50,6 @@ public class AuthService {
         while (memberRepository.existsMemberByNicknameValue(randomNickname)) {
             randomNickname = nicknameGenerator.generate();
         }
-        return memberRepository.save(new Member(oAuthMemberId, randomNickname));
+        return memberRepository.save(Member.initial(oAuthMemberId, randomNickname));
     }
 }

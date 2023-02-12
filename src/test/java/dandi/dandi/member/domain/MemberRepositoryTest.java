@@ -24,7 +24,7 @@ class MemberRepositoryTest {
     @Test
     void findByOAuthId() {
         String oAuthId = "oAuthId";
-        memberRepository.save(new Member(oAuthId, NICKNAME));
+        memberRepository.save(Member.initial(oAuthId, NICKNAME));
 
         Optional<Member> member = memberRepository.findByOAuthId(oAuthId);
 
@@ -36,7 +36,7 @@ class MemberRepositoryTest {
     @CsvSource({"abcd123, true", "jklq123, false"})
     void existsMemberByNicknameValue(String nickname, boolean expected) {
         String oAuthId = "oAuthId";
-        memberRepository.save(new Member(oAuthId, NICKNAME));
+        memberRepository.save(Member.initial(oAuthId, NICKNAME));
 
         boolean actual = memberRepository.existsMemberByNicknameValue(nickname);
 
