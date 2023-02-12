@@ -46,7 +46,7 @@ class AuthServiceTest {
         when(memberRepository.existsMemberByNicknameValue(NICKNAME))
                 .thenReturn(false);
         when(memberRepository.save(any()))
-                .thenReturn(new Member(OAUTH_MEMBER_ID, NICKNAME));
+                .thenReturn(Member.initial(OAUTH_MEMBER_ID, NICKNAME));
 
         LoginResponse loginResponse = authService.getAccessToken(new LoginRequest(ID_TOKEN));
 
@@ -62,7 +62,7 @@ class AuthServiceTest {
         when(oAuthClient.getOAuthMemberId(anyString()))
                 .thenReturn(OAUTH_MEMBER_ID);
         when(memberRepository.findByOAuthId(OAUTH_MEMBER_ID))
-                .thenReturn(Optional.of(new Member(OAUTH_MEMBER_ID, NICKNAME)));
+                .thenReturn(Optional.of(Member.initial(OAUTH_MEMBER_ID, NICKNAME)));
         when(jwtTokenManager.generateToken(anyString()))
                 .thenReturn(TOKEN);
 

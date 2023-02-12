@@ -21,17 +21,21 @@ public class Member {
     @Column(nullable = false)
     private Nickname nickname;
 
+    @Embedded
+    private Location location;
+
     protected Member() {
     }
 
-    private Member(Long id, String oAuthId, Nickname nickname) {
+    private Member(Long id, String oAuthId, Nickname nickname, Location location) {
         this.id = id;
         this.oAuthId = oAuthId;
         this.nickname = nickname;
+        this.location = location;
     }
 
-    public Member(String oAuthId, String nickname) {
-        this(null, oAuthId, Nickname.from(nickname));
+    public static Member initial(String oAuthId, String nickname) {
+        return new Member(null, oAuthId, Nickname.from(nickname), Location.initial());
     }
 
     public Long getId() {
