@@ -2,6 +2,7 @@ package dandi.dandi.member.presentation;
 
 import dandi.dandi.auth.support.Login;
 import dandi.dandi.member.application.MemberService;
+import dandi.dandi.member.application.dto.LocationUpdateRequest;
 import dandi.dandi.member.application.dto.MemberInfoResponse;
 import dandi.dandi.member.application.dto.NicknameUpdateRequest;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,13 @@ public class MemberController implements MemberControllerDocs {
     public ResponseEntity<Void> updateMemberNickname(@Login Long memberId,
                                                      @RequestBody NicknameUpdateRequest nicknameUpdateRequest) {
         memberService.updateNickname(memberId, nicknameUpdateRequest);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/members/location")
+    public ResponseEntity<Void> updateMemberLocation(@Login Long memberId,
+                                                     @RequestBody LocationUpdateRequest locationUpdateRequest) {
+        memberService.updateLocation(memberId, locationUpdateRequest);
         return ResponseEntity.noContent().build();
     }
 }

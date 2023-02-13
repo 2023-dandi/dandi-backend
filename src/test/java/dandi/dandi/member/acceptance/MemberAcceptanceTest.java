@@ -11,6 +11,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import dandi.dandi.auth.application.dto.LoginRequest;
 import dandi.dandi.common.AcceptanceTest;
 import dandi.dandi.common.HttpMethodFixture;
+import dandi.dandi.member.application.dto.LocationUpdateRequest;
 import dandi.dandi.member.application.dto.MemberInfoResponse;
 import dandi.dandi.member.application.dto.NicknameUpdateRequest;
 import io.restassured.response.ExtractableResponse;
@@ -82,6 +83,42 @@ class MemberAcceptanceTest extends AcceptanceTest {
 
         ExtractableResponse<Response> response =
                 httpPatchWithAuthorization("/members/nickname", new NicknameUpdateRequest(invalidNickname), token);
+
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value()),
+                () -> assertThat(extractExceptionMessage(response)).isNotNull()
+        );
+    }
+
+    @DisplayName("사용자 위치 정보 변경에 성공하면 204를 반환한다.")
+    @Test
+    void updateMemberLocation_NoContent() {
+        String oAuthIdToken = "idToken";
+        when(oAuthClient.getOAuthMemberId(oAuthIdToken))
+                .thenReturn("memberIdentifier");
+        String token = HttpMethodFixture.httpPost(new LoginRequest(oAuthIdToken), LOGIN_REQUEST_URI)
+                .header(AUTHORIZATION);
+        LocationUpdateRequest locationUpdateRequest = new LocationUpdateRequest(1.0, 2.0);
+
+        ExtractableResponse<Response> response =
+                httpPatchWithAuthorization("/members/location", locationUpdateRequest, token);
+
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
+    }
+
+    @DisplayName("잘못된 범위의 사용자 위치 정보 요청에 대해 400을 반환한다.")
+    @Test
+    void updateMemberLocation_BadRequest() {
+        String oAuthIdToken = "idToken";
+        when(oAuthClient.getOAuthMemberId(oAuthIdToken))
+                .thenReturn("memberIdentifier");
+        String token = HttpMethodFixture.httpPost(new LoginRequest(oAuthIdToken), LOGIN_REQUEST_URI)
+                .header(AUTHORIZATION);
+        double invalidLatitude = -91.0;
+        LocationUpdateRequest invalidLocationUpdateRequest = new LocationUpdateRequest(invalidLatitude, -2.0);
+
+        ExtractableResponse<Response> response =
+                httpPatchWithAuthorization("/members/location", invalidLocationUpdateRequest, token);
 
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value()),
