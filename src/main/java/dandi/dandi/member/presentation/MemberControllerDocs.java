@@ -13,7 +13,7 @@ import org.springframework.http.ResponseEntity;
 @Tag(name = "회원체계")
 public interface MemberControllerDocs {
 
-    @Operation(summary = "Apple ID로 로그인/회원가입", parameters = @Parameter(name = "Authorization", in = ParameterIn.HEADER, required = true))
+    @Operation(summary = "사용자 정보 반환", parameters = @Parameter(name = "Authorization", in = ParameterIn.HEADER, required = true))
     @ApiResponse(responseCode = "200", description = "사용자 정보 정상 반환")
     ResponseEntity<MemberInfoResponse> getMemberInfo(@Parameter(hidden = true) Long memberId);
 
