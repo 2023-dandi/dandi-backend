@@ -23,6 +23,14 @@ public class Location {
         return INITIAL_LOCATION;
     }
 
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
