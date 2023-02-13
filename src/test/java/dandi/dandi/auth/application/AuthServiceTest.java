@@ -16,8 +16,12 @@ import dandi.dandi.member.domain.nicknamegenerator.NicknameGenerator;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+@ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
 
     private static final String ID_TOKEN = "idToken";
@@ -25,12 +29,16 @@ class AuthServiceTest {
     private static final String OAUTH_MEMBER_ID = "oAuthMemberId";
     private static final String NICKNAME = "nickname";
 
-    private final MemberRepository memberRepository = Mockito.mock(MemberRepository.class);
-    private final OAuthClient oAuthClient = Mockito.mock(OAuthClient.class);
-    private final JwtTokenManager jwtTokenManager = Mockito.mock(JwtTokenManager.class);
-    private final NicknameGenerator nicknameGenerator = Mockito.mock(NicknameGenerator.class);
-    private final AuthService authService =
-            new AuthService(oAuthClient, memberRepository, jwtTokenManager, nicknameGenerator);
+    @Mock
+    private MemberRepository memberRepository;
+    @Mock
+    private OAuthClient oAuthClient;
+    @Mock
+    private JwtTokenManager jwtTokenManager;
+    @Mock
+    private NicknameGenerator nicknameGenerator;
+    @InjectMocks
+    private AuthService authService;
 
     @DisplayName("oAuthId를 받아, 새 회원이라면 회원 가입을 시키고 토큰과 새 회원 여부를 반환한다.")
     @Test
