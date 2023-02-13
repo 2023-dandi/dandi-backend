@@ -53,4 +53,8 @@ public class Member {
     public double getLongitude() {
         return location.getLongitude();
     }
+
+    public void updateNickname(String nickname) {
+        this.nickname = Nickname.from(nickname);
+    }
 }
