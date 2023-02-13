@@ -20,7 +20,7 @@ public class MemberController implements MemberControllerDocs {
     }
 
     @GetMapping("/members")
-    public ResponseEntity<MemberInfoResponse> getMemberNickname(@Login Long memberId) {
+    public ResponseEntity<MemberInfoResponse> getMemberInfo(@Login Long memberId) {
         return ResponseEntity.ok(memberService.findMemberInfo(memberId));
     }
 
