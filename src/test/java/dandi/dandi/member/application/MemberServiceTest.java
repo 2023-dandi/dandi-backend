@@ -12,12 +12,19 @@ import dandi.dandi.member.domain.MemberRepository;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+@ExtendWith(MockitoExtension.class)
 class MemberServiceTest {
 
-    private final MemberRepository memberRepository = Mockito.mock(MemberRepository.class);
-    private final MemberService memberService = new MemberService(memberRepository);
+    @Mock
+    private MemberRepository memberRepository;
+
+    @InjectMocks
+    private MemberService memberService;
 
     @DisplayName("회원의 정보를 반환할 수 있다.")
     @Test
