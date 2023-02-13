@@ -2,6 +2,7 @@ package dandi.dandi.member.presentation;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
+import dandi.dandi.member.application.dto.LocationUpdateRequest;
 import dandi.dandi.member.application.dto.MemberInfoResponse;
 import dandi.dandi.member.application.dto.NicknameUpdateRequest;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,4 +27,12 @@ public interface MemberControllerDocs {
     })
     ResponseEntity<Void> updateMemberNickname(@Parameter(hidden = true) Long memberId,
                                               NicknameUpdateRequest nicknameUpdateRequest);
+
+    @Operation(summary = "위치 변경", parameters = @Parameter(name = AUTHORIZATION, in = ParameterIn.HEADER, required = true))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "위치 정상 변경"),
+            @ApiResponse(responseCode = "400", description = "범위에 어긋나는 경도, 위도")
+    })
+    ResponseEntity<Void> updateMemberLocation(@Parameter(hidden = true) Long memberId,
+                                              LocationUpdateRequest locationUpdateRequest);
 }
