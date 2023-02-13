@@ -14,10 +14,7 @@ import org.springframework.http.ResponseEntity;
 public interface MemberControllerDocs {
 
     @Operation(summary = "Apple ID로 로그인/회원가입", parameters = @Parameter(name = "Authorization", in = ParameterIn.HEADER, required = true))
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "사용자 정보 정상 반환"),
-            @ApiResponse(responseCode = "401", description = "유효하지 않은 토큰")
-    })
+    @ApiResponse(responseCode = "200", description = "사용자 정보 정상 반환")
     ResponseEntity<MemberInfoResponse> getMemberInfo(@Parameter(hidden = true) Long memberId);
 
     @Operation(summary = "닉네임 변경", parameters = @Parameter(name = "Authorization", in = ParameterIn.HEADER, required = true))
