@@ -27,4 +27,17 @@ public class HttpMethodFixture {
                 .then().log().all()
                 .extract();
     }
+
+    public static ExtractableResponse<Response> httpPatchWithAuthorization(String path,
+                                                                           Object requestBody,
+                                                                           String token) {
+        return RestAssured
+                .given().log().all()
+                .header(AUTHORIZATION, token)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(requestBody)
+                .when().patch(path)
+                .then().log().all()
+                .extract();
+    }
 }

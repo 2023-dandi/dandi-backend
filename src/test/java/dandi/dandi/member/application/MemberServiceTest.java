@@ -3,10 +3,13 @@ package dandi.dandi.member.application;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.Mockito.only;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import dandi.dandi.auth.exception.UnauthorizedException;
 import dandi.dandi.member.application.dto.MemberInfoResponse;
+import dandi.dandi.member.application.dto.NicknameUpdateRequest;
 import dandi.dandi.member.domain.Member;
 import dandi.dandi.member.domain.MemberRepository;
 import java.util.Optional;
@@ -15,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
@@ -53,5 +57,20 @@ class MemberServiceTest {
         assertThatThrownBy(() -> memberService.findMemberInfo(nonExistentMemberId))
                 .isInstanceOf(UnauthorizedException.class)
                 .hasMessage("존재하지 않는 사용자의 토큰입니다.");
+    }
+
+    @DisplayName("회원의 닉네임을 변경할 수 있다.")
+    @Test
+    void updateNickname() {
+        Long memberId = 1L;
+        Member member = Mockito.mock(Member.class);
+        String newNickname = "newNickname";
+        NicknameUpdateRequest nicknameUpdateRequest = new NicknameUpdateRequest(newNickname);
+        when(memberRepository.findById(memberId))
+                .thenReturn(Optional.of(member));
+
+        memberService.updateNickname(memberId, nicknameUpdateRequest);
+
+        verify(member, only()).updateNickname(newNickname);
     }
 }
