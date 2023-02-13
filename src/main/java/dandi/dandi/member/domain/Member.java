@@ -41,4 +41,16 @@ public class Member {
     public Long getId() {
         return id;
     }
+
+    public String getNickname() {
+        return nickname.getValue();
+    }
+
+    public double getLatitude() {
+        return location.getLatitude();
+    }
+
+    public double getLongitude() {
+        return location.getLongitude();
+    }
 }

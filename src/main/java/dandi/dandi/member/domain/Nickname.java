@@ -34,4 +34,8 @@ public class Nickname {
             throw new IllegalArgumentException("닉네임에 가능한 문자는 공백없이 (.), (-), 영어와 숫자입니다.");
         }
     }
+
+    public String getValue() {
+        return value;
+    }
 }

@@ -13,4 +13,8 @@ public class UnauthorizedException extends RuntimeException {
     public static UnauthorizedException expired() {
         return new UnauthorizedException("만료된 토큰입니다.");
     }
+
+    public static UnauthorizedException notExistentMember() {
+        return new UnauthorizedException("존재하지 않는 사용자의 토큰입니다.");
+    }
 }
