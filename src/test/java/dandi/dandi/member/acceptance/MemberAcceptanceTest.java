@@ -2,6 +2,7 @@ package dandi.dandi.member.acceptance;
 
 import static dandi.dandi.common.HttpMethodFixture.httpGetWithAuthorization;
 import static dandi.dandi.common.HttpMethodFixture.httpPatchWithAuthorization;
+import static dandi.dandi.common.HttpResponseExtractor.extractExceptionMessage;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.when;
@@ -66,6 +67,25 @@ class MemberAcceptanceTest extends AcceptanceTest {
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value()),
                 () -> assertThat(nicknameAfterNicknameUpdateRequest).isEqualTo(newNickname)
+        );
+    }
+
+    @DisplayName("규칙에 어긋나는 회원 닉네임 변경 요청에 대해 400을 반환한다.")
+    @Test
+    void updateMemberNickname_BadRequest() {
+        String oAuthIdToken = "idToken";
+        when(oAuthClient.getOAuthMemberId(oAuthIdToken))
+                .thenReturn("memberIdentifier");
+        String token = HttpMethodFixture.httpPost(new LoginRequest(oAuthIdToken), LOGIN_REQUEST_URI)
+                .header(AUTHORIZATION);
+        String invalidNickname = "invalid  Nickname";
+
+        ExtractableResponse<Response> response =
+                httpPatchWithAuthorization("/members/nickname", new NicknameUpdateRequest(invalidNickname), token);
+
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value()),
+                () -> assertThat(extractExceptionMessage(response)).isNotNull()
         );
     }
 }
