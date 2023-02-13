@@ -57,4 +57,8 @@ public class Member {
     public void updateNickname(String nickname) {
         this.nickname = Nickname.from(nickname);
     }
+
+    public void updateLocation(double latitude, double longitude) {
+        this.location = new Location(latitude, longitude);
+    }
 }

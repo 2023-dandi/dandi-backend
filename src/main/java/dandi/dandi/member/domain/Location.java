@@ -2,21 +2,29 @@ package dandi.dandi.member.domain;
 
 import java.util.Objects;
 import javax.persistence.Embeddable;
+import javax.persistence.Embedded;
 
 @Embeddable
 public class Location {
 
     private static final Location INITIAL_LOCATION = new Location(0.0, 0.0);
 
-    private double latitude;
-    private double longitude;
+    @Embedded
+    private Latitude latitude;
 
-    private Location(double latitude, double longitude) {
+    @Embedded
+    private Longitude longitude;
+
+    private Location() {
+    }
+
+    private Location(Latitude latitude, Longitude longitude) {
         this.latitude = latitude;
         this.longitude = longitude;
     }
 
-    private Location() {
+    public Location(double latitude, double longitude) {
+        this(new Latitude(latitude), new Longitude(longitude));
     }
 
     public static Location initial() {
@@ -24,11 +32,11 @@ public class Location {
     }
 
     public double getLatitude() {
-        return latitude;
+        return latitude.getValue();
     }
 
     public double getLongitude() {
-        return longitude;
+        return longitude.getValue();
     }
 
     @Override
@@ -40,8 +48,8 @@ public class Location {
             return false;
         }
         Location location = (Location) o;
-        return Double.compare(location.latitude, latitude) == 0
-                && Double.compare(location.longitude, longitude) == 0;
+        return Objects.equals(latitude, location.latitude) && Objects.equals(longitude,
+                location.longitude);
     }
 
     @Override
