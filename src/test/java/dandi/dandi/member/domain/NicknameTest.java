@@ -30,8 +30,6 @@ class NicknameTest {
     @ParameterizedTest
     @ValueSource(strings = {"a 1", "abc.+", "abc닉네임"})
     void create_InvalidCharacter(String invalidLengthNickname) {
-        String a = "orange-sleeveless-elephant";
-        System.out.println(a.length());
         assertThatThrownBy(() -> Nickname.from(invalidLengthNickname))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("닉네임에 가능한 문자는 공백없이 (.), (-), 영어와 숫자입니다.");
