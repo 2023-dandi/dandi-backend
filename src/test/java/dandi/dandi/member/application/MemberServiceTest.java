@@ -8,6 +8,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import dandi.dandi.auth.exception.UnauthorizedException;
+import dandi.dandi.member.application.dto.LocationUpdateRequest;
 import dandi.dandi.member.application.dto.MemberInfoResponse;
 import dandi.dandi.member.application.dto.NicknameUpdateRequest;
 import dandi.dandi.member.domain.Member;
@@ -72,5 +73,21 @@ class MemberServiceTest {
         memberService.updateNickname(memberId, nicknameUpdateRequest);
 
         verify(member, only()).updateNickname(newNickname);
+    }
+
+    @DisplayName("회원의 위치 정보를 변경할 수 있다.")
+    @Test
+    void updateLocation() {
+        Long memberId = 1L;
+        Member member = Mockito.mock(Member.class);
+        double latitude = 1.0;
+        double longitude = 1.0;
+        LocationUpdateRequest locationUpdateRequest = new LocationUpdateRequest(latitude, longitude);
+        when(memberRepository.findById(memberId))
+                .thenReturn(Optional.of(member));
+
+        memberService.updateLocation(memberId, locationUpdateRequest);
+
+        verify(member, only()).updateLocation(latitude, latitude);
     }
 }

@@ -1,6 +1,7 @@
 package dandi.dandi.member.application;
 
 import dandi.dandi.auth.exception.UnauthorizedException;
+import dandi.dandi.member.application.dto.LocationUpdateRequest;
 import dandi.dandi.member.application.dto.MemberInfoResponse;
 import dandi.dandi.member.application.dto.NicknameUpdateRequest;
 import dandi.dandi.member.domain.Member;
@@ -27,6 +28,12 @@ public class MemberService {
     public void updateNickname(Long memberId, NicknameUpdateRequest nicknameUpdateRequest) {
         Member member = findMember(memberId);
         member.updateNickname(nicknameUpdateRequest.getNewNickname());
+    }
+
+    @Transactional
+    public void updateLocation(Long memberId, LocationUpdateRequest locationUpdateRequest) {
+        Member member = findMember(memberId);
+        member.updateLocation(locationUpdateRequest.getLatitude(), locationUpdateRequest.getLongitude());
     }
 
     private Member findMember(Long memberId) {
