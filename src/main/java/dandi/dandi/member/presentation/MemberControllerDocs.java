@@ -1,6 +1,7 @@
 package dandi.dandi.member.presentation;
 
 import dandi.dandi.member.application.dto.MemberInfoResponse;
+import dandi.dandi.member.application.dto.NicknameUpdateRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -18,4 +19,12 @@ public interface MemberControllerDocs {
             @ApiResponse(responseCode = "401", description = "유효하지 않은 토큰")
     })
     ResponseEntity<MemberInfoResponse> getMemberNickname(@Parameter(hidden = true) Long memberId);
+
+    @Operation(summary = "닉네임 변경", parameters = @Parameter(name = "Authorization", in = ParameterIn.HEADER, required = true))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "닉네임 정상 변경"),
+            @ApiResponse(responseCode = "400", description = "규칙에 어긋나는 닉네임")
+    })
+    ResponseEntity<Void> updateMemberNickname(@Parameter(hidden = true) Long memberId,
+                                              NicknameUpdateRequest nicknameUpdateRequest);
 }
