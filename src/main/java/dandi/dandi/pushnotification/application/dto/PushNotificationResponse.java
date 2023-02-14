@@ -1,11 +1,13 @@
 package dandi.dandi.pushnotification.application.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import dandi.dandi.pushnotification.domain.PushNotification;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalTime;
 
 public class PushNotificationResponse {
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm", timezone = "Asia/Seoul")
     @Schema(example = "10:20")
     private LocalTime pushNotificationTime;
     @Schema
