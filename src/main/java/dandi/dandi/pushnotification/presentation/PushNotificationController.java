@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class PushNotificationController {
+public class PushNotificationController implements PushNotificationControllerDocs {
 
     private final PushNotificationService pushNotificationService;
 
