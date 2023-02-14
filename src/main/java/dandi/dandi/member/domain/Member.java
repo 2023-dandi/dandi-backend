@@ -6,9 +6,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import org.springframework.data.domain.AbstractAggregateRoot;
 
 @Entity
-public class Member {
+public class Member extends AbstractAggregateRoot<Member> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,6 +33,7 @@ public class Member {
         this.oAuthId = oAuthId;
         this.nickname = nickname;
         this.location = location;
+        registerEvent(new NewMemberCreatedEvent(id));
     }
 
     public static Member initial(String oAuthId, String nickname) {
