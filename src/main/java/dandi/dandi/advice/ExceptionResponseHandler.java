@@ -27,7 +27,7 @@ public class ExceptionResponseHandler {
     }
 
     @ResponseStatus
-    @ExceptionHandler(InternalServerException.class)
+    @ExceptionHandler({InternalServerException.class, RuntimeException.class})
     public ResponseEntity<ExceptionResponse> internalServerError() {
         return ResponseEntity.internalServerError()
                 .body(ExceptionResponse.internalServerError());
