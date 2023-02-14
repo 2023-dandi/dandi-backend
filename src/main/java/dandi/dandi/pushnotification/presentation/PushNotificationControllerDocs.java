@@ -2,6 +2,7 @@ package dandi.dandi.pushnotification.presentation;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
+import dandi.dandi.pushnotification.application.dto.PushNotificationAllowanceUpdateRequest;
 import dandi.dandi.pushnotification.application.dto.PushNotificationResponse;
 import dandi.dandi.pushnotification.application.dto.PushNotificationTimeUpdateRequest;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,4 +27,9 @@ public interface PushNotificationControllerDocs {
     })
     ResponseEntity<Void> updatePushNotificationTime(@Parameter(hidden = true) Long memberId,
                                                     PushNotificationTimeUpdateRequest pushNotificationTimeUpdateRequest);
+
+    @Operation(summary = "푸시 알림 허용 여부 변경", parameters = @Parameter(name = AUTHORIZATION, in = ParameterIn.HEADER, required = true))
+    @ApiResponse(responseCode = "204", description = "푸시 알림 허용 여부 정상 변경")
+    ResponseEntity<Void> updatePushNotificationAllowance(@Parameter(hidden = true) Long memberId,
+                                                         PushNotificationAllowanceUpdateRequest pushNotificationAllowanceUpdateRequest);
 }
