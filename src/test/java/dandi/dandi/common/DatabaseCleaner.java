@@ -12,6 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 public class DatabaseCleaner implements InitializingBean {
 
+    private static final String CAMEL_REGEX = "([a-z])([A-Z]+)";
+    private static final String SNAKE_REPLACEMENT = "$1_$2";
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -23,8 +26,13 @@ public class DatabaseCleaner implements InitializingBean {
                 .getEntities()
                 .stream()
                 .filter(e -> e.getJavaType().getAnnotation(Entity.class) != null)
-                .map(e -> e.getName().toUpperCase())
+                .map(e -> toSnakeCase(e.getName()))
                 .collect(Collectors.toList());
+    }
+
+    private String toSnakeCase(String entityName) {
+        return entityName.replaceAll(CAMEL_REGEX, SNAKE_REPLACEMENT)
+                .toLowerCase();
     }
 
     @Transactional
