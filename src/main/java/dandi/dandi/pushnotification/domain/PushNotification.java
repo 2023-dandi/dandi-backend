@@ -42,6 +42,10 @@ public class PushNotification {
         this.pushNotificationTime = PushNotificationTime.from(pushNotificationTime);
     }
 
+    public void updateAllowance(boolean allowance) {
+        this.allowance = allowance;
+    }
+
     public LocalTime getPushNotificationTime() {
         return pushNotificationTime.getValue();
     }

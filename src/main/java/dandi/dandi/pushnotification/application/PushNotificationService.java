@@ -1,6 +1,7 @@
 package dandi.dandi.pushnotification.application;
 
 import dandi.dandi.advice.InternalServerException;
+import dandi.dandi.pushnotification.application.dto.PushNotificationAllowanceUpdateRequest;
 import dandi.dandi.pushnotification.application.dto.PushNotificationResponse;
 import dandi.dandi.pushnotification.application.dto.PushNotificationTimeUpdateRequest;
 import dandi.dandi.pushnotification.domain.PushNotification;
@@ -28,6 +29,13 @@ public class PushNotificationService {
                                            PushNotificationTimeUpdateRequest pushNotificationTimeUpdateRequest) {
         PushNotification pushNotification = findPushNotificationByMemberId(memberId);
         pushNotification.updatePushNotificationTime(pushNotificationTimeUpdateRequest.getNewPushNotificationTime());
+    }
+
+    @Transactional
+    public void updatePushNotificationAllowance(Long memberId,
+                                                PushNotificationAllowanceUpdateRequest pushNotificationAllowanceUpdateRequest) {
+        PushNotification pushNotification = findPushNotificationByMemberId(memberId);
+        pushNotification.updateAllowance(pushNotificationAllowanceUpdateRequest.isAllowed());
     }
 
     private PushNotification findPushNotificationByMemberId(Long memberId) {

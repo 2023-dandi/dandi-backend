@@ -7,6 +7,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import dandi.dandi.advice.InternalServerException;
+import dandi.dandi.pushnotification.application.dto.PushNotificationAllowanceUpdateRequest;
 import dandi.dandi.pushnotification.application.dto.PushNotificationResponse;
 import dandi.dandi.pushnotification.application.dto.PushNotificationTimeUpdateRequest;
 import dandi.dandi.pushnotification.domain.PushNotification;
@@ -59,7 +60,7 @@ class PushNotificationServiceTest {
 
     @DisplayName("회원의 푸시 알림 시간을 변경할 수 있다.")
     @Test
-    void a() {
+    void updatePushNotificationTime() {
         Long memberId = 1L;
         PushNotification pushNotification = Mockito.mock(PushNotification.class);
         LocalTime newPushNotificationTime = LocalTime.of(10, 20);
@@ -70,5 +71,19 @@ class PushNotificationServiceTest {
                 memberId, new PushNotificationTimeUpdateRequest(newPushNotificationTime));
 
         verify(pushNotification).updatePushNotificationTime(newPushNotificationTime);
+    }
+
+    @DisplayName("회원의 푸시 알림 허용 여부를 변경할 수 있다.")
+    @Test
+    void updatePushNotificationAllowance() {
+        Long memberId = 1L;
+        PushNotification pushNotification = Mockito.mock(PushNotification.class);
+        when(pushNotificationRepository.findPushNotificationByMemberId(memberId))
+                .thenReturn(Optional.of(pushNotification));
+
+        pushNotificationService.updatePushNotificationAllowance(
+                memberId, new PushNotificationAllowanceUpdateRequest(true));
+
+        verify(pushNotification).updateAllowance(true);
     }
 }

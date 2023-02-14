@@ -2,6 +2,7 @@ package dandi.dandi.pushnotification.presentation;
 
 import dandi.dandi.auth.support.Login;
 import dandi.dandi.pushnotification.application.PushNotificationService;
+import dandi.dandi.pushnotification.application.dto.PushNotificationAllowanceUpdateRequest;
 import dandi.dandi.pushnotification.application.dto.PushNotificationResponse;
 import dandi.dandi.pushnotification.application.dto.PushNotificationTimeUpdateRequest;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +31,13 @@ public class PushNotificationController implements PushNotificationControllerDoc
     public ResponseEntity<Void> updatePushNotificationTime(@Login Long memberId,
                                                            @RequestBody PushNotificationTimeUpdateRequest pushNotificationTimeUpdateRequest) {
         pushNotificationService.updatePushNotificationTime(memberId, pushNotificationTimeUpdateRequest);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/allowance")
+    public ResponseEntity<Void> updatePushNotificationAllowance(@Login Long memberId,
+                                                                @RequestBody PushNotificationAllowanceUpdateRequest pushNotificationAllowanceUpdateRequest) {
+        pushNotificationService.updatePushNotificationAllowance(memberId, pushNotificationAllowanceUpdateRequest);
         return ResponseEntity.noContent().build();
     }
 }

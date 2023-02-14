@@ -15,7 +15,17 @@ class PushNotificationTest {
         LocalTime newPushNotificationTime = LocalTime.of(10, 10);
 
         pushNotification.updatePushNotificationTime(newPushNotificationTime);
-        
+
         assertThat(pushNotification.getPushNotificationTime()).isEqualTo(newPushNotificationTime);
+    }
+
+    @DisplayName("푸시 알림 시간을 변경한다.")
+    @Test
+    void updateAllowance() {
+        PushNotification pushNotification = PushNotification.initial(1L);
+
+        pushNotification.updateAllowance(true);
+
+        assertThat(pushNotification.isAllowed()).isTrue();
     }
 }
