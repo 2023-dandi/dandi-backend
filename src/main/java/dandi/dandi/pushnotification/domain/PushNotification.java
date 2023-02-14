@@ -1,5 +1,6 @@
 package dandi.dandi.pushnotification.domain;
 
+import java.time.LocalTime;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -35,6 +36,14 @@ public class PushNotification {
 
     public static PushNotification initial(Long memberId) {
         return new PushNotification(null, memberId, PushNotificationTime.initial(), false);
+    }
+
+    public LocalTime getPushNotificationTime() {
+        return pushNotificationTime.getValue();
+    }
+
+    public boolean isAllowed() {
+        return allowance;
     }
 
     @Override

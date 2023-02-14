@@ -47,6 +47,10 @@ public class PushNotificationTime {
         }
     }
 
+    public LocalTime getValue() {
+        return value;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

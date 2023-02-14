@@ -25,4 +25,11 @@ public class ExceptionResponseHandler {
         return ResponseEntity.badRequest()
                 .body(new ExceptionResponse(exception.getMessage()));
     }
+
+    @ResponseStatus
+    @ExceptionHandler(InternalServerException.class)
+    public ResponseEntity<ExceptionResponse> internalServerError() {
+        return ResponseEntity.internalServerError()
+                .body(ExceptionResponse.internalServerError());
+    }
 }
