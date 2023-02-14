@@ -2,6 +2,7 @@ package dandi.dandi.pushnotification.application;
 
 import dandi.dandi.advice.InternalServerException;
 import dandi.dandi.pushnotification.application.dto.PushNotificationResponse;
+import dandi.dandi.pushnotification.application.dto.PushNotificationTimeUpdateRequest;
 import dandi.dandi.pushnotification.domain.PushNotification;
 import dandi.dandi.pushnotification.domain.PushNotificationRepository;
 import org.springframework.stereotype.Service;
@@ -18,8 +19,19 @@ public class PushNotificationService {
 
     @Transactional(readOnly = true)
     public PushNotificationResponse findPushNotification(Long memberId) {
-        PushNotification pushNotification = pushNotificationRepository.findPushNotificationByMemberId(memberId)
-                .orElseThrow(() -> InternalServerException.pushNotificationNotFound(memberId));
+        PushNotification pushNotification = findPushNotificationByMemberId(memberId);
         return new PushNotificationResponse(pushNotification);
+    }
+
+    @Transactional
+    public void updatePushNotificationTime(Long memberId,
+                                           PushNotificationTimeUpdateRequest pushNotificationTimeUpdateRequest) {
+        PushNotification pushNotification = findPushNotificationByMemberId(memberId);
+        pushNotification.updatePushNotificationTime(pushNotificationTimeUpdateRequest.getNewPushNotificationTime());
+    }
+
+    private PushNotification findPushNotificationByMemberId(Long memberId) {
+        return pushNotificationRepository.findPushNotificationByMemberId(memberId)
+                .orElseThrow(() -> InternalServerException.pushNotificationNotFound(memberId));
     }
 }
