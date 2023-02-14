@@ -38,6 +38,10 @@ public class PushNotification {
         return new PushNotification(null, memberId, PushNotificationTime.initial(), false);
     }
 
+    public void updatePushNotificationTime(LocalTime pushNotificationTime) {
+        this.pushNotificationTime = PushNotificationTime.from(pushNotificationTime);
+    }
+
     public LocalTime getPushNotificationTime() {
         return pushNotificationTime.getValue();
     }
