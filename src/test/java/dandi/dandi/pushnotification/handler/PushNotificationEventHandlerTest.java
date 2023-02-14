@@ -21,9 +21,9 @@ class PushNotificationEventHandlerTest {
     @InjectMocks
     private PushNotificationEventHandler pushNotificationEventHandler;
 
-    @DisplayName("")
+    @DisplayName("새 회원 가입 이벤트를 받아, 새 회원에 대한 푸시 알림을 생성한다.")
     @Test
-    void a() {
+    void savePushNotificationByMember() {
         pushNotificationEventHandler.savePushNotificationByMember(new NewMemberCreatedEvent(1L));
 
         verify(pushNotificationRepository)
