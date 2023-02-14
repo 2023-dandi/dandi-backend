@@ -2,7 +2,6 @@ package dandi.dandi.auth.application;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
@@ -12,7 +11,7 @@ import dandi.dandi.auth.domain.OAuthClient;
 import dandi.dandi.auth.infrastructure.token.JwtTokenManager;
 import dandi.dandi.member.domain.Member;
 import dandi.dandi.member.domain.MemberRepository;
-import dandi.dandi.member.domain.nicknamegenerator.NicknameGenerator;
+import dandi.dandi.member.domain.MemberSignupManager;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,6 +27,7 @@ class AuthServiceTest {
     private static final String TOKEN = "token";
     private static final String OAUTH_MEMBER_ID = "oAuthMemberId";
     private static final String NICKNAME = "nickname";
+    private static final Long NEW_MEMBER_ID = 1L;
 
     @Mock
     private MemberRepository memberRepository;
@@ -36,7 +36,7 @@ class AuthServiceTest {
     @Mock
     private JwtTokenManager jwtTokenManager;
     @Mock
-    private NicknameGenerator nicknameGenerator;
+    private MemberSignupManager memberSignupManager;
     @InjectMocks
     private AuthService authService;
 
@@ -47,14 +47,10 @@ class AuthServiceTest {
                 .thenReturn(OAUTH_MEMBER_ID);
         when(memberRepository.findByOAuthId(OAUTH_MEMBER_ID))
                 .thenReturn(Optional.empty());
-        when(jwtTokenManager.generateToken(anyString()))
+        when(memberSignupManager.signup(OAUTH_MEMBER_ID))
+                .thenReturn(NEW_MEMBER_ID);
+        when(jwtTokenManager.generateToken(String.valueOf(NEW_MEMBER_ID)))
                 .thenReturn(TOKEN);
-        when(nicknameGenerator.generate())
-                .thenReturn(NICKNAME);
-        when(memberRepository.existsMemberByNicknameValue(NICKNAME))
-                .thenReturn(false);
-        when(memberRepository.save(any()))
-                .thenReturn(Member.initial(OAUTH_MEMBER_ID, NICKNAME));
 
         LoginResponse loginResponse = authService.getAccessToken(new LoginRequest(ID_TOKEN));
 
