@@ -11,6 +11,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import dandi.dandi.auth.application.dto.LoginRequest;
 import dandi.dandi.common.AcceptanceTest;
 import dandi.dandi.common.HttpMethodFixture;
+import dandi.dandi.pushnotification.application.dto.PushNotificationAllowanceUpdateRequest;
 import dandi.dandi.pushnotification.application.dto.PushNotificationResponse;
 import dandi.dandi.pushnotification.application.dto.PushNotificationTimeUpdateRequest;
 import io.restassured.response.ExtractableResponse;
@@ -25,6 +26,7 @@ class PushNotificationAcceptanceTest extends AcceptanceTest {
     private static final String LOGIN_REQUEST_URI = "/login/oauth/apple";
     private static final String PUSH_NOTIFICATION_REQUEST_URI = "/push-notification";
     private static final String PUSH_NOTIFICATION_TIME_REQUEST_URI = "/push-notification/time";
+    private static final String PUSH_NOTIFICATION_ALLOWANCE_REQUEST_URI = "/push-notification/allowance";
 
     @DisplayName("회원의 푸시 알림 정보(시간대, 허용 여부)의 요청에 성공하면 200과 푸시 알림 정보를 반환한다.")
     @Test
@@ -92,6 +94,34 @@ class PushNotificationAcceptanceTest extends AcceptanceTest {
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value()),
                 () -> assertThat(extractExceptionMessage(response)).isNotNull()
+        );
+    }
+
+    @DisplayName("푸시 알림 허용 여부를 변경할 수 있다.")
+    @Test
+    void updatePushNotificationAllowance() {
+        String oAuthIdToken = "idToken";
+        when(oAuthClient.getOAuthMemberId(oAuthIdToken))
+                .thenReturn("memberIdentifier");
+        String token = HttpMethodFixture.httpPost(new LoginRequest(oAuthIdToken), LOGIN_REQUEST_URI)
+                .header(AUTHORIZATION);
+        boolean initialAllowance = httpGetWithAuthorization(PUSH_NOTIFICATION_REQUEST_URI, token)
+                .jsonPath()
+                .getObject(".", PushNotificationResponse.class)
+                .isAllowance();
+        PushNotificationAllowanceUpdateRequest pushNotificationAllowanceUpdateRequest =
+                new PushNotificationAllowanceUpdateRequest(true);
+
+        ExtractableResponse<Response> response = httpPatchWithAuthorization(
+                PUSH_NOTIFICATION_ALLOWANCE_REQUEST_URI, pushNotificationAllowanceUpdateRequest, token);
+
+        boolean allowanceAfterUpdate = httpGetWithAuthorization(PUSH_NOTIFICATION_REQUEST_URI, token)
+                .jsonPath()
+                .getObject(".", PushNotificationResponse.class)
+                .isAllowance();
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value()),
+                () -> assertThat(initialAllowance).isNotEqualTo(allowanceAfterUpdate)
         );
     }
 }
