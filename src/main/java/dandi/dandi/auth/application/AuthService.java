@@ -3,6 +3,8 @@ package dandi.dandi.auth.application;
 import dandi.dandi.auth.application.dto.LoginRequest;
 import dandi.dandi.auth.application.dto.LoginResponse;
 import dandi.dandi.auth.domain.OAuthClient;
+import dandi.dandi.auth.domain.RefreshToken;
+import dandi.dandi.auth.domain.RefreshTokenRepository;
 import dandi.dandi.auth.infrastructure.token.JwtTokenManager;
 import dandi.dandi.member.domain.Member;
 import dandi.dandi.member.domain.MemberRepository;
@@ -17,25 +19,27 @@ public class AuthService {
     private final MemberSignupManager memberSignupManager;
     private final OAuthClient oAuthClient;
     private final MemberRepository memberRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final JwtTokenManager jwtTokenManager;
 
     public AuthService(MemberSignupManager memberSignupManager, OAuthClient oAuthClient,
-                       MemberRepository memberRepository,
+                       MemberRepository memberRepository, RefreshTokenRepository refreshTokenRepository,
                        JwtTokenManager jwtTokenManager) {
         this.memberSignupManager = memberSignupManager;
         this.oAuthClient = oAuthClient;
         this.memberRepository = memberRepository;
+        this.refreshTokenRepository = refreshTokenRepository;
         this.jwtTokenManager = jwtTokenManager;
     }
 
     @Transactional
-    public LoginResponse getAccessToken(LoginRequest loginRequest) {
+    public LoginResponse getToken(LoginRequest loginRequest) {
         String oAuthMemberId = oAuthClient.getOAuthMemberId(loginRequest.getIdToken());
         Optional<Member> member = memberRepository.findByOAuthId(oAuthMemberId);
-
         if (member.isPresent()) {
-            String token = jwtTokenManager.generateToken(String.valueOf(member.get().getId()));
-            return LoginResponse.existingUser(token);
+            String accessToken = jwtTokenManager.generateToken(String.valueOf(member.get().getId()));
+            String refreshToken = generateRefreshToken(member.get().getId());
+            return LoginResponse.existingUser(accessToken, refreshToken);
         }
         return getNewMemberLoginResponse(oAuthMemberId);
     }
@@ -43,6 +47,13 @@ public class AuthService {
     private LoginResponse getNewMemberLoginResponse(String oAuthMemberId) {
         Long newMemberId = memberSignupManager.signup(oAuthMemberId);
         String token = jwtTokenManager.generateToken(String.valueOf(newMemberId));
-        return LoginResponse.newUser(token);
+        String refreshToken = generateRefreshToken(newMemberId);
+        return LoginResponse.newUser(token, refreshToken);
+    }
+
+    private String generateRefreshToken(Long memberId) {
+        RefreshToken refreshToken = RefreshToken.generateNew(memberId);
+        refreshTokenRepository.save(refreshToken);
+        return refreshToken.getValue();
     }
 }

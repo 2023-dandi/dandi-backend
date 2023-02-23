@@ -22,7 +22,7 @@ class AuthAcceptanceTest extends AcceptanceTest {
     private static final String VALID_OAUTH_ID_TOKEN = "oAuthIdToken";
     private static final String AUTHENTICATION_TYPE = "Bearer ";
 
-    @DisplayName("처음으로 로그인하는 사용자가 oauth 로그인을 하면 회원 가입을 진행하고 201과 token을 반환한다.")
+    @DisplayName("처음으로 로그인하는 사용자가 oauth 로그인을 하면 회원 가입을 진행하고 201과 access, refresh token을 반환한다.")
     @Test
     void login_NewMember() {
         mockAppleIdToken(VALID_OAUTH_ID_TOKEN);
@@ -30,14 +30,16 @@ class AuthAcceptanceTest extends AcceptanceTest {
         ExtractableResponse<Response> response =
                 HttpMethodFixture.httpPost(new LoginRequest(VALID_OAUTH_ID_TOKEN), LOGIN_REQUEST_URI);
 
-        String token = response.header(HttpHeaders.AUTHORIZATION);
+        String accessToken = response.header(HttpHeaders.AUTHORIZATION);
+        String setCookie = response.header(HttpHeaders.SET_COOKIE);
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value()),
-                () -> assertThat(token).contains(AUTHENTICATION_TYPE)
+                () -> assertThat(accessToken).contains(AUTHENTICATION_TYPE),
+                () -> assertThat(setCookie).contains("refreshToken")
         );
     }
 
-    @DisplayName("기존 사용자가 oauth 로그인을 하면 200과 token을 반환한다.")
+    @DisplayName("기존 사용자가 oauth 로그인을 하면 200과 access, refresh token을 반환한다.")
     @Test
     void login_ExistingMember() {
         mockAppleIdToken(VALID_OAUTH_ID_TOKEN);
@@ -46,10 +48,12 @@ class AuthAcceptanceTest extends AcceptanceTest {
         ExtractableResponse<Response> response =
                 HttpMethodFixture.httpPost(new LoginRequest(VALID_OAUTH_ID_TOKEN), LOGIN_REQUEST_URI);
 
-        String token = response.header(HttpHeaders.AUTHORIZATION);
+        String accessToken = response.header(HttpHeaders.AUTHORIZATION);
+        String setCookie = response.header(HttpHeaders.SET_COOKIE);
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
-                () -> assertThat(token).contains(AUTHENTICATION_TYPE)
+                () -> assertThat(accessToken).contains(AUTHENTICATION_TYPE),
+                () -> assertThat(setCookie).contains("refreshToken")
         );
     }
 
@@ -85,18 +89,18 @@ class AuthAcceptanceTest extends AcceptanceTest {
         );
     }
 
-    private void mockAppleIdToken(String token) {
-        when(oAuthClient.getOAuthMemberId(token))
+    private void mockAppleIdToken(String accessToken) {
+        when(oAuthClient.getOAuthMemberId(accessToken))
                 .thenReturn("memberIdentifier");
     }
 
-    private void mockExpiredToken(String token) {
-        when(oAuthClient.getOAuthMemberId(token))
+    private void mockExpiredToken(String accessToken) {
+        when(oAuthClient.getOAuthMemberId(accessToken))
                 .thenThrow(UnauthorizedException.expired());
     }
 
-    private void mockInvalidToken(String token) {
-        when(oAuthClient.getOAuthMemberId(token))
+    private void mockInvalidToken(String accessToken) {
+        when(oAuthClient.getOAuthMemberId(accessToken))
                 .thenThrow(UnauthorizedException.invalid());
     }
 }

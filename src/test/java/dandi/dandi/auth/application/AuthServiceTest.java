@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 import dandi.dandi.auth.application.dto.LoginRequest;
 import dandi.dandi.auth.application.dto.LoginResponse;
 import dandi.dandi.auth.domain.OAuthClient;
+import dandi.dandi.auth.domain.RefreshTokenRepository;
 import dandi.dandi.auth.infrastructure.token.JwtTokenManager;
 import dandi.dandi.member.domain.Member;
 import dandi.dandi.member.domain.MemberRepository;
@@ -37,6 +38,8 @@ class AuthServiceTest {
     private JwtTokenManager jwtTokenManager;
     @Mock
     private MemberSignupManager memberSignupManager;
+    @Mock
+    private RefreshTokenRepository refreshTokenRepository;
     @InjectMocks
     private AuthService authService;
 
@@ -52,10 +55,11 @@ class AuthServiceTest {
         when(jwtTokenManager.generateToken(String.valueOf(NEW_MEMBER_ID)))
                 .thenReturn(TOKEN);
 
-        LoginResponse loginResponse = authService.getAccessToken(new LoginRequest(ID_TOKEN));
+        LoginResponse loginResponse = authService.getToken(new LoginRequest(ID_TOKEN));
 
         assertAll(
-                () -> assertThat(loginResponse.getToken()).isEqualTo(TOKEN),
+                () -> assertThat(loginResponse.getAccessToken()).isEqualTo(TOKEN),
+                () -> assertThat(loginResponse.getRefreshToken()).isNotNull(),
                 () -> assertThat(loginResponse.isNewUser()).isTrue()
         );
     }
@@ -70,10 +74,11 @@ class AuthServiceTest {
         when(jwtTokenManager.generateToken(anyString()))
                 .thenReturn(TOKEN);
 
-        LoginResponse loginResponse = authService.getAccessToken(new LoginRequest(ID_TOKEN));
+        LoginResponse loginResponse = authService.getToken(new LoginRequest(ID_TOKEN));
 
         assertAll(
-                () -> assertThat(loginResponse.getToken()).isEqualTo(TOKEN),
+                () -> assertThat(loginResponse.getAccessToken()).isEqualTo(TOKEN),
+                () -> assertThat(loginResponse.getRefreshToken()).isNotNull(),
                 () -> assertThat(loginResponse.isNewUser()).isFalse()
         );
     }
