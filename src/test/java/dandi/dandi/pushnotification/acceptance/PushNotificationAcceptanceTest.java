@@ -43,20 +43,14 @@ class PushNotificationAcceptanceTest extends AcceptanceTest {
     @Test
     void updatePushNotificationTime_NoContent() {
         String token = getToken();
-        LocalTime initialPushNotificationTime = httpGetWithAuthorization(PUSH_NOTIFICATION_REQUEST_URI, token)
-                .jsonPath()
-                .getObject(".", PushNotificationResponse.class)
-                .getPushNotificationTime();
+        LocalTime initialPushNotificationTime = getPushNotificationTime(token);
         PushNotificationTimeUpdateRequest pushNotificationTimeUpdateRequest =
                 new PushNotificationTimeUpdateRequest(LocalTime.of(20, 10));
 
         ExtractableResponse<Response> response = httpPatchWithAuthorization(
                 PUSH_NOTIFICATION_TIME_REQUEST_URI, pushNotificationTimeUpdateRequest, token);
 
-        LocalTime pushNotificationTimeAfterUpdate = httpGetWithAuthorization(PUSH_NOTIFICATION_REQUEST_URI, token)
-                .jsonPath()
-                .getObject(".", PushNotificationResponse.class)
-                .getPushNotificationTime();
+        LocalTime pushNotificationTimeAfterUpdate = getPushNotificationTime(token);
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value()),
                 () -> assertThat(initialPushNotificationTime).isNotEqualTo(pushNotificationTimeAfterUpdate)
@@ -83,23 +77,31 @@ class PushNotificationAcceptanceTest extends AcceptanceTest {
     @Test
     void updatePushNotificationAllowance() {
         String token = getToken();
-        boolean initialAllowance = httpGetWithAuthorization(PUSH_NOTIFICATION_REQUEST_URI, token)
-                .jsonPath()
-                .getObject(".", PushNotificationResponse.class)
-                .isAllowance();
+        boolean initialAllowance = getPushNotificationAllowance(token);
         PushNotificationAllowanceUpdateRequest pushNotificationAllowanceUpdateRequest =
                 new PushNotificationAllowanceUpdateRequest(true);
 
         ExtractableResponse<Response> response = httpPatchWithAuthorization(
                 PUSH_NOTIFICATION_ALLOWANCE_REQUEST_URI, pushNotificationAllowanceUpdateRequest, token);
 
-        boolean allowanceAfterUpdate = httpGetWithAuthorization(PUSH_NOTIFICATION_REQUEST_URI, token)
-                .jsonPath()
-                .getObject(".", PushNotificationResponse.class)
-                .isAllowance();
+        boolean allowanceAfterUpdate = getPushNotificationAllowance(token);
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value()),
                 () -> assertThat(initialAllowance).isNotEqualTo(allowanceAfterUpdate)
         );
+    }
+
+    private LocalTime getPushNotificationTime(String token) {
+        return httpGetWithAuthorization(PUSH_NOTIFICATION_REQUEST_URI, token)
+                .jsonPath()
+                .getObject(".", PushNotificationResponse.class)
+                .getPushNotificationTime();
+    }
+
+    private boolean getPushNotificationAllowance(String token) {
+        return httpGetWithAuthorization(PUSH_NOTIFICATION_REQUEST_URI, token)
+                .jsonPath()
+                .getObject(".", PushNotificationResponse.class)
+                .isAllowance();
     }
 }
