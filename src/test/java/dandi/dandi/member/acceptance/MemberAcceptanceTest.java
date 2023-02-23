@@ -3,14 +3,13 @@ package dandi.dandi.member.acceptance;
 import static dandi.dandi.common.HttpMethodFixture.httpGetWithAuthorization;
 import static dandi.dandi.common.HttpMethodFixture.httpPatchWithAuthorization;
 import static dandi.dandi.common.HttpResponseExtractor.extractExceptionMessage;
+import static dandi.dandi.common.RequestURI.MEMBER_INFO_URI;
+import static dandi.dandi.common.RequestURI.MEMBER_NICKNAME_LOCATION;
+import static dandi.dandi.common.RequestURI.MEMBER_NICKNAME_URI;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.Mockito.when;
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
-import dandi.dandi.auth.application.dto.LoginRequest;
 import dandi.dandi.common.AcceptanceTest;
-import dandi.dandi.common.HttpMethodFixture;
 import dandi.dandi.member.application.dto.LocationUpdateRequest;
 import dandi.dandi.member.application.dto.MemberInfoResponse;
 import dandi.dandi.member.application.dto.NicknameUpdateRequest;
@@ -22,17 +21,10 @@ import org.springframework.http.HttpStatus;
 
 class MemberAcceptanceTest extends AcceptanceTest {
 
-    private static final String LOGIN_REQUEST_URI = "/login/oauth/apple";
-    private static final String MEMBER_INFO_URI = "/members";
-
     @DisplayName("회원 정보 요청에 대해 닉네임과 200을 반환한다.")
     @Test
     void getMemberNickname() {
-        String oAuthIdToken = "idToken";
-        when(oAuthClient.getOAuthMemberId(oAuthIdToken))
-                .thenReturn("memberIdentifier");
-        String token = HttpMethodFixture.httpPost(new LoginRequest(oAuthIdToken), LOGIN_REQUEST_URI)
-                .header(AUTHORIZATION);
+        String token = getToken();
         double initialLatitude = 0.0;
         double initialLongitude = 0.0;
 
@@ -51,20 +43,13 @@ class MemberAcceptanceTest extends AcceptanceTest {
     @DisplayName("회원 닉네임 변경 요청에 성공하면 204를 반환한다.")
     @Test
     void updateMemberNickname() {
-        String oAuthIdToken = "idToken";
-        when(oAuthClient.getOAuthMemberId(oAuthIdToken))
-                .thenReturn("memberIdentifier");
-        String token = HttpMethodFixture.httpPost(new LoginRequest(oAuthIdToken), LOGIN_REQUEST_URI)
-                .header(AUTHORIZATION);
+        String token = getToken();
         String newNickname = "newNickname";
 
         ExtractableResponse<Response> response =
-                httpPatchWithAuthorization("/members/nickname", new NicknameUpdateRequest(newNickname), token);
+                httpPatchWithAuthorization(MEMBER_NICKNAME_URI, new NicknameUpdateRequest(newNickname), token);
 
-        String nicknameAfterNicknameUpdateRequest = httpGetWithAuthorization(MEMBER_INFO_URI, token)
-                .jsonPath()
-                .getObject(".", MemberInfoResponse.class)
-                .getNickname();
+        String nicknameAfterNicknameUpdateRequest = getNickname(token);
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value()),
                 () -> assertThat(nicknameAfterNicknameUpdateRequest).isEqualTo(newNickname)
@@ -74,15 +59,11 @@ class MemberAcceptanceTest extends AcceptanceTest {
     @DisplayName("규칙에 어긋나는 회원 닉네임 변경 요청에 대해 400을 반환한다.")
     @Test
     void updateMemberNickname_BadRequest() {
-        String oAuthIdToken = "idToken";
-        when(oAuthClient.getOAuthMemberId(oAuthIdToken))
-                .thenReturn("memberIdentifier");
-        String token = HttpMethodFixture.httpPost(new LoginRequest(oAuthIdToken), LOGIN_REQUEST_URI)
-                .header(AUTHORIZATION);
+        String token = getToken();
         String invalidNickname = "invalid  Nickname";
 
         ExtractableResponse<Response> response =
-                httpPatchWithAuthorization("/members/nickname", new NicknameUpdateRequest(invalidNickname), token);
+                httpPatchWithAuthorization(MEMBER_NICKNAME_URI, new NicknameUpdateRequest(invalidNickname), token);
 
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value()),
@@ -93,15 +74,11 @@ class MemberAcceptanceTest extends AcceptanceTest {
     @DisplayName("사용자 위치 정보 변경에 성공하면 204를 반환한다.")
     @Test
     void updateMemberLocation_NoContent() {
-        String oAuthIdToken = "idToken";
-        when(oAuthClient.getOAuthMemberId(oAuthIdToken))
-                .thenReturn("memberIdentifier");
-        String token = HttpMethodFixture.httpPost(new LoginRequest(oAuthIdToken), LOGIN_REQUEST_URI)
-                .header(AUTHORIZATION);
+        String token = getToken();
         LocationUpdateRequest locationUpdateRequest = new LocationUpdateRequest(1.0, 2.0);
 
         ExtractableResponse<Response> response =
-                httpPatchWithAuthorization("/members/location", locationUpdateRequest, token);
+                httpPatchWithAuthorization(MEMBER_NICKNAME_LOCATION, locationUpdateRequest, token);
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
     }
@@ -109,20 +86,23 @@ class MemberAcceptanceTest extends AcceptanceTest {
     @DisplayName("잘못된 범위의 사용자 위치 정보 요청에 대해 400을 반환한다.")
     @Test
     void updateMemberLocation_BadRequest() {
-        String oAuthIdToken = "idToken";
-        when(oAuthClient.getOAuthMemberId(oAuthIdToken))
-                .thenReturn("memberIdentifier");
-        String token = HttpMethodFixture.httpPost(new LoginRequest(oAuthIdToken), LOGIN_REQUEST_URI)
-                .header(AUTHORIZATION);
+        String token = getToken();
         double invalidLatitude = -91.0;
         LocationUpdateRequest invalidLocationUpdateRequest = new LocationUpdateRequest(invalidLatitude, -2.0);
 
         ExtractableResponse<Response> response =
-                httpPatchWithAuthorization("/members/location", invalidLocationUpdateRequest, token);
+                httpPatchWithAuthorization(MEMBER_NICKNAME_LOCATION, invalidLocationUpdateRequest, token);
 
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value()),
                 () -> assertThat(extractExceptionMessage(response)).isNotNull()
         );
+    }
+
+    private String getNickname(String token) {
+        return httpGetWithAuthorization(MEMBER_INFO_URI, token)
+                .jsonPath()
+                .getObject(".", MemberInfoResponse.class)
+                .getNickname();
     }
 }

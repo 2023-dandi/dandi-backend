@@ -3,14 +3,13 @@ package dandi.dandi.pushnotification.acceptance;
 import static dandi.dandi.common.HttpMethodFixture.httpGetWithAuthorization;
 import static dandi.dandi.common.HttpMethodFixture.httpPatchWithAuthorization;
 import static dandi.dandi.common.HttpResponseExtractor.extractExceptionMessage;
+import static dandi.dandi.common.RequestURI.PUSH_NOTIFICATION_ALLOWANCE_REQUEST_URI;
+import static dandi.dandi.common.RequestURI.PUSH_NOTIFICATION_REQUEST_URI;
+import static dandi.dandi.common.RequestURI.PUSH_NOTIFICATION_TIME_REQUEST_URI;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.Mockito.when;
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
-import dandi.dandi.auth.application.dto.LoginRequest;
 import dandi.dandi.common.AcceptanceTest;
-import dandi.dandi.common.HttpMethodFixture;
 import dandi.dandi.pushnotification.application.dto.PushNotificationAllowanceUpdateRequest;
 import dandi.dandi.pushnotification.application.dto.PushNotificationResponse;
 import dandi.dandi.pushnotification.application.dto.PushNotificationTimeUpdateRequest;
@@ -23,19 +22,10 @@ import org.springframework.http.HttpStatus;
 
 class PushNotificationAcceptanceTest extends AcceptanceTest {
 
-    private static final String LOGIN_REQUEST_URI = "/login/oauth/apple";
-    private static final String PUSH_NOTIFICATION_REQUEST_URI = "/push-notification";
-    private static final String PUSH_NOTIFICATION_TIME_REQUEST_URI = "/push-notification/time";
-    private static final String PUSH_NOTIFICATION_ALLOWANCE_REQUEST_URI = "/push-notification/allowance";
-
     @DisplayName("회원의 푸시 알림 정보(시간대, 허용 여부)의 요청에 성공하면 200과 푸시 알림 정보를 반환한다.")
     @Test
     void getPushNotification() {
-        String oAuthIdToken = "idToken";
-        when(oAuthClient.getOAuthMemberId(oAuthIdToken))
-                .thenReturn("memberIdentifier");
-        String token = HttpMethodFixture.httpPost(new LoginRequest(oAuthIdToken), LOGIN_REQUEST_URI)
-                .header(AUTHORIZATION);
+        String token = getToken();
 
         ExtractableResponse<Response> response =
                 httpGetWithAuthorization(PUSH_NOTIFICATION_REQUEST_URI, token);
@@ -52,25 +42,15 @@ class PushNotificationAcceptanceTest extends AcceptanceTest {
     @DisplayName("회원의 푸시 알림 시간 변경 요청에 성공하면 204를 반환한다.")
     @Test
     void updatePushNotificationTime_NoContent() {
-        String oAuthIdToken = "idToken";
-        when(oAuthClient.getOAuthMemberId(oAuthIdToken))
-                .thenReturn("memberIdentifier");
-        String token = HttpMethodFixture.httpPost(new LoginRequest(oAuthIdToken), LOGIN_REQUEST_URI)
-                .header(AUTHORIZATION);
-        LocalTime initialPushNotificationTime = httpGetWithAuthorization(PUSH_NOTIFICATION_REQUEST_URI, token)
-                .jsonPath()
-                .getObject(".", PushNotificationResponse.class)
-                .getPushNotificationTime();
+        String token = getToken();
+        LocalTime initialPushNotificationTime = getPushNotificationTime(token);
         PushNotificationTimeUpdateRequest pushNotificationTimeUpdateRequest =
                 new PushNotificationTimeUpdateRequest(LocalTime.of(20, 10));
 
         ExtractableResponse<Response> response = httpPatchWithAuthorization(
                 PUSH_NOTIFICATION_TIME_REQUEST_URI, pushNotificationTimeUpdateRequest, token);
 
-        LocalTime pushNotificationTimeAfterUpdate = httpGetWithAuthorization(PUSH_NOTIFICATION_REQUEST_URI, token)
-                .jsonPath()
-                .getObject(".", PushNotificationResponse.class)
-                .getPushNotificationTime();
+        LocalTime pushNotificationTimeAfterUpdate = getPushNotificationTime(token);
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value()),
                 () -> assertThat(initialPushNotificationTime).isNotEqualTo(pushNotificationTimeAfterUpdate)
@@ -80,11 +60,7 @@ class PushNotificationAcceptanceTest extends AcceptanceTest {
     @DisplayName("10분 단위가 아닌 푸시 알림 시간 변경 요청에 대해 400을 반환한다.")
     @Test
     void updatePushNotificationTime_BadRequest() {
-        String oAuthIdToken = "idToken";
-        when(oAuthClient.getOAuthMemberId(oAuthIdToken))
-                .thenReturn("memberIdentifier");
-        String token = HttpMethodFixture.httpPost(new LoginRequest(oAuthIdToken), LOGIN_REQUEST_URI)
-                .header(AUTHORIZATION);
+        String token = getToken();
         PushNotificationTimeUpdateRequest invalidPushNotificationTimeUpdateRequest =
                 new PushNotificationTimeUpdateRequest(LocalTime.of(20, 11));
 
@@ -100,28 +76,32 @@ class PushNotificationAcceptanceTest extends AcceptanceTest {
     @DisplayName("푸시 알림 허용 여부를 변경할 수 있다.")
     @Test
     void updatePushNotificationAllowance() {
-        String oAuthIdToken = "idToken";
-        when(oAuthClient.getOAuthMemberId(oAuthIdToken))
-                .thenReturn("memberIdentifier");
-        String token = HttpMethodFixture.httpPost(new LoginRequest(oAuthIdToken), LOGIN_REQUEST_URI)
-                .header(AUTHORIZATION);
-        boolean initialAllowance = httpGetWithAuthorization(PUSH_NOTIFICATION_REQUEST_URI, token)
-                .jsonPath()
-                .getObject(".", PushNotificationResponse.class)
-                .isAllowance();
+        String token = getToken();
+        boolean initialAllowance = getPushNotificationAllowance(token);
         PushNotificationAllowanceUpdateRequest pushNotificationAllowanceUpdateRequest =
                 new PushNotificationAllowanceUpdateRequest(true);
 
         ExtractableResponse<Response> response = httpPatchWithAuthorization(
                 PUSH_NOTIFICATION_ALLOWANCE_REQUEST_URI, pushNotificationAllowanceUpdateRequest, token);
 
-        boolean allowanceAfterUpdate = httpGetWithAuthorization(PUSH_NOTIFICATION_REQUEST_URI, token)
-                .jsonPath()
-                .getObject(".", PushNotificationResponse.class)
-                .isAllowance();
+        boolean allowanceAfterUpdate = getPushNotificationAllowance(token);
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value()),
                 () -> assertThat(initialAllowance).isNotEqualTo(allowanceAfterUpdate)
         );
+    }
+
+    private LocalTime getPushNotificationTime(String token) {
+        return httpGetWithAuthorization(PUSH_NOTIFICATION_REQUEST_URI, token)
+                .jsonPath()
+                .getObject(".", PushNotificationResponse.class)
+                .getPushNotificationTime();
+    }
+
+    private boolean getPushNotificationAllowance(String token) {
+        return httpGetWithAuthorization(PUSH_NOTIFICATION_REQUEST_URI, token)
+                .jsonPath()
+                .getObject(".", PushNotificationResponse.class)
+                .isAllowance();
     }
 }

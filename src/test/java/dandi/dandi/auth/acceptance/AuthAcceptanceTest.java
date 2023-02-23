@@ -1,10 +1,11 @@
 package dandi.dandi.auth.acceptance;
 
+import static dandi.dandi.common.HttpResponseExtractor.extractExceptionMessage;
+import static dandi.dandi.common.RequestURI.LOGIN_REQUEST_URI;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.when;
 
-import dandi.dandi.advice.ExceptionResponse;
 import dandi.dandi.auth.application.dto.LoginRequest;
 import dandi.dandi.auth.exception.UnauthorizedException;
 import dandi.dandi.common.AcceptanceTest;
@@ -18,18 +19,16 @@ import org.springframework.http.HttpStatus;
 
 class AuthAcceptanceTest extends AcceptanceTest {
 
-    private static final String LOGIN_REQUEST_URI = "/login/oauth/apple";
+    private static final String VALID_OAUTH_ID_TOKEN = "oAuthIdToken";
     private static final String AUTHENTICATION_TYPE = "Bearer ";
 
     @DisplayName("처음으로 로그인하는 사용자가 oauth 로그인을 하면 회원 가입을 진행하고 201과 token을 반환한다.")
     @Test
     void login_NewMember() {
-        String oAuthIdToken = "idToken";
-        when(oAuthClient.getOAuthMemberId(oAuthIdToken))
-                .thenReturn("memberIdentifier");
+        mockAppleIdToken(VALID_OAUTH_ID_TOKEN);
 
         ExtractableResponse<Response> response =
-                HttpMethodFixture.httpPost(new LoginRequest(oAuthIdToken), LOGIN_REQUEST_URI);
+                HttpMethodFixture.httpPost(new LoginRequest(VALID_OAUTH_ID_TOKEN), LOGIN_REQUEST_URI);
 
         String token = response.header(HttpHeaders.AUTHORIZATION);
         assertAll(
@@ -41,13 +40,11 @@ class AuthAcceptanceTest extends AcceptanceTest {
     @DisplayName("기존 사용자가 oauth 로그인을 하면 200과 token을 반환한다.")
     @Test
     void login_ExistingMember() {
-        String oAuthIdToken = "idToken";
-        when(oAuthClient.getOAuthMemberId(oAuthIdToken))
-                .thenReturn("memberIdentifier");
-        HttpMethodFixture.httpPost(new LoginRequest(oAuthIdToken), LOGIN_REQUEST_URI);
+        mockAppleIdToken(VALID_OAUTH_ID_TOKEN);
+        HttpMethodFixture.httpPost(new LoginRequest(VALID_OAUTH_ID_TOKEN), LOGIN_REQUEST_URI);
 
         ExtractableResponse<Response> response =
-                HttpMethodFixture.httpPost(new LoginRequest(oAuthIdToken), LOGIN_REQUEST_URI);
+                HttpMethodFixture.httpPost(new LoginRequest(VALID_OAUTH_ID_TOKEN), LOGIN_REQUEST_URI);
 
         String token = response.header(HttpHeaders.AUTHORIZATION);
         assertAll(
@@ -60,19 +57,15 @@ class AuthAcceptanceTest extends AcceptanceTest {
     @Test
     void login_Unauthorized_ExpiredAppleIdToken() {
         String expiredToken = "expiredToken";
+        mockExpiredToken(expiredToken);
         UnauthorizedException unauthorizedException = UnauthorizedException.expired();
-        when(oAuthClient.getOAuthMemberId(expiredToken))
-                .thenThrow(unauthorizedException);
 
         ExtractableResponse<Response> response = HttpMethodFixture.httpPost(new LoginRequest(expiredToken),
                 LOGIN_REQUEST_URI);
 
-        String exceptionMessage = response.jsonPath()
-                .getObject(".", ExceptionResponse.class)
-                .getMessage();
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value()),
-                () -> assertThat(exceptionMessage).isEqualTo(unauthorizedException.getMessage())
+                () -> assertThat(extractExceptionMessage(response)).isEqualTo(unauthorizedException.getMessage())
         );
     }
 
@@ -80,19 +73,30 @@ class AuthAcceptanceTest extends AcceptanceTest {
     @Test
     void login_Unauthorized_InvalidAppleIdToken() {
         String invalidToken = "invalidToken";
+        mockInvalidToken(invalidToken);
         UnauthorizedException unauthorizedException = UnauthorizedException.invalid();
-        when(oAuthClient.getOAuthMemberId(invalidToken))
-                .thenThrow(unauthorizedException);
 
         ExtractableResponse<Response> response = HttpMethodFixture.httpPost(new LoginRequest(invalidToken),
                 LOGIN_REQUEST_URI);
 
-        String exceptionMessage = response.jsonPath()
-                .getObject(".", ExceptionResponse.class)
-                .getMessage();
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value()),
-                () -> assertThat(exceptionMessage).isEqualTo(unauthorizedException.getMessage())
+                () -> assertThat(extractExceptionMessage(response)).isEqualTo(unauthorizedException.getMessage())
         );
+    }
+
+    private void mockAppleIdToken(String token) {
+        when(oAuthClient.getOAuthMemberId(token))
+                .thenReturn("memberIdentifier");
+    }
+
+    private void mockExpiredToken(String token) {
+        when(oAuthClient.getOAuthMemberId(token))
+                .thenThrow(UnauthorizedException.expired());
+    }
+
+    private void mockInvalidToken(String token) {
+        when(oAuthClient.getOAuthMemberId(token))
+                .thenThrow(UnauthorizedException.invalid());
     }
 }
