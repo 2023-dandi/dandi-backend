@@ -1,5 +1,6 @@
 package dandi.dandi.auth.acceptance;
 
+import static dandi.dandi.common.RequestURI.LOGIN_REQUEST_URI;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.when;
@@ -18,7 +19,6 @@ import org.springframework.http.HttpStatus;
 
 class AuthAcceptanceTest extends AcceptanceTest {
 
-    private static final String LOGIN_REQUEST_URI = "/login/oauth/apple";
     private static final String AUTHENTICATION_TYPE = "Bearer ";
 
     @DisplayName("처음으로 로그인하는 사용자가 oauth 로그인을 하면 회원 가입을 진행하고 201과 token을 반환한다.")

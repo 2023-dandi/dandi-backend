@@ -1,5 +1,6 @@
 package dandi.dandi.common;
 
+import static dandi.dandi.common.RequestURI.LOGIN_REQUEST_URI;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
@@ -41,8 +42,6 @@ public class AcceptanceTest {
     void clearDatabase() {
         databaseCleaner.clear();
     }
-
-    private static final String LOGIN_REQUEST_URI = "/login/oauth/apple";
 
     public String getToken() {
         String oAuthIdToken = "idToken";

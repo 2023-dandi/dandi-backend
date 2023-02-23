@@ -3,6 +3,9 @@ package dandi.dandi.pushnotification.acceptance;
 import static dandi.dandi.common.HttpMethodFixture.httpGetWithAuthorization;
 import static dandi.dandi.common.HttpMethodFixture.httpPatchWithAuthorization;
 import static dandi.dandi.common.HttpResponseExtractor.extractExceptionMessage;
+import static dandi.dandi.common.RequestURI.PUSH_NOTIFICATION_ALLOWANCE_REQUEST_URI;
+import static dandi.dandi.common.RequestURI.PUSH_NOTIFICATION_REQUEST_URI;
+import static dandi.dandi.common.RequestURI.PUSH_NOTIFICATION_TIME_REQUEST_URI;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -18,10 +21,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
 class PushNotificationAcceptanceTest extends AcceptanceTest {
-
-    private static final String PUSH_NOTIFICATION_REQUEST_URI = "/push-notification";
-    private static final String PUSH_NOTIFICATION_TIME_REQUEST_URI = "/push-notification/time";
-    private static final String PUSH_NOTIFICATION_ALLOWANCE_REQUEST_URI = "/push-notification/allowance";
 
     @DisplayName("회원의 푸시 알림 정보(시간대, 허용 여부)의 요청에 성공하면 200과 푸시 알림 정보를 반환한다.")
     @Test
