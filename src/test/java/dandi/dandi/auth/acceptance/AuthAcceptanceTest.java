@@ -57,7 +57,7 @@ class AuthAcceptanceTest extends AcceptanceTest {
     @Test
     void login_Unauthorized_ExpiredAppleIdToken() {
         String expiredToken = "expiredToken";
-        mockAppleIdToken(expiredToken);
+        mockExpiredToken(expiredToken);
         UnauthorizedException unauthorizedException = UnauthorizedException.expired();
 
         ExtractableResponse<Response> response = HttpMethodFixture.httpPost(new LoginRequest(expiredToken),
@@ -73,7 +73,7 @@ class AuthAcceptanceTest extends AcceptanceTest {
     @Test
     void login_Unauthorized_InvalidAppleIdToken() {
         String invalidToken = "invalidToken";
-        mockAppleIdToken(invalidToken);
+        mockInvalidToken(invalidToken);
         UnauthorizedException unauthorizedException = UnauthorizedException.invalid();
 
         ExtractableResponse<Response> response = HttpMethodFixture.httpPost(new LoginRequest(invalidToken),
@@ -85,8 +85,18 @@ class AuthAcceptanceTest extends AcceptanceTest {
         );
     }
 
-    private void mockAppleIdToken(String oAuthIdToken) {
-        when(oAuthClient.getOAuthMemberId(oAuthIdToken))
+    private void mockAppleIdToken(String token) {
+        when(oAuthClient.getOAuthMemberId(token))
                 .thenReturn("memberIdentifier");
+    }
+
+    private void mockExpiredToken(String token) {
+        when(oAuthClient.getOAuthMemberId(token))
+                .thenThrow(UnauthorizedException.expired());
+    }
+
+    private void mockInvalidToken(String token) {
+        when(oAuthClient.getOAuthMemberId(token))
+                .thenThrow(UnauthorizedException.invalid());
     }
 }
