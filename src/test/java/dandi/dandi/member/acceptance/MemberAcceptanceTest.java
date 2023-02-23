@@ -5,12 +5,8 @@ import static dandi.dandi.common.HttpMethodFixture.httpPatchWithAuthorization;
 import static dandi.dandi.common.HttpResponseExtractor.extractExceptionMessage;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.Mockito.when;
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
-import dandi.dandi.auth.application.dto.LoginRequest;
 import dandi.dandi.common.AcceptanceTest;
-import dandi.dandi.common.HttpMethodFixture;
 import dandi.dandi.member.application.dto.LocationUpdateRequest;
 import dandi.dandi.member.application.dto.MemberInfoResponse;
 import dandi.dandi.member.application.dto.NicknameUpdateRequest;
@@ -22,17 +18,12 @@ import org.springframework.http.HttpStatus;
 
 class MemberAcceptanceTest extends AcceptanceTest {
 
-    private static final String LOGIN_REQUEST_URI = "/login/oauth/apple";
     private static final String MEMBER_INFO_URI = "/members";
 
     @DisplayName("회원 정보 요청에 대해 닉네임과 200을 반환한다.")
     @Test
     void getMemberNickname() {
-        String oAuthIdToken = "idToken";
-        when(oAuthClient.getOAuthMemberId(oAuthIdToken))
-                .thenReturn("memberIdentifier");
-        String token = HttpMethodFixture.httpPost(new LoginRequest(oAuthIdToken), LOGIN_REQUEST_URI)
-                .header(AUTHORIZATION);
+        String token = getToken();
         double initialLatitude = 0.0;
         double initialLongitude = 0.0;
 
@@ -51,11 +42,7 @@ class MemberAcceptanceTest extends AcceptanceTest {
     @DisplayName("회원 닉네임 변경 요청에 성공하면 204를 반환한다.")
     @Test
     void updateMemberNickname() {
-        String oAuthIdToken = "idToken";
-        when(oAuthClient.getOAuthMemberId(oAuthIdToken))
-                .thenReturn("memberIdentifier");
-        String token = HttpMethodFixture.httpPost(new LoginRequest(oAuthIdToken), LOGIN_REQUEST_URI)
-                .header(AUTHORIZATION);
+        String token = getToken();
         String newNickname = "newNickname";
 
         ExtractableResponse<Response> response =
@@ -74,11 +61,7 @@ class MemberAcceptanceTest extends AcceptanceTest {
     @DisplayName("규칙에 어긋나는 회원 닉네임 변경 요청에 대해 400을 반환한다.")
     @Test
     void updateMemberNickname_BadRequest() {
-        String oAuthIdToken = "idToken";
-        when(oAuthClient.getOAuthMemberId(oAuthIdToken))
-                .thenReturn("memberIdentifier");
-        String token = HttpMethodFixture.httpPost(new LoginRequest(oAuthIdToken), LOGIN_REQUEST_URI)
-                .header(AUTHORIZATION);
+        String token = getToken();
         String invalidNickname = "invalid  Nickname";
 
         ExtractableResponse<Response> response =
@@ -93,11 +76,7 @@ class MemberAcceptanceTest extends AcceptanceTest {
     @DisplayName("사용자 위치 정보 변경에 성공하면 204를 반환한다.")
     @Test
     void updateMemberLocation_NoContent() {
-        String oAuthIdToken = "idToken";
-        when(oAuthClient.getOAuthMemberId(oAuthIdToken))
-                .thenReturn("memberIdentifier");
-        String token = HttpMethodFixture.httpPost(new LoginRequest(oAuthIdToken), LOGIN_REQUEST_URI)
-                .header(AUTHORIZATION);
+        String token = getToken();
         LocationUpdateRequest locationUpdateRequest = new LocationUpdateRequest(1.0, 2.0);
 
         ExtractableResponse<Response> response =
@@ -109,11 +88,7 @@ class MemberAcceptanceTest extends AcceptanceTest {
     @DisplayName("잘못된 범위의 사용자 위치 정보 요청에 대해 400을 반환한다.")
     @Test
     void updateMemberLocation_BadRequest() {
-        String oAuthIdToken = "idToken";
-        when(oAuthClient.getOAuthMemberId(oAuthIdToken))
-                .thenReturn("memberIdentifier");
-        String token = HttpMethodFixture.httpPost(new LoginRequest(oAuthIdToken), LOGIN_REQUEST_URI)
-                .header(AUTHORIZATION);
+        String token = getToken();
         double invalidLatitude = -91.0;
         LocationUpdateRequest invalidLocationUpdateRequest = new LocationUpdateRequest(invalidLatitude, -2.0);
 

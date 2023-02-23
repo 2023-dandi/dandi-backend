@@ -1,5 +1,9 @@
 package dandi.dandi.common;
 
+import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+
+import dandi.dandi.auth.application.dto.LoginRequest;
 import dandi.dandi.auth.domain.OAuthClient;
 import dandi.dandi.config.AsyncTestConfig;
 import io.restassured.RestAssured;
@@ -36,5 +40,15 @@ public class AcceptanceTest {
     @AfterEach
     void clearDatabase() {
         databaseCleaner.clear();
+    }
+
+    private static final String LOGIN_REQUEST_URI = "/login/oauth/apple";
+
+    public String getToken() {
+        String oAuthIdToken = "idToken";
+        when(oAuthClient.getOAuthMemberId(oAuthIdToken))
+                .thenReturn("memberIdentifier");
+        return HttpMethodFixture.httpPost(new LoginRequest(oAuthIdToken), LOGIN_REQUEST_URI)
+                .header(AUTHORIZATION);
     }
 }
