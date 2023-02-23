@@ -13,7 +13,7 @@ public class RefreshTokenCookieProvider {
 
     private final Long validDuration;
 
-    public RefreshTokenCookieProvider(@Value("${security.refresh.valid-duration}") Long validDuration) {
+    public RefreshTokenCookieProvider(@Value("${security.jwt.refresh.valid-duration}") Long validDuration) {
         this.validDuration = validDuration;
     }
 

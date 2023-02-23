@@ -16,8 +16,8 @@ public class JwtTokenManager {
     private final SecretKey key;
     private final long validDuration;
 
-    public JwtTokenManager(@Value("${security.jwt.secret-key}") String secretKey,
-                           @Value("${security.jwt.valid-duration}") long validDuration) {
+    public JwtTokenManager(@Value("${security.jwt.access.secret-key}") String secretKey,
+                           @Value("${security.jwt.access.valid-duration}") long validDuration) {
         this.key = Keys.hmacShaKeyFor(secretKey.getBytes(UTF_8));
         this.validDuration = validDuration;
     }
