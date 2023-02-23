@@ -1,11 +1,11 @@
 package dandi.dandi.auth.acceptance;
 
+import static dandi.dandi.common.HttpResponseExtractor.extractExceptionMessage;
 import static dandi.dandi.common.RequestURI.LOGIN_REQUEST_URI;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.when;
 
-import dandi.dandi.advice.ExceptionResponse;
 import dandi.dandi.auth.application.dto.LoginRequest;
 import dandi.dandi.auth.exception.UnauthorizedException;
 import dandi.dandi.common.AcceptanceTest;
@@ -63,12 +63,9 @@ class AuthAcceptanceTest extends AcceptanceTest {
         ExtractableResponse<Response> response = HttpMethodFixture.httpPost(new LoginRequest(expiredToken),
                 LOGIN_REQUEST_URI);
 
-        String exceptionMessage = response.jsonPath()
-                .getObject(".", ExceptionResponse.class)
-                .getMessage();
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value()),
-                () -> assertThat(exceptionMessage).isEqualTo(unauthorizedException.getMessage())
+                () -> assertThat(extractExceptionMessage(response)).isEqualTo(unauthorizedException.getMessage())
         );
     }
 
@@ -82,12 +79,9 @@ class AuthAcceptanceTest extends AcceptanceTest {
         ExtractableResponse<Response> response = HttpMethodFixture.httpPost(new LoginRequest(invalidToken),
                 LOGIN_REQUEST_URI);
 
-        String exceptionMessage = response.jsonPath()
-                .getObject(".", ExceptionResponse.class)
-                .getMessage();
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value()),
-                () -> assertThat(exceptionMessage).isEqualTo(unauthorizedException.getMessage())
+                () -> assertThat(extractExceptionMessage(response)).isEqualTo(unauthorizedException.getMessage())
         );
     }
 
