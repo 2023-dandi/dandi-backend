@@ -49,10 +49,7 @@ class MemberAcceptanceTest extends AcceptanceTest {
         ExtractableResponse<Response> response =
                 httpPatchWithAuthorization(MEMBER_NICKNAME_URI, new NicknameUpdateRequest(newNickname), token);
 
-        String nicknameAfterNicknameUpdateRequest = httpGetWithAuthorization(MEMBER_INFO_URI, token)
-                .jsonPath()
-                .getObject(".", MemberInfoResponse.class)
-                .getNickname();
+        String nicknameAfterNicknameUpdateRequest = getNickname(token);
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value()),
                 () -> assertThat(nicknameAfterNicknameUpdateRequest).isEqualTo(newNickname)
@@ -100,5 +97,12 @@ class MemberAcceptanceTest extends AcceptanceTest {
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value()),
                 () -> assertThat(extractExceptionMessage(response)).isNotNull()
         );
+    }
+
+    private String getNickname(String token) {
+        return httpGetWithAuthorization(MEMBER_INFO_URI, token)
+                .jsonPath()
+                .getObject(".", MemberInfoResponse.class)
+                .getNickname();
     }
 }
