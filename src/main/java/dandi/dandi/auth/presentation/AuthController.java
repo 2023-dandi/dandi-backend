@@ -16,8 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class AuthController implements AuthControllerDocs {
 
-    private static final String AUTHENTICATION_TYPE = "Bearer ";
-
     private final AuthService authService;
     private final RefreshTokenCookieProvider refreshTokenCookieGenerator;
 
@@ -38,7 +36,7 @@ public class AuthController implements AuthControllerDocs {
     private ResponseEntity<Void> generateResponseEntityWithToken(BodyBuilder bodyBuilder, LoginResponse loginResponse) {
         ResponseCookie refreshTokenCookieProviderCookie =
                 refreshTokenCookieGenerator.createCookie(loginResponse.getRefreshToken());
-        return bodyBuilder.header(HttpHeaders.AUTHORIZATION, AUTHENTICATION_TYPE + loginResponse.getAccessToken())
+        return bodyBuilder.header(HttpHeaders.AUTHORIZATION, loginResponse.getAccessToken())
                 .header(HttpHeaders.SET_COOKIE, refreshTokenCookieProviderCookie.toString())
                 .build();
     }

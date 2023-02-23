@@ -20,7 +20,6 @@ import org.springframework.http.HttpStatus;
 class AuthAcceptanceTest extends AcceptanceTest {
 
     private static final String VALID_OAUTH_ID_TOKEN = "oAuthIdToken";
-    private static final String AUTHENTICATION_TYPE = "Bearer ";
 
     @DisplayName("처음으로 로그인하는 사용자가 oauth 로그인을 하면 회원 가입을 진행하고 201과 access, refresh token을 반환한다.")
     @Test
@@ -34,7 +33,7 @@ class AuthAcceptanceTest extends AcceptanceTest {
         String setCookie = response.header(HttpHeaders.SET_COOKIE);
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value()),
-                () -> assertThat(accessToken).contains(AUTHENTICATION_TYPE),
+                () -> assertThat(accessToken).isNotNull(),
                 () -> assertThat(setCookie).contains("refreshToken")
         );
     }
@@ -52,7 +51,7 @@ class AuthAcceptanceTest extends AcceptanceTest {
         String setCookie = response.header(HttpHeaders.SET_COOKIE);
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
-                () -> assertThat(accessToken).contains(AUTHENTICATION_TYPE),
+                () -> assertThat(accessToken).isNotNull(),
                 () -> assertThat(setCookie).contains("refreshToken")
         );
     }
