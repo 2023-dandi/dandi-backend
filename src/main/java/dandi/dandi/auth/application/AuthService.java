@@ -8,6 +8,7 @@ import dandi.dandi.auth.domain.RefreshToken;
 import dandi.dandi.auth.domain.RefreshTokenRepository;
 import dandi.dandi.auth.exception.UnauthorizedException;
 import dandi.dandi.auth.infrastructure.token.JwtTokenManager;
+import dandi.dandi.auth.infrastructure.token.RefreshTokenManager;
 import dandi.dandi.member.domain.Member;
 import dandi.dandi.member.domain.MemberRepository;
 import dandi.dandi.member.domain.MemberSignupManager;
@@ -22,15 +23,17 @@ public class AuthService {
     private final OAuthClient oAuthClient;
     private final MemberRepository memberRepository;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final RefreshTokenManager refreshTokenManager;
     private final JwtTokenManager jwtTokenManager;
 
     public AuthService(MemberSignupManager memberSignupManager, OAuthClient oAuthClient,
                        MemberRepository memberRepository, RefreshTokenRepository refreshTokenRepository,
-                       JwtTokenManager jwtTokenManager) {
+                       RefreshTokenManager refreshTokenManager, JwtTokenManager jwtTokenManager) {
         this.memberSignupManager = memberSignupManager;
         this.oAuthClient = oAuthClient;
         this.memberRepository = memberRepository;
         this.refreshTokenRepository = refreshTokenRepository;
+        this.refreshTokenManager = refreshTokenManager;
         this.jwtTokenManager = jwtTokenManager;
     }
 
@@ -54,17 +57,25 @@ public class AuthService {
     }
 
     private String generateRefreshToken(Long memberId) {
-        RefreshToken refreshToken = RefreshToken.generateNew(memberId);
+        RefreshToken refreshToken = refreshTokenManager.generateToken(memberId);
         refreshTokenRepository.save(refreshToken);
         return refreshToken.getValue();
     }
 
     @Transactional
     public TokenRefreshResponse refresh(Long memberId, String refreshToken) {
-        RefreshToken found = refreshTokenRepository.findRefreshTokenByMemberIdAndValue(memberId, refreshToken)
+        RefreshToken refreshTokenInfo = refreshTokenRepository
+                .findRefreshTokenByMemberIdAndValue(memberId, refreshToken)
                 .orElseThrow(UnauthorizedException::refreshTokenNotFound);
-        String updatedRefreshToken = found.updateRefreshToken();
+        validateExpiration(refreshTokenInfo);
+        String updatedRefreshToken = refreshTokenInfo.updateRefreshToken();
         String accessToken = jwtTokenManager.generateToken(String.valueOf(memberId));
         return new TokenRefreshResponse(accessToken, updatedRefreshToken);
+    }
+
+    private static void validateExpiration(RefreshToken refreshTokenInfo) {
+        if (refreshTokenInfo.isExpired()) {
+            throw UnauthorizedException.expiredRefreshToken();
+        }
     }
 }
