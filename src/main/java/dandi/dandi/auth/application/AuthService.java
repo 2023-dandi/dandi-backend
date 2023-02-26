@@ -2,9 +2,11 @@ package dandi.dandi.auth.application;
 
 import dandi.dandi.auth.application.dto.LoginRequest;
 import dandi.dandi.auth.application.dto.LoginResponse;
+import dandi.dandi.auth.application.dto.TokenRefreshResponse;
 import dandi.dandi.auth.domain.OAuthClient;
 import dandi.dandi.auth.domain.RefreshToken;
 import dandi.dandi.auth.domain.RefreshTokenRepository;
+import dandi.dandi.auth.exception.UnauthorizedException;
 import dandi.dandi.auth.infrastructure.token.JwtTokenManager;
 import dandi.dandi.member.domain.Member;
 import dandi.dandi.member.domain.MemberRepository;
@@ -55,5 +57,14 @@ public class AuthService {
         RefreshToken refreshToken = RefreshToken.generateNew(memberId);
         refreshTokenRepository.save(refreshToken);
         return refreshToken.getValue();
+    }
+
+    @Transactional
+    public TokenRefreshResponse refresh(Long memberId, String refreshToken) {
+        RefreshToken found = refreshTokenRepository.findRefreshTokenByMemberIdAndValue(memberId, refreshToken)
+                .orElseThrow(UnauthorizedException::refreshTokenNotFound);
+        String updatedRefreshToken = found.updateRefreshToken();
+        String accessToken = jwtTokenManager.generateToken(String.valueOf(memberId));
+        return new TokenRefreshResponse(accessToken, updatedRefreshToken);
     }
 }

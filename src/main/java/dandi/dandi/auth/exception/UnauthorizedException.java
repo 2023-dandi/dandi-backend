@@ -17,4 +17,8 @@ public class UnauthorizedException extends RuntimeException {
     public static UnauthorizedException notExistentMember() {
         return new UnauthorizedException("존재하지 않는 사용자의 토큰입니다.");
     }
+
+    public static UnauthorizedException refreshTokenNotFound() {
+        return new UnauthorizedException("유효하지 않은 Refresh Token입니다.");
+    }
 }

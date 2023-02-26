@@ -1,14 +1,19 @@
 package dandi.dandi.auth.application;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 import dandi.dandi.auth.application.dto.LoginRequest;
 import dandi.dandi.auth.application.dto.LoginResponse;
+import dandi.dandi.auth.application.dto.TokenRefreshResponse;
 import dandi.dandi.auth.domain.OAuthClient;
+import dandi.dandi.auth.domain.RefreshToken;
 import dandi.dandi.auth.domain.RefreshTokenRepository;
+import dandi.dandi.auth.exception.UnauthorizedException;
 import dandi.dandi.auth.infrastructure.token.JwtTokenManager;
 import dandi.dandi.member.domain.Member;
 import dandi.dandi.member.domain.MemberRepository;
@@ -81,5 +86,36 @@ class AuthServiceTest {
                 () -> assertThat(loginResponse.getRefreshToken()).isNotNull(),
                 () -> assertThat(loginResponse.isNewUser()).isFalse()
         );
+    }
+
+    @DisplayName("MemberId와 Refresh Token을 받아, 새로운 Access Token과 Refresh Token을 반환한다.")
+    @Test
+    void refresh() {
+        Long memberId = 1L;
+        String refreshToken = "refreshToken";
+        when(refreshTokenRepository.findRefreshTokenByMemberIdAndValue(memberId, refreshToken))
+                .thenReturn(Optional.of(RefreshToken.generateNew(memberId)));
+        when(jwtTokenManager.generateToken(anyString()))
+                .thenReturn(TOKEN);
+
+        TokenRefreshResponse tokenRefreshResponse = authService.refresh(memberId, refreshToken);
+
+        assertAll(
+                () -> assertThat(tokenRefreshResponse.getAccessToken()).isNotNull(),
+                () -> assertThat(tokenRefreshResponse.getRefreshToken()).isNotEqualTo(refreshToken)
+        );
+    }
+
+    @DisplayName("MemberId와 Refresh Token 값에 해당하는 Refresh Token 객체가 존재하지 않는다면 예외를 발생시킨다.")
+    @Test
+    void refresh_RefreshTokenNotFound() {
+        Long notFountMemberId = 2L;
+        String notFountRefreshToken = "notFoundRefreshToken";
+        when(refreshTokenRepository.findRefreshTokenByMemberIdAndValue(any(), any()))
+                .thenThrow(UnauthorizedException.refreshTokenNotFound());
+
+        assertThatThrownBy(() -> authService.refresh(notFountMemberId, notFountRefreshToken))
+                .isInstanceOf(UnauthorizedException.class)
+                .hasMessage(UnauthorizedException.refreshTokenNotFound().getMessage());
     }
 }
