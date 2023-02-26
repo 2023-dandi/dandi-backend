@@ -18,27 +18,32 @@ public class RefreshToken {
 
     private Long memberId;
 
-    private LocalDateTime issuedAt;
+    private LocalDateTime expired;
 
     private String value;
 
     protected RefreshToken() {
     }
 
-    private RefreshToken(Long id, Long memberId, LocalDateTime issuedAt, String value) {
+    private RefreshToken(Long id, Long memberId, LocalDateTime expired, String value) {
         this.id = id;
         this.memberId = memberId;
-        this.issuedAt = issuedAt;
+        this.expired = expired;
         this.value = value;
     }
 
-    public RefreshToken(Long memberId, LocalDateTime issuedAt, String value) {
-        this(null, memberId, issuedAt, value);
+    public RefreshToken(Long memberId, LocalDateTime expired, String value) {
+        this(null, memberId, expired, value);
     }
 
-    public static RefreshToken generateNew(Long memberId) {
+    public static RefreshToken generateNewWithExpiration(Long memberId, LocalDateTime expired) {
         String refreshToken = UUID.randomUUID().toString();
-        return new RefreshToken(null, memberId, LocalDateTime.now(), refreshToken);
+        return new RefreshToken(null, memberId, expired, refreshToken);
+    }
+
+    public boolean isExpired() {
+        LocalDateTime current = LocalDateTime.now();
+        return expired.isBefore(current);
     }
 
     public String updateRefreshToken() {

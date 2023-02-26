@@ -21,4 +21,8 @@ public class UnauthorizedException extends RuntimeException {
     public static UnauthorizedException refreshTokenNotFound() {
         return new UnauthorizedException("유효하지 않은 Refresh Token입니다.");
     }
+
+    public static UnauthorizedException expiredRefreshToken() {
+        return new UnauthorizedException("만료된 Refresh Token 입니다.");
+    }
 }
