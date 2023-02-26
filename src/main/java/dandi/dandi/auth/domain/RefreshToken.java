@@ -41,7 +41,17 @@ public class RefreshToken {
         return new RefreshToken(null, memberId, LocalDateTime.now(), refreshToken);
     }
 
+    public String updateRefreshToken() {
+        String newRefreshToken = UUID.randomUUID().toString();
+        this.value = newRefreshToken;
+        return newRefreshToken;
+    }
+
     public String getValue() {
         return value;
+    }
+
+    public Long getMemberId() {
+        return memberId;
     }
 }
