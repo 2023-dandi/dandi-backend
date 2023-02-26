@@ -2,9 +2,11 @@ package dandi.dandi.auth.acceptance;
 
 import static dandi.dandi.common.HttpResponseExtractor.extractExceptionMessage;
 import static dandi.dandi.common.RequestURI.LOGIN_REQUEST_URI;
+import static dandi.dandi.common.RequestURI.TOKEN_REFRESH_REQUEST_URI;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 import dandi.dandi.auth.application.dto.LoginRequest;
 import dandi.dandi.auth.exception.UnauthorizedException;
@@ -12,6 +14,7 @@ import dandi.dandi.common.AcceptanceTest;
 import dandi.dandi.common.HttpMethodFixture;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
+import java.util.Map;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
@@ -20,6 +23,7 @@ import org.springframework.http.HttpStatus;
 class AuthAcceptanceTest extends AcceptanceTest {
 
     private static final String VALID_OAUTH_ID_TOKEN = "oAuthIdToken";
+    private static final String REFRESH_TOKEN = "Refresh-Token";
 
     @DisplayName("처음으로 로그인하는 사용자가 oauth 로그인을 하면 회원 가입을 진행하고 201과 access, refresh token을 반환한다.")
     @Test
@@ -34,7 +38,7 @@ class AuthAcceptanceTest extends AcceptanceTest {
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value()),
                 () -> assertThat(accessToken).isNotNull(),
-                () -> assertThat(setCookie).contains("refreshToken")
+                () -> assertThat(setCookie).contains(REFRESH_TOKEN)
         );
     }
 
@@ -52,7 +56,7 @@ class AuthAcceptanceTest extends AcceptanceTest {
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
                 () -> assertThat(accessToken).isNotNull(),
-                () -> assertThat(setCookie).contains("refreshToken")
+                () -> assertThat(setCookie).contains(REFRESH_TOKEN)
         );
     }
 
@@ -85,6 +89,27 @@ class AuthAcceptanceTest extends AcceptanceTest {
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value()),
                 () -> assertThat(extractExceptionMessage(response)).isEqualTo(unauthorizedException.getMessage())
+        );
+    }
+
+    @DisplayName("Token Refresh 요청에 대해 200과 새로운 Access Token과 Refresh Token을 응답한다.")
+    @Test
+    void refresh() {
+        mockAppleIdToken(VALID_OAUTH_ID_TOKEN);
+        ExtractableResponse<Response> loginResponse =
+                HttpMethodFixture.httpPost(new LoginRequest(VALID_OAUTH_ID_TOKEN), LOGIN_REQUEST_URI);
+        String accessTokenBeforeRefresh = loginResponse.header(AUTHORIZATION);
+        String refreshTokenBeforeRefresh = loginResponse.cookie(REFRESH_TOKEN);
+
+        ExtractableResponse<Response> response = HttpMethodFixture.httpPostWithAuthorizationAndCookie(
+                TOKEN_REFRESH_REQUEST_URI, accessTokenBeforeRefresh, Map.of(REFRESH_TOKEN, refreshTokenBeforeRefresh));
+
+        String accessTokenAfterRefresh = response.header(AUTHORIZATION);
+        String refreshTokenAfterRefresh = response.cookie(REFRESH_TOKEN);
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(accessTokenAfterRefresh).isNotNull(),
+                () -> assertThat(refreshTokenAfterRefresh).isNotEqualTo(refreshTokenBeforeRefresh)
         );
     }
 
