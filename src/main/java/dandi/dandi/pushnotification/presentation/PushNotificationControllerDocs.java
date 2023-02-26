@@ -2,12 +2,15 @@ package dandi.dandi.pushnotification.presentation;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
+import dandi.dandi.advice.ExceptionResponse;
 import dandi.dandi.pushnotification.application.dto.PushNotificationAllowanceUpdateRequest;
 import dandi.dandi.pushnotification.application.dto.PushNotificationResponse;
 import dandi.dandi.pushnotification.application.dto.PushNotificationTimeUpdateRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -23,7 +26,8 @@ public interface PushNotificationControllerDocs {
     @Operation(summary = "푸시 알림 시간 변경", parameters = @Parameter(name = AUTHORIZATION, in = ParameterIn.HEADER, required = true))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "푸시 알림 시간 정상 변경"),
-            @ApiResponse(responseCode = "400", description = "10분 단위가 아닌 푸시 알림 시간")
+            @ApiResponse(responseCode = "400", description = "10분 단위가 아닌 푸시 알림 시간",
+                    content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
     })
     ResponseEntity<Void> updatePushNotificationTime(@Parameter(hidden = true) Long memberId,
                                                     PushNotificationTimeUpdateRequest pushNotificationTimeUpdateRequest);
