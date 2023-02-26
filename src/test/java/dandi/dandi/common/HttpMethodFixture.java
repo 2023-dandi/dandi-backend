@@ -5,6 +5,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
+import java.util.Map;
 import org.springframework.http.MediaType;
 
 public class HttpMethodFixture {
@@ -15,6 +16,18 @@ public class HttpMethodFixture {
         return RestAssured
                 .given().log().all()
                 .body(requestBody)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when().post(path)
+                .then().log().all()
+                .extract();
+    }
+
+    public static ExtractableResponse<Response> httpPostWithAuthorizationAndCookie(String path, String token,
+                                                                                   Map<String, Object> cookies) {
+        return RestAssured
+                .given().log().all()
+                .header(AUTHORIZATION, AUTHORIZATION_TYPE + token)
+                .cookies(cookies)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when().post(path)
                 .then().log().all()

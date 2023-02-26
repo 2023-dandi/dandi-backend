@@ -6,6 +6,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 import dandi.dandi.auth.application.dto.LoginRequest;
 import dandi.dandi.auth.domain.OAuthClient;
+import dandi.dandi.auth.infrastructure.token.RefreshTokenManager;
 import dandi.dandi.config.AsyncTestConfig;
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.AfterEach;
@@ -15,6 +16,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.Import;
 
@@ -32,6 +34,9 @@ public class AcceptanceTest {
 
     @MockBean
     protected OAuthClient oAuthClient;
+
+    @SpyBean
+    protected RefreshTokenManager refreshTokenManager;
 
     @BeforeEach
     public void setUp() {

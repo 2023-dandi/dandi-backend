@@ -5,15 +5,18 @@ import static dandi.dandi.common.RequestURI.LOGIN_REQUEST_URI;
 import static dandi.dandi.common.RequestURI.TOKEN_REFRESH_REQUEST_URI;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 import dandi.dandi.auth.application.dto.LoginRequest;
+import dandi.dandi.auth.domain.RefreshToken;
 import dandi.dandi.auth.exception.UnauthorizedException;
 import dandi.dandi.common.AcceptanceTest;
 import dandi.dandi.common.HttpMethodFixture;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
+import java.time.LocalDateTime;
 import java.util.Map;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -113,6 +116,46 @@ class AuthAcceptanceTest extends AcceptanceTest {
         );
     }
 
+    @DisplayName("존재하지 않는 RefreshToken을 통한 Token Refresh 요청에 대해 401을 응답한다.")
+    @Test
+    void refresh_NotFountRefreshToken() {
+        mockAppleIdToken(VALID_OAUTH_ID_TOKEN);
+        mockNotFoundRefreshToken();
+        ExtractableResponse<Response> loginResponse =
+                HttpMethodFixture.httpPost(new LoginRequest(VALID_OAUTH_ID_TOKEN), LOGIN_REQUEST_URI);
+        String accessTokenBeforeRefresh = loginResponse.header(AUTHORIZATION);
+        String refreshTokenBeforeRefresh = loginResponse.cookie(REFRESH_TOKEN);
+
+        ExtractableResponse<Response> response = HttpMethodFixture.httpPostWithAuthorizationAndCookie(
+                TOKEN_REFRESH_REQUEST_URI, accessTokenBeforeRefresh, Map.of(REFRESH_TOKEN, refreshTokenBeforeRefresh));
+
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value()),
+                () -> assertThat(extractExceptionMessage(response))
+                        .isEqualTo(UnauthorizedException.refreshTokenNotFound().getMessage())
+        );
+    }
+
+    @DisplayName("만료된 Refresh 토큰을 통한 Token Refresh에 대해 401을 응답한다.")
+    @Test
+    void refresh_ExpiredRefreshToken() {
+        mockAppleIdToken(VALID_OAUTH_ID_TOKEN);
+        mockExpiredRefreshToken();
+        ExtractableResponse<Response> loginResponse =
+                HttpMethodFixture.httpPost(new LoginRequest(VALID_OAUTH_ID_TOKEN), LOGIN_REQUEST_URI);
+        String accessTokenBeforeRefresh = loginResponse.header(AUTHORIZATION);
+        String refreshTokenBeforeRefresh = loginResponse.cookie(REFRESH_TOKEN);
+
+        ExtractableResponse<Response> response = HttpMethodFixture.httpPostWithAuthorizationAndCookie(
+                TOKEN_REFRESH_REQUEST_URI, accessTokenBeforeRefresh, Map.of(REFRESH_TOKEN, refreshTokenBeforeRefresh));
+
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value()),
+                () -> assertThat(extractExceptionMessage(response))
+                        .isEqualTo(UnauthorizedException.expiredRefreshToken().getMessage())
+        );
+    }
+
     private void mockAppleIdToken(String accessToken) {
         when(oAuthClient.getOAuthMemberId(accessToken))
                 .thenReturn("memberIdentifier");
@@ -126,5 +169,15 @@ class AuthAcceptanceTest extends AcceptanceTest {
     private void mockInvalidToken(String accessToken) {
         when(oAuthClient.getOAuthMemberId(accessToken))
                 .thenThrow(UnauthorizedException.invalid());
+    }
+
+    private void mockNotFoundRefreshToken() {
+        when(refreshTokenManager.generateToken(any()))
+                .thenReturn(RefreshToken.generateNewWithExpiration(1000L, LocalDateTime.now()));
+    }
+
+    private void mockExpiredRefreshToken() {
+        when(refreshTokenManager.generateToken(any()))
+                .thenReturn(RefreshToken.generateNewWithExpiration(1L, LocalDateTime.now().minusDays(1)));
     }
 }

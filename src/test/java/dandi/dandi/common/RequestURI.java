@@ -3,6 +3,7 @@ package dandi.dandi.common;
 public class RequestURI {
 
     public static final String LOGIN_REQUEST_URI = "/login/oauth/apple";
+    public static final String TOKEN_REFRESH_REQUEST_URI = "/refresh";
 
     public static final String MEMBER_INFO_URI = "/members";
     public static final String MEMBER_NICKNAME_URI = "/members/nickname";

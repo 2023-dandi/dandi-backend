@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class RefreshTokenCookieProvider {
 
-    private static final String REFRESH_TOKEN = "Refresh-Token";
+    public static final String REFRESH_TOKEN = "Refresh-Token";
 
     private final Long validDuration;
 
