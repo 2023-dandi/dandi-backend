@@ -17,6 +17,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 
+	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
 	runtimeOnly 'com.mysql:mysql-connector-j'
 
 	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
