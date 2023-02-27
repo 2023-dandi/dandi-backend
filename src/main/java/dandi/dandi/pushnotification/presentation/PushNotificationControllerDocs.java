@@ -19,11 +19,11 @@ import org.springframework.http.ResponseEntity;
 @Tag(name = "푸시 알림")
 public interface PushNotificationControllerDocs {
 
-    @Operation(summary = "푸시 알림 정보 반환", parameters = @Parameter(name = AUTHORIZATION, in = ParameterIn.HEADER, required = true))
+    @Operation(summary = "푸시 알림 정보 반환", parameters = @Parameter(name = AUTHORIZATION, in = ParameterIn.HEADER, required = true, example = "Bearer ${token}"))
     @ApiResponse(responseCode = "200", description = "푸시 알림 정보 정상 반환")
     ResponseEntity<PushNotificationResponse> getPushNotification(@Parameter(hidden = true) Long memberId);
 
-    @Operation(summary = "푸시 알림 시간 변경", parameters = @Parameter(name = AUTHORIZATION, in = ParameterIn.HEADER, required = true))
+    @Operation(summary = "푸시 알림 시간 변경", parameters = @Parameter(name = AUTHORIZATION, in = ParameterIn.HEADER, required = true, example = "Bearer ${token}"))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "푸시 알림 시간 정상 변경"),
             @ApiResponse(responseCode = "400", description = "10분 단위가 아닌 푸시 알림 시간",
@@ -32,7 +32,7 @@ public interface PushNotificationControllerDocs {
     ResponseEntity<Void> updatePushNotificationTime(@Parameter(hidden = true) Long memberId,
                                                     PushNotificationTimeUpdateRequest pushNotificationTimeUpdateRequest);
 
-    @Operation(summary = "푸시 알림 허용 여부 변경", parameters = @Parameter(name = AUTHORIZATION, in = ParameterIn.HEADER, required = true))
+    @Operation(summary = "푸시 알림 허용 여부 변경", parameters = @Parameter(name = AUTHORIZATION, in = ParameterIn.HEADER, required = true, example = "Bearer ${token}"))
     @ApiResponse(responseCode = "204", description = "푸시 알림 허용 여부 정상 변경")
     ResponseEntity<Void> updatePushNotificationAllowance(@Parameter(hidden = true) Long memberId,
                                                          PushNotificationAllowanceUpdateRequest pushNotificationAllowanceUpdateRequest);
