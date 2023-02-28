@@ -26,14 +26,17 @@ public class Member extends AbstractAggregateRoot<Member> {
     @Embedded
     private Location location;
 
+    private String profileImgUrl;
+
     protected Member() {
     }
 
-    private Member(Long id, String oAuthId, Nickname nickname, Location location) {
+    private Member(Long id, String oAuthId, Nickname nickname, Location location, String profileImgUrl) {
         this.id = id;
         this.oAuthId = oAuthId;
         this.nickname = nickname;
         this.location = location;
+        this.profileImgUrl = profileImgUrl;
     }
     
     @PostPersist
@@ -42,7 +45,7 @@ public class Member extends AbstractAggregateRoot<Member> {
     }
 
     public static Member initial(String oAuthId, String nickname) {
-        return new Member(null, oAuthId, Nickname.from(nickname), Location.initial());
+        return new Member(null, oAuthId, Nickname.from(nickname), Location.initial(), null);
     }
 
     public Long getId() {
