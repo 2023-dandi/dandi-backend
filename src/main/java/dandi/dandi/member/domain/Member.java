@@ -71,4 +71,8 @@ public class Member extends AbstractAggregateRoot<Member> {
     public void updateLocation(double latitude, double longitude) {
         this.location = new Location(latitude, longitude);
     }
+
+    public String getProfileImgUrl() {
+        return profileImgUrl;
+    }
 }
