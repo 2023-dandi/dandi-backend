@@ -18,6 +18,7 @@ dependencies {
 	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 
 	implementation 'com.amazonaws:aws-java-sdk-s3:1.12.13'
+	implementation "org.testcontainers:localstack:1.16.3"
 
 	runtimeOnly 'com.mysql:mysql-connector-j'
 
