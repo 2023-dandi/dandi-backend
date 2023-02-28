@@ -13,11 +13,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
+@RequestMapping("/members")
 public class MemberController implements MemberControllerDocs {
 
     private final MemberService memberService;
@@ -28,26 +30,26 @@ public class MemberController implements MemberControllerDocs {
         this.profileImageService = profileImageService;
     }
 
-    @GetMapping("/members")
+    @GetMapping
     public ResponseEntity<MemberInfoResponse> getMemberInfo(@Login Long memberId) {
         return ResponseEntity.ok(memberService.findMemberInfo(memberId));
     }
 
-    @PatchMapping("/members/nickname")
+    @PatchMapping("/nickname")
     public ResponseEntity<Void> updateMemberNickname(@Login Long memberId,
                                                      @RequestBody NicknameUpdateRequest nicknameUpdateRequest) {
         memberService.updateNickname(memberId, nicknameUpdateRequest);
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping("/members/location")
+    @PatchMapping("/location")
     public ResponseEntity<Void> updateMemberLocation(@Login Long memberId,
                                                      @RequestBody LocationUpdateRequest locationUpdateRequest) {
         memberService.updateLocation(memberId, locationUpdateRequest);
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping(path = "/members/profile-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(path = "/profile-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ProfileImageUpdateResponse> updateMemberProfileImage(@Login Long memberId,
                                                                                @RequestPart(value = "profileImage") MultipartFile profileImage) {
         return ResponseEntity.ok(profileImageService.updateProfileImage(memberId, profileImage));
