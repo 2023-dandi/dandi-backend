@@ -1,5 +1,6 @@
 package dandi.dandi.member.infrastructure;
 
+import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import dandi.dandi.member.domain.ProfileImageUploader;
@@ -20,9 +21,14 @@ public class AwsS3ProfileImageUploader implements ProfileImageUploader {
     }
 
     @Override
-    public void upload(String fileKey, InputStream inputStream) throws IOException {
+    public void upload(String fileKey, InputStream inputStream) throws IOException, SdkClientException {
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentLength(inputStream.available());
         amazonS3.putObject(bucketName, fileKey, inputStream, objectMetadata);
+    }
+
+    @Override
+    public void delete(String fileKey) {
+        amazonS3.deleteObject(bucketName, fileKey);
     }
 }
