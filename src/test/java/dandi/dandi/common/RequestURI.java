@@ -8,6 +8,7 @@ public class RequestURI {
     public static final String MEMBER_INFO_URI = "/members";
     public static final String MEMBER_NICKNAME_URI = "/members/nickname";
     public static final String MEMBER_NICKNAME_LOCATION = "/members/location";
+    public static final String MEMBER_PROFILE_IMAGE_URI = "/members/profile-image";
 
     public static final String PUSH_NOTIFICATION_REQUEST_URI = "/push-notification";
     public static final String PUSH_NOTIFICATION_TIME_REQUEST_URI = "/push-notification/time";

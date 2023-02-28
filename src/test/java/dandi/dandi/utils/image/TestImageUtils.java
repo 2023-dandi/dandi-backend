@@ -29,4 +29,9 @@ public class TestImageUtils {
 
         return new CommonsMultipartFile(fileItem);
     }
+
+    public static File generatetestImgFile() {
+        return new File(new File("")
+                .getAbsolutePath() + TEST_IMAGE_RESOURCE_DIR + TEST_IMAGE_FILE_NAME);
+    }
 }

@@ -2,21 +2,29 @@ package dandi.dandi.member.acceptance;
 
 import static dandi.dandi.common.HttpMethodFixture.httpGetWithAuthorization;
 import static dandi.dandi.common.HttpMethodFixture.httpPatchWithAuthorization;
+import static dandi.dandi.common.HttpMethodFixture.httpPutWithAuthorizationAndImgFile;
 import static dandi.dandi.common.HttpResponseExtractor.extractExceptionMessage;
 import static dandi.dandi.common.RequestURI.MEMBER_INFO_URI;
 import static dandi.dandi.common.RequestURI.MEMBER_NICKNAME_LOCATION;
 import static dandi.dandi.common.RequestURI.MEMBER_NICKNAME_URI;
+import static dandi.dandi.common.RequestURI.MEMBER_PROFILE_IMAGE_URI;
+import static dandi.dandi.utils.image.TestImageUtils.generatetestImgFile;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.ArgumentMatchers.any;
 
+import com.amazonaws.AmazonClientException;
 import dandi.dandi.common.AcceptanceTest;
 import dandi.dandi.member.application.dto.LocationUpdateRequest;
 import dandi.dandi.member.application.dto.MemberInfoResponse;
 import dandi.dandi.member.application.dto.NicknameUpdateRequest;
+import dandi.dandi.member.application.dto.ProfileImageUpdateResponse;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
+import java.io.File;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 
 class MemberAcceptanceTest extends AcceptanceTest {
@@ -97,6 +105,43 @@ class MemberAcceptanceTest extends AcceptanceTest {
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value()),
                 () -> assertThat(extractExceptionMessage(response)).isNotNull()
         );
+    }
+
+    @DisplayName("프로필 사진 업데이트 요청에 성공하면 프로필 사진 접근 가능 식별값과 200을 반환한다.")
+    @Test
+    void updateMemberProfileImage_OK() {
+        String token = getToken();
+        File testImgFile = generatetestImgFile();
+
+        ExtractableResponse<Response> response =
+                httpPutWithAuthorizationAndImgFile(MEMBER_PROFILE_IMAGE_URI, token, testImgFile);
+
+        String profileImageUrl = response.jsonPath()
+                .getObject(".", ProfileImageUpdateResponse.class)
+                .getProfileImageUrl();
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(profileImageUrl).isNotNull()
+        );
+    }
+
+    @DisplayName("프로필 사진 업데이트 요청에 실패하면 500을 반환한다.")
+    @Test
+    void updateMemberProfileImage_InternalServerError() {
+        String token = getToken();
+        File testImgFile = generatetestImgFile();
+        mockAmazonS3Exception();
+
+        ExtractableResponse<Response> response =
+                httpPutWithAuthorizationAndImgFile(MEMBER_PROFILE_IMAGE_URI, token, testImgFile);
+
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
+    }
+
+    private void mockAmazonS3Exception() {
+        Mockito.doThrow(AmazonClientException.class)
+                .when(amazonS3)
+                .putObject(any(), any(), any(), any());
     }
 
     private String getNickname(String token) {

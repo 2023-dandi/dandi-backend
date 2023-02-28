@@ -5,6 +5,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
+import java.io.File;
 import java.util.Map;
 import org.springframework.http.MediaType;
 
@@ -52,6 +53,20 @@ public class HttpMethodFixture {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(requestBody)
                 .when().patch(path)
+                .then().log().all()
+                .extract();
+    }
+
+    public static ExtractableResponse<Response> httpPutWithAuthorizationAndImgFile(String path,
+                                                                                   String token,
+                                                                                   File file) {
+
+        return RestAssured
+                .given().log().all()
+                .header(AUTHORIZATION, AUTHORIZATION_TYPE + token)
+                .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+                .multiPart("profileImage", file)
+                .when().put(path)
                 .then().log().all()
                 .extract();
     }

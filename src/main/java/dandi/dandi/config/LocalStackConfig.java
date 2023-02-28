@@ -40,4 +40,3 @@ public class LocalStackConfig {
         return amazonS3;
     }
 }
-

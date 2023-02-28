@@ -4,6 +4,7 @@ import static dandi.dandi.common.RequestURI.LOGIN_REQUEST_URI;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
+import com.amazonaws.services.s3.AmazonS3;
 import dandi.dandi.auth.application.dto.LoginRequest;
 import dandi.dandi.auth.domain.OAuthClient;
 import dandi.dandi.auth.infrastructure.token.RefreshTokenManager;
@@ -37,6 +38,9 @@ public class AcceptanceTest {
 
     @SpyBean
     protected RefreshTokenManager refreshTokenManager;
+
+    @SpyBean
+    protected AmazonS3 amazonS3;
 
     @BeforeEach
     public void setUp() {
