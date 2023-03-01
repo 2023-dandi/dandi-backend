@@ -1,8 +1,10 @@
 package dandi.dandi.common;
 
+import static io.restassured.config.MultiPartConfig.multiPartConfig;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 import io.restassured.RestAssured;
+import io.restassured.config.RestAssuredConfig;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.io.File;
@@ -60,12 +62,12 @@ public class HttpMethodFixture {
     public static ExtractableResponse<Response> httpPutWithAuthorizationAndImgFile(String path,
                                                                                    String token,
                                                                                    File file) {
-
         return RestAssured
                 .given().log().all()
                 .header(AUTHORIZATION, AUTHORIZATION_TYPE + token)
-                .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
-                .multiPart("profileImage", file)
+                .contentType("multipart/form-data; boundary=------AaB03x")
+                .multiPart("profileImage", file, MediaType.IMAGE_JPEG_VALUE)
+                .config(RestAssuredConfig.config().multiPartConfig(multiPartConfig().defaultBoundary("------AaB03x")))
                 .when().put(path)
                 .then().log().all()
                 .extract();
