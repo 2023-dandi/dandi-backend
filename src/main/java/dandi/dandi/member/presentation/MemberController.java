@@ -51,7 +51,8 @@ public class MemberController implements MemberControllerDocs {
 
     @PutMapping(path = "/profile-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ProfileImageUpdateResponse> updateMemberProfileImage(@Login Long memberId,
-                                                                               @RequestPart(value = "profileImage") MultipartFile profileImage) {
+                                                                               @RequestPart(value = "profileImage")
+                                                                               MultipartFile profileImage) {
         return ResponseEntity.ok(profileImageService.updateProfileImage(memberId, profileImage));
     }
 }
