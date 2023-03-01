@@ -23,7 +23,6 @@ public class LocalStackConfig {
         this.bucketName = bucketName;
     }
 
-
     @Bean(initMethod = "start", destroyMethod = "stop")
     public LocalStackContainer localStackContainer() {
         return new LocalStackContainer(LOCAL_STACK_IMAGE)
