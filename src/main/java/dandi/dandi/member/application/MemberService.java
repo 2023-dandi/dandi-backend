@@ -3,6 +3,7 @@ package dandi.dandi.member.application;
 import dandi.dandi.auth.exception.UnauthorizedException;
 import dandi.dandi.member.application.dto.LocationUpdateRequest;
 import dandi.dandi.member.application.dto.MemberInfoResponse;
+import dandi.dandi.member.application.dto.NicknameDuplicationCheckResponse;
 import dandi.dandi.member.application.dto.NicknameUpdateRequest;
 import dandi.dandi.member.domain.Member;
 import dandi.dandi.member.domain.MemberRepository;
@@ -39,5 +40,11 @@ public class MemberService {
     private Member findMember(Long memberId) {
         return memberRepository.findById(memberId)
                 .orElseThrow(UnauthorizedException::notExistentMember);
+    }
+
+    @Transactional(readOnly = true)
+    public NicknameDuplicationCheckResponse checkDuplication(String nickname) {
+        boolean duplicated = memberRepository.existsMemberByNicknameValue(nickname);
+        return new NicknameDuplicationCheckResponse(duplicated);
     }
 }
