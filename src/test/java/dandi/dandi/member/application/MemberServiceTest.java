@@ -46,7 +46,8 @@ class MemberServiceTest {
         assertAll(
                 () -> assertThat(memberInfoResponse.getNickname()).isEqualTo(NICKNAME),
                 () -> assertThat(memberInfoResponse.getLatitude()).isEqualTo(0.0),
-                () -> assertThat(memberInfoResponse.getLongitude()).isEqualTo(0.0)
+                () -> assertThat(memberInfoResponse.getLongitude()).isEqualTo(0.0),
+                () -> assertThat(memberInfoResponse.getProfileImageUrl()).isEqualTo(INITIAL_PROFILE_IMAGE_URL)
         );
     }
 
