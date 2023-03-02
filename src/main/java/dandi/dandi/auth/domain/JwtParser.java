@@ -27,7 +27,7 @@ public class JwtParser {
             String decodedHeader = new String(Base64Utils.decodeFromUrlSafeString(encodedHeader));
             return OBJECT_MAPPER.readValue(decodedHeader, Map.class);
         } catch (JsonProcessingException | ArrayIndexOutOfBoundsException e) {
-            throw UnauthorizedException.invalid();
+            throw UnauthorizedException.rigged();
         }
     }
 
@@ -41,7 +41,7 @@ public class JwtParser {
         } catch (ExpiredJwtException e) {
             throw UnauthorizedException.expired();
         } catch (UnsupportedJwtException | MalformedJwtException | SignatureException | IllegalArgumentException e) {
-            throw UnauthorizedException.invalid();
+            throw UnauthorizedException.rigged();
         }
     }
 }

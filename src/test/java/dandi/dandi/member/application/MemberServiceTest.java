@@ -60,7 +60,7 @@ class MemberServiceTest {
 
         assertThatThrownBy(() -> memberService.findMemberInfo(nonExistentMemberId))
                 .isInstanceOf(UnauthorizedException.class)
-                .hasMessage("존재하지 않는 사용자의 토큰입니다.");
+                .hasMessage(UnauthorizedException.notExistentMember().getMessage());
     }
 
     @DisplayName("회원의 닉네임을 변경할 수 있다.")
