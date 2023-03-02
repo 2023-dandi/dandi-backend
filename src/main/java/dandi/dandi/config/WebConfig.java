@@ -11,6 +11,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
+    private static final List<String> SWAGGER_REQUEST_URIS = List.of("/api-docs", "/swagger-ui/index.html",
+            "/swagger-ui/swagger-ui-bundle.js", "/v3/api-docs/swagger-config", "/v3/api-docs"
+    );
+
     private final AuthenticationArgumentResolver authenticationArgumentResolver;
     private final AuthInterceptor authInterceptor;
 
@@ -30,7 +34,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .addPathPatterns("/**")
                 .excludePathPatterns("/login/oauth/apple")
                 .excludePathPatterns("/refresh")
-                .excludePathPatterns("/members/nickname/duplication");
+                .excludePathPatterns("/members/nickname/duplication")
+                .excludePathPatterns(SWAGGER_REQUEST_URIS);
     }
 }
-
