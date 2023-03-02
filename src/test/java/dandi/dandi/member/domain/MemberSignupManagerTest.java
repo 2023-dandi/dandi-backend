@@ -18,6 +18,7 @@ class MemberSignupManagerTest {
 
     private static final String MEMBER_OAUTH_ID = "oAuthMemberId";
     private static final String RANDOM_NICKNAME = "randomNickname";
+    private static final String INITIAL_PROFILE_IMAGE_URL = "imageDir/imageFilename";
     private static final long GENERATED_MEMBER_ID = 1L;
 
     @Mock
@@ -37,7 +38,8 @@ class MemberSignupManagerTest {
         when(memberRepository.existsMemberByNicknameValue(RANDOM_NICKNAME))
                 .thenReturn(false);
         when(memberRepository.save(any(Member.class)))
-                .thenReturn(allocateMemberId(Member.initial(MEMBER_OAUTH_ID, RANDOM_NICKNAME)));
+                .thenReturn(
+                        allocateMemberId(Member.initial(MEMBER_OAUTH_ID, RANDOM_NICKNAME, INITIAL_PROFILE_IMAGE_URL)));
 
         Long newMemberId = memberSignupManager.signup(MEMBER_OAUTH_ID);
 

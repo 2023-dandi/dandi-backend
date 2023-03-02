@@ -37,7 +37,7 @@ class MemberServiceTest {
         Long memberId = 1L;
         String nickname = "nickname";
         when(memberRepository.findById(memberId))
-                .thenReturn(Optional.of(Member.initial("oAuthId", nickname)));
+                .thenReturn(Optional.of(Member.initial("oAuthId", nickname, "profileImageUrl")));
 
         MemberInfoResponse memberInfoResponse = memberService.findMemberInfo(memberId);
 
