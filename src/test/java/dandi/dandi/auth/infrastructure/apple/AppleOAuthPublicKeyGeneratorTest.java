@@ -39,7 +39,7 @@ class AppleOAuthPublicKeyGeneratorTest {
 
         assertThatThrownBy(() -> appleOAuthPublicKeyGenerator.generatePublicKey(invalidTokenHeaders, publicKeys))
                 .isInstanceOf(UnauthorizedException.class)
-                .hasMessage("유효하지 않은 토큰입니다.");
+                .hasMessage(UnauthorizedException.invalid().getMessage());
     }
 
     @DisplayName("Apple에서 받은 유효하지 않은 kty(Key Type) 혹은 N으로 PublicKey를 생성하려 하면 예외를 발생시킨다.")

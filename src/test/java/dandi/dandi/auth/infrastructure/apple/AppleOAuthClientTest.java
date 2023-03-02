@@ -67,7 +67,7 @@ class AppleOAuthClientTest {
         // when, then
         assertThatThrownBy(() -> appleOAuthClient.getOAuthMemberId(ANY_TOKEN))
                 .isInstanceOf(UnauthorizedException.class)
-                .hasMessage("만료된 토큰입니다.");
+                .hasMessage(UnauthorizedException.expired().getMessage());
     }
 
     private void mockExternalDependency() {
@@ -90,7 +90,7 @@ class AppleOAuthClientTest {
         // when, then
         assertThatThrownBy(() -> appleOAuthClient.getOAuthMemberId(ANY_TOKEN))
                 .isInstanceOf(UnauthorizedException.class)
-                .hasMessage("유효하지 않은 토큰입니다.");
+                .hasMessage(UnauthorizedException.invalid().getMessage());
     }
 
     private void mockPublicKey() {
