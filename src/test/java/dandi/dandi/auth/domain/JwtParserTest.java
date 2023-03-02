@@ -45,7 +45,7 @@ class JwtParserTest {
 
         assertThatThrownBy(() -> jwtParser.parseHeaders(invalidToken))
                 .isInstanceOf(UnauthorizedException.class)
-                .hasMessage(UnauthorizedException.invalid().getMessage());
+                .hasMessage(UnauthorizedException.rigged().getMessage());
     }
 
     @DisplayName("token과 PublicKey를 받아 Claim들을 반환한다.")
@@ -83,6 +83,6 @@ class JwtParserTest {
 
         assertThatThrownBy(() -> jwtParser.parseClaims(token, anotherPublicKey))
                 .isInstanceOf(UnauthorizedException.class)
-                .hasMessage(UnauthorizedException.invalid().getMessage());
+                .hasMessage(UnauthorizedException.rigged().getMessage());
     }
 }

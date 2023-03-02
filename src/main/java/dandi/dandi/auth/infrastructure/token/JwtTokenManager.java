@@ -56,7 +56,7 @@ public class JwtTokenManager {
                     .build()
                     .parseClaimsJws(token);
         } catch (UnsupportedJwtException | MalformedJwtException | SignatureException | IllegalArgumentException e) {
-            throw UnauthorizedException.invalid();
+            throw UnauthorizedException.rigged();
         } catch (ExpiredJwtException e) {
             throw UnauthorizedException.expired();
         }

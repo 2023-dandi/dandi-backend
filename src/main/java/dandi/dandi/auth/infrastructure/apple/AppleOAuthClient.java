@@ -41,7 +41,7 @@ public class AppleOAuthClient implements OAuthClient {
             throw UnauthorizedException.expired();
         }
         if (!appleJwtClaimValidator.isValid(claims)) {
-            throw UnauthorizedException.invalid();
+            throw UnauthorizedException.rigged();
         }
     }
 }

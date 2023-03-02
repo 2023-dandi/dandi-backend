@@ -85,7 +85,7 @@ class AuthAcceptanceTest extends AcceptanceTest {
     void login_Unauthorized_InvalidAppleIdToken() {
         String invalidToken = "invalidToken";
         mockInvalidToken(invalidToken);
-        UnauthorizedException unauthorizedException = UnauthorizedException.invalid();
+        UnauthorizedException unauthorizedException = UnauthorizedException.rigged();
 
         ExtractableResponse<Response> response = HttpMethodFixture.httpPost(new LoginRequest(invalidToken),
                 LOGIN_REQUEST_URI);
@@ -178,7 +178,7 @@ class AuthAcceptanceTest extends AcceptanceTest {
 
     private void mockInvalidToken(String accessToken) {
         when(oAuthClient.getOAuthMemberId(accessToken))
-                .thenThrow(UnauthorizedException.invalid());
+                .thenThrow(UnauthorizedException.rigged());
     }
 
     private void mockNotFoundRefreshToken() {

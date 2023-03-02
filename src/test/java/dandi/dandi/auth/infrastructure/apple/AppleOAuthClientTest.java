@@ -90,7 +90,7 @@ class AppleOAuthClientTest {
         // when, then
         assertThatThrownBy(() -> appleOAuthClient.getOAuthMemberId(ANY_TOKEN))
                 .isInstanceOf(UnauthorizedException.class)
-                .hasMessage(UnauthorizedException.invalid().getMessage());
+                .hasMessage(UnauthorizedException.rigged().getMessage());
     }
 
     private void mockPublicKey() {

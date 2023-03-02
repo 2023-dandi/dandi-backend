@@ -52,7 +52,7 @@ class JwtTokenManagerTest {
     void validate_RiggedToken() {
         assertThatThrownBy(() -> jwtTokenManager.validate("riggedToken"))
                 .isInstanceOf(UnauthorizedException.class)
-                .hasMessage(UnauthorizedException.invalid().getMessage());
+                .hasMessage(UnauthorizedException.rigged().getMessage());
     }
 
     @DisplayName("만료된 토큰을 검증하면 예외를 발생시킨다.")

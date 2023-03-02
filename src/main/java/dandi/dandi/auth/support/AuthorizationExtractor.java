@@ -20,7 +20,7 @@ public class AuthorizationExtractor {
         if (isAccessToken(value)) {
             return parseAccessToken(value);
         }
-        throw UnauthorizedException.invalid();
+        throw UnauthorizedException.rigged();
     }
 
     private void checkNull(String value) {

@@ -46,6 +46,6 @@ class AuthorizationExtractorTest {
 
         assertThatThrownBy(() -> authorizationExtractor.extractAccessToken(request))
                 .isInstanceOf(UnauthorizedException.class)
-                .hasMessage(UnauthorizedException.invalid().getMessage());
+                .hasMessage(UnauthorizedException.rigged().getMessage());
     }
 }

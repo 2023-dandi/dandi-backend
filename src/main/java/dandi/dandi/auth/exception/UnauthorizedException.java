@@ -10,8 +10,8 @@ public class UnauthorizedException extends RuntimeException {
         return new UnauthorizedException("Access Token이 존재하지 않습니다.");
     }
 
-    public static UnauthorizedException invalid() {
-        return new UnauthorizedException("유효하지 않은 Access Token입니다.");
+    public static UnauthorizedException rigged() {
+        return new UnauthorizedException("조작된 Access Token입니다.");
     }
 
     public static UnauthorizedException expired() {
