@@ -1,5 +1,7 @@
 package dandi.dandi.member.domain;
 
+import static dandi.dandi.member.MemberTestFixture.INITIAL_PROFILE_IMAGE_URL;
+import static dandi.dandi.member.MemberTestFixture.OAUTH_ID;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 import java.util.Optional;
@@ -16,7 +18,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 class MemberRepositoryTest {
 
     private static final String NICKNAME = "abcd123";
-    private static final String INITIAL_PROFILE_IMAGE_URL = "imageDir/imageFilename";
 
     @Autowired
     private MemberRepository memberRepository;
@@ -24,10 +25,9 @@ class MemberRepositoryTest {
     @DisplayName("oAuthId를 가진 Member를 찾는다.")
     @Test
     void findByOAuthId() {
-        String oAuthId = "oAuthId";
-        memberRepository.save(Member.initial(oAuthId, NICKNAME, INITIAL_PROFILE_IMAGE_URL));
+        memberRepository.save(Member.initial(OAUTH_ID, NICKNAME, INITIAL_PROFILE_IMAGE_URL));
 
-        Optional<Member> member = memberRepository.findByOAuthId(oAuthId);
+        Optional<Member> member = memberRepository.findByOAuthId(OAUTH_ID);
 
         assertThat(member).isPresent();
     }
@@ -36,8 +36,7 @@ class MemberRepositoryTest {
     @ParameterizedTest
     @CsvSource({"abcd123, true", "jklq123, false"})
     void existsMemberByNicknameValue(String nickname, boolean expected) {
-        String oAuthId = "oAuthId";
-        memberRepository.save(Member.initial(oAuthId, NICKNAME, INITIAL_PROFILE_IMAGE_URL));
+        memberRepository.save(Member.initial(OAUTH_ID, NICKNAME, INITIAL_PROFILE_IMAGE_URL));
 
         boolean actual = memberRepository.existsMemberByNicknameValue(nickname);
 

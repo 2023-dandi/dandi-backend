@@ -1,5 +1,8 @@
 package dandi.dandi.member.application;
 
+import static dandi.dandi.member.MemberTestFixture.INITIAL_PROFILE_IMAGE_URL;
+import static dandi.dandi.member.MemberTestFixture.NICKNAME;
+import static dandi.dandi.member.MemberTestFixture.OAUTH_ID;
 import static dandi.dandi.utils.image.TestImageUtils.TEST_IMAGE_FILE_NAME;
 import static dandi.dandi.utils.image.TestImageUtils.generateTestImgMultipartFile;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -33,9 +36,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class ProfileImageServiceTest {
 
-    private static final String MEMBER_OAUTH_ID = "oAuthId";
-    private static final String MEMBER_NICKNAME = "nickname";
-    private static final String INITIAL_PROFILE_IMAGE_URL = "imageDir/imageFilename";
     private static final String NOT_INITIAL_PROFILE_IMAGE_URL = "notInitialProfileImageUrl";
 
     private static final String TEST_PROFILE_BUCKET_IMG_DIR = "test-dir";
@@ -50,7 +50,7 @@ class ProfileImageServiceTest {
     void updateProfileImage_NotInitialProfileImage() throws IOException {
         Long memberId = 1L;
         Member notInitialProfileImageMember =
-                Member.initial(MEMBER_OAUTH_ID, MEMBER_NICKNAME, NOT_INITIAL_PROFILE_IMAGE_URL);
+                Member.initial(OAUTH_ID, NICKNAME, NOT_INITIAL_PROFILE_IMAGE_URL);
         when(memberRepository.findById(memberId))
                 .thenReturn(Optional.of(notInitialProfileImageMember));
 
@@ -68,7 +68,7 @@ class ProfileImageServiceTest {
     void updateProfileImage_InitialProfileImageMember() throws IOException {
         Long memberId = 1L;
         when(memberRepository.findById(memberId))
-                .thenReturn(Optional.of(Member.initial(MEMBER_OAUTH_ID, MEMBER_NICKNAME, INITIAL_PROFILE_IMAGE_URL)));
+                .thenReturn(Optional.of(Member.initial(OAUTH_ID, NICKNAME, INITIAL_PROFILE_IMAGE_URL)));
 
         String imgUrl = profileImageService.updateProfileImage(memberId, generateTestImgMultipartFile())
                 .getProfileImageUrl();
@@ -85,7 +85,7 @@ class ProfileImageServiceTest {
     void updateProfileImageUrl_ImageUploadFailed(Exception exception) throws IOException {
         Long memberId = 1L;
         when(memberRepository.findById(memberId))
-                .thenReturn(Optional.of(Member.initial(MEMBER_OAUTH_ID, MEMBER_NICKNAME, INITIAL_PROFILE_IMAGE_URL)));
+                .thenReturn(Optional.of(Member.initial(OAUTH_ID, NICKNAME, INITIAL_PROFILE_IMAGE_URL)));
         doThrow(exception)
                 .when(profileImageUploader)
                 .upload(anyString(), any());

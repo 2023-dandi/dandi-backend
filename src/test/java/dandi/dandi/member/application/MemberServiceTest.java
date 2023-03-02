@@ -1,5 +1,8 @@
 package dandi.dandi.member.application;
 
+import static dandi.dandi.member.MemberTestFixture.INITIAL_PROFILE_IMAGE_URL;
+import static dandi.dandi.member.MemberTestFixture.NICKNAME;
+import static dandi.dandi.member.MemberTestFixture.OAUTH_ID;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -35,14 +38,13 @@ class MemberServiceTest {
     @Test
     void findMemberInfo() {
         Long memberId = 1L;
-        String nickname = "nickname";
         when(memberRepository.findById(memberId))
-                .thenReturn(Optional.of(Member.initial("oAuthId", nickname, "profileImageUrl")));
+                .thenReturn(Optional.of(Member.initial(OAUTH_ID, NICKNAME, INITIAL_PROFILE_IMAGE_URL)));
 
         MemberInfoResponse memberInfoResponse = memberService.findMemberInfo(memberId);
 
         assertAll(
-                () -> assertThat(memberInfoResponse.getNickname()).isEqualTo(nickname),
+                () -> assertThat(memberInfoResponse.getNickname()).isEqualTo(NICKNAME),
                 () -> assertThat(memberInfoResponse.getLatitude()).isEqualTo(0.0),
                 () -> assertThat(memberInfoResponse.getLongitude()).isEqualTo(0.0)
         );

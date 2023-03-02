@@ -1,5 +1,8 @@
 package dandi.dandi.member.domain;
 
+import static dandi.dandi.member.MemberTestFixture.INITIAL_PROFILE_IMAGE_URL;
+import static dandi.dandi.member.MemberTestFixture.NICKNAME;
+import static dandi.dandi.member.MemberTestFixture.OAUTH_ID;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -16,9 +19,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class MemberSignupManagerTest {
 
-    private static final String MEMBER_OAUTH_ID = "oAuthMemberId";
-    private static final String RANDOM_NICKNAME = "randomNickname";
-    private static final String INITIAL_PROFILE_IMAGE_URL = "imageDir/imageFilename";
     private static final long GENERATED_MEMBER_ID = 1L;
 
     @Mock
@@ -34,14 +34,14 @@ class MemberSignupManagerTest {
     @Test
     void signup() throws NoSuchFieldException, IllegalAccessException {
         when(nicknameGenerator.generate())
-                .thenReturn(RANDOM_NICKNAME);
-        when(memberRepository.existsMemberByNicknameValue(RANDOM_NICKNAME))
+                .thenReturn(NICKNAME);
+        when(memberRepository.existsMemberByNicknameValue(NICKNAME))
                 .thenReturn(false);
         when(memberRepository.save(any(Member.class)))
                 .thenReturn(
-                        allocateMemberId(Member.initial(MEMBER_OAUTH_ID, RANDOM_NICKNAME, INITIAL_PROFILE_IMAGE_URL)));
+                        allocateMemberId(Member.initial(OAUTH_ID, NICKNAME, INITIAL_PROFILE_IMAGE_URL)));
 
-        Long newMemberId = memberSignupManager.signup(MEMBER_OAUTH_ID);
+        Long newMemberId = memberSignupManager.signup(OAUTH_ID);
 
         assertThat(newMemberId).isEqualTo(GENERATED_MEMBER_ID);
     }
