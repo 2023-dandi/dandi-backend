@@ -6,6 +6,10 @@ public class UnauthorizedException extends RuntimeException {
         super(message);
     }
 
+    public static UnauthorizedException accessTokenNotFound() {
+        return new UnauthorizedException("Access Token이 존재하지 않습니다.");
+    }
+
     public static UnauthorizedException invalid() {
         return new UnauthorizedException("유효하지 않은 토큰입니다.");
     }
