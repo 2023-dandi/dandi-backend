@@ -44,7 +44,8 @@ class MemberAcceptanceTest extends AcceptanceTest {
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
                 () -> assertThat(memberInfoResponse.getNickname()).isEqualTo(memberInfoResponse.getNickname()),
                 () -> assertThat(memberInfoResponse.getLatitude()).isEqualTo(initialLatitude),
-                () -> assertThat(memberInfoResponse.getLongitude()).isEqualTo(initialLongitude)
+                () -> assertThat(memberInfoResponse.getLongitude()).isEqualTo(initialLongitude),
+                () -> assertThat(memberInfoResponse.getProfileImageUrl()).isNotNull()
         );
     }
 

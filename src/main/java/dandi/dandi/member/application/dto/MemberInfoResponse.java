@@ -14,6 +14,9 @@ public class MemberInfoResponse {
     @Schema(example = "126.963687")
     private double longitude;
 
+    @Schema(example = "profileDir/profileImage.jpg")
+    private String profileImageUrl;
+
     public MemberInfoResponse() {
     }
 
@@ -21,6 +24,7 @@ public class MemberInfoResponse {
         this.nickname = member.getNickname();
         this.latitude = member.getLatitude();
         this.longitude = member.getLongitude();
+        this.profileImageUrl = member.getProfileImgUrl();
     }
 
     public String getNickname() {
@@ -33,5 +37,9 @@ public class MemberInfoResponse {
 
     public double getLongitude() {
         return longitude;
+    }
+
+    public String getProfileImageUrl() {
+        return profileImageUrl;
     }
 }
