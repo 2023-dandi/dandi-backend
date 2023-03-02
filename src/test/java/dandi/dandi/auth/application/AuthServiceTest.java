@@ -1,5 +1,8 @@
 package dandi.dandi.auth.application;
 
+import static dandi.dandi.member.MemberTestFixture.INITIAL_PROFILE_IMAGE_URL;
+import static dandi.dandi.member.MemberTestFixture.NICKNAME;
+import static dandi.dandi.member.MemberTestFixture.OAUTH_ID;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -33,9 +36,6 @@ class AuthServiceTest {
 
     private static final String ID_TOKEN = "idToken";
     private static final String TOKEN = "token";
-    private static final String OAUTH_MEMBER_ID = "oAuthMemberId";
-    private static final String NICKNAME = "nickname";
-    private static final String INITIAL_PROFILE_IMAGE_URL = "testDir/imageFilename";
     private static final Long NEW_MEMBER_ID = 2L;
     private static final Long EXISTING_MEMBER_ID = 1L;
     private static final String REFRESH_TOKEN = "refreshToken";
@@ -59,10 +59,10 @@ class AuthServiceTest {
     @Test
     void getAccessToken_NewMember() {
         when(oAuthClient.getOAuthMemberId(anyString()))
-                .thenReturn(OAUTH_MEMBER_ID);
-        when(memberRepository.findByOAuthId(OAUTH_MEMBER_ID))
+                .thenReturn(OAUTH_ID);
+        when(memberRepository.findByOAuthId(OAUTH_ID))
                 .thenReturn(Optional.empty());
-        when(memberSignupManager.signup(OAUTH_MEMBER_ID))
+        when(memberSignupManager.signup(OAUTH_ID))
                 .thenReturn(NEW_MEMBER_ID);
         when(jwtTokenManager.generateToken(String.valueOf(NEW_MEMBER_ID)))
                 .thenReturn(TOKEN);
@@ -82,9 +82,9 @@ class AuthServiceTest {
     @Test
     void getAccessToken_ExistingMember() {
         when(oAuthClient.getOAuthMemberId(anyString()))
-                .thenReturn(OAUTH_MEMBER_ID);
-        when(memberRepository.findByOAuthId(OAUTH_MEMBER_ID))
-                .thenReturn(Optional.of(Member.initial(OAUTH_MEMBER_ID, NICKNAME, INITIAL_PROFILE_IMAGE_URL)));
+                .thenReturn(OAUTH_ID);
+        when(memberRepository.findByOAuthId(OAUTH_ID))
+                .thenReturn(Optional.of(Member.initial(OAUTH_ID, NICKNAME, INITIAL_PROFILE_IMAGE_URL)));
         when(jwtTokenManager.generateToken(anyString()))
                 .thenReturn(TOKEN);
         when(refreshTokenManager.generateToken(any()))

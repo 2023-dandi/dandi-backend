@@ -1,6 +1,7 @@
 package dandi.dandi.common;
 
 import static dandi.dandi.common.RequestURI.LOGIN_REQUEST_URI;
+import static dandi.dandi.member.MemberTestFixture.OAUTH_ID;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
@@ -26,6 +27,8 @@ import org.springframework.context.annotation.Import;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Import(AsyncTestConfig.class)
 public class AcceptanceTest {
+
+    private static final String APPLE_IDENTITY_TOKEN = "appleIdentityToken";
 
     @LocalServerPort
     int port;
@@ -53,10 +56,9 @@ public class AcceptanceTest {
     }
 
     public String getToken() {
-        String oAuthIdToken = "idToken";
-        when(oAuthClient.getOAuthMemberId(oAuthIdToken))
-                .thenReturn("memberIdentifier");
-        return HttpMethodFixture.httpPost(new LoginRequest(oAuthIdToken), LOGIN_REQUEST_URI)
+        when(oAuthClient.getOAuthMemberId(APPLE_IDENTITY_TOKEN))
+                .thenReturn(OAUTH_ID);
+        return HttpMethodFixture.httpPost(new LoginRequest(APPLE_IDENTITY_TOKEN), LOGIN_REQUEST_URI)
                 .header(AUTHORIZATION);
     }
 }
