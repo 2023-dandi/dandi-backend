@@ -7,6 +7,7 @@ import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
 import dandi.dandi.advice.ExceptionResponse;
 import dandi.dandi.member.application.dto.LocationUpdateRequest;
 import dandi.dandi.member.application.dto.MemberInfoResponse;
+import dandi.dandi.member.application.dto.NicknameDuplicationCheckResponse;
 import dandi.dandi.member.application.dto.NicknameUpdateRequest;
 import dandi.dandi.member.application.dto.ProfileImageUpdateResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,6 +22,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "회원체계")
@@ -29,6 +31,10 @@ public interface MemberControllerDocs {
     @Operation(summary = "사용자 정보 반환", parameters = @Parameter(name = AUTHORIZATION, in = ParameterIn.HEADER, required = true, example = "Bearer ${token}"))
     @ApiResponse(responseCode = "200", description = "사용자 정보 정상 반환")
     ResponseEntity<MemberInfoResponse> getMemberInfo(@Parameter(hidden = true) Long memberId);
+
+    @Operation(summary = "닉네임 중복 확인")
+    @ApiResponse(responseCode = "200", description = "닉네임 중복 확인 성공")
+    ResponseEntity<NicknameDuplicationCheckResponse> checkNicknameDuplication(@RequestParam String nickname);
 
     @Operation(summary = "닉네임 변경", parameters = @Parameter(name = AUTHORIZATION, in = ParameterIn.HEADER, required = true, example = "Bearer ${token}"))
     @ApiResponses(value = {

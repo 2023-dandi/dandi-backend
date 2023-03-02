@@ -29,7 +29,8 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(authInterceptor)
                 .addPathPatterns("/**")
                 .excludePathPatterns("/login/oauth/apple")
-                .excludePathPatterns("/refresh");
+                .excludePathPatterns("/refresh")
+                .excludePathPatterns("/members/nickname/duplication");
     }
 }
 

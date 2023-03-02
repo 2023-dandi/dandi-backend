@@ -5,6 +5,7 @@ import dandi.dandi.member.application.MemberService;
 import dandi.dandi.member.application.ProfileImageService;
 import dandi.dandi.member.application.dto.LocationUpdateRequest;
 import dandi.dandi.member.application.dto.MemberInfoResponse;
+import dandi.dandi.member.application.dto.NicknameDuplicationCheckResponse;
 import dandi.dandi.member.application.dto.NicknameUpdateRequest;
 import dandi.dandi.member.application.dto.ProfileImageUpdateResponse;
 import org.springframework.http.MediaType;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,6 +35,11 @@ public class MemberController implements MemberControllerDocs {
     @GetMapping
     public ResponseEntity<MemberInfoResponse> getMemberInfo(@Login Long memberId) {
         return ResponseEntity.ok(memberService.findMemberInfo(memberId));
+    }
+
+    @GetMapping(value = "/nickname/duplication", params = "nickname")
+    public ResponseEntity<NicknameDuplicationCheckResponse> checkNicknameDuplication(@RequestParam String nickname) {
+        return ResponseEntity.ok(memberService.checkDuplication(nickname));
     }
 
     @PatchMapping("/nickname")

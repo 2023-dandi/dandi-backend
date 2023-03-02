@@ -7,6 +7,7 @@ public class RequestURI {
 
     public static final String MEMBER_INFO_URI = "/members";
     public static final String MEMBER_NICKNAME_URI = "/members/nickname";
+    public static final String MEMBER_NICKNAME_DUPLICATION_CHECK_URI = "/members/nickname/duplication";
     public static final String MEMBER_NICKNAME_LOCATION = "/members/location";
     public static final String MEMBER_PROFILE_IMAGE_URI = "/members/profile-image";
 
