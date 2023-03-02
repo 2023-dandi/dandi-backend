@@ -1,5 +1,6 @@
 package dandi.dandi.auth.acceptance;
 
+import static dandi.dandi.common.HttpMethodFixture.httpGetWithAuthorization;
 import static dandi.dandi.common.HttpResponseExtractor.extractExceptionMessage;
 import static dandi.dandi.common.RequestURI.LOGIN_REQUEST_URI;
 import static dandi.dandi.common.RequestURI.TOKEN_REFRESH_REQUEST_URI;
@@ -155,6 +156,15 @@ class AuthAcceptanceTest extends AcceptanceTest {
                         .isEqualTo(UnauthorizedException.expiredRefreshToken().getMessage())
         );
     }
+
+    @DisplayName("조작된 Access Token으로 요청하면 401을 반환한다.")
+    @Test
+    void accessToken_RiggedAccessToken() {
+        ExtractableResponse<Response> response = httpGetWithAuthorization("/members", "riggedAccessToken");
+
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
+    }
+
 
     private void mockAppleIdToken(String accessToken) {
         when(oAuthClient.getOAuthMemberId(accessToken))
