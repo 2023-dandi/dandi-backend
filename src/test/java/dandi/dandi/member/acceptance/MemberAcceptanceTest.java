@@ -1,10 +1,12 @@
 package dandi.dandi.member.acceptance;
 
+import static dandi.dandi.common.HttpMethodFixture.httpGet;
 import static dandi.dandi.common.HttpMethodFixture.httpGetWithAuthorization;
 import static dandi.dandi.common.HttpMethodFixture.httpPatchWithAuthorization;
 import static dandi.dandi.common.HttpMethodFixture.httpPutWithAuthorizationAndImgFile;
 import static dandi.dandi.common.HttpResponseExtractor.extractExceptionMessage;
 import static dandi.dandi.common.RequestURI.MEMBER_INFO_URI;
+import static dandi.dandi.common.RequestURI.MEMBER_NICKNAME_DUPLICATION_CHECK_URI;
 import static dandi.dandi.common.RequestURI.MEMBER_NICKNAME_LOCATION;
 import static dandi.dandi.common.RequestURI.MEMBER_NICKNAME_URI;
 import static dandi.dandi.common.RequestURI.MEMBER_PROFILE_IMAGE_URI;
@@ -17,6 +19,7 @@ import com.amazonaws.AmazonClientException;
 import dandi.dandi.common.AcceptanceTest;
 import dandi.dandi.member.application.dto.LocationUpdateRequest;
 import dandi.dandi.member.application.dto.MemberInfoResponse;
+import dandi.dandi.member.application.dto.NicknameDuplicationCheckResponse;
 import dandi.dandi.member.application.dto.NicknameUpdateRequest;
 import dandi.dandi.member.application.dto.ProfileImageUpdateResponse;
 import io.restassured.response.ExtractableResponse;
@@ -24,6 +27,8 @@ import io.restassured.response.Response;
 import java.io.File;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 
@@ -77,6 +82,25 @@ class MemberAcceptanceTest extends AcceptanceTest {
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value()),
                 () -> assertThat(extractExceptionMessage(response)).isNotNull()
+        );
+    }
+
+    @DisplayName("닉네임 중복 체크 요청에 대해 중복여부와 200을 반환한다.")
+    @ParameterizedTest
+    @CsvSource({"nickname123, true", "123nickname, false"})
+    void checkNicknameDuplication(String nickname, boolean expected) {
+        String token = getToken();
+        httpPatchWithAuthorization(MEMBER_NICKNAME_URI, new NicknameUpdateRequest("nickname123"), token);
+
+        ExtractableResponse<Response> response =
+                httpGet(MEMBER_NICKNAME_DUPLICATION_CHECK_URI + "?nickname=" + nickname);
+
+        boolean duplicated = response.jsonPath()
+                .getObject(".", NicknameDuplicationCheckResponse.class)
+                .isDuplicated();
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(duplicated).isEqualTo(expected)
         );
     }
 
