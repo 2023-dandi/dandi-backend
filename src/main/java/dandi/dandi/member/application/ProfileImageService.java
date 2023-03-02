@@ -8,7 +8,6 @@ import dandi.dandi.member.domain.Member;
 import dandi.dandi.member.domain.MemberRepository;
 import dandi.dandi.member.domain.ProfileImageUploader;
 import java.io.IOException;
-import java.util.Objects;
 import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,12 +25,15 @@ public class ProfileImageService {
 
     private final MemberRepository memberRepository;
     private final ProfileImageUploader profileImageUploader;
+    private final String initialProfileImageUrl;
     private final String profileImageDir;
 
     public ProfileImageService(MemberRepository memberRepository, ProfileImageUploader profileImageUploader,
+                               @Value("${image.member-initial-profile-image-url}") String initialProfileImageUrl,
                                @Value("${image.profile-dir}") String profileImageDir) {
         this.memberRepository = memberRepository;
         this.profileImageUploader = profileImageUploader;
+        this.initialProfileImageUrl = initialProfileImageUrl;
         this.profileImageDir = profileImageDir;
     }
 
@@ -42,7 +44,7 @@ public class ProfileImageService {
         String fileKey = generateFileKey(profileImage);
         memberRepository.updateProfileImageUrl(member.getId(), fileKey);
         uploadImage(fileKey, profileImage);
-        deleteCurrentProfileImageIfExists(member);
+        deleteCurrentProfileImageIfNotProfileImage(member);
         return new ProfileImageUpdateResponse(fileKey);
     }
 
@@ -59,10 +61,9 @@ public class ProfileImageService {
         return String.format(S3_FILE_KEY_FORMAT, profileImageDir, uuid, profileImage.getOriginalFilename());
     }
 
-    private void deleteCurrentProfileImageIfExists(Member member) {
-        String currentProfileImageUrl = member.getProfileImgUrl();
-        if (Objects.nonNull(currentProfileImageUrl)) {
-            deletePreviousProfileImage(currentProfileImageUrl);
+    private void deleteCurrentProfileImageIfNotProfileImage(Member member) {
+        if (!member.hasProfileImgUrl(initialProfileImageUrl)) {
+            deletePreviousProfileImage(member.getProfileImgUrl());
         }
     }
 

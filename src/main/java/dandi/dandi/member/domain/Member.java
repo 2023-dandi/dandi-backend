@@ -38,14 +38,14 @@ public class Member extends AbstractAggregateRoot<Member> {
         this.location = location;
         this.profileImgUrl = profileImgUrl;
     }
-    
+
     @PostPersist
     private void registerNewMemberCreatedEvent() {
         registerEvent(new NewMemberCreatedEvent(id));
     }
 
-    public static Member initial(String oAuthId, String nickname) {
-        return new Member(null, oAuthId, Nickname.from(nickname), Location.initial(), null);
+    public static Member initial(String oAuthId, String nickname, String initialProfileImageUrl) {
+        return new Member(null, oAuthId, Nickname.from(nickname), Location.initial(), initialProfileImageUrl);
     }
 
     public Long getId() {
@@ -70,6 +70,10 @@ public class Member extends AbstractAggregateRoot<Member> {
 
     public void updateLocation(double latitude, double longitude) {
         this.location = new Location(latitude, longitude);
+    }
+
+    public boolean hasProfileImgUrl(String profileImgUrl) {
+        return this.profileImgUrl.equals(profileImgUrl);
     }
 
     public String getProfileImgUrl() {

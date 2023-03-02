@@ -16,6 +16,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 class MemberRepositoryTest {
 
     private static final String NICKNAME = "abcd123";
+    private static final String INITIAL_PROFILE_IMAGE_URL = "imageDir/imageFilename";
 
     @Autowired
     private MemberRepository memberRepository;
@@ -24,7 +25,7 @@ class MemberRepositoryTest {
     @Test
     void findByOAuthId() {
         String oAuthId = "oAuthId";
-        memberRepository.save(Member.initial(oAuthId, NICKNAME));
+        memberRepository.save(Member.initial(oAuthId, NICKNAME, INITIAL_PROFILE_IMAGE_URL));
 
         Optional<Member> member = memberRepository.findByOAuthId(oAuthId);
 
@@ -36,7 +37,7 @@ class MemberRepositoryTest {
     @CsvSource({"abcd123, true", "jklq123, false"})
     void existsMemberByNicknameValue(String nickname, boolean expected) {
         String oAuthId = "oAuthId";
-        memberRepository.save(Member.initial(oAuthId, NICKNAME));
+        memberRepository.save(Member.initial(oAuthId, NICKNAME, INITIAL_PROFILE_IMAGE_URL));
 
         boolean actual = memberRepository.existsMemberByNicknameValue(nickname);
 

@@ -11,7 +11,7 @@ class MemberTest {
     @DisplayName("닉네임을 변경할 수 있다.")
     @Test
     void updateNickname() {
-        Member member = Member.initial("oAuthId", "nickname");
+        Member member = Member.initial("oAuthId", "nickname", "profileImage");
         String newNickname = "newNickname";
 
         member.updateNickname(newNickname);
@@ -22,7 +22,7 @@ class MemberTest {
     @DisplayName("위치 정보를 변경할 수 있다.")
     @Test
     void updateLocation() {
-        Member member = Member.initial("oAuthId", "nickname");
+        Member member = Member.initial("oAuthId", "nickname", "profileImage");
         double latitude = 10.0;
         double longitude = 20.0;
 

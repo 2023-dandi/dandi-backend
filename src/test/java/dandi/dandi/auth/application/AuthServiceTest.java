@@ -35,6 +35,7 @@ class AuthServiceTest {
     private static final String TOKEN = "token";
     private static final String OAUTH_MEMBER_ID = "oAuthMemberId";
     private static final String NICKNAME = "nickname";
+    private static final String INITIAL_PROFILE_IMAGE_URL = "testDir/imageFilename";
     private static final Long NEW_MEMBER_ID = 2L;
     private static final Long EXISTING_MEMBER_ID = 1L;
     private static final String REFRESH_TOKEN = "refreshToken";
@@ -83,7 +84,7 @@ class AuthServiceTest {
         when(oAuthClient.getOAuthMemberId(anyString()))
                 .thenReturn(OAUTH_MEMBER_ID);
         when(memberRepository.findByOAuthId(OAUTH_MEMBER_ID))
-                .thenReturn(Optional.of(Member.initial(OAUTH_MEMBER_ID, NICKNAME)));
+                .thenReturn(Optional.of(Member.initial(OAUTH_MEMBER_ID, NICKNAME, INITIAL_PROFILE_IMAGE_URL)));
         when(jwtTokenManager.generateToken(anyString()))
                 .thenReturn(TOKEN);
         when(refreshTokenManager.generateToken(any()))
