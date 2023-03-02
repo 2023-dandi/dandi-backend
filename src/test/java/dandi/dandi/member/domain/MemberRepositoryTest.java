@@ -42,4 +42,15 @@ class MemberRepositoryTest {
 
         assertThat(actual).isEqualTo(expected);
     }
+
+    @DisplayName("존재하는 nickname인지 반환한다.")
+    @ParameterizedTest
+    @CsvSource({"abcd123, true", "asdas521, false"})
+    void existsByNicknameValue(String nickname, boolean expected) {
+        memberRepository.save(Member.initial(OAUTH_ID, "abcd123", INITIAL_PROFILE_IMAGE_URL));
+
+        boolean actual = memberRepository.existsByNicknameValue(nickname);
+
+        assertThat(actual).isEqualTo(expected);
+    }
 }
