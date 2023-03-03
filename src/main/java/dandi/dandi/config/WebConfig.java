@@ -33,8 +33,8 @@ public class WebConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(authInterceptor)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/login/oauth/apple")
-                .excludePathPatterns("/refresh")
+                .excludePathPatterns("/auth/login/oauth/apple")
+                .excludePathPatterns("/auth/refresh")
                 .excludePathPatterns("/members/nickname/duplication")
                 .excludePathPatterns(SWAGGER_REQUEST_URIS);
     }
