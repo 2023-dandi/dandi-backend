@@ -1,8 +1,10 @@
 package dandi.dandi.auth.acceptance;
 
 import static dandi.dandi.common.HttpMethodFixture.httpGetWithAuthorization;
+import static dandi.dandi.common.HttpMethodFixture.httpPostWithAuthorization;
 import static dandi.dandi.common.HttpResponseExtractor.extractExceptionMessage;
 import static dandi.dandi.common.RequestURI.LOGIN_REQUEST_URI;
+import static dandi.dandi.common.RequestURI.LOGOUT_REQUEST_URI;
 import static dandi.dandi.common.RequestURI.TOKEN_REFRESH_REQUEST_URI;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -155,6 +157,16 @@ class AuthAcceptanceTest extends AcceptanceTest {
                 () -> assertThat(extractExceptionMessage(response))
                         .isEqualTo(UnauthorizedException.expiredRefreshToken().getMessage())
         );
+    }
+
+    @DisplayName("로그아웃 요청에 성공하면 204를 반환한다.")
+    @Test
+    void logout() {
+        String token = getToken();
+
+        ExtractableResponse<Response> response = httpPostWithAuthorization(LOGOUT_REQUEST_URI, token);
+
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
     }
 
     @DisplayName("조작된 Access Token으로 요청하면 401을 반환한다.")
