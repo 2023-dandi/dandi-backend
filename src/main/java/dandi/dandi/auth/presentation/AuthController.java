@@ -57,4 +57,10 @@ public class AuthController implements AuthControllerDocs {
                 .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
                 .build();
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(@Login Long memberId) {
+        authService.logout(memberId);
+        return ResponseEntity.noContent().build();
+    }
 }

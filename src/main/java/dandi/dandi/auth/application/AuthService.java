@@ -78,4 +78,9 @@ public class AuthService {
             throw UnauthorizedException.expiredRefreshToken();
         }
     }
+
+    @Transactional
+    public void logout(Long memberId) {
+        refreshTokenRepository.deleteByMemberId(memberId);
+    }
 }

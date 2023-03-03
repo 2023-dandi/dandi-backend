@@ -49,4 +49,8 @@ public interface AuthControllerDocs {
     })
     ResponseEntity<Void> refresh(@Parameter(hidden = true) Long memberId,
                                  @Parameter(hidden = true) String refreshToken);
+
+    @Operation(summary = "로그아웃", parameters = @Parameter(name = AUTHORIZATION, in = ParameterIn.HEADER, required = true, example = "Bearer ${token}"))
+    @ApiResponse(responseCode = "204", description = "로그아웃 성공")
+    ResponseEntity<Void> logout(@Parameter(hidden = true) Long memberId);
 }

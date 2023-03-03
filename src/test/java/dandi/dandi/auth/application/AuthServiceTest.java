@@ -8,6 +8,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import dandi.dandi.auth.application.dto.LoginRequest;
@@ -139,5 +140,13 @@ class AuthServiceTest {
         assertThatThrownBy(() -> authService.refresh(EXISTING_MEMBER_ID, REFRESH_TOKEN))
                 .isInstanceOf(UnauthorizedException.class)
                 .hasMessage(UnauthorizedException.expiredRefreshToken().getMessage());
+    }
+
+    @DisplayName("로그아웃을 할 수 있다.")
+    @Test
+    void logout() {
+        authService.logout(EXISTING_MEMBER_ID);
+
+        verify(refreshTokenRepository).deleteByMemberId(EXISTING_MEMBER_ID);
     }
 }
