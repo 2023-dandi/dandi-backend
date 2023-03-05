@@ -108,12 +108,21 @@ class MemberAcceptanceTest extends AcceptanceTest {
     @Test
     void updateMemberLocation_NoContent() {
         String token = getToken();
-        LocationUpdateRequest locationUpdateRequest = new LocationUpdateRequest(1.0, 2.0);
+        double latitude = 1.0;
+        double longitude = 2.0;
+        LocationUpdateRequest locationUpdateRequest = new LocationUpdateRequest(latitude, longitude);
 
         ExtractableResponse<Response> response =
                 httpPatchWithAuthorization(MEMBER_NICKNAME_LOCATION, locationUpdateRequest, token);
 
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
+        MemberInfoResponse memberInfoResponse = httpGetWithAuthorization(MEMBER_INFO_URI, token)
+                .jsonPath()
+                .getObject(".", MemberInfoResponse.class);
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value()),
+                () -> assertThat(memberInfoResponse.getLatitude()).isEqualTo(latitude),
+                () -> assertThat(memberInfoResponse.getLongitude()).isEqualTo(longitude)
+        );
     }
 
     @DisplayName("잘못된 범위의 사용자 위치 정보 요청에 대해 400을 반환한다.")
