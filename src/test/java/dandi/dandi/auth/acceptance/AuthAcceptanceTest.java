@@ -1,6 +1,7 @@
 package dandi.dandi.auth.acceptance;
 
 import static dandi.dandi.common.HttpMethodFixture.httpGetWithAuthorization;
+import static dandi.dandi.common.HttpMethodFixture.httpPost;
 import static dandi.dandi.common.HttpMethodFixture.httpPostWithAuthorization;
 import static dandi.dandi.common.HttpResponseExtractor.extractExceptionMessage;
 import static dandi.dandi.common.RequestURI.LOGIN_REQUEST_URI;
@@ -10,9 +11,9 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 import dandi.dandi.auth.application.dto.LoginRequest;
+import dandi.dandi.auth.application.dto.TokenResponse;
 import dandi.dandi.auth.domain.RefreshToken;
 import dandi.dandi.auth.exception.UnauthorizedException;
 import dandi.dandi.common.AcceptanceTest;
@@ -23,7 +24,6 @@ import java.time.LocalDateTime;
 import java.util.Map;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 
 class AuthAcceptanceTest extends AcceptanceTest {
@@ -37,14 +37,14 @@ class AuthAcceptanceTest extends AcceptanceTest {
         mockAppleIdToken(VALID_OAUTH_ID_TOKEN);
 
         ExtractableResponse<Response> response =
-                HttpMethodFixture.httpPost(new LoginRequest(VALID_OAUTH_ID_TOKEN), LOGIN_REQUEST_URI);
+                httpPost(new LoginRequest(VALID_OAUTH_ID_TOKEN), LOGIN_REQUEST_URI);
 
-        String accessToken = response.header(HttpHeaders.AUTHORIZATION);
-        String setCookie = response.header(HttpHeaders.SET_COOKIE);
+        TokenResponse tokenResponse = response.jsonPath()
+                .getObject(".", TokenResponse.class);
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value()),
-                () -> assertThat(accessToken).isNotNull(),
-                () -> assertThat(setCookie).contains(REFRESH_TOKEN)
+                () -> assertThat(tokenResponse.getAccessToken()).isNotNull(),
+                () -> assertThat(tokenResponse.getRefreshToken()).isNotNull()
         );
     }
 
@@ -52,17 +52,17 @@ class AuthAcceptanceTest extends AcceptanceTest {
     @Test
     void login_ExistingMember() {
         mockAppleIdToken(VALID_OAUTH_ID_TOKEN);
-        HttpMethodFixture.httpPost(new LoginRequest(VALID_OAUTH_ID_TOKEN), LOGIN_REQUEST_URI);
+        httpPost(new LoginRequest(VALID_OAUTH_ID_TOKEN), LOGIN_REQUEST_URI);
 
         ExtractableResponse<Response> response =
-                HttpMethodFixture.httpPost(new LoginRequest(VALID_OAUTH_ID_TOKEN), LOGIN_REQUEST_URI);
+                httpPost(new LoginRequest(VALID_OAUTH_ID_TOKEN), LOGIN_REQUEST_URI);
 
-        String accessToken = response.header(HttpHeaders.AUTHORIZATION);
-        String setCookie = response.header(HttpHeaders.SET_COOKIE);
+        TokenResponse tokenResponse = response.jsonPath()
+                .getObject(".", TokenResponse.class);
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
-                () -> assertThat(accessToken).isNotNull(),
-                () -> assertThat(setCookie).contains(REFRESH_TOKEN)
+                () -> assertThat(tokenResponse.getAccessToken()).isNotNull(),
+                () -> assertThat(tokenResponse.getRefreshToken()).isNotNull()
         );
     }
 
@@ -73,7 +73,7 @@ class AuthAcceptanceTest extends AcceptanceTest {
         mockExpiredToken(expiredToken);
         UnauthorizedException unauthorizedException = UnauthorizedException.expired();
 
-        ExtractableResponse<Response> response = HttpMethodFixture.httpPost(new LoginRequest(expiredToken),
+        ExtractableResponse<Response> response = httpPost(new LoginRequest(expiredToken),
                 LOGIN_REQUEST_URI);
 
         assertAll(
@@ -89,7 +89,7 @@ class AuthAcceptanceTest extends AcceptanceTest {
         mockInvalidToken(invalidToken);
         UnauthorizedException unauthorizedException = UnauthorizedException.rigged();
 
-        ExtractableResponse<Response> response = HttpMethodFixture.httpPost(new LoginRequest(invalidToken),
+        ExtractableResponse<Response> response = httpPost(new LoginRequest(invalidToken),
                 LOGIN_REQUEST_URI);
 
         assertAll(
@@ -102,20 +102,21 @@ class AuthAcceptanceTest extends AcceptanceTest {
     @Test
     void refresh() {
         mockAppleIdToken(VALID_OAUTH_ID_TOKEN);
-        ExtractableResponse<Response> loginResponse =
-                HttpMethodFixture.httpPost(new LoginRequest(VALID_OAUTH_ID_TOKEN), LOGIN_REQUEST_URI);
-        String accessTokenBeforeRefresh = loginResponse.header(AUTHORIZATION);
-        String refreshTokenBeforeRefresh = loginResponse.cookie(REFRESH_TOKEN);
+        TokenResponse tokenResponse = httpPost(new LoginRequest(VALID_OAUTH_ID_TOKEN), LOGIN_REQUEST_URI)
+                .jsonPath()
+                .getObject(".", TokenResponse.class);
+        String accessTokenBeforeRefresh = tokenResponse.getAccessToken();
+        String refreshTokenBeforeRefresh = tokenResponse.getRefreshToken();
 
         ExtractableResponse<Response> response = HttpMethodFixture.httpPostWithAuthorizationAndCookie(
                 TOKEN_REFRESH_REQUEST_URI, accessTokenBeforeRefresh, Map.of(REFRESH_TOKEN, refreshTokenBeforeRefresh));
 
-        String accessTokenAfterRefresh = response.header(AUTHORIZATION);
-        String refreshTokenAfterRefresh = response.cookie(REFRESH_TOKEN);
+        TokenResponse tokenRefreshResponse = response.jsonPath()
+                .getObject(".", TokenResponse.class);
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
-                () -> assertThat(accessTokenAfterRefresh).isNotNull(),
-                () -> assertThat(refreshTokenAfterRefresh).isNotEqualTo(refreshTokenBeforeRefresh)
+                () -> assertThat(tokenRefreshResponse.getAccessToken()).isNotNull(),
+                () -> assertThat(tokenRefreshResponse.getRefreshToken()).isNotEqualTo(refreshTokenBeforeRefresh)
         );
     }
 
@@ -124,10 +125,11 @@ class AuthAcceptanceTest extends AcceptanceTest {
     void refresh_NotFountRefreshToken() {
         mockAppleIdToken(VALID_OAUTH_ID_TOKEN);
         mockNotFoundRefreshToken();
-        ExtractableResponse<Response> loginResponse =
-                HttpMethodFixture.httpPost(new LoginRequest(VALID_OAUTH_ID_TOKEN), LOGIN_REQUEST_URI);
-        String accessTokenBeforeRefresh = loginResponse.header(AUTHORIZATION);
-        String refreshTokenBeforeRefresh = loginResponse.cookie(REFRESH_TOKEN);
+        TokenResponse tokenResponse = httpPost(new LoginRequest(VALID_OAUTH_ID_TOKEN), LOGIN_REQUEST_URI)
+                .jsonPath()
+                .getObject(".", TokenResponse.class);
+        String accessTokenBeforeRefresh = tokenResponse.getAccessToken();
+        String refreshTokenBeforeRefresh = tokenResponse.getRefreshToken();
 
         ExtractableResponse<Response> response = HttpMethodFixture.httpPostWithAuthorizationAndCookie(
                 TOKEN_REFRESH_REQUEST_URI, accessTokenBeforeRefresh, Map.of(REFRESH_TOKEN, refreshTokenBeforeRefresh));
@@ -144,10 +146,11 @@ class AuthAcceptanceTest extends AcceptanceTest {
     void refresh_ExpiredRefreshToken() {
         mockAppleIdToken(VALID_OAUTH_ID_TOKEN);
         mockExpiredRefreshToken();
-        ExtractableResponse<Response> loginResponse =
-                HttpMethodFixture.httpPost(new LoginRequest(VALID_OAUTH_ID_TOKEN), LOGIN_REQUEST_URI);
-        String accessTokenBeforeRefresh = loginResponse.header(AUTHORIZATION);
-        String refreshTokenBeforeRefresh = loginResponse.cookie(REFRESH_TOKEN);
+        TokenResponse tokenResponse = httpPost(new LoginRequest(VALID_OAUTH_ID_TOKEN), LOGIN_REQUEST_URI)
+                .jsonPath()
+                .getObject(".", TokenResponse.class);
+        String accessTokenBeforeRefresh = tokenResponse.getAccessToken();
+        String refreshTokenBeforeRefresh = tokenResponse.getRefreshToken();
 
         ExtractableResponse<Response> response = HttpMethodFixture.httpPostWithAuthorizationAndCookie(
                 TOKEN_REFRESH_REQUEST_URI, accessTokenBeforeRefresh, Map.of(REFRESH_TOKEN, refreshTokenBeforeRefresh));
