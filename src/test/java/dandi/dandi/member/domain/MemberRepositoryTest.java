@@ -1,9 +1,11 @@
 package dandi.dandi.member.domain;
 
-import static dandi.dandi.member.MemberTestFixture.INITIAL_PROFILE_IMAGE_URL;
 import static dandi.dandi.member.MemberTestFixture.OAUTH_ID;
+import static dandi.dandi.member.MemberTestFixture.TEST_MEMBER_JPA_ENTITY;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
+import dandi.dandi.member.adapter.out.persistence.MemberJpaEntity;
+import dandi.dandi.member.adapter.out.persistence.MemberRepository;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,39 +19,37 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class MemberRepositoryTest {
 
-    private static final String NICKNAME = "abcd123";
-
     @Autowired
     private MemberRepository memberRepository;
 
     @DisplayName("oAuthId를 가진 Member를 찾는다.")
     @Test
     void findByOAuthId() {
-        memberRepository.save(Member.initial(OAUTH_ID, NICKNAME, INITIAL_PROFILE_IMAGE_URL));
+        memberRepository.save(TEST_MEMBER_JPA_ENTITY);
 
-        Optional<Member> member = memberRepository.findByOAuthId(OAUTH_ID);
+        Optional<MemberJpaEntity> member = memberRepository.findByOAuthId(OAUTH_ID);
 
         assertThat(member).isPresent();
     }
 
     @DisplayName("nickname을 가진 Member가 존재하는지 반환한다.")
     @ParameterizedTest
-    @CsvSource({"abcd123, true", "jklq123, false"})
+    @CsvSource({"memberNickname, true", "jklq123, false"})
     void existsMemberByNicknameValue(String nickname, boolean expected) {
-        memberRepository.save(Member.initial(OAUTH_ID, NICKNAME, INITIAL_PROFILE_IMAGE_URL));
+        memberRepository.save(TEST_MEMBER_JPA_ENTITY);
 
-        boolean actual = memberRepository.existsMemberByNicknameValue(nickname);
+        boolean actual = memberRepository.existsMemberByNickname(nickname);
 
         assertThat(actual).isEqualTo(expected);
     }
 
     @DisplayName("존재하는 nickname인지 반환한다.")
     @ParameterizedTest
-    @CsvSource({"abcd123, true", "asdas521, false"})
+    @CsvSource({"memberNickname, true", "asdas521, false"})
     void existsByNicknameValue(String nickname, boolean expected) {
-        memberRepository.save(Member.initial(OAUTH_ID, "abcd123", INITIAL_PROFILE_IMAGE_URL));
+        memberRepository.save(TEST_MEMBER_JPA_ENTITY);
 
-        boolean actual = memberRepository.existsByNicknameValue(nickname);
+        boolean actual = memberRepository.existsByNickname(nickname);
 
         assertThat(actual).isEqualTo(expected);
     }

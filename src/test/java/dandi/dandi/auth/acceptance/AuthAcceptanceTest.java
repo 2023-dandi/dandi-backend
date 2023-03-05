@@ -12,8 +12,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-import dandi.dandi.auth.application.dto.LoginRequest;
-import dandi.dandi.auth.application.dto.TokenResponse;
+import dandi.dandi.auth.application.port.in.dto.LoginRequest;
+import dandi.dandi.auth.application.port.out.dto.TokenResponse;
 import dandi.dandi.auth.domain.RefreshToken;
 import dandi.dandi.auth.exception.UnauthorizedException;
 import dandi.dandi.common.AcceptanceTest;

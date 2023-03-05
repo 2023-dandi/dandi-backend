@@ -5,8 +5,8 @@ import static dandi.dandi.member.MemberTestFixture.OAUTH_ID;
 import static org.mockito.Mockito.when;
 
 import com.amazonaws.services.s3.AmazonS3;
-import dandi.dandi.auth.application.dto.LoginRequest;
-import dandi.dandi.auth.application.dto.TokenResponse;
+import dandi.dandi.auth.application.port.in.dto.LoginRequest;
+import dandi.dandi.auth.application.port.out.dto.TokenResponse;
 import dandi.dandi.auth.domain.OAuthClient;
 import dandi.dandi.auth.infrastructure.token.RefreshTokenManager;
 import dandi.dandi.config.AsyncTestConfig;

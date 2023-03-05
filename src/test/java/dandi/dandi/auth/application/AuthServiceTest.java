@@ -1,8 +1,7 @@
 package dandi.dandi.auth.application;
 
-import static dandi.dandi.member.MemberTestFixture.INITIAL_PROFILE_IMAGE_URL;
-import static dandi.dandi.member.MemberTestFixture.NICKNAME;
 import static dandi.dandi.member.MemberTestFixture.OAUTH_ID;
+import static dandi.dandi.member.MemberTestFixture.TEST_MEMBER;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -11,18 +10,17 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import dandi.dandi.auth.application.dto.LoginRequest;
-import dandi.dandi.auth.application.dto.LoginResponse;
-import dandi.dandi.auth.application.dto.TokenResponse;
+import dandi.dandi.auth.adapter.out.RefreshTokenPersistenceAdapter;
+import dandi.dandi.auth.application.port.in.dto.LoginRequest;
+import dandi.dandi.auth.application.port.out.dto.LoginResponse;
+import dandi.dandi.auth.application.port.out.dto.TokenResponse;
 import dandi.dandi.auth.domain.OAuthClient;
 import dandi.dandi.auth.domain.RefreshToken;
-import dandi.dandi.auth.domain.RefreshTokenRepository;
 import dandi.dandi.auth.exception.UnauthorizedException;
 import dandi.dandi.auth.infrastructure.token.JwtTokenManager;
 import dandi.dandi.auth.infrastructure.token.RefreshTokenManager;
-import dandi.dandi.member.domain.Member;
-import dandi.dandi.member.domain.MemberRepository;
-import dandi.dandi.member.domain.MemberSignupManager;
+import dandi.dandi.member.application.port.out.MemberPersistencePort;
+import dandi.dandi.member.application.service.MemberSignupManager;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
@@ -42,7 +40,7 @@ class AuthServiceTest {
     private static final String REFRESH_TOKEN = "refreshToken";
 
     @Mock
-    private MemberRepository memberRepository;
+    private MemberPersistencePort memberPersistencePort;
     @Mock
     private OAuthClient oAuthClient;
     @Mock
@@ -50,7 +48,7 @@ class AuthServiceTest {
     @Mock
     private MemberSignupManager memberSignupManager;
     @Mock
-    private RefreshTokenRepository refreshTokenRepository;
+    private RefreshTokenPersistenceAdapter refreshTokenPersistenceAdapter;
     @Mock
     private RefreshTokenManager refreshTokenManager;
     @InjectMocks
@@ -61,7 +59,7 @@ class AuthServiceTest {
     void getAccessToken_NewMember() {
         when(oAuthClient.getOAuthMemberId(anyString()))
                 .thenReturn(OAUTH_ID);
-        when(memberRepository.findByOAuthId(OAUTH_ID))
+        when(memberPersistencePort.findByOAuthId(OAUTH_ID))
                 .thenReturn(Optional.empty());
         when(memberSignupManager.signup(OAUTH_ID))
                 .thenReturn(NEW_MEMBER_ID);
@@ -84,8 +82,8 @@ class AuthServiceTest {
     void getAccessToken_ExistingMember() {
         when(oAuthClient.getOAuthMemberId(anyString()))
                 .thenReturn(OAUTH_ID);
-        when(memberRepository.findByOAuthId(OAUTH_ID))
-                .thenReturn(Optional.of(Member.initial(OAUTH_ID, NICKNAME, INITIAL_PROFILE_IMAGE_URL)));
+        when(memberPersistencePort.findByOAuthId(OAUTH_ID))
+                .thenReturn(Optional.of(TEST_MEMBER));
         when(jwtTokenManager.generateToken(anyString()))
                 .thenReturn(TOKEN);
         when(refreshTokenManager.generateToken(any()))
@@ -103,7 +101,7 @@ class AuthServiceTest {
     @DisplayName("MemberId와 Refresh Token을 받아, 새로운 Access Token과 Refresh Token을 반환한다.")
     @Test
     void refresh() {
-        when(refreshTokenRepository.findRefreshTokenByMemberIdAndValue(EXISTING_MEMBER_ID, REFRESH_TOKEN))
+        when(refreshTokenPersistenceAdapter.findRefreshTokenByMemberIdAndValue(EXISTING_MEMBER_ID, REFRESH_TOKEN))
                 .thenReturn(Optional.of(RefreshToken.generateNewWithExpiration(EXISTING_MEMBER_ID, LocalDateTime.MAX)));
         when(jwtTokenManager.generateToken(anyString()))
                 .thenReturn(TOKEN);
@@ -121,7 +119,7 @@ class AuthServiceTest {
     void refresh_RefreshTokenNotFound() {
         Long notFountMemberId = 2L;
         String notFountRefreshToken = "notFoundRefreshToken";
-        when(refreshTokenRepository.findRefreshTokenByMemberIdAndValue(any(), any()))
+        when(refreshTokenPersistenceAdapter.findRefreshTokenByMemberIdAndValue(any(), any()))
                 .thenThrow(UnauthorizedException.refreshTokenNotFound());
 
         assertThatThrownBy(() -> authService.refresh(notFountMemberId, notFountRefreshToken))
@@ -134,7 +132,7 @@ class AuthServiceTest {
     void refresh_ExpiredRefreshToken() {
         RefreshToken expiredRefreshToken =
                 RefreshToken.generateNewWithExpiration(EXISTING_MEMBER_ID, LocalDateTime.MIN);
-        when(refreshTokenRepository.findRefreshTokenByMemberIdAndValue(EXISTING_MEMBER_ID, REFRESH_TOKEN))
+        when(refreshTokenPersistenceAdapter.findRefreshTokenByMemberIdAndValue(EXISTING_MEMBER_ID, REFRESH_TOKEN))
                 .thenReturn(Optional.of(expiredRefreshToken));
 
         assertThatThrownBy(() -> authService.refresh(EXISTING_MEMBER_ID, REFRESH_TOKEN))
@@ -147,6 +145,6 @@ class AuthServiceTest {
     void logout() {
         authService.logout(EXISTING_MEMBER_ID);
 
-        verify(refreshTokenRepository).deleteByMemberId(EXISTING_MEMBER_ID);
+        verify(refreshTokenPersistenceAdapter).deleteByMemberId(EXISTING_MEMBER_ID);
     }
 }

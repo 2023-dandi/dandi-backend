@@ -17,11 +17,11 @@ import static org.mockito.ArgumentMatchers.any;
 
 import com.amazonaws.AmazonClientException;
 import dandi.dandi.common.AcceptanceTest;
-import dandi.dandi.member.application.dto.LocationUpdateRequest;
-import dandi.dandi.member.application.dto.MemberInfoResponse;
-import dandi.dandi.member.application.dto.NicknameDuplicationCheckResponse;
-import dandi.dandi.member.application.dto.NicknameUpdateRequest;
-import dandi.dandi.member.application.dto.ProfileImageUpdateResponse;
+import dandi.dandi.member.application.port.in.dto.LocationUpdateRequest;
+import dandi.dandi.member.application.port.in.dto.NicknameUpdateRequest;
+import dandi.dandi.member.application.port.out.dto.MemberInfoResponse;
+import dandi.dandi.member.application.port.out.dto.NicknameDuplicationCheckResponse;
+import dandi.dandi.member.application.port.out.dto.ProfileImageUpdateResponse;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.io.File;

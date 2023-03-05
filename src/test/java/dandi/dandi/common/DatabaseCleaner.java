@@ -12,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 public class DatabaseCleaner implements InitializingBean {
 
+
+    private static final List<String> TABLE_NAMES = List.of("member", "refresh_token", "push_notification");
     private static final String CAMEL_REGEX = "([a-z])([A-Z]+)";
     private static final String SNAKE_REPLACEMENT = "$1_$2";
 
@@ -38,7 +40,7 @@ public class DatabaseCleaner implements InitializingBean {
     @Transactional
     public void clear() {
         entityManager.flush();
-        for (String tableName : tableNames) {
+        for (String tableName : TABLE_NAMES) {
             entityManager.createNativeQuery("TRUNCATE TABLE " + tableName).executeUpdate();
             entityManager.createNativeQuery(
                             "ALTER TABLE " + tableName + " AUTO_INCREMENT = 1")
