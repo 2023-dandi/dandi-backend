@@ -11,10 +11,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-    private static final List<String> SWAGGER_REQUEST_URIS = List.of("/api-docs", "/swagger-ui/index.html",
-            "/swagger-ui/swagger-ui-bundle.js", "/swagger-ui/swagger-ui.css",
-            "/swagger-ui/swagger-ui-standalone-preset.js", "/v3/api-docs/swagger-config", "/v3/api-docs"
-    );
+    private static final List<String> SWAGGER_REQUEST_URIS = List.of("/api-docs", "/swagger-ui/**",
+            "/v3/api-docs/swagger-config", "/v3/api-docs");
 
     private final AuthenticationArgumentResolver authenticationArgumentResolver;
     private final AuthInterceptor authInterceptor;

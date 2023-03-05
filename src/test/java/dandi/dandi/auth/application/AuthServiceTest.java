@@ -13,7 +13,7 @@ import static org.mockito.Mockito.when;
 
 import dandi.dandi.auth.application.dto.LoginRequest;
 import dandi.dandi.auth.application.dto.LoginResponse;
-import dandi.dandi.auth.application.dto.TokenRefreshResponse;
+import dandi.dandi.auth.application.dto.TokenResponse;
 import dandi.dandi.auth.domain.OAuthClient;
 import dandi.dandi.auth.domain.RefreshToken;
 import dandi.dandi.auth.domain.RefreshTokenRepository;
@@ -108,11 +108,11 @@ class AuthServiceTest {
         when(jwtTokenManager.generateToken(anyString()))
                 .thenReturn(TOKEN);
 
-        TokenRefreshResponse tokenRefreshResponse = authService.refresh(EXISTING_MEMBER_ID, REFRESH_TOKEN);
+        TokenResponse tokenResponse = authService.refresh(EXISTING_MEMBER_ID, REFRESH_TOKEN);
 
         assertAll(
-                () -> assertThat(tokenRefreshResponse.getAccessToken()).isNotNull(),
-                () -> assertThat(tokenRefreshResponse.getRefreshToken()).isNotEqualTo(REFRESH_TOKEN)
+                () -> assertThat(tokenResponse.getAccessToken()).isNotNull(),
+                () -> assertThat(tokenResponse.getRefreshToken()).isNotEqualTo(REFRESH_TOKEN)
         );
     }
 
