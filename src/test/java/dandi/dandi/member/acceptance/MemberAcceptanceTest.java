@@ -10,6 +10,7 @@ import static dandi.dandi.common.RequestURI.MEMBER_NICKNAME_DUPLICATION_CHECK_UR
 import static dandi.dandi.common.RequestURI.MEMBER_NICKNAME_LOCATION;
 import static dandi.dandi.common.RequestURI.MEMBER_NICKNAME_URI;
 import static dandi.dandi.common.RequestURI.MEMBER_PROFILE_IMAGE_URI;
+import static dandi.dandi.utils.image.TestImageUtils.TEST_IMAGE_FILE_NAME;
 import static dandi.dandi.utils.image.TestImageUtils.generatetestImgFile;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -155,7 +156,7 @@ class MemberAcceptanceTest extends AcceptanceTest {
                 .getProfileImageUrl();
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
-                () -> assertThat(profileImageUrl).isNotNull()
+                () -> assertThat(profileImageUrl).contains(TEST_IMAGE_FILE_NAME)
         );
     }
 
