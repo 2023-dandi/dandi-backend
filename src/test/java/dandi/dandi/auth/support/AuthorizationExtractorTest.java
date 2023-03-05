@@ -27,6 +27,8 @@ class AuthorizationExtractorTest {
         String accessTokenWithAuthenticationType = AUTHENTICATION_TYPE + accessToken;
         when(request.getHeaders(AUTHORIZATION))
                 .thenReturn(authorizationHeaders);
+        when(authorizationHeaders.hasMoreElements())
+                .thenReturn(true);
         when(authorizationHeaders.nextElement())
                 .thenReturn(accessTokenWithAuthenticationType);
 
@@ -46,6 +48,6 @@ class AuthorizationExtractorTest {
 
         assertThatThrownBy(() -> authorizationExtractor.extractAccessToken(request))
                 .isInstanceOf(UnauthorizedException.class)
-                .hasMessage(UnauthorizedException.rigged().getMessage());
+                .hasMessage(UnauthorizedException.accessTokenNotFound().getMessage());
     }
 }

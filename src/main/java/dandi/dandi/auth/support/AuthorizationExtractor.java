@@ -11,30 +11,44 @@ import org.springframework.stereotype.Component;
 @Component
 public class AuthorizationExtractor {
 
-    public static final String AUTHENTICATION_TYPE = "Bearer";
+    private static final String AUTHENTICATION_TYPE = "Bearer";
+    private static final char AUTH_VALUE_DELIMITER = ',';
 
     public String extractAccessToken(HttpServletRequest request) {
         Enumeration<String> authorizationHeaders = request.getHeaders(AUTHORIZATION);
-        String value = authorizationHeaders.nextElement();
+        String value = extract(authorizationHeaders);
         checkNull(value);
-        if (isAccessToken(value)) {
-            return parseAccessToken(value);
+        return value;
+    }
+
+    private String extract(Enumeration<String> headers) {
+        while (headers.hasMoreElements()) {
+            String value = headers.nextElement();
+            if ((value.startsWith(AUTHENTICATION_TYPE))) {
+                String authHeaderValue = value.substring(AUTHENTICATION_TYPE.length()).trim();
+                authHeaderValue = parseMultipleAuthHeaderValue(authHeaderValue);
+                return authHeaderValue;
+            }
         }
-        throw UnauthorizedException.rigged();
+        return null;
+    }
+
+    private String parseMultipleAuthHeaderValue(String authHeaderValue) {
+        int commaIndex = authHeaderValue.indexOf(AUTH_VALUE_DELIMITER);
+        if (hasMultipleAuthHeaderValues(authHeaderValue)) {
+            return authHeaderValue.substring(0, commaIndex);
+        }
+        return authHeaderValue;
+    }
+
+    private boolean hasMultipleAuthHeaderValues(String authHeaderValue) {
+        int commaIndex = authHeaderValue.indexOf(AUTH_VALUE_DELIMITER);
+        return commaIndex > 0;
     }
 
     private void checkNull(String value) {
         if (Objects.isNull(value)) {
             throw UnauthorizedException.accessTokenNotFound();
         }
-    }
-
-    private boolean isAccessToken(String value) {
-        return value.startsWith(AUTHENTICATION_TYPE);
-    }
-
-    private String parseAccessToken(String value) {
-        return value.substring(AUTHENTICATION_TYPE.length())
-                .trim();
     }
 }
