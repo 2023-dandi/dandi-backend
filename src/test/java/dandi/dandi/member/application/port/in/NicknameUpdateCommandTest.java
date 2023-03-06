@@ -24,7 +24,7 @@ class NicknameUpdateCommandTest {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = {"", " "})
-    void create_Null(String nickname) {
+    void create_NullOrBlankValue(String nickname) {
         assertThatThrownBy(() -> new NicknameUpdateCommand(nickname))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage(INVALID_NICKNAME_MESSAGE);
