@@ -1,5 +1,6 @@
-package dandi.dandi.member.application.port.in.dto;
+package dandi.dandi.member.web.dto.in;
 
+import dandi.dandi.member.application.port.in.LocationUpdateCommand;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 public class LocationUpdateRequest {
@@ -24,5 +25,9 @@ public class LocationUpdateRequest {
 
     public Double getLongitude() {
         return longitude;
+    }
+
+    public LocationUpdateCommand toCommand() {
+        return new LocationUpdateCommand(latitude, longitude);
     }
 }

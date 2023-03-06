@@ -2,7 +2,6 @@ package dandi.dandi.member.adapter.out.persistence;
 
 import dandi.dandi.member.domain.Location;
 import dandi.dandi.member.domain.Member;
-import dandi.dandi.member.domain.Nickname;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -58,7 +57,7 @@ public class MemberJpaEntity {
         return new Member(
                 id,
                 oAuthId,
-                Nickname.from(nickname),
+                nickname,
                 new Location(latitude, longitude),
                 profileImgUrl
         );

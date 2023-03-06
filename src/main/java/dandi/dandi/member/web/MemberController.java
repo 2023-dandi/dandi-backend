@@ -3,11 +3,11 @@ package dandi.dandi.member.web;
 import dandi.dandi.auth.support.Login;
 import dandi.dandi.member.application.port.in.MemberUseCase;
 import dandi.dandi.member.application.port.in.ProfileImageUseCase;
-import dandi.dandi.member.application.port.in.dto.LocationUpdateRequest;
-import dandi.dandi.member.application.port.in.dto.NicknameUpdateRequest;
-import dandi.dandi.member.application.port.out.dto.MemberInfoResponse;
-import dandi.dandi.member.application.port.out.dto.NicknameDuplicationCheckResponse;
-import dandi.dandi.member.application.port.out.dto.ProfileImageUpdateResponse;
+import dandi.dandi.member.web.dto.in.LocationUpdateRequest;
+import dandi.dandi.member.web.dto.in.NicknameUpdateRequest;
+import dandi.dandi.member.web.dto.out.MemberInfoResponse;
+import dandi.dandi.member.web.dto.out.NicknameDuplicationCheckResponse;
+import dandi.dandi.member.web.dto.out.ProfileImageUpdateResponse;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -45,14 +45,14 @@ public class MemberController implements MemberControllerDocs {
     @PatchMapping("/nickname")
     public ResponseEntity<Void> updateMemberNickname(@Login Long memberId,
                                                      @RequestBody NicknameUpdateRequest nicknameUpdateRequest) {
-        memberUseCase.updateNickname(memberId, nicknameUpdateRequest);
+        memberUseCase.updateNickname(memberId, nicknameUpdateRequest.toCommand());
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/location")
     public ResponseEntity<Void> updateMemberLocation(@Login Long memberId,
                                                      @RequestBody LocationUpdateRequest locationUpdateRequest) {
-        memberUseCase.updateLocation(memberId, locationUpdateRequest);
+        memberUseCase.updateLocation(memberId, locationUpdateRequest.toCommand());
         return ResponseEntity.noContent().build();
     }
 

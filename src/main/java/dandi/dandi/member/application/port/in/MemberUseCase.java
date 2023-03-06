@@ -1,17 +1,15 @@
 package dandi.dandi.member.application.port.in;
 
-import dandi.dandi.member.application.port.in.dto.LocationUpdateRequest;
-import dandi.dandi.member.application.port.in.dto.NicknameUpdateRequest;
-import dandi.dandi.member.application.port.out.dto.MemberInfoResponse;
-import dandi.dandi.member.application.port.out.dto.NicknameDuplicationCheckResponse;
+import dandi.dandi.member.web.dto.out.MemberInfoResponse;
+import dandi.dandi.member.web.dto.out.NicknameDuplicationCheckResponse;
 
 public interface MemberUseCase {
 
     MemberInfoResponse findMemberInfo(Long memberId);
 
-    void updateNickname(Long memberId, NicknameUpdateRequest nicknameUpdateRequest);
+    void updateNickname(Long memberId, NicknameUpdateCommand nicknameUpdateCommand);
 
-    void updateLocation(Long memberId, LocationUpdateRequest locationUpdateRequest);
+    void updateLocation(Long memberId, LocationUpdateCommand locationUpdateCommand);
 
     NicknameDuplicationCheckResponse checkDuplication(String nickname);
 }

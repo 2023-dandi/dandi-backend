@@ -1,4 +1,4 @@
-package dandi.dandi.member.application.port.out.dto;
+package dandi.dandi.member.web.dto.out;
 
 public class ProfileImageUpdateResponse {
 

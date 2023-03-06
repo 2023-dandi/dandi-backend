@@ -6,13 +6,13 @@ public class Member {
 
     private String oAuthId;
 
-    private Nickname nickname;
+    private String nickname;
 
     private Location location;
 
     private String profileImgUrl;
 
-    public Member(Long id, String oAuthId, Nickname nickname, Location location, String profileImgUrl) {
+    public Member(Long id, String oAuthId, String nickname, Location location, String profileImgUrl) {
         this.id = id;
         this.oAuthId = oAuthId;
         this.nickname = nickname;
@@ -21,7 +21,7 @@ public class Member {
     }
 
     public static Member initial(String oAuthId, String nickname, String initialProfileImageUrl) {
-        return new Member(null, oAuthId, Nickname.from(nickname), Location.initial(), initialProfileImageUrl);
+        return new Member(null, oAuthId, nickname, Location.initial(), initialProfileImageUrl);
     }
 
     public Long getId() {
@@ -33,7 +33,7 @@ public class Member {
     }
 
     public String getNickname() {
-        return nickname.getValue();
+        return nickname;
     }
 
     public double getLatitude() {

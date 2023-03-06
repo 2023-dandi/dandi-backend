@@ -1,4 +1,4 @@
-package dandi.dandi.member.application.port.out.dto;
+package dandi.dandi.member.web.dto.out;
 
 import dandi.dandi.member.domain.Member;
 import io.swagger.v3.oas.annotations.media.Schema;

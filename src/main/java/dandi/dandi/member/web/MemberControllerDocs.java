@@ -5,11 +5,11 @@ import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
 
 import dandi.dandi.advice.ExceptionResponse;
-import dandi.dandi.member.application.port.in.dto.LocationUpdateRequest;
-import dandi.dandi.member.application.port.in.dto.NicknameUpdateRequest;
-import dandi.dandi.member.application.port.out.dto.MemberInfoResponse;
-import dandi.dandi.member.application.port.out.dto.NicknameDuplicationCheckResponse;
-import dandi.dandi.member.application.port.out.dto.ProfileImageUpdateResponse;
+import dandi.dandi.member.web.dto.in.LocationUpdateRequest;
+import dandi.dandi.member.web.dto.in.NicknameUpdateRequest;
+import dandi.dandi.member.web.dto.out.MemberInfoResponse;
+import dandi.dandi.member.web.dto.out.NicknameDuplicationCheckResponse;
+import dandi.dandi.member.web.dto.out.ProfileImageUpdateResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
