@@ -48,11 +48,6 @@ public class MemberPersistenceAdapter implements MemberPersistencePort {
     }
 
     @Override
-    public boolean existsByNickname(String nickname) {
-        return memberRepository.existsByNickname(nickname);
-    }
-
-    @Override
     public void updateLocation(Long memberId, Double latitude, Double longitude) {
         memberRepository.updateLocation(memberId, latitude, longitude);
     }

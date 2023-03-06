@@ -13,8 +13,6 @@ public interface MemberPersistencePort {
 
     void updateProfileImageUrl(Long memberId, String profileImageUrl);
 
-    boolean existsByNickname(String nickname);
-
     Member save(Member member);
 
     void updateNickname(Long memberId, String newNickname);
