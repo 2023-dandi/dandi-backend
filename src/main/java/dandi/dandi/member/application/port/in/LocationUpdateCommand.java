@@ -13,6 +13,8 @@ public class LocationUpdateCommand extends SelfValidating<LocationUpdateCommand>
     @DecimalMin(value = "-90.0")
     @DecimalMax(value = "90.0")
     private final Double latitude;
+
+    @NotNull
     @DecimalMin(value = "-180.0")
     @DecimalMax(value = "180.0")
     private final Double longitude;
