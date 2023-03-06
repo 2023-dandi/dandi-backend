@@ -1,7 +1,7 @@
 package dandi.dandi.config;
 
-import dandi.dandi.auth.support.AuthInterceptor;
-import dandi.dandi.auth.support.AuthenticationArgumentResolver;
+import dandi.dandi.auth.web.support.AuthInterceptor;
+import dandi.dandi.auth.web.support.AuthenticationArgumentResolver;
 import java.util.List;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;

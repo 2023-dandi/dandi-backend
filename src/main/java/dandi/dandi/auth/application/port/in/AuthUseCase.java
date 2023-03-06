@@ -1,17 +1,13 @@
 package dandi.dandi.auth.application.port.in;
 
-import dandi.dandi.auth.application.port.in.dto.LoginRequest;
-import dandi.dandi.auth.application.port.out.dto.LoginResponse;
-import dandi.dandi.auth.application.port.out.dto.TokenResponse;
-import javax.transaction.Transactional;
+import dandi.dandi.auth.application.port.out.LoginResponse;
+import dandi.dandi.auth.application.port.out.TokenResponse;
 
 public interface AuthUseCase {
-    @Transactional
-    LoginResponse getToken(LoginRequest loginRequest);
 
-    @Transactional
+    LoginResponse getToken(LoginCommand loginCommand);
+
     TokenResponse refresh(Long memberId, String refreshToken);
 
-    @Transactional
     void logout(Long memberId);
 }

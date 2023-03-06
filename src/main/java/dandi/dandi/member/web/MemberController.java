@@ -1,6 +1,6 @@
 package dandi.dandi.member.web;
 
-import dandi.dandi.auth.support.Login;
+import dandi.dandi.auth.web.support.Login;
 import dandi.dandi.member.application.port.in.MemberUseCase;
 import dandi.dandi.member.application.port.in.ProfileImageUseCase;
 import dandi.dandi.member.web.dto.in.LocationUpdateRequest;

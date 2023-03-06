@@ -1,6 +1,6 @@
 package dandi.dandi.pushnotification.presentation;
 
-import dandi.dandi.auth.support.Login;
+import dandi.dandi.auth.web.support.Login;
 import dandi.dandi.pushnotification.application.PushNotificationService;
 import dandi.dandi.pushnotification.application.dto.PushNotificationAllowanceUpdateRequest;
 import dandi.dandi.pushnotification.application.dto.PushNotificationResponse;

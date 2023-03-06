@@ -4,8 +4,8 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.COOKIE;
 
 import dandi.dandi.advice.ExceptionResponse;
-import dandi.dandi.auth.application.port.in.dto.LoginRequest;
-import dandi.dandi.auth.application.port.out.dto.TokenResponse;
+import dandi.dandi.auth.application.port.out.TokenResponse;
+import dandi.dandi.auth.web.in.LoginRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;

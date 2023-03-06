@@ -1,13 +1,13 @@
 package dandi.dandi.auth.web;
 
-import static dandi.dandi.auth.support.RefreshTokenCookieProvider.REFRESH_TOKEN;
+import static dandi.dandi.auth.web.support.RefreshTokenCookieProvider.REFRESH_TOKEN;
 import static org.springframework.http.HttpStatus.CREATED;
 
 import dandi.dandi.auth.application.port.in.AuthUseCase;
-import dandi.dandi.auth.application.port.in.dto.LoginRequest;
-import dandi.dandi.auth.application.port.out.dto.LoginResponse;
-import dandi.dandi.auth.application.port.out.dto.TokenResponse;
-import dandi.dandi.auth.support.Login;
+import dandi.dandi.auth.application.port.out.LoginResponse;
+import dandi.dandi.auth.application.port.out.TokenResponse;
+import dandi.dandi.auth.web.in.LoginRequest;
+import dandi.dandi.auth.web.support.Login;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,7 +27,7 @@ public class AuthController implements AuthControllerDocs {
 
     @PostMapping("/login/oauth/apple")
     public ResponseEntity<TokenResponse> login(@RequestBody LoginRequest loginRequest) {
-        LoginResponse loginResponse = authUseCase.getToken(loginRequest);
+        LoginResponse loginResponse = authUseCase.getToken(loginRequest.toCommand());
         if (loginResponse.isNewUser()) {
             return ResponseEntity.status(CREATED).body(new TokenResponse(loginResponse));
         }

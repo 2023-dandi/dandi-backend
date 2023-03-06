@@ -10,15 +10,16 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import dandi.dandi.auth.adapter.out.RefreshTokenPersistenceAdapter;
-import dandi.dandi.auth.application.port.in.dto.LoginRequest;
-import dandi.dandi.auth.application.port.out.dto.LoginResponse;
-import dandi.dandi.auth.application.port.out.dto.TokenResponse;
-import dandi.dandi.auth.domain.OAuthClient;
+import dandi.dandi.auth.application.port.in.LoginCommand;
+import dandi.dandi.auth.application.port.out.LoginResponse;
+import dandi.dandi.auth.application.port.out.TokenResponse;
+import dandi.dandi.auth.application.port.out.jwt.AccessTokenManagerPort;
+import dandi.dandi.auth.application.port.out.jwt.RefreshTokenManagerPort;
+import dandi.dandi.auth.application.port.out.oauth.OAuthClientPort;
+import dandi.dandi.auth.application.port.out.persistence.RefreshTokenPersistencePort;
+import dandi.dandi.auth.application.service.AuthService;
 import dandi.dandi.auth.domain.RefreshToken;
 import dandi.dandi.auth.exception.UnauthorizedException;
-import dandi.dandi.auth.infrastructure.token.JwtTokenManager;
-import dandi.dandi.auth.infrastructure.token.RefreshTokenManager;
 import dandi.dandi.member.application.port.out.MemberPersistencePort;
 import dandi.dandi.member.application.service.MemberSignupManager;
 import java.time.LocalDateTime;
@@ -37,38 +38,40 @@ class AuthServiceTest {
     private static final String TOKEN = "token";
     private static final Long NEW_MEMBER_ID = 2L;
     private static final Long EXISTING_MEMBER_ID = 1L;
-    private static final String REFRESH_TOKEN = "refreshToken";
+    private static final Long REFRESH_TOKEN_ID = 1L;
+    private static final String REFRESH_TOKEN_VALUE = "refreshToken";
+    private static final String UPDATED_REFRESH_TOKEN_VALUE = "updateRefreshToken";
 
     @Mock
     private MemberPersistencePort memberPersistencePort;
     @Mock
-    private OAuthClient oAuthClient;
+    private OAuthClientPort oAuthClientPort;
     @Mock
-    private JwtTokenManager jwtTokenManager;
+    private AccessTokenManagerPort accessTokenManagerPort;
     @Mock
     private MemberSignupManager memberSignupManager;
     @Mock
-    private RefreshTokenPersistenceAdapter refreshTokenPersistenceAdapter;
+    private RefreshTokenPersistencePort refreshTokenPersistencePort;
     @Mock
-    private RefreshTokenManager refreshTokenManager;
+    private RefreshTokenManagerPort refreshTokenManagerPort;
     @InjectMocks
     private AuthService authService;
 
     @DisplayName("oAuthId를 받아, 새 회원이라면 회원 가입을 시키고 토큰과 새 회원 여부를 반환한다.")
     @Test
     void getAccessToken_NewMember() {
-        when(oAuthClient.getOAuthMemberId(anyString()))
+        when(oAuthClientPort.getOAuthMemberId(anyString()))
                 .thenReturn(OAUTH_ID);
         when(memberPersistencePort.findByOAuthId(OAUTH_ID))
                 .thenReturn(Optional.empty());
         when(memberSignupManager.signup(OAUTH_ID))
                 .thenReturn(NEW_MEMBER_ID);
-        when(jwtTokenManager.generateToken(String.valueOf(NEW_MEMBER_ID)))
+        when(accessTokenManagerPort.generateToken(String.valueOf(NEW_MEMBER_ID)))
                 .thenReturn(TOKEN);
-        when(refreshTokenManager.generateToken(NEW_MEMBER_ID))
+        when(refreshTokenManagerPort.generateToken(NEW_MEMBER_ID))
                 .thenReturn(RefreshToken.generateNewWithExpiration(NEW_MEMBER_ID, LocalDateTime.MAX));
 
-        LoginResponse loginResponse = authService.getToken(new LoginRequest(ID_TOKEN));
+        LoginResponse loginResponse = authService.getToken(new LoginCommand(ID_TOKEN));
 
         assertAll(
                 () -> assertThat(loginResponse.getAccessToken()).isEqualTo(TOKEN),
@@ -80,16 +83,16 @@ class AuthServiceTest {
     @DisplayName("oAuthId를 받아, 기존 회원이라면 회원 가입 없이 토큰과 새 회원 여부를 반환한다.")
     @Test
     void getAccessToken_ExistingMember() {
-        when(oAuthClient.getOAuthMemberId(anyString()))
+        when(oAuthClientPort.getOAuthMemberId(anyString()))
                 .thenReturn(OAUTH_ID);
         when(memberPersistencePort.findByOAuthId(OAUTH_ID))
                 .thenReturn(Optional.of(TEST_MEMBER));
-        when(jwtTokenManager.generateToken(anyString()))
+        when(accessTokenManagerPort.generateToken(anyString()))
                 .thenReturn(TOKEN);
-        when(refreshTokenManager.generateToken(any()))
+        when(refreshTokenManagerPort.generateToken(any()))
                 .thenReturn(RefreshToken.generateNewWithExpiration(EXISTING_MEMBER_ID, LocalDateTime.MAX));
 
-        LoginResponse loginResponse = authService.getToken(new LoginRequest(ID_TOKEN));
+        LoginResponse loginResponse = authService.getToken(new LoginCommand(ID_TOKEN));
 
         assertAll(
                 () -> assertThat(loginResponse.getAccessToken()).isEqualTo(TOKEN),
@@ -101,16 +104,23 @@ class AuthServiceTest {
     @DisplayName("MemberId와 Refresh Token을 받아, 새로운 Access Token과 Refresh Token을 반환한다.")
     @Test
     void refresh() {
-        when(refreshTokenPersistenceAdapter.findRefreshTokenByMemberIdAndValue(EXISTING_MEMBER_ID, REFRESH_TOKEN))
-                .thenReturn(Optional.of(RefreshToken.generateNewWithExpiration(EXISTING_MEMBER_ID, LocalDateTime.MAX)));
-        when(jwtTokenManager.generateToken(anyString()))
+        RefreshToken refreshToken =
+                new RefreshToken(REFRESH_TOKEN_ID, EXISTING_MEMBER_ID, LocalDateTime.MAX, REFRESH_TOKEN_VALUE);
+        when(refreshTokenPersistencePort.findRefreshTokenByMemberIdAndValue(EXISTING_MEMBER_ID, REFRESH_TOKEN_VALUE))
+                .thenReturn(Optional.of(refreshToken));
+        RefreshToken updateRefreshToken =
+                new RefreshToken(REFRESH_TOKEN_ID, EXISTING_MEMBER_ID, LocalDateTime.MAX, UPDATED_REFRESH_TOKEN_VALUE);
+        when(refreshTokenManagerPort.generateToken(refreshToken.getMemberId()))
+                .thenReturn(updateRefreshToken);
+        when(accessTokenManagerPort.generateToken(anyString()))
                 .thenReturn(TOKEN);
 
-        TokenResponse tokenResponse = authService.refresh(EXISTING_MEMBER_ID, REFRESH_TOKEN);
+        TokenResponse tokenResponse = authService.refresh(EXISTING_MEMBER_ID, REFRESH_TOKEN_VALUE);
 
         assertAll(
-                () -> assertThat(tokenResponse.getAccessToken()).isNotNull(),
-                () -> assertThat(tokenResponse.getRefreshToken()).isNotEqualTo(REFRESH_TOKEN)
+                () -> assertThat(tokenResponse.getAccessToken()).isEqualTo(TOKEN),
+                () -> assertThat(tokenResponse.getRefreshToken()).isEqualTo(UPDATED_REFRESH_TOKEN_VALUE),
+                () -> verify(refreshTokenPersistencePort).update(refreshToken.getId(), updateRefreshToken)
         );
     }
 
@@ -119,7 +129,7 @@ class AuthServiceTest {
     void refresh_RefreshTokenNotFound() {
         Long notFountMemberId = 2L;
         String notFountRefreshToken = "notFoundRefreshToken";
-        when(refreshTokenPersistenceAdapter.findRefreshTokenByMemberIdAndValue(any(), any()))
+        when(refreshTokenPersistencePort.findRefreshTokenByMemberIdAndValue(any(), any()))
                 .thenThrow(UnauthorizedException.refreshTokenNotFound());
 
         assertThatThrownBy(() -> authService.refresh(notFountMemberId, notFountRefreshToken))
@@ -132,10 +142,10 @@ class AuthServiceTest {
     void refresh_ExpiredRefreshToken() {
         RefreshToken expiredRefreshToken =
                 RefreshToken.generateNewWithExpiration(EXISTING_MEMBER_ID, LocalDateTime.MIN);
-        when(refreshTokenPersistenceAdapter.findRefreshTokenByMemberIdAndValue(EXISTING_MEMBER_ID, REFRESH_TOKEN))
+        when(refreshTokenPersistencePort.findRefreshTokenByMemberIdAndValue(EXISTING_MEMBER_ID, REFRESH_TOKEN_VALUE))
                 .thenReturn(Optional.of(expiredRefreshToken));
 
-        assertThatThrownBy(() -> authService.refresh(EXISTING_MEMBER_ID, REFRESH_TOKEN))
+        assertThatThrownBy(() -> authService.refresh(EXISTING_MEMBER_ID, REFRESH_TOKEN_VALUE))
                 .isInstanceOf(UnauthorizedException.class)
                 .hasMessage(UnauthorizedException.expiredRefreshToken().getMessage());
     }
@@ -145,6 +155,6 @@ class AuthServiceTest {
     void logout() {
         authService.logout(EXISTING_MEMBER_ID);
 
-        verify(refreshTokenPersistenceAdapter).deleteByMemberId(EXISTING_MEMBER_ID);
+        verify(refreshTokenPersistencePort).deleteByMemberId(EXISTING_MEMBER_ID);
     }
 }

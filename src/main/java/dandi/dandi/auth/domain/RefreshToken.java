@@ -2,18 +2,9 @@ package dandi.dandi.auth.domain;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 
-@Entity
 public class RefreshToken {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "refresh_token_id")
     private Long id;
 
     private Long memberId;
@@ -22,18 +13,11 @@ public class RefreshToken {
 
     private String value;
 
-    protected RefreshToken() {
-    }
-
-    private RefreshToken(Long id, Long memberId, LocalDateTime expired, String value) {
+    public RefreshToken(Long id, Long memberId, LocalDateTime expired, String value) {
         this.id = id;
         this.memberId = memberId;
         this.expired = expired;
         this.value = value;
-    }
-
-    public RefreshToken(Long memberId, LocalDateTime expired, String value) {
-        this(null, memberId, expired, value);
     }
 
     public static RefreshToken generateNewWithExpiration(Long memberId, LocalDateTime expired) {
@@ -46,17 +30,19 @@ public class RefreshToken {
         return expired.isBefore(current);
     }
 
-    public String updateRefreshToken() {
-        String newRefreshToken = UUID.randomUUID().toString();
-        this.value = newRefreshToken;
-        return newRefreshToken;
+    public Long getId() {
+        return id;
     }
 
-    public String getValue() {
-        return value;
+    public LocalDateTime getExpired() {
+        return expired;
     }
 
     public Long getMemberId() {
         return memberId;
+    }
+
+    public String getValue() {
+        return value;
     }
 }
