@@ -11,12 +11,12 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import dandi.dandi.auth.exception.UnauthorizedException;
-import dandi.dandi.member.application.port.in.dto.LocationUpdateRequest;
-import dandi.dandi.member.application.port.in.dto.NicknameUpdateRequest;
+import dandi.dandi.member.application.port.in.LocationUpdateCommand;
+import dandi.dandi.member.application.port.in.NicknameUpdateCommand;
 import dandi.dandi.member.application.port.out.MemberPersistencePort;
-import dandi.dandi.member.application.port.out.dto.MemberInfoResponse;
 import dandi.dandi.member.application.service.MemberService;
 import dandi.dandi.member.domain.Member;
+import dandi.dandi.member.web.dto.out.MemberInfoResponse;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -67,11 +67,11 @@ class MemberServiceTest {
     @Test
     void updateNickname() {
         String newNickname = "newNickname";
-        NicknameUpdateRequest nicknameUpdateRequest = new NicknameUpdateRequest(newNickname);
+        NicknameUpdateCommand nicknameUpdateCommand = new NicknameUpdateCommand(newNickname);
         when(memberPersistencePort.findById(TEST_MEMBER.getId()))
                 .thenReturn(Optional.of(TEST_MEMBER));
 
-        memberService.updateNickname(TEST_MEMBER.getId(), nicknameUpdateRequest);
+        memberService.updateNickname(TEST_MEMBER.getId(), nicknameUpdateCommand);
 
         verify(memberPersistencePort).updateNickname(TEST_MEMBER.getId(), newNickname);
     }
@@ -81,11 +81,11 @@ class MemberServiceTest {
     void updateLocation() {
         double latitude = 1.0;
         double longitude = 1.0;
-        LocationUpdateRequest locationUpdateRequest = new LocationUpdateRequest(latitude, longitude);
+        LocationUpdateCommand locationUpdateCommand = new LocationUpdateCommand(latitude, longitude);
         when(memberPersistencePort.findById(TEST_MEMBER.getId()))
                 .thenReturn(Optional.of(TEST_MEMBER));
 
-        memberService.updateLocation(TEST_MEMBER.getId(), locationUpdateRequest);
+        memberService.updateLocation(TEST_MEMBER.getId(), locationUpdateCommand);
 
         verify(memberPersistencePort).updateLocation(TEST_MEMBER.getId(), latitude, latitude);
     }
