@@ -15,7 +15,7 @@ class RefreshTokenTest {
     @ParameterizedTest
     @MethodSource("provideRefreshTokenAndExpired")
     void isExpired(LocalDateTime expired, boolean expected) {
-        RefreshToken refreshToken = new RefreshToken(1L, expired, "value");
+        RefreshToken refreshToken = new RefreshToken(1L, 1L, expired, "value");
 
         boolean actual = refreshToken.isExpired();
 

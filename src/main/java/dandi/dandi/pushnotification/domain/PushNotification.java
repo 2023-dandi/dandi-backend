@@ -2,32 +2,15 @@ package dandi.dandi.pushnotification.domain;
 
 import java.time.LocalTime;
 import java.util.Objects;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 
-@Entity
 public class PushNotification {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "push_notification_id")
-    private Long id;
+    private final Long id;
+    private final Long memberId;
+    private final PushNotificationTime pushNotificationTime;
+    private final boolean allowance;
 
-    private Long memberId;
-
-    @Embedded
-    private PushNotificationTime pushNotificationTime;
-
-    private boolean allowance;
-
-    private PushNotification() {
-    }
-
-    private PushNotification(Long id, Long memberId, PushNotificationTime pushNotificationTime, boolean allowance) {
+    public PushNotification(Long id, Long memberId, PushNotificationTime pushNotificationTime, boolean allowance) {
         this.id = id;
         this.memberId = memberId;
         this.pushNotificationTime = pushNotificationTime;
@@ -38,12 +21,12 @@ public class PushNotification {
         return new PushNotification(null, memberId, PushNotificationTime.initial(), false);
     }
 
-    public void updatePushNotificationTime(LocalTime pushNotificationTime) {
-        this.pushNotificationTime = PushNotificationTime.from(pushNotificationTime);
+    public Long getId() {
+        return id;
     }
 
-    public void updateAllowance(boolean allowance) {
-        this.allowance = allowance;
+    public Long getMemberId() {
+        return memberId;
     }
 
     public LocalTime getPushNotificationTime() {

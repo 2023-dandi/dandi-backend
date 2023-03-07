@@ -5,10 +5,10 @@ import static dandi.dandi.member.MemberTestFixture.OAUTH_ID;
 import static org.mockito.Mockito.when;
 
 import com.amazonaws.services.s3.AmazonS3;
-import dandi.dandi.auth.application.dto.LoginRequest;
-import dandi.dandi.auth.application.dto.TokenResponse;
-import dandi.dandi.auth.domain.OAuthClient;
-import dandi.dandi.auth.infrastructure.token.RefreshTokenManager;
+import dandi.dandi.auth.adapter.out.jwt.RefreshTokenManagerAdapter;
+import dandi.dandi.auth.application.port.in.TokenResponse;
+import dandi.dandi.auth.application.port.out.oauth.OAuthClientPort;
+import dandi.dandi.auth.web.in.LoginRequest;
 import dandi.dandi.config.AsyncTestConfig;
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.AfterEach;
@@ -37,10 +37,10 @@ public class AcceptanceTest {
     private DatabaseCleaner databaseCleaner;
 
     @MockBean
-    protected OAuthClient oAuthClient;
+    protected OAuthClientPort oAuthClientPort;
 
     @SpyBean
-    protected RefreshTokenManager refreshTokenManager;
+    protected RefreshTokenManagerAdapter refreshTokenManager;
 
     @SpyBean
     protected AmazonS3 amazonS3;
@@ -56,7 +56,7 @@ public class AcceptanceTest {
     }
 
     public String getToken() {
-        when(oAuthClient.getOAuthMemberId(APPLE_IDENTITY_TOKEN))
+        when(oAuthClientPort.getOAuthMemberId(APPLE_IDENTITY_TOKEN))
                 .thenReturn(OAUTH_ID);
         return HttpMethodFixture.httpPost(new LoginRequest(APPLE_IDENTITY_TOKEN), LOGIN_REQUEST_URI)
                 .jsonPath()

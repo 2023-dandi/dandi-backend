@@ -10,6 +10,7 @@ import static dandi.dandi.common.RequestURI.MEMBER_NICKNAME_DUPLICATION_CHECK_UR
 import static dandi.dandi.common.RequestURI.MEMBER_NICKNAME_LOCATION;
 import static dandi.dandi.common.RequestURI.MEMBER_NICKNAME_URI;
 import static dandi.dandi.common.RequestURI.MEMBER_PROFILE_IMAGE_URI;
+import static dandi.dandi.utils.image.TestImageUtils.TEST_IMAGE_FILE_NAME;
 import static dandi.dandi.utils.image.TestImageUtils.generatetestImgFile;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -17,11 +18,11 @@ import static org.mockito.ArgumentMatchers.any;
 
 import com.amazonaws.AmazonClientException;
 import dandi.dandi.common.AcceptanceTest;
-import dandi.dandi.member.application.dto.LocationUpdateRequest;
-import dandi.dandi.member.application.dto.MemberInfoResponse;
-import dandi.dandi.member.application.dto.NicknameDuplicationCheckResponse;
-import dandi.dandi.member.application.dto.NicknameUpdateRequest;
-import dandi.dandi.member.application.dto.ProfileImageUpdateResponse;
+import dandi.dandi.member.application.port.in.MemberInfoResponse;
+import dandi.dandi.member.application.port.in.NicknameDuplicationCheckResponse;
+import dandi.dandi.member.application.port.in.ProfileImageUpdateResponse;
+import dandi.dandi.member.web.dto.in.LocationUpdateRequest;
+import dandi.dandi.member.web.dto.in.NicknameUpdateRequest;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.io.File;
@@ -108,12 +109,21 @@ class MemberAcceptanceTest extends AcceptanceTest {
     @Test
     void updateMemberLocation_NoContent() {
         String token = getToken();
-        LocationUpdateRequest locationUpdateRequest = new LocationUpdateRequest(1.0, 2.0);
+        double latitude = 1.0;
+        double longitude = 2.0;
+        LocationUpdateRequest locationUpdateRequest = new LocationUpdateRequest(latitude, longitude);
 
         ExtractableResponse<Response> response =
                 httpPatchWithAuthorization(MEMBER_NICKNAME_LOCATION, locationUpdateRequest, token);
 
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
+        MemberInfoResponse memberInfoResponse = httpGetWithAuthorization(MEMBER_INFO_URI, token)
+                .jsonPath()
+                .getObject(".", MemberInfoResponse.class);
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value()),
+                () -> assertThat(memberInfoResponse.getLatitude()).isEqualTo(latitude),
+                () -> assertThat(memberInfoResponse.getLongitude()).isEqualTo(longitude)
+        );
     }
 
     @DisplayName("잘못된 범위의 사용자 위치 정보 요청에 대해 400을 반환한다.")
@@ -146,7 +156,7 @@ class MemberAcceptanceTest extends AcceptanceTest {
                 .getProfileImageUrl();
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
-                () -> assertThat(profileImageUrl).isNotNull()
+                () -> assertThat(profileImageUrl).contains(TEST_IMAGE_FILE_NAME)
         );
     }
 

@@ -1,37 +1,14 @@
 package dandi.dandi.member.domain;
 
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.PostPersist;
-import org.springframework.data.domain.AbstractAggregateRoot;
+public class Member {
 
-@Entity
-public class Member extends AbstractAggregateRoot<Member> {
+    private final Long id;
+    private final String oAuthId;
+    private final String nickname;
+    private final Location location;
+    private final String profileImgUrl;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "member_id")
-    private Long id;
-
-    private String oAuthId;
-
-    @Embedded
-    @Column(nullable = false)
-    private Nickname nickname;
-
-    @Embedded
-    private Location location;
-
-    private String profileImgUrl;
-
-    protected Member() {
-    }
-
-    private Member(Long id, String oAuthId, Nickname nickname, Location location, String profileImgUrl) {
+    public Member(Long id, String oAuthId, String nickname, Location location, String profileImgUrl) {
         this.id = id;
         this.oAuthId = oAuthId;
         this.nickname = nickname;
@@ -39,21 +16,20 @@ public class Member extends AbstractAggregateRoot<Member> {
         this.profileImgUrl = profileImgUrl;
     }
 
-    @PostPersist
-    private void registerNewMemberCreatedEvent() {
-        registerEvent(new NewMemberCreatedEvent(id));
-    }
-
     public static Member initial(String oAuthId, String nickname, String initialProfileImageUrl) {
-        return new Member(null, oAuthId, Nickname.from(nickname), Location.initial(), initialProfileImageUrl);
+        return new Member(null, oAuthId, nickname, Location.initial(), initialProfileImageUrl);
     }
 
     public Long getId() {
         return id;
     }
 
+    public String getOAuthId() {
+        return oAuthId;
+    }
+
     public String getNickname() {
-        return nickname.getValue();
+        return nickname;
     }
 
     public double getLatitude() {
@@ -62,14 +38,6 @@ public class Member extends AbstractAggregateRoot<Member> {
 
     public double getLongitude() {
         return location.getLongitude();
-    }
-
-    public void updateNickname(String nickname) {
-        this.nickname = Nickname.from(nickname);
-    }
-
-    public void updateLocation(double latitude, double longitude) {
-        this.location = new Location(latitude, longitude);
     }
 
     public boolean hasProfileImgUrl(String profileImgUrl) {
