@@ -1,13 +1,13 @@
 package dandi.dandi.member.web;
 
 import dandi.dandi.auth.web.support.Login;
+import dandi.dandi.member.application.port.in.MemberInfoResponse;
 import dandi.dandi.member.application.port.in.MemberUseCase;
+import dandi.dandi.member.application.port.in.NicknameDuplicationCheckResponse;
+import dandi.dandi.member.application.port.in.ProfileImageUpdateResponse;
 import dandi.dandi.member.application.port.in.ProfileImageUseCase;
 import dandi.dandi.member.web.dto.in.LocationUpdateRequest;
 import dandi.dandi.member.web.dto.in.NicknameUpdateRequest;
-import dandi.dandi.member.web.dto.out.MemberInfoResponse;
-import dandi.dandi.member.web.dto.out.NicknameDuplicationCheckResponse;
-import dandi.dandi.member.web.dto.out.ProfileImageUpdateResponse;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

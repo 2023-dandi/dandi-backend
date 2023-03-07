@@ -1,6 +1,5 @@
 package dandi.dandi.member.application.port.in;
 
-import dandi.dandi.member.web.dto.out.ProfileImageUpdateResponse;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface ProfileImageUseCase {

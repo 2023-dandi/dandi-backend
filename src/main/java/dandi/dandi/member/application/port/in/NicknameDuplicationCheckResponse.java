@@ -1,4 +1,4 @@
-package dandi.dandi.member.web.dto.out;
+package dandi.dandi.member.application.port.in;
 
 public class NicknameDuplicationCheckResponse {
 

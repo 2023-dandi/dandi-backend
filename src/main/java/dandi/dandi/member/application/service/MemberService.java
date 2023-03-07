@@ -2,14 +2,14 @@ package dandi.dandi.member.application.service;
 
 import dandi.dandi.auth.exception.UnauthorizedException;
 import dandi.dandi.member.application.port.in.LocationUpdateCommand;
+import dandi.dandi.member.application.port.in.MemberInfoResponse;
 import dandi.dandi.member.application.port.in.MemberUseCase;
+import dandi.dandi.member.application.port.in.NicknameDuplicationCheckResponse;
 import dandi.dandi.member.application.port.in.NicknameUpdateCommand;
 import dandi.dandi.member.application.port.out.MemberPersistencePort;
 import dandi.dandi.member.domain.Latitude;
 import dandi.dandi.member.domain.Longitude;
 import dandi.dandi.member.domain.Member;
-import dandi.dandi.member.web.dto.out.MemberInfoResponse;
-import dandi.dandi.member.web.dto.out.NicknameDuplicationCheckResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

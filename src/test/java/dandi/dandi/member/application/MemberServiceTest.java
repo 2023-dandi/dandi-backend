@@ -12,11 +12,11 @@ import static org.mockito.Mockito.when;
 
 import dandi.dandi.auth.exception.UnauthorizedException;
 import dandi.dandi.member.application.port.in.LocationUpdateCommand;
+import dandi.dandi.member.application.port.in.MemberInfoResponse;
 import dandi.dandi.member.application.port.in.NicknameUpdateCommand;
 import dandi.dandi.member.application.port.out.MemberPersistencePort;
 import dandi.dandi.member.application.service.MemberService;
 import dandi.dandi.member.domain.Member;
-import dandi.dandi.member.web.dto.out.MemberInfoResponse;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
