@@ -1,4 +1,4 @@
-package dandi.dandi.pushnotification.adapter.out;
+package dandi.dandi.pushnotification.adapter.out.persistence;
 
 import dandi.dandi.pushnotification.domain.PushNotification;
 import dandi.dandi.pushnotification.domain.PushNotificationTime;
