@@ -4,10 +4,7 @@ import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
 
-@Embeddable
 public class PushNotificationTime {
 
     private static final int MINUTE_UNIT = 10;
@@ -19,11 +16,7 @@ public class PushNotificationTime {
         return INITIAL;
     }
 
-    @Column(name = "push_notification_time")
     private LocalTime value;
-
-    private PushNotificationTime() {
-    }
 
     private PushNotificationTime(LocalTime value) {
         validateZeroSecond(value);

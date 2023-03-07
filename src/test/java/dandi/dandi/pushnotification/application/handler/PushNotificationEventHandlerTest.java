@@ -1,10 +1,10 @@
-package dandi.dandi.pushnotification.handler;
+package dandi.dandi.pushnotification.application.handler;
 
 import static org.mockito.Mockito.verify;
 
 import dandi.dandi.member.domain.NewMemberCreatedEvent;
+import dandi.dandi.pushnotification.application.port.out.persistence.PushNotificationPersistencePort;
 import dandi.dandi.pushnotification.domain.PushNotification;
-import dandi.dandi.pushnotification.domain.PushNotificationRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,7 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class PushNotificationEventHandlerTest {
 
     @Mock
-    private PushNotificationRepository pushNotificationRepository;
+    private PushNotificationPersistencePort notificationPersistencePort;
 
     @InjectMocks
     private PushNotificationEventHandler pushNotificationEventHandler;
@@ -26,7 +26,6 @@ class PushNotificationEventHandlerTest {
     void savePushNotificationByMember() {
         pushNotificationEventHandler.savePushNotificationByMember(new NewMemberCreatedEvent(1L));
 
-        verify(pushNotificationRepository)
-                .save(PushNotification.initial(1L));
+        verify(notificationPersistencePort).save(PushNotification.initial(1L));
     }
 }

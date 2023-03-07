@@ -1,10 +1,10 @@
 package dandi.dandi.pushnotification.presentation;
 
 import dandi.dandi.auth.web.support.Login;
-import dandi.dandi.pushnotification.application.PushNotificationService;
 import dandi.dandi.pushnotification.application.dto.PushNotificationAllowanceUpdateRequest;
 import dandi.dandi.pushnotification.application.dto.PushNotificationResponse;
 import dandi.dandi.pushnotification.application.dto.PushNotificationTimeUpdateRequest;
+import dandi.dandi.pushnotification.application.sevice.PushNotificationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;

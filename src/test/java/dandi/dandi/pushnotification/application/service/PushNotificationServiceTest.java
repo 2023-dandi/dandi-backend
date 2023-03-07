@@ -1,4 +1,4 @@
-package dandi.dandi.pushnotification.application;
+package dandi.dandi.pushnotification.application.service;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -10,8 +10,10 @@ import dandi.dandi.advice.InternalServerException;
 import dandi.dandi.pushnotification.application.dto.PushNotificationAllowanceUpdateRequest;
 import dandi.dandi.pushnotification.application.dto.PushNotificationResponse;
 import dandi.dandi.pushnotification.application.dto.PushNotificationTimeUpdateRequest;
+import dandi.dandi.pushnotification.application.port.out.persistence.PushNotificationPersistencePort;
+import dandi.dandi.pushnotification.application.sevice.PushNotificationService;
 import dandi.dandi.pushnotification.domain.PushNotification;
-import dandi.dandi.pushnotification.domain.PushNotificationRepository;
+import dandi.dandi.pushnotification.domain.PushNotificationTime;
 import java.time.LocalTime;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
@@ -19,14 +21,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class PushNotificationServiceTest {
 
+    private static final PushNotification PUSH_NOTIFICATION =
+            new PushNotification(1L, 1L, PushNotificationTime.from(LocalTime.MIDNIGHT), true);
+
     @Mock
-    private PushNotificationRepository pushNotificationRepository;
+    private PushNotificationPersistencePort pushNotificationPersistencePort;
 
     @InjectMocks
     private PushNotificationService pushNotificationService;
@@ -35,7 +39,7 @@ class PushNotificationServiceTest {
     @Test
     void findPushNotification() {
         Long memberId = 1L;
-        when(pushNotificationRepository.findPushNotificationByMemberId(memberId))
+        when(pushNotificationPersistencePort.findPushNotificationByMemberId(memberId))
                 .thenReturn(Optional.of(PushNotification.initial(memberId)));
 
         PushNotificationResponse pushNotificationResponse = pushNotificationService.findPushNotification(memberId);
@@ -50,7 +54,7 @@ class PushNotificationServiceTest {
     @Test
     void findPushNotification_NotFoundPushNotification() {
         Long notFoundPushNotificationMemberId = 1L;
-        when(pushNotificationRepository.findPushNotificationByMemberId(notFoundPushNotificationMemberId))
+        when(pushNotificationPersistencePort.findPushNotificationByMemberId(notFoundPushNotificationMemberId))
                 .thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> pushNotificationService.findPushNotification(notFoundPushNotificationMemberId))
@@ -61,29 +65,26 @@ class PushNotificationServiceTest {
     @DisplayName("회원의 푸시 알림 시간을 변경할 수 있다.")
     @Test
     void updatePushNotificationTime() {
-        Long memberId = 1L;
-        PushNotification pushNotification = Mockito.mock(PushNotification.class);
         LocalTime newPushNotificationTime = LocalTime.of(10, 20);
-        when(pushNotificationRepository.findPushNotificationByMemberId(memberId))
-                .thenReturn(Optional.of(pushNotification));
+        when(pushNotificationPersistencePort.findPushNotificationByMemberId(PUSH_NOTIFICATION.getMemberId()))
+                .thenReturn(Optional.of(PUSH_NOTIFICATION));
 
         pushNotificationService.updatePushNotificationTime(
-                memberId, new PushNotificationTimeUpdateRequest(newPushNotificationTime));
+                PUSH_NOTIFICATION.getMemberId(), new PushNotificationTimeUpdateRequest(newPushNotificationTime));
 
-        verify(pushNotification).updatePushNotificationTime(newPushNotificationTime);
+        verify(pushNotificationPersistencePort)
+                .updatePushNotificationTime(PUSH_NOTIFICATION.getId(), newPushNotificationTime);
     }
 
     @DisplayName("회원의 푸시 알림 허용 여부를 변경할 수 있다.")
     @Test
     void updatePushNotificationAllowance() {
-        Long memberId = 1L;
-        PushNotification pushNotification = Mockito.mock(PushNotification.class);
-        when(pushNotificationRepository.findPushNotificationByMemberId(memberId))
-                .thenReturn(Optional.of(pushNotification));
+        when(pushNotificationPersistencePort.findPushNotificationByMemberId(PUSH_NOTIFICATION.getMemberId()))
+                .thenReturn(Optional.of(PUSH_NOTIFICATION));
 
         pushNotificationService.updatePushNotificationAllowance(
-                memberId, new PushNotificationAllowanceUpdateRequest(true));
+                PUSH_NOTIFICATION.getMemberId(), new PushNotificationAllowanceUpdateRequest(true));
 
-        verify(pushNotification).updateAllowance(true);
+        verify(pushNotificationPersistencePort).updatePushNotificationAllowance(PUSH_NOTIFICATION.getId(), true);
     }
 }

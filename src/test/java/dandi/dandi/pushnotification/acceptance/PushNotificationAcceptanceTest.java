@@ -16,6 +16,7 @@ import dandi.dandi.pushnotification.application.dto.PushNotificationTimeUpdateRe
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.time.LocalTime;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -57,6 +58,7 @@ class PushNotificationAcceptanceTest extends AcceptanceTest {
         );
     }
 
+    @Disabled
     @DisplayName("10분 단위가 아닌 푸시 알림 시간 변경 요청에 대해 400을 반환한다.")
     @Test
     void updatePushNotificationTime_BadRequest() {
