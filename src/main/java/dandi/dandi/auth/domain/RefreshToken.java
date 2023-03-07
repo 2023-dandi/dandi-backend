@@ -5,13 +5,10 @@ import java.util.UUID;
 
 public class RefreshToken {
 
-    private Long id;
-
-    private Long memberId;
-
-    private LocalDateTime expired;
-
-    private String value;
+    private final Long id;
+    private final Long memberId;
+    private final LocalDateTime expired;
+    private final String value;
 
     public RefreshToken(Long id, Long memberId, LocalDateTime expired, String value) {
         this.id = id;

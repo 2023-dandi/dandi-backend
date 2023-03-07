@@ -2,15 +2,11 @@ package dandi.dandi.member.domain;
 
 public class Member {
 
-    private Long id;
-
-    private String oAuthId;
-
-    private String nickname;
-
-    private Location location;
-
-    private String profileImgUrl;
+    private final Long id;
+    private final String oAuthId;
+    private final String nickname;
+    private final Location location;
+    private final String profileImgUrl;
 
     public Member(Long id, String oAuthId, String nickname, Location location, String profileImgUrl) {
         this.id = id;

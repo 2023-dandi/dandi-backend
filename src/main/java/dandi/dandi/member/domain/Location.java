@@ -6,9 +6,8 @@ public class Location {
 
     private static final Location INITIAL_LOCATION = new Location(0.0, 0.0);
 
-    private double latitude;
-
-    private double longitude;
+    private final double latitude;
+    private final double longitude;
 
     public Location(double latitude, double longitude) {
         this.latitude = latitude;

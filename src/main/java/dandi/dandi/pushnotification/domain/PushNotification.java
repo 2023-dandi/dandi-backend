@@ -5,10 +5,10 @@ import java.util.Objects;
 
 public class PushNotification {
 
-    private Long id;
-    private Long memberId;
-    private PushNotificationTime pushNotificationTime;
-    private boolean allowance;
+    private final Long id;
+    private final Long memberId;
+    private final PushNotificationTime pushNotificationTime;
+    private final boolean allowance;
 
     public PushNotification(Long id, Long memberId, PushNotificationTime pushNotificationTime, boolean allowance) {
         this.id = id;

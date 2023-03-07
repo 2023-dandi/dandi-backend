@@ -14,7 +14,7 @@ public class PushNotificationTime {
         return INITIAL;
     }
 
-    private LocalTime value;
+    private final LocalTime value;
 
     private PushNotificationTime(LocalTime value) {
         this.value = value;
