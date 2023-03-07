@@ -10,13 +10,12 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import dandi.dandi.common.AcceptanceTest;
-import dandi.dandi.pushnotification.application.dto.PushNotificationAllowanceUpdateRequest;
-import dandi.dandi.pushnotification.application.dto.PushNotificationResponse;
-import dandi.dandi.pushnotification.application.dto.PushNotificationTimeUpdateRequest;
+import dandi.dandi.pushnotification.application.port.in.PushNotificationResponse;
+import dandi.dandi.pushnotification.web.dto.PushNotificationAllowanceUpdateRequest;
+import dandi.dandi.pushnotification.web.dto.PushNotificationTimeUpdateRequest;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.time.LocalTime;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -58,7 +57,6 @@ class PushNotificationAcceptanceTest extends AcceptanceTest {
         );
     }
 
-    @Disabled
     @DisplayName("10분 단위가 아닌 푸시 알림 시간 변경 요청에 대해 400을 반환한다.")
     @Test
     void updatePushNotificationTime_BadRequest() {

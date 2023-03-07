@@ -1,10 +1,10 @@
-package dandi.dandi.pushnotification.presentation;
+package dandi.dandi.pushnotification.web;
 
 import dandi.dandi.auth.web.support.Login;
-import dandi.dandi.pushnotification.application.dto.PushNotificationAllowanceUpdateRequest;
-import dandi.dandi.pushnotification.application.dto.PushNotificationResponse;
-import dandi.dandi.pushnotification.application.dto.PushNotificationTimeUpdateRequest;
+import dandi.dandi.pushnotification.application.port.in.PushNotificationResponse;
 import dandi.dandi.pushnotification.application.sevice.PushNotificationService;
+import dandi.dandi.pushnotification.web.dto.PushNotificationAllowanceUpdateRequest;
+import dandi.dandi.pushnotification.web.dto.PushNotificationTimeUpdateRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -30,14 +30,15 @@ public class PushNotificationController implements PushNotificationControllerDoc
     @PatchMapping("/time")
     public ResponseEntity<Void> updatePushNotificationTime(@Login Long memberId,
                                                            @RequestBody PushNotificationTimeUpdateRequest pushNotificationTimeUpdateRequest) {
-        pushNotificationService.updatePushNotificationTime(memberId, pushNotificationTimeUpdateRequest);
+        pushNotificationService.updatePushNotificationTime(memberId, pushNotificationTimeUpdateRequest.toCommand());
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/allowance")
     public ResponseEntity<Void> updatePushNotificationAllowance(@Login Long memberId,
                                                                 @RequestBody PushNotificationAllowanceUpdateRequest pushNotificationAllowanceUpdateRequest) {
-        pushNotificationService.updatePushNotificationAllowance(memberId, pushNotificationAllowanceUpdateRequest);
+        pushNotificationService.updatePushNotificationAllowance(memberId,
+                pushNotificationAllowanceUpdateRequest.toCommand());
         return ResponseEntity.noContent().build();
     }
 }

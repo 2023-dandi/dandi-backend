@@ -1,6 +1,7 @@
-package dandi.dandi.pushnotification.application.dto;
+package dandi.dandi.pushnotification.web.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import dandi.dandi.pushnotification.application.port.in.PushNotificationTimeUpdateCommand;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalTime;
 
@@ -17,7 +18,7 @@ public class PushNotificationTimeUpdateRequest {
         this.newPushNotificationTime = newPushNotificationTime;
     }
 
-    public LocalTime getNewPushNotificationTime() {
-        return newPushNotificationTime;
+    public PushNotificationTimeUpdateCommand toCommand() {
+        return new PushNotificationTimeUpdateCommand(newPushNotificationTime);
     }
 }

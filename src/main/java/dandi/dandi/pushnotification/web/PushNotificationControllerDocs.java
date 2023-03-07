@@ -1,11 +1,11 @@
-package dandi.dandi.pushnotification.presentation;
+package dandi.dandi.pushnotification.web;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 import dandi.dandi.advice.ExceptionResponse;
-import dandi.dandi.pushnotification.application.dto.PushNotificationAllowanceUpdateRequest;
-import dandi.dandi.pushnotification.application.dto.PushNotificationResponse;
-import dandi.dandi.pushnotification.application.dto.PushNotificationTimeUpdateRequest;
+import dandi.dandi.pushnotification.application.port.in.PushNotificationResponse;
+import dandi.dandi.pushnotification.web.dto.PushNotificationAllowanceUpdateRequest;
+import dandi.dandi.pushnotification.web.dto.PushNotificationTimeUpdateRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;

@@ -1,4 +1,4 @@
-package dandi.dandi.auth.application.port.out;
+package dandi.dandi.auth.application.port.in;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 

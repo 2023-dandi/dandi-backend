@@ -4,8 +4,8 @@ import static dandi.dandi.auth.web.support.RefreshTokenCookieProvider.REFRESH_TO
 import static org.springframework.http.HttpStatus.CREATED;
 
 import dandi.dandi.auth.application.port.in.AuthUseCase;
-import dandi.dandi.auth.application.port.out.LoginResponse;
-import dandi.dandi.auth.application.port.out.TokenResponse;
+import dandi.dandi.auth.application.port.in.LoginResponse;
+import dandi.dandi.auth.application.port.in.TokenResponse;
 import dandi.dandi.auth.web.in.LoginRequest;
 import dandi.dandi.auth.web.support.Login;
 import org.springframework.http.ResponseEntity;

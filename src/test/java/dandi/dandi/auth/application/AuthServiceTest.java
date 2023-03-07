@@ -11,8 +11,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import dandi.dandi.auth.application.port.in.LoginCommand;
-import dandi.dandi.auth.application.port.out.LoginResponse;
-import dandi.dandi.auth.application.port.out.TokenResponse;
+import dandi.dandi.auth.application.port.in.LoginResponse;
+import dandi.dandi.auth.application.port.in.TokenResponse;
 import dandi.dandi.auth.application.port.out.jwt.AccessTokenManagerPort;
 import dandi.dandi.auth.application.port.out.jwt.RefreshTokenManagerPort;
 import dandi.dandi.auth.application.port.out.oauth.OAuthClientPort;

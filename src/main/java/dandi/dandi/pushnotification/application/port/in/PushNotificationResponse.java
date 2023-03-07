@@ -1,4 +1,4 @@
-package dandi.dandi.pushnotification.application.dto;
+package dandi.dandi.pushnotification.application.port.in;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import dandi.dandi.pushnotification.domain.PushNotification;

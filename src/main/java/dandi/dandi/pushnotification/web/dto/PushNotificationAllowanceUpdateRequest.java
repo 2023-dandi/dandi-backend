@@ -1,6 +1,7 @@
-package dandi.dandi.pushnotification.application.dto;
+package dandi.dandi.pushnotification.web.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import dandi.dandi.pushnotification.application.port.in.PushNotificationAllowanceUpdateCommand;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 public class PushNotificationAllowanceUpdateRequest {
@@ -18,5 +19,9 @@ public class PushNotificationAllowanceUpdateRequest {
 
     public boolean isAllowed() {
         return allowed;
+    }
+
+    public PushNotificationAllowanceUpdateCommand toCommand() {
+        return new PushNotificationAllowanceUpdateCommand(allowed);
     }
 }

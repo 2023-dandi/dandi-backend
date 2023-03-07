@@ -7,9 +7,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import dandi.dandi.advice.InternalServerException;
-import dandi.dandi.pushnotification.application.dto.PushNotificationAllowanceUpdateRequest;
-import dandi.dandi.pushnotification.application.dto.PushNotificationResponse;
-import dandi.dandi.pushnotification.application.dto.PushNotificationTimeUpdateRequest;
+import dandi.dandi.pushnotification.application.port.in.PushNotificationAllowanceUpdateCommand;
+import dandi.dandi.pushnotification.application.port.in.PushNotificationResponse;
+import dandi.dandi.pushnotification.application.port.in.PushNotificationTimeUpdateCommand;
 import dandi.dandi.pushnotification.application.port.out.persistence.PushNotificationPersistencePort;
 import dandi.dandi.pushnotification.application.sevice.PushNotificationService;
 import dandi.dandi.pushnotification.domain.PushNotification;
@@ -70,7 +70,7 @@ class PushNotificationServiceTest {
                 .thenReturn(Optional.of(PUSH_NOTIFICATION));
 
         pushNotificationService.updatePushNotificationTime(
-                PUSH_NOTIFICATION.getMemberId(), new PushNotificationTimeUpdateRequest(newPushNotificationTime));
+                PUSH_NOTIFICATION.getMemberId(), new PushNotificationTimeUpdateCommand(newPushNotificationTime));
 
         verify(pushNotificationPersistencePort)
                 .updatePushNotificationTime(PUSH_NOTIFICATION.getId(), newPushNotificationTime);
@@ -83,7 +83,7 @@ class PushNotificationServiceTest {
                 .thenReturn(Optional.of(PUSH_NOTIFICATION));
 
         pushNotificationService.updatePushNotificationAllowance(
-                PUSH_NOTIFICATION.getMemberId(), new PushNotificationAllowanceUpdateRequest(true));
+                PUSH_NOTIFICATION.getMemberId(), new PushNotificationAllowanceUpdateCommand(true));
 
         verify(pushNotificationPersistencePort).updatePushNotificationAllowance(PUSH_NOTIFICATION.getId(), true);
     }

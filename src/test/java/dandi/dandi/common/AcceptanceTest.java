@@ -6,7 +6,7 @@ import static org.mockito.Mockito.when;
 
 import com.amazonaws.services.s3.AmazonS3;
 import dandi.dandi.auth.adapter.out.jwt.RefreshTokenManagerAdapter;
-import dandi.dandi.auth.application.port.out.TokenResponse;
+import dandi.dandi.auth.application.port.in.TokenResponse;
 import dandi.dandi.auth.application.port.out.oauth.OAuthClientPort;
 import dandi.dandi.auth.web.in.LoginRequest;
 import dandi.dandi.config.AsyncTestConfig;
