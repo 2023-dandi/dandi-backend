@@ -1,6 +1,5 @@
-package dandi.dandi.pushnotification.domain;
+package dandi.dandi.pushnotification.adapter.out.persistence;
 
-import dandi.dandi.pushnotification.adapter.out.persistence.PushNotificationJpaEntity;
 import java.time.LocalTime;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;

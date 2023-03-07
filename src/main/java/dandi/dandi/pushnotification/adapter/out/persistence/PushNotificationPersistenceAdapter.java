@@ -2,7 +2,6 @@ package dandi.dandi.pushnotification.adapter.out.persistence;
 
 import dandi.dandi.pushnotification.application.port.out.persistence.PushNotificationPersistencePort;
 import dandi.dandi.pushnotification.domain.PushNotification;
-import dandi.dandi.pushnotification.domain.PushNotificationRepository;
 import java.time.LocalTime;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
