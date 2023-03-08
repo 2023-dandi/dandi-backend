@@ -9,16 +9,16 @@ public class PushNotificationTimeUpdateRequest {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm", timezone = "Asia/Seoul")
     @Schema(example = "20:30")
-    private LocalTime newPushNotificationTime;
+    private LocalTime pushNotificationTime;
 
     public PushNotificationTimeUpdateRequest() {
     }
 
-    public PushNotificationTimeUpdateRequest(LocalTime newPushNotificationTime) {
-        this.newPushNotificationTime = newPushNotificationTime;
+    public PushNotificationTimeUpdateRequest(LocalTime pushNotificationTime) {
+        this.pushNotificationTime = pushNotificationTime;
     }
 
     public PushNotificationTimeUpdateCommand toCommand() {
-        return new PushNotificationTimeUpdateCommand(newPushNotificationTime);
+        return new PushNotificationTimeUpdateCommand(pushNotificationTime);
     }
 }
