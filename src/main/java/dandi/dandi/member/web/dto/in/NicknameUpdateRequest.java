@@ -5,21 +5,21 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 public class NicknameUpdateRequest {
 
-    @Schema(example = "new Nickname")
-    private String newNickname;
+    @Schema(example = "neNickname")
+    private String nickname;
 
     public NicknameUpdateRequest() {
     }
 
-    public NicknameUpdateRequest(String newNickname) {
-        this.newNickname = newNickname;
+    public NicknameUpdateRequest(String nickname) {
+        this.nickname = nickname;
     }
 
-    public String getNewNickname() {
-        return newNickname;
+    public String getNickname() {
+        return nickname;
     }
 
     public NicknameUpdateCommand toCommand() {
-        return new NicknameUpdateCommand(newNickname);
+        return new NicknameUpdateCommand(nickname);
     }
 }
