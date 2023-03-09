@@ -8,6 +8,7 @@ import dandi.dandi.member.application.port.in.NicknameDuplicationCheckResponse;
 import dandi.dandi.member.application.port.in.NicknameUpdateCommand;
 import dandi.dandi.member.application.port.out.MemberPersistencePort;
 import dandi.dandi.member.domain.Member;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,16 +16,22 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberService implements MemberUseCase {
 
     private final MemberPersistencePort memberPersistencePort;
+    private final String initialProfileImageUrl;
 
-    public MemberService(MemberPersistencePort memberPersistencePort) {
+    public MemberService(MemberPersistencePort memberPersistencePort,
+                         @Value("${image.member-initial-profile-image-url}") String initialProfileImageUrl) {
         this.memberPersistencePort = memberPersistencePort;
+        this.initialProfileImageUrl = initialProfileImageUrl;
     }
 
     @Override
     @Transactional(readOnly = true)
     public MemberInfoResponse findMemberInfo(Long memberId) {
         Member member = findMember(memberId);
-        return new MemberInfoResponse(member);
+        if (member.hasProfileImgUrl(initialProfileImageUrl)) {
+            return MemberInfoResponse.fromInitialProfileImageMember(member);
+        }
+        return MemberInfoResponse.fromCustomProfileImageMember(member);
     }
 
     @Override

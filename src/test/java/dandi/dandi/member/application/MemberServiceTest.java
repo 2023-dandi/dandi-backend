@@ -18,28 +18,31 @@ import dandi.dandi.member.application.port.out.MemberPersistencePort;
 import dandi.dandi.member.application.service.MemberService;
 import dandi.dandi.member.domain.Member;
 import java.util.Optional;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class MemberServiceTest {
 
-    @Mock
-    private MemberPersistencePort memberPersistencePort;
+    private static final String CUSTOM_INITIAL_PROFILE_IMAGE = "notInitialProfileImage";
 
-    @InjectMocks
-    private MemberService memberService;
+    private final MemberPersistencePort memberPersistencePort = Mockito.mock(MemberPersistencePort.class);
+    private final MemberService memberService = new MemberService(memberPersistencePort, INITIAL_PROFILE_IMAGE_URL);
 
-    @DisplayName("회원의 정보를 반환할 수 있다.")
-    @Test
-    void findMemberInfo() {
+    @DisplayName("회원의 정보를 반환할 수 있다. 기본 프로필 이미지라면 프로필 이미지가 null이 반환되고 변경했다면 이미지 url을 반환한다.")
+    @ParameterizedTest
+    @MethodSource("provideProfileImageAndExpectedReturnedProfileImageUrl")
+    void findMemberInfo(String profileImageUrl, String returnedProfileImageUrl) {
         Long memberId = 1L;
         when(memberPersistencePort.findById(memberId))
-                .thenReturn(Optional.of(Member.initial(OAUTH_ID, NICKNAME, INITIAL_PROFILE_IMAGE_URL)));
+                .thenReturn(Optional.of(Member.initial(OAUTH_ID, NICKNAME, profileImageUrl)));
 
         MemberInfoResponse memberInfoResponse = memberService.findMemberInfo(memberId);
 
@@ -47,7 +50,14 @@ class MemberServiceTest {
                 () -> assertThat(memberInfoResponse.getNickname()).isEqualTo(NICKNAME),
                 () -> assertThat(memberInfoResponse.getLatitude()).isEqualTo(0.0),
                 () -> assertThat(memberInfoResponse.getLongitude()).isEqualTo(0.0),
-                () -> assertThat(memberInfoResponse.getProfileImageUrl()).isEqualTo(INITIAL_PROFILE_IMAGE_URL)
+                () -> assertThat(memberInfoResponse.getProfileImageUrl()).isEqualTo(returnedProfileImageUrl)
+        );
+    }
+
+    private static Stream<Arguments> provideProfileImageAndExpectedReturnedProfileImageUrl() {
+        return Stream.of(
+                Arguments.of(INITIAL_PROFILE_IMAGE_URL, null),
+                Arguments.of(CUSTOM_INITIAL_PROFILE_IMAGE, CUSTOM_INITIAL_PROFILE_IMAGE)
         );
     }
 
