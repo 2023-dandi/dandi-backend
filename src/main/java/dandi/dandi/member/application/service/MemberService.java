@@ -9,6 +9,7 @@ import dandi.dandi.member.application.port.in.NicknameUpdateCommand;
 import dandi.dandi.member.application.port.out.MemberPersistencePort;
 import dandi.dandi.member.domain.Member;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,7 +39,11 @@ public class MemberService implements MemberUseCase {
     @Transactional
     public void updateNickname(Long memberId, NicknameUpdateCommand nicknameUpdateCommand) {
         Member member = findMember(memberId);
-        memberPersistencePort.updateNickname(member.getId(), nicknameUpdateCommand.getNickname());
+        try {
+            memberPersistencePort.updateNickname(member.getId(), nicknameUpdateCommand.getNickname());
+        } catch (DataIntegrityViolationException e) {
+            throw new IllegalArgumentException("이미 존재하는 닉네임입니다.");
+        }
     }
 
     @Override

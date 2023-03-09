@@ -7,6 +7,7 @@ import static dandi.dandi.member.MemberTestFixture.TEST_MEMBER;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -27,6 +28,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.dao.DataIntegrityViolationException;
 
 @ExtendWith(MockitoExtension.class)
 class MemberServiceTest {
@@ -84,6 +86,21 @@ class MemberServiceTest {
         memberService.updateNickname(TEST_MEMBER.getId(), nicknameUpdateCommand);
 
         verify(memberPersistencePort).updateNickname(TEST_MEMBER.getId(), newNickname);
+    }
+
+    @DisplayName("이미 존재하는 닉네임으로 변경하려하면 예외를 발생시킨다.")
+    @Test
+    void updateNickname_DuplicationNicknameException() {
+        String newNickname = "newNickname";
+        NicknameUpdateCommand nicknameUpdateCommand = new NicknameUpdateCommand(newNickname);
+        when(memberPersistencePort.findById(TEST_MEMBER.getId()))
+                .thenReturn(Optional.of(TEST_MEMBER));
+        doThrow(new DataIntegrityViolationException("unique constraint violation"))
+                .when(memberPersistencePort).updateNickname(TEST_MEMBER.getId(), newNickname);
+
+        assertThatThrownBy(() -> memberService.updateNickname(TEST_MEMBER.getId(), nicknameUpdateCommand))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("이미 존재하는 닉네임입니다.");
     }
 
     @DisplayName("회원의 위치 정보를 변경할 수 있다.")

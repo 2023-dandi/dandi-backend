@@ -20,7 +20,7 @@ public class MemberJpaEntity {
 
     private String oAuthId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String nickname;
 
     private double latitude;

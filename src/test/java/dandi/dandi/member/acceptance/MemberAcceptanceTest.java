@@ -3,20 +3,26 @@ package dandi.dandi.member.acceptance;
 import static dandi.dandi.common.HttpMethodFixture.httpGet;
 import static dandi.dandi.common.HttpMethodFixture.httpGetWithAuthorization;
 import static dandi.dandi.common.HttpMethodFixture.httpPatchWithAuthorization;
+import static dandi.dandi.common.HttpMethodFixture.httpPost;
 import static dandi.dandi.common.HttpMethodFixture.httpPutWithAuthorizationAndImgFile;
 import static dandi.dandi.common.HttpResponseExtractor.extractExceptionMessage;
+import static dandi.dandi.common.RequestURI.LOGIN_REQUEST_URI;
 import static dandi.dandi.common.RequestURI.MEMBER_INFO_URI;
 import static dandi.dandi.common.RequestURI.MEMBER_NICKNAME_DUPLICATION_CHECK_URI;
 import static dandi.dandi.common.RequestURI.MEMBER_NICKNAME_LOCATION;
 import static dandi.dandi.common.RequestURI.MEMBER_NICKNAME_URI;
 import static dandi.dandi.common.RequestURI.MEMBER_PROFILE_IMAGE_URI;
+import static dandi.dandi.member.MemberTestFixture.OAUTH_ID;
 import static dandi.dandi.utils.image.TestImageUtils.TEST_IMAGE_FILE_NAME;
 import static dandi.dandi.utils.image.TestImageUtils.generatetestImgFile;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 import com.amazonaws.AmazonClientException;
+import dandi.dandi.auth.application.port.in.TokenResponse;
+import dandi.dandi.auth.web.in.LoginRequest;
 import dandi.dandi.common.AcceptanceTest;
 import dandi.dandi.member.application.port.in.MemberInfoResponse;
 import dandi.dandi.member.application.port.in.NicknameDuplicationCheckResponse;
@@ -90,6 +96,28 @@ class MemberAcceptanceTest extends AcceptanceTest {
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value()),
                 () -> assertThat(nicknameAfterNicknameUpdateRequest).isEqualTo(newNickname)
         );
+    }
+
+    @DisplayName("이미 존재하는 닉네임으로 닉네임을 변경을 하려는 요청에 대해 400을 반환한다.")
+    @Test
+    void updateMemberNickname_DuplicatedNickname() {
+        String token = getToken();
+        String anotherMemberAppleIdToken = "anotherMemberAppleIdToken";
+        String anotherMemberAuthId = "anotherMemberAuthId";
+        when(oAuthClientPort.getOAuthMemberId(anotherMemberAppleIdToken))
+                .thenReturn(OAUTH_ID);
+        String anotherMemberAccessToken = httpPost(new LoginRequest(anotherMemberAuthId), LOGIN_REQUEST_URI)
+                .jsonPath()
+                .getObject(".", TokenResponse.class)
+                .getAccessToken();
+        String newNickname = "newNickname";
+        httpPatchWithAuthorization(MEMBER_NICKNAME_URI, new NicknameUpdateRequest(newNickname),
+                anotherMemberAccessToken);
+
+        ExtractableResponse<Response> response =
+                httpPatchWithAuthorization(MEMBER_NICKNAME_URI, new NicknameUpdateRequest(newNickname), token);
+
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
     }
 
     @DisplayName("규칙에 어긋나는 회원 닉네임 변경 요청에 대해 400을 반환한다.")
