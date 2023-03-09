@@ -5,10 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 public class LocationUpdateRequest {
 
-    @Schema(example = "위도")
     private Double latitude;
-
-    @Schema(example = "경도")
     private Double longitude;
 
     public LocationUpdateRequest() {

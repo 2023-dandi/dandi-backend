@@ -5,7 +5,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 public class LoginRequest {
 
-    @Schema(example = "Identity Token From Apple Server")
     private String idToken;
 
     public LoginRequest() {

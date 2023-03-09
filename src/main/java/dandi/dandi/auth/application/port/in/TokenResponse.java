@@ -1,13 +1,8 @@
 package dandi.dandi.auth.application.port.in;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-
 public class TokenResponse {
 
-    @Schema(example = "Access Token")
     private String accessToken;
-
-    @Schema(example = "Refresh Token")
     private String refreshToken;
 
     public TokenResponse(LoginResponse loginResponse) {

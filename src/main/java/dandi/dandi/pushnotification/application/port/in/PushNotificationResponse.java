@@ -7,10 +7,7 @@ import java.time.LocalTime;
 
 public class PushNotificationResponse {
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm", timezone = "Asia/Seoul")
-    @Schema(example = "10:20")
     private LocalTime pushNotificationTime;
-    @Schema
     private boolean allowance;
 
     public PushNotificationResponse() {

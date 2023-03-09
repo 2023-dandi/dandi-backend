@@ -5,7 +5,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 public class NicknameUpdateRequest {
 
-    @Schema(example = "neNickname")
     private String nickname;
 
     public NicknameUpdateRequest() {

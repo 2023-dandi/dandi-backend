@@ -7,7 +7,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public class PushNotificationAllowanceUpdateRequest {
 
     @JsonFormat
-    @Schema(example = "true")
     private Boolean allowed;
 
     public PushNotificationAllowanceUpdateRequest() {
