@@ -39,7 +39,8 @@ public interface MemberControllerDocs {
     @Operation(summary = "닉네임 변경", parameters = @Parameter(name = AUTHORIZATION, in = ParameterIn.HEADER, required = true, example = "Bearer ${token}"))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "닉네임 정상 변경"),
-            @ApiResponse(responseCode = "400", description = "규칙에 어긋나는 닉네임",
+            @ApiResponse(responseCode = "400", description = "규칙에 어긋나는 닉네임\t\n"
+                    + "이미 존재하는 닉네임",
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
     })
     ResponseEntity<Void> updateMemberNickname(@Parameter(hidden = true) Long memberId,
