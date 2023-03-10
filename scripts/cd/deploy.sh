@@ -17,3 +17,4 @@ nohup java -jar "-Dspring.profiles.active=dev \
 
 EXECUTED_PROCESS_PID=$(pgrep -f $JAR_FILE)
 echo "$CURRENT_TIME > executed process pid = $EXECUTED_PROCESS_PID" >>$DEPLOY_LOG
+curl -s -d "payload={\"text\":\"Application Execution : $EXECUTED_PROCESS_PID\"}" "${SLACK_WEBHOOK_URI}"
