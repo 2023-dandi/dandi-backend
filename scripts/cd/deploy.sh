@@ -2,7 +2,6 @@ PROJECT_ROOT="/home/ubuntu/dandi-project"
 JAR_FILE="$PROJECT_ROOT/dandi.jar"
 
 APP_LOG="$PROJECT_ROOT/application-log"
-ERROR_LOG="$PROJECT_ROOT/error-log"
 DEPLOY_LOG="$PROJECT_ROOT/deploy-log"
 
 CURRENT_TIME=$(date +%c)
