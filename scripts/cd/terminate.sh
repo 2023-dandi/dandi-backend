@@ -1,4 +1,4 @@
-PROJECT_ROOT="/home/ubuntu/dandi-project"
+PROJECT_ROOT="/home/ubuntu"
 DEPLOY_LOG="$PROJECT_ROOT/deploy.log"
 TIME_NOW=$(date +%c)
 
