@@ -8,7 +8,7 @@ DEPLOY_LOG="$PROJECT_ROOT/deploy-log"
 CURRENT_TIME=$(date +%c)
 
 echo "$CURRENT_TIME > $JAR_FILE 파일 복사" >>$DEPLOY_LOG
-cp $PROJECT_ROOT/build/libs/*.jar $JAR_FILE
+cp $PROJECT_ROOT/build/libs/*.jar $PROJECT_ROOT
 
 echo "$CURRENT_TIME > $JAR_FILE 파일 실행" >>$DEPLOY_LOG
 nohup java -jar "-Dspring.profiles.active=dev \
