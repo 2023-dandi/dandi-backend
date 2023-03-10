@@ -6,14 +6,12 @@ ERROR_LOG="$PROJECT_ROOT/error-log"
 DEPLOY_LOG="$PROJECT_ROOT/deploy-log"
 
 CURRENT_TIME=$(date +%c)
+cd $PROJECT_ROOT/build/libs
 
-echo "$CURRENT_TIME > $JAR_FILE 파일 복사" >>$DEPLOY_LOG
-cp $PROJECT_ROOT/build/libs/*.jar $PROJECT_ROOT
-
-echo "$CURRENT_TIME > $JAR_FILE 파일 실행" >>$DEPLOY_LOG
 nohup java -jar "-Dspring.profiles.active=dev \
 -DLog4jContextSelector=org.apache.logging.log4j.core.async.AsyncLoggerContextSelector \
--Dlog4j2.enable.threadlocals=true -Dlog4j2.enable.direct.encoders=true" $JAR_FILE &
+-Dlog4j2.enable.threadlocals=true -Dlog4j2.enable.direct.encoders=true" *.jar &
+echo "$CURRENT_TIME > jar 파일 실행" >>$DEPLOY_LOG
 
 EXECUTED_PROCESS_PID=$(pgrep -f $JAR_FILE)
 echo "$CURRENT_TIME > executed process pid = $EXECUTED_PROCESS_PID" >>$DEPLOY_LOG
