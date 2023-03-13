@@ -1,0 +1,23 @@
+version: 0.0
+os: linux
+
+files:
+  - source: /
+    destination: /home/ubuntu/dandi-project
+    overwrite: yes
+
+permissions:
+  - object: /
+    pattern: "**"
+    owner: ubuntu
+    group: ubuntu
+
+hooks:
+  AfterInstall:
+    - location: scripts/cd/terminate.sh
+      timeout: 60
+      runas: ubuntu
+  ApplicationStart:
+    - location: scripts/cd/deploy.sh
+      timeout: 60
+      runas: ubuntu
