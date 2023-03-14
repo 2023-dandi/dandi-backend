@@ -1,5 +1,6 @@
 package dandi.dandi.common.validation;
 
+import java.util.ArrayList;
 import java.util.Set;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -19,6 +20,14 @@ public abstract class SelfValidating<T> {
         Set<ConstraintViolation<T>> violations = validator.validate((T) this);
         if (!violations.isEmpty()) {
             throw new IllegalArgumentException(message);
+        }
+    }
+
+    protected void validateSelf() {
+        Set<ConstraintViolation<T>> violations = validator.validate((T) this);
+        if (!violations.isEmpty()) {
+            ConstraintViolation<T> violation = new ArrayList<>(violations).get(0);
+            throw new IllegalArgumentException(violation.getMessage());
         }
     }
 }
