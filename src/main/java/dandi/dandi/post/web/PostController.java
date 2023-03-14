@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class PostController {
+public class PostController implements PostControllerDocs {
 
     private final PostUseCase postUseCase;
 
