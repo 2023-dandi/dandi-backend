@@ -17,9 +17,9 @@ import static org.mockito.Mockito.when;
 
 import com.amazonaws.SdkClientException;
 import dandi.dandi.auth.exception.UnauthorizedException;
+import dandi.dandi.image.application.out.ImageUploader;
 import dandi.dandi.image.exception.ImageUploadFailedException;
 import dandi.dandi.member.application.port.out.MemberPersistencePort;
-import dandi.dandi.member.application.port.out.ProfileImageUploader;
 import dandi.dandi.member.application.service.ProfileImageService;
 import dandi.dandi.member.domain.Member;
 import java.io.IOException;
@@ -42,9 +42,9 @@ class ProfileImageServiceTest {
     private static final String TEST_PROFILE_BUCKET_IMG_DIR = "test-dir";
 
     private final MemberPersistencePort memberPersistencePort = Mockito.mock(MemberPersistencePort.class);
-    private final ProfileImageUploader profileImageUploader = Mockito.mock(ProfileImageUploader.class);
+    private final ImageUploader imageUploader = Mockito.mock(ImageUploader.class);
     private final ProfileImageService profileImageService = new ProfileImageService(memberPersistencePort,
-            profileImageUploader, INITIAL_PROFILE_IMAGE_URL, TEST_PROFILE_BUCKET_IMG_DIR);
+            imageUploader, INITIAL_PROFILE_IMAGE_URL, TEST_PROFILE_BUCKET_IMG_DIR);
 
     @DisplayName("기본 프로필 사진이 아닌 회원의 프로필 사진을 변경하면 기존 사진을 삭제하고 사진을 업로드 한 후, 사진의 식별값을 반환한다.")
     @Test
@@ -60,7 +60,7 @@ class ProfileImageServiceTest {
 
         assertAll(
                 () -> assertThat(imgUrl).contains(TEST_PROFILE_BUCKET_IMG_DIR, TEST_IMAGE_FILE_NAME),
-                () -> verify(profileImageUploader).delete(anyString())
+                () -> verify(imageUploader).delete(anyString())
         );
     }
 
@@ -76,7 +76,7 @@ class ProfileImageServiceTest {
 
         assertAll(
                 () -> assertThat(imgUrl).contains(TEST_PROFILE_BUCKET_IMG_DIR, TEST_IMAGE_FILE_NAME),
-                () -> verify(profileImageUploader, never()).delete(anyString())
+                () -> verify(imageUploader, never()).delete(anyString())
         );
     }
 
@@ -88,7 +88,7 @@ class ProfileImageServiceTest {
         when(memberPersistencePort.findById(memberId))
                 .thenReturn(Optional.of(Member.initial(OAUTH_ID, NICKNAME, INITIAL_PROFILE_IMAGE_URL)));
         doThrow(exception)
-                .when(profileImageUploader)
+                .when(imageUploader)
                 .upload(anyString(), any());
 
         assertThatThrownBy(() -> profileImageService.updateProfileImage(memberId, generateTestImgMultipartFile()))
