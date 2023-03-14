@@ -15,4 +15,7 @@ public class RequestURI {
     public static final String PUSH_NOTIFICATION_REQUEST_URI = "/push-notification";
     public static final String PUSH_NOTIFICATION_TIME_REQUEST_URI = "/push-notification/time";
     public static final String PUSH_NOTIFICATION_ALLOWANCE_REQUEST_URI = "/push-notification/allowance";
+
+    public static final String POST_REGISTER_REQUEST_URI = "/posts";
+    public static final String POST_IMAGE_REGISTER_REQUEST_URI = "/posts/images";
 }
