@@ -30,7 +30,7 @@ public interface PostControllerDocs {
     ResponseEntity<Void> registerPostImage(@Parameter(hidden = true) Long memberId,
                                            @Parameter(hidden = true) MultipartFile profileImage);
 
-    @Operation(summary = "닉네임 변경", parameters = @Parameter(name = AUTHORIZATION, in = ParameterIn.HEADER, required = true, example = "Bearer ${token}"))
+    @Operation(summary = "게시글 등록", parameters = @Parameter(name = AUTHORIZATION, in = ParameterIn.HEADER, required = true, example = "Bearer ${token}"))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "닉네임 정상 변경", headers = {
                     @Header(name = HttpHeaders.LOCATION)}),
