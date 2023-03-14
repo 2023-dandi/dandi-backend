@@ -48,6 +48,21 @@ public class HttpMethodFixture {
                 .extract();
     }
 
+    public static ExtractableResponse<Response> httpPostWithAuthorizationAndImgFile(String path,
+                                                                                    String token,
+                                                                                    File file,
+                                                                                    String multiPartControlName) {
+        return RestAssured
+                .given().log().all()
+                .header(AUTHORIZATION, AUTHORIZATION_TYPE + token)
+                .contentType("multipart/form-data; boundary=------AaB03x")
+                .multiPart(multiPartControlName, file, MediaType.IMAGE_JPEG_VALUE)
+                .config(RestAssuredConfig.config().multiPartConfig(multiPartConfig().defaultBoundary("------AaB03x")))
+                .when().post(path)
+                .then().log().all()
+                .extract();
+    }
+
     public static ExtractableResponse<Response> httpPostWithAuthorizationAndCookie(String path, String token,
                                                                                    Map<String, Object> cookies) {
         return RestAssured
