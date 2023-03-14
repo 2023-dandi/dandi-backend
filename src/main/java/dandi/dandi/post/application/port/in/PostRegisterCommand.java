@@ -2,6 +2,8 @@ package dandi.dandi.post.application.port.in;
 
 import dandi.dandi.common.validation.SelfValidating;
 import java.util.List;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -11,6 +13,7 @@ public class PostRegisterCommand extends SelfValidating<PostRegisterCommand> {
     private static final String MAX_TEMPERATURE_NULL_EXCEPTION_MESSAGE = "최고 기온이 null입니다.";
     private static final String POST_IMAGE_URL_NULL_OR_BLANK_EXCEPTION_MESSAGE = "게시글 사진이 null 혹은 빈문자열입니다.";
     private static final String OUTFIT_FEELING_INDEX_NULL_EXCEPTION_MESSAGE = "착장 느낌이 null입니다.";
+    private static final String OUTFIT_FEELING_INDEX_RANGE_EXCEPTION_MESSAGE = "착장 느낌은 1 ~ 5의 값입니다.";
 
     @NotNull(message = MIN_TEMPERATURE_NULL_EXCEPTION_MESSAGE)
     private final Double minTemperature;
@@ -23,6 +26,8 @@ public class PostRegisterCommand extends SelfValidating<PostRegisterCommand> {
     private final String postImageUrl;
 
     @NotNull(message = OUTFIT_FEELING_INDEX_NULL_EXCEPTION_MESSAGE)
+    @Min(value = 1, message = OUTFIT_FEELING_INDEX_RANGE_EXCEPTION_MESSAGE)
+    @Max(value = 5, message = OUTFIT_FEELING_INDEX_RANGE_EXCEPTION_MESSAGE)
     private final Long feelingIndex;
 
     private final List<Long> additionalFeelingIndexes;
