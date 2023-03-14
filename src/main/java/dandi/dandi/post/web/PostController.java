@@ -2,7 +2,6 @@ package dandi.dandi.post.web;
 
 import dandi.dandi.auth.web.support.Login;
 import dandi.dandi.post.application.port.in.PostUseCase;
-import dandi.dandi.post.application.service.PostService;
 import dandi.dandi.post.web.in.PostRegisterRequest;
 import java.net.URI;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +14,7 @@ public class PostController implements PostControllerDocs {
 
     private final PostUseCase postUseCase;
 
-    public PostController(PostService postUseCase) {
+    public PostController(PostUseCase postUseCase) {
         this.postUseCase = postUseCase;
     }
 
