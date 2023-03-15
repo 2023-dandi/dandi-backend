@@ -1,12 +1,22 @@
 package dandi.dandi.post;
 
+import static dandi.dandi.member.MemberTestFixture.NICKNAME;
+
+import dandi.dandi.post.domain.Post;
+import dandi.dandi.post.domain.Temperatures;
+import dandi.dandi.post.domain.WeatherFeeling;
 import java.util.List;
 
 public class PostFixture {
 
     public static final double MIN_TEMPERATURE = 20.0;
     public static final double MAX_TEMPERATURE = 30.0;
+    public static final Temperatures TEMPERATURES = new Temperatures(MIN_TEMPERATURE, MAX_TEMPERATURE);
     public static final String POST_IMAGE_URL = "postImageUrl";
     public static final Long OUTFIT_FEELING_INDEX = 1L;
     public static final List<Long> ADDITIONAL_OUTFIT_FEELING_INDICES = List.of(1L, 2L);
+    public static final WeatherFeeling WEATHER_FEELING =
+            new WeatherFeeling(OUTFIT_FEELING_INDEX, ADDITIONAL_OUTFIT_FEELING_INDICES);
+
+    public static final Post TEST_POST = new Post(1L, NICKNAME, TEMPERATURES, POST_IMAGE_URL, WEATHER_FEELING);
 }

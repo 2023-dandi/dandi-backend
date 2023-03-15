@@ -1,8 +1,10 @@
 package dandi.dandi.post.application.service;
 
 import dandi.dandi.auth.exception.UnauthorizedException;
+import dandi.dandi.common.exception.NotFoundException;
 import dandi.dandi.member.application.port.out.MemberPersistencePort;
 import dandi.dandi.member.domain.Member;
+import dandi.dandi.post.application.port.in.PostDetailResponse;
 import dandi.dandi.post.application.port.in.PostRegisterCommand;
 import dandi.dandi.post.application.port.in.PostUseCase;
 import dandi.dandi.post.application.port.out.PostPersistencePort;
@@ -34,5 +36,13 @@ public class PostService implements PostUseCase {
         Member member = memberPersistencePort.findById(memberId)
                 .orElseThrow(UnauthorizedException::notExistentMember);
         return postPersistencePort.save(post, member);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public PostDetailResponse getPostDetails(Long postId) {
+        Post post = postPersistencePort.findById(postId)
+                .orElseThrow(NotFoundException::post);
+        return new PostDetailResponse(post);
     }
 }
