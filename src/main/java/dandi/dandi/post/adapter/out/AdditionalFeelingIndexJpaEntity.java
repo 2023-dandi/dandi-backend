@@ -19,7 +19,7 @@ public class AdditionalFeelingIndexJpaEntity {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "team_id")
+    @JoinColumn(name = "post_id")
     private PostJpaEntity postJpaEntity;
 
     private Long value;
