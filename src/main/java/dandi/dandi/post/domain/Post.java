@@ -5,29 +5,30 @@ import java.util.List;
 public class Post {
 
     private final Long id;
-    private final Long memberId;
+    private final String writerNickname;
     private final Temperatures temperatures;
     private final String postImageUrl;
     private final WeatherFeeling weatherFeeling;
 
-    public Post(Long id, Long memberId, Temperatures temperatures, String postImageUrl, WeatherFeeling weatherFeeling) {
+    public Post(Long id, String writerNickname, Temperatures temperatures, String postImageUrl,
+                WeatherFeeling weatherFeeling) {
         this.id = id;
-        this.memberId = memberId;
+        this.writerNickname = writerNickname;
         this.temperatures = temperatures;
         this.postImageUrl = postImageUrl;
         this.weatherFeeling = weatherFeeling;
     }
 
-    public Post(Long memberId, Temperatures temperatures, String postImageUrl, WeatherFeeling weatherFeeling) {
-        this(null, memberId, temperatures, postImageUrl, weatherFeeling);
+    public static Post initial(Temperatures temperatures, String postImageUrl, WeatherFeeling weatherFeeling) {
+        return new Post(null, null, temperatures, postImageUrl, weatherFeeling);
     }
 
     public Long getId() {
         return id;
     }
 
-    public Long getMemberId() {
-        return memberId;
+    public String getWriterNickname() {
+        return writerNickname;
     }
 
     public Double getMinTemperature() {
