@@ -1,8 +1,6 @@
 package dandi.dandi.common;
 
 import java.util.List;
-import java.util.stream.Collectors;
-import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import org.springframework.beans.factory.InitializingBean;
@@ -15,27 +13,12 @@ public class DatabaseCleaner implements InitializingBean {
 
     private static final List<String> TABLE_NAMES = List.of("member", "refresh_token", "push_notification",
             "post", "additional_feeling_index");
-    private static final String CAMEL_REGEX = "([a-z])([A-Z]+)";
-    private static final String SNAKE_REPLACEMENT = "$1_$2";
 
     @PersistenceContext
     private EntityManager entityManager;
 
-    private List<String> tableNames;
-
     @Override
     public void afterPropertiesSet() {
-        tableNames = entityManager.getMetamodel()
-                .getEntities()
-                .stream()
-                .filter(e -> e.getJavaType().getAnnotation(Entity.class) != null)
-                .map(e -> toSnakeCase(e.getName()))
-                .collect(Collectors.toList());
-    }
-
-    private String toSnakeCase(String entityName) {
-        return entityName.replaceAll(CAMEL_REGEX, SNAKE_REPLACEMENT)
-                .toLowerCase();
     }
 
     @Transactional
