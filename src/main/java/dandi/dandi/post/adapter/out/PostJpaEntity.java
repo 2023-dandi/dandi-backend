@@ -15,6 +15,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 @Entity
 @Table(name = "post")
@@ -38,6 +40,7 @@ public class PostJpaEntity {
     private Long feelingIndex;
 
     @OneToMany(mappedBy = "postJpaEntity")
+    @Cascade(value = CascadeType.ALL)
     private List<AdditionalFeelingIndexJpaEntity> additionalFeelingIndicesJpaEntities;
 
     protected PostJpaEntity() {
