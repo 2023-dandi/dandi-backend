@@ -24,7 +24,7 @@ public class PostService implements PostUseCase {
         Temperatures temperatures = new Temperatures(
                 postRegisterCommand.getMinTemperature(), postRegisterCommand.getMaxTemperature());
         WeatherFeeling weatherFeeling = new WeatherFeeling(
-                postRegisterCommand.getFeelingIndex(), postRegisterCommand.getAdditionalFeelingIndexes());
+                postRegisterCommand.getFeelingIndex(), postRegisterCommand.getAdditionalFeelingIndices());
         Post post = new Post(memberId, temperatures, postRegisterCommand.getPostImageUrl(), weatherFeeling);
         return postPersistencePort.save(post);
     }

@@ -35,7 +35,7 @@ public class PostRegisterRequest {
                 temperatureRequest.getMin(),
                 temperatureRequest.getMax(), postImageUrl,
                 feelingRequest.getFeelingIndex(),
-                feelingRequest.getAdditionalFeelingIndexes()
+                feelingRequest.getAdditionalFeelingIndices()
         );
     }
 }

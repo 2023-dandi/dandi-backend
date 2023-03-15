@@ -30,15 +30,15 @@ public class PostRegisterCommand extends SelfValidating<PostRegisterCommand> {
     @Max(value = 5, message = OUTFIT_FEELING_INDEX_RANGE_EXCEPTION_MESSAGE)
     private final Long feelingIndex;
 
-    private final List<Long> additionalFeelingIndexes;
+    private final List<Long> additionalFeelingIndices;
 
     public PostRegisterCommand(Double minTemperature, Double maxTemperature, String postImageUrl,
-                               Long feelingIndex, List<Long> additionalFeelingIndexes) {
+                               Long feelingIndex, List<Long> additionalFeelingIndices) {
         this.minTemperature = minTemperature;
         this.maxTemperature = maxTemperature;
         this.postImageUrl = postImageUrl;
         this.feelingIndex = feelingIndex;
-        this.additionalFeelingIndexes = additionalFeelingIndexes;
+        this.additionalFeelingIndices = additionalFeelingIndices;
         this.validateSelf();
     }
 
@@ -58,7 +58,7 @@ public class PostRegisterCommand extends SelfValidating<PostRegisterCommand> {
         return feelingIndex;
     }
 
-    public List<Long> getAdditionalFeelingIndexes() {
-        return additionalFeelingIndexes;
+    public List<Long> getAdditionalFeelingIndices() {
+        return additionalFeelingIndices;
     }
 }

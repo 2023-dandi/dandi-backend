@@ -5,21 +5,21 @@ import java.util.List;
 public class FeelingRequest {
 
     private Long feelingIndex;
-    private List<Long> additionalFeelingIndexes;
+    private List<Long> additionalFeelingIndices;
 
     public FeelingRequest() {
     }
 
-    public FeelingRequest(Long feelingIndex, List<Long> additionalFeelingIndexes) {
+    public FeelingRequest(Long feelingIndex, List<Long> additionalFeelingIndices) {
         this.feelingIndex = feelingIndex;
-        this.additionalFeelingIndexes = additionalFeelingIndexes;
+        this.additionalFeelingIndices = additionalFeelingIndices;
     }
 
     public Long getFeelingIndex() {
         return feelingIndex;
     }
 
-    public List<Long> getAdditionalFeelingIndexes() {
-        return additionalFeelingIndexes;
+    public List<Long> getAdditionalFeelingIndices() {
+        return additionalFeelingIndices;
     }
 }
