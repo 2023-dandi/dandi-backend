@@ -35,7 +35,7 @@ class PostAcceptanceTest extends AcceptanceTest {
 
     @DisplayName("게시글 등록에 성공하면 201과 게시글에 접근할 수 있는 URI를 Location 헤더에 반환한다.")
     @Test
-    void registerPost() {
+    void registerPost_Created() {
         String token = getToken();
         PostRegisterRequest postRegisterRequest = new PostRegisterRequest(POST_IMAGE_URL,
                 new TemperatureRequest(MIN_TEMPERATURE, MAX_TEMPERATURE),
