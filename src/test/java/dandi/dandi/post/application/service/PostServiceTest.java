@@ -68,7 +68,7 @@ class PostServiceTest {
                         .isEqualTo(TEST_POST.getMaxTemperature()),
                 () -> assertThat(postDetailsResponse.getOutfitFeelings().getFeelingIndex())
                         .isEqualTo(TEST_POST.getWeatherFeelingIndex()),
-                () -> assertThat(postDetailsResponse.getOutfitFeelings().getAdditionalFeelingIndex())
+                () -> assertThat(postDetailsResponse.getOutfitFeelings().getAdditionalFeelingIndices())
                         .isEqualTo(TEST_POST.getAdditionalWeatherFeelingIndices())
         );
     }
