@@ -1,6 +1,7 @@
 package dandi.dandi.post.application.port.in;
 
 import dandi.dandi.post.domain.Post;
+import java.time.LocalDate;
 
 public class PostDetailResponse {
 
@@ -8,6 +9,7 @@ public class PostDetailResponse {
     private TemperatureResponse temperatureResponse;
     private OutfitFeelingResponse outfitFeelingResponse;
     private String postImageUrl;
+    private LocalDate createdAt;
 
     public PostDetailResponse() {
     }
@@ -18,6 +20,7 @@ public class PostDetailResponse {
         this.outfitFeelingResponse = new OutfitFeelingResponse(
                 post.getWeatherFeelingIndex(), post.getAdditionalWeatherFeelingIndices());
         this.postImageUrl = post.getPostImageUrl();
+        this.createdAt = post.getCreatedAt();
     }
 
     public String getWriterNickname() {
@@ -34,5 +37,9 @@ public class PostDetailResponse {
 
     public String getPostImageUrl() {
         return postImageUrl;
+    }
+
+    public LocalDate getCreatedAt() {
+        return createdAt;
     }
 }

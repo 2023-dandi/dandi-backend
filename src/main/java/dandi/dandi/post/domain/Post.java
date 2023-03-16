@@ -1,5 +1,6 @@
 package dandi.dandi.post.domain;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public class Post {
@@ -9,18 +10,20 @@ public class Post {
     private final Temperatures temperatures;
     private final String postImageUrl;
     private final WeatherFeeling weatherFeeling;
+    private final LocalDate createdAt;
 
     public Post(Long id, String writerNickname, Temperatures temperatures, String postImageUrl,
-                WeatherFeeling weatherFeeling) {
+                WeatherFeeling weatherFeeling, LocalDate createdAt) {
         this.id = id;
         this.writerNickname = writerNickname;
         this.temperatures = temperatures;
         this.postImageUrl = postImageUrl;
         this.weatherFeeling = weatherFeeling;
+        this.createdAt = createdAt;
     }
 
     public static Post initial(Temperatures temperatures, String postImageUrl, WeatherFeeling weatherFeeling) {
-        return new Post(null, null, temperatures, postImageUrl, weatherFeeling);
+        return new Post(null, null, temperatures, postImageUrl, weatherFeeling, null);
     }
 
     public Long getId() {
@@ -49,5 +52,9 @@ public class Post {
 
     public List<Long> getAdditionalWeatherFeelingIndices() {
         return weatherFeeling.getAdditionalFeelingIndices();
+    }
+
+    public LocalDate getCreatedAt() {
+        return createdAt;
     }
 }
