@@ -3,6 +3,7 @@ package dandi.dandi.post.web;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 import dandi.dandi.advice.ExceptionResponse;
+import dandi.dandi.post.application.port.in.PostDetailResponse;
 import dandi.dandi.post.web.in.PostRegisterRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -38,4 +39,12 @@ public interface PostControllerDocs {
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
     })
     ResponseEntity<Void> registerPost(@Parameter(hidden = true) Long memberId, PostRegisterRequest postRegisterRequest);
+
+    @Operation(summary = "게시글 상세 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "게시글 상세 조회 정상 응답"),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 게시글",
+                    content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
+    })
+    ResponseEntity<PostDetailResponse> getPostDetails(@Parameter(hidden = true) Long memberId);
 }
