@@ -5,6 +5,7 @@ import static dandi.dandi.member.MemberTestFixture.NICKNAME;
 import dandi.dandi.post.domain.Post;
 import dandi.dandi.post.domain.Temperatures;
 import dandi.dandi.post.domain.WeatherFeeling;
+import java.time.LocalDate;
 import java.util.List;
 
 public class PostFixture {
@@ -18,5 +19,6 @@ public class PostFixture {
     public static final WeatherFeeling WEATHER_FEELING =
             new WeatherFeeling(OUTFIT_FEELING_INDEX, ADDITIONAL_OUTFIT_FEELING_INDICES);
 
-    public static final Post TEST_POST = new Post(1L, NICKNAME, TEMPERATURES, POST_IMAGE_URL, WEATHER_FEELING);
+    public static final Post TEST_POST = new Post(
+            1L, NICKNAME, TEMPERATURES, POST_IMAGE_URL, WEATHER_FEELING, LocalDate.now());
 }
