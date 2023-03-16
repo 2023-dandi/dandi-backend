@@ -62,13 +62,13 @@ class PostServiceTest {
                         .isEqualTo(TEST_POST.getPostImageUrl()),
                 () -> assertThat(postDetailsResponse.getWriterNickname())
                         .isEqualTo(TEST_POST.getWriterNickname()),
-                () -> assertThat(postDetailsResponse.getTemperatureResponse().getMin())
+                () -> assertThat(postDetailsResponse.getTemperatures().getMin())
                         .isEqualTo(TEST_POST.getMinTemperature()),
-                () -> assertThat(postDetailsResponse.getTemperatureResponse().getMax())
+                () -> assertThat(postDetailsResponse.getTemperatures().getMax())
                         .isEqualTo(TEST_POST.getMaxTemperature()),
-                () -> assertThat(postDetailsResponse.getOutfitFeelingResponse().getFeelingIndex())
+                () -> assertThat(postDetailsResponse.getOutfitFeelings().getFeelingIndex())
                         .isEqualTo(TEST_POST.getWeatherFeelingIndex()),
-                () -> assertThat(postDetailsResponse.getOutfitFeelingResponse().getAdditionalFeelingIndex())
+                () -> assertThat(postDetailsResponse.getOutfitFeelings().getAdditionalFeelingIndex())
                         .isEqualTo(TEST_POST.getAdditionalWeatherFeelingIndices())
         );
     }

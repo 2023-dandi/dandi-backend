@@ -6,8 +6,8 @@ import java.time.LocalDate;
 public class PostDetailResponse {
 
     private String writerNickname;
-    private TemperatureResponse temperatureResponse;
-    private OutfitFeelingResponse outfitFeelingResponse;
+    private TemperatureResponse temperatures;
+    private OutfitFeelingResponse outfitFeelings;
     private String postImageUrl;
     private LocalDate createdAt;
 
@@ -16,8 +16,8 @@ public class PostDetailResponse {
 
     public PostDetailResponse(Post post) {
         this.writerNickname = post.getWriterNickname();
-        this.temperatureResponse = new TemperatureResponse(post.getMinTemperature(), post.getMaxTemperature());
-        this.outfitFeelingResponse = new OutfitFeelingResponse(
+        this.temperatures = new TemperatureResponse(post.getMinTemperature(), post.getMaxTemperature());
+        this.outfitFeelings = new OutfitFeelingResponse(
                 post.getWeatherFeelingIndex(), post.getAdditionalWeatherFeelingIndices());
         this.postImageUrl = post.getPostImageUrl();
         this.createdAt = post.getCreatedAt();
@@ -27,12 +27,12 @@ public class PostDetailResponse {
         return writerNickname;
     }
 
-    public TemperatureResponse getTemperatureResponse() {
-        return temperatureResponse;
+    public TemperatureResponse getTemperatures() {
+        return temperatures;
     }
 
-    public OutfitFeelingResponse getOutfitFeelingResponse() {
-        return outfitFeelingResponse;
+    public OutfitFeelingResponse getOutfitFeelings() {
+        return outfitFeelings;
     }
 
     public String getPostImageUrl() {

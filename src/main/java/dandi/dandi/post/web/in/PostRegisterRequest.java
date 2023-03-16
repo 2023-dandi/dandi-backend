@@ -5,37 +5,37 @@ import dandi.dandi.post.application.port.in.PostRegisterCommand;
 public class PostRegisterRequest {
 
     private String postImageUrl;
-    private TemperatureRequest temperatureRequest;
-    private FeelingRequest feelingRequest;
+    private TemperatureRequest temperatures;
+    private OutfitFeelingRequest outfitFeelings;
 
     public PostRegisterRequest() {
     }
 
-    public PostRegisterRequest(String postImageUrl, TemperatureRequest temperatureRequest,
-                               FeelingRequest feelingRequest) {
+    public PostRegisterRequest(String postImageUrl, TemperatureRequest temperatures,
+                               OutfitFeelingRequest outfitFeelings) {
         this.postImageUrl = postImageUrl;
-        this.temperatureRequest = temperatureRequest;
-        this.feelingRequest = feelingRequest;
+        this.temperatures = temperatures;
+        this.outfitFeelings = outfitFeelings;
     }
 
     public String getPostImageUrl() {
         return postImageUrl;
     }
 
-    public TemperatureRequest getTemperatureRequest() {
-        return temperatureRequest;
+    public TemperatureRequest getTemperatures() {
+        return temperatures;
     }
 
-    public FeelingRequest getFeelingRequest() {
-        return feelingRequest;
+    public OutfitFeelingRequest getOutfitFeelings() {
+        return outfitFeelings;
     }
 
     public PostRegisterCommand toCommand() {
         return new PostRegisterCommand(
-                temperatureRequest.getMin(),
-                temperatureRequest.getMax(), postImageUrl,
-                feelingRequest.getFeelingIndex(),
-                feelingRequest.getAdditionalFeelingIndices()
+                temperatures.getMin(),
+                temperatures.getMax(), postImageUrl,
+                outfitFeelings.getFeelingIndex(),
+                outfitFeelings.getAdditionalFeelingIndices()
         );
     }
 }
