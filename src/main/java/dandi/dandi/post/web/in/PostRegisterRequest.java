@@ -6,13 +6,13 @@ public class PostRegisterRequest {
 
     private String postImageUrl;
     private TemperatureRequest temperatures;
-    private FeelingRequest outfitFeelings;
+    private OutfitFeelingRequest outfitFeelings;
 
     public PostRegisterRequest() {
     }
 
     public PostRegisterRequest(String postImageUrl, TemperatureRequest temperatures,
-                               FeelingRequest outfitFeelings) {
+                               OutfitFeelingRequest outfitFeelings) {
         this.postImageUrl = postImageUrl;
         this.temperatures = temperatures;
         this.outfitFeelings = outfitFeelings;
@@ -26,7 +26,7 @@ public class PostRegisterRequest {
         return temperatures;
     }
 
-    public FeelingRequest getOutfitFeelings() {
+    public OutfitFeelingRequest getOutfitFeelings() {
         return outfitFeelings;
     }
 

@@ -20,7 +20,7 @@ import static org.mockito.ArgumentMatchers.any;
 import com.amazonaws.AmazonClientException;
 import dandi.dandi.common.AcceptanceTest;
 import dandi.dandi.post.application.port.in.PostDetailResponse;
-import dandi.dandi.post.web.in.FeelingRequest;
+import dandi.dandi.post.web.in.OutfitFeelingRequest;
 import dandi.dandi.post.web.in.PostRegisterRequest;
 import dandi.dandi.post.web.in.TemperatureRequest;
 import io.restassured.response.ExtractableResponse;
@@ -42,7 +42,7 @@ class PostAcceptanceTest extends AcceptanceTest {
         String token = getToken();
         PostRegisterRequest postRegisterRequest = new PostRegisterRequest(POST_IMAGE_URL,
                 new TemperatureRequest(MIN_TEMPERATURE, MAX_TEMPERATURE),
-                new FeelingRequest(OUTFIT_FEELING_INDEX, ADDITIONAL_OUTFIT_FEELING_INDICES));
+                new OutfitFeelingRequest(OUTFIT_FEELING_INDEX, ADDITIONAL_OUTFIT_FEELING_INDICES));
 
         ExtractableResponse<Response> response =
                 httpPostWithAuthorization(POST_REGISTER_REQUEST_URI, postRegisterRequest, token);
@@ -61,7 +61,7 @@ class PostAcceptanceTest extends AcceptanceTest {
         String token = getToken();
         PostRegisterRequest invalidRangeOutfitFeelingIndexPostRegisterRequest = new PostRegisterRequest(
                 POST_IMAGE_URL, new TemperatureRequest(MIN_TEMPERATURE, MAX_TEMPERATURE),
-                new FeelingRequest(outfitFeelingIndex, ADDITIONAL_OUTFIT_FEELING_INDICES));
+                new OutfitFeelingRequest(outfitFeelingIndex, ADDITIONAL_OUTFIT_FEELING_INDICES));
 
         ExtractableResponse<Response> response = httpPostWithAuthorization(
                 POST_REGISTER_REQUEST_URI, invalidRangeOutfitFeelingIndexPostRegisterRequest, token);
@@ -134,7 +134,7 @@ class PostAcceptanceTest extends AcceptanceTest {
     private Long registerPost(String token) {
         PostRegisterRequest postRegisterRequest = new PostRegisterRequest(POST_IMAGE_URL,
                 new TemperatureRequest(MIN_TEMPERATURE, MAX_TEMPERATURE),
-                new FeelingRequest(OUTFIT_FEELING_INDEX, ADDITIONAL_OUTFIT_FEELING_INDICES));
+                new OutfitFeelingRequest(OUTFIT_FEELING_INDEX, ADDITIONAL_OUTFIT_FEELING_INDICES));
         String locationHeader = httpPostWithAuthorization(POST_REGISTER_REQUEST_URI, postRegisterRequest, token)
                 .header(HttpHeaders.LOCATION);
         String postId = locationHeader.split("/posts/")[1];
