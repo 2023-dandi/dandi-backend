@@ -20,6 +20,7 @@ import static org.mockito.ArgumentMatchers.any;
 import com.amazonaws.AmazonClientException;
 import dandi.dandi.common.AcceptanceTest;
 import dandi.dandi.post.application.port.in.PostDetailResponse;
+import dandi.dandi.post.application.port.in.PostImageRegisterResponse;
 import dandi.dandi.post.web.in.OutfitFeelingRequest;
 import dandi.dandi.post.web.in.PostRegisterRequest;
 import dandi.dandi.post.web.in.TemperatureRequest;
@@ -72,7 +73,7 @@ class PostAcceptanceTest extends AcceptanceTest {
         );
     }
 
-    @DisplayName("게시글 사진 등록에 성공하면 201과 Location 헤더에 게시글 사진 리소스 정보를 응답한다.")
+    @DisplayName("게시글 사진 등록에 성공하면 201과 게시글 사진 URL을 응답한다.")
     @Test
     void registerPostImage_Created() {
         String token = getToken();
@@ -81,7 +82,9 @@ class PostAcceptanceTest extends AcceptanceTest {
         ExtractableResponse<Response> response = httpPostWithAuthorizationAndImgFile(
                 POST_IMAGE_REGISTER_REQUEST_URI, token, testImgFile, "postImage");
 
-        String locationHeader = response.header(HttpHeaders.LOCATION);
+        String locationHeader = response.jsonPath()
+                .getObject(".", PostImageRegisterResponse.class)
+                .getPostImageUrl();
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value()),
                 () -> assertThat(locationHeader).isNotNull()

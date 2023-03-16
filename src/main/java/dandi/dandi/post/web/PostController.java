@@ -2,10 +2,12 @@ package dandi.dandi.post.web;
 
 import dandi.dandi.auth.web.support.Login;
 import dandi.dandi.post.application.port.in.PostDetailResponse;
+import dandi.dandi.post.application.port.in.PostImageRegisterResponse;
 import dandi.dandi.post.application.port.in.PostImageUseCase;
 import dandi.dandi.post.application.port.in.PostUseCase;
 import dandi.dandi.post.web.in.PostRegisterRequest;
 import java.net.URI;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,11 +31,11 @@ public class PostController implements PostControllerDocs {
     }
 
     @PostMapping("/images")
-    public ResponseEntity<Void> registerPostImage(@Login Long memberId,
-                                                  @RequestPart(value = "postImage")
-                                                  MultipartFile profileImage) {
-        String postImageUrl = postImageUseCase.uploadPostImage(memberId, profileImage);
-        return ResponseEntity.created(URI.create(postImageUrl)).build();
+    public ResponseEntity<PostImageRegisterResponse> registerPostImage(@Login Long memberId,
+                                                                       @RequestPart(value = "postImage")
+                                                                       MultipartFile profileImage) {
+        PostImageRegisterResponse postImageRegisterResponse = postImageUseCase.uploadPostImage(memberId, profileImage);
+        return ResponseEntity.status(HttpStatus.CREATED).body(postImageRegisterResponse);
     }
 
     @PostMapping
