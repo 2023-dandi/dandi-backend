@@ -120,7 +120,7 @@ class PostAcceptanceTest extends AcceptanceTest {
                 () -> assertThat(postDetailResponse.getWriterNickname()).isNotNull(),
                 () -> assertThat(postDetailResponse.getOutfitFeelings().getFeelingIndex())
                         .isEqualTo(OUTFIT_FEELING_INDEX),
-                () -> assertThat(postDetailResponse.getOutfitFeelings().getAdditionalFeelingIndex())
+                () -> assertThat(postDetailResponse.getOutfitFeelings().getAdditionalFeelingIndices())
                         .isEqualTo(ADDITIONAL_OUTFIT_FEELING_INDICES),
                 () -> assertThat(postDetailResponse.getCreatedAt()).isNotNull()
         );
