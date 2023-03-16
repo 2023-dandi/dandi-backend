@@ -35,7 +35,7 @@ class PushNotificationAcceptanceTest extends AcceptanceTest {
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
                 () -> assertThat(pushNotificationResponse.getPushNotificationTime()).isEqualTo(LocalTime.MIN),
-                () -> assertThat(pushNotificationResponse.isAllowance()).isFalse()
+                () -> assertThat(pushNotificationResponse.isAllowance()).isTrue()
         );
     }
 
@@ -79,7 +79,7 @@ class PushNotificationAcceptanceTest extends AcceptanceTest {
         String token = getToken();
         boolean initialAllowance = getPushNotificationAllowance(token);
         PushNotificationAllowanceUpdateRequest pushNotificationAllowanceUpdateRequest =
-                new PushNotificationAllowanceUpdateRequest(true);
+                new PushNotificationAllowanceUpdateRequest(false);
 
         ExtractableResponse<Response> response = httpPatchWithAuthorization(
                 PUSH_NOTIFICATION_ALLOWANCE_REQUEST_URI, pushNotificationAllowanceUpdateRequest, token);

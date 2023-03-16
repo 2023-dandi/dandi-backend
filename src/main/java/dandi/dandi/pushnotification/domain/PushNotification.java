@@ -18,7 +18,7 @@ public class PushNotification {
     }
 
     public static PushNotification initial(Long memberId) {
-        return new PushNotification(null, memberId, PushNotificationTime.initial(), false);
+        return new PushNotification(null, memberId, PushNotificationTime.initial(), true);
     }
 
     public Long getId() {
