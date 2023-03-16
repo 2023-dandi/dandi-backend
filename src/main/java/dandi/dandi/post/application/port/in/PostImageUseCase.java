@@ -4,5 +4,5 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface PostImageUseCase {
 
-    String uploadPostImage(Long memberId, MultipartFile multipartFile);
+    PostImageRegisterResponse uploadPostImage(Long memberId, MultipartFile multipartFile);
 }

@@ -3,6 +3,7 @@ package dandi.dandi.post.application.service;
 import com.amazonaws.SdkClientException;
 import dandi.dandi.image.application.out.ImageUploader;
 import dandi.dandi.image.exception.ImageUploadFailedException;
+import dandi.dandi.post.application.port.in.PostImageRegisterResponse;
 import dandi.dandi.post.application.port.in.PostImageUseCase;
 import java.io.IOException;
 import java.util.UUID;
@@ -25,10 +26,10 @@ public class PostImageService implements PostImageUseCase {
     }
 
     @Override
-    public String uploadPostImage(Long memberId, MultipartFile multipartFile) {
+    public PostImageRegisterResponse uploadPostImage(Long memberId, MultipartFile multipartFile) {
         String fileKey = generateFileKey(memberId, multipartFile);
         uploadImage(multipartFile, fileKey);
-        return fileKey;
+        return new PostImageRegisterResponse(fileKey);
     }
 
     private void uploadImage(MultipartFile multipartFile, String fileKey) {

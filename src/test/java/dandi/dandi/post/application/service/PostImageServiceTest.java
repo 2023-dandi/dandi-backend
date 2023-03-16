@@ -11,6 +11,7 @@ import static org.mockito.Mockito.verify;
 
 import dandi.dandi.image.application.out.ImageUploader;
 import dandi.dandi.image.exception.ImageUploadFailedException;
+import dandi.dandi.post.application.port.in.PostImageRegisterResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import org.junit.jupiter.api.DisplayName;
@@ -33,11 +34,11 @@ class PostImageServiceTest {
         Long memberId = 1L;
         MultipartFile multipartFile = generateTestImgMultipartFile();
 
-        String uploadedPostImageUrl = postImageService.uploadPostImage(memberId, multipartFile);
+        PostImageRegisterResponse postImageRegisterResponse = postImageService.uploadPostImage(memberId, multipartFile);
 
         assertAll(
                 () -> verify(imageUploader).upload(anyString(), any(InputStream.class)),
-                () -> assertThat(uploadedPostImageUrl)
+                () -> assertThat(postImageRegisterResponse.getPostImageUrl())
                         .contains(postImageDir)
                         .contains(multipartFile.getOriginalFilename())
                         .contains(String.valueOf(memberId))

@@ -4,6 +4,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 import dandi.dandi.advice.ExceptionResponse;
 import dandi.dandi.post.application.port.in.PostDetailResponse;
+import dandi.dandi.post.application.port.in.PostImageRegisterResponse;
 import dandi.dandi.post.web.in.PostRegisterRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -23,13 +24,12 @@ public interface PostControllerDocs {
 
     @Operation(summary = "게시글 이미지 등록")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "게시글 이미지 등록 성공", headers = {
-                    @Header(name = HttpHeaders.LOCATION)}),
+            @ApiResponse(responseCode = "201", description = "게시글 이미지 등록 성공"),
             @ApiResponse(responseCode = "500", description = "프로필 사진 변경 실패",
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
     })
-    ResponseEntity<Void> registerPostImage(@Parameter(hidden = true) Long memberId,
-                                           @Parameter(hidden = true) MultipartFile profileImage);
+    ResponseEntity<PostImageRegisterResponse> registerPostImage(@Parameter(hidden = true) Long memberId,
+                                                                @Parameter(hidden = true) MultipartFile profileImage);
 
     @Operation(summary = "게시글 등록", parameters = @Parameter(name = AUTHORIZATION, in = ParameterIn.HEADER, required = true, example = "Bearer ${token}"))
     @ApiResponses(value = {
