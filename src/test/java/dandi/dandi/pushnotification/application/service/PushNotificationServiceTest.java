@@ -46,7 +46,7 @@ class PushNotificationServiceTest {
 
         assertAll(
                 () -> assertThat(pushNotificationResponse.getPushNotificationTime()).isEqualTo(LocalTime.MIN),
-                () -> assertThat(pushNotificationResponse.isAllowance()).isFalse()
+                () -> assertThat(pushNotificationResponse.isAllowance()).isTrue()
         );
     }
 
