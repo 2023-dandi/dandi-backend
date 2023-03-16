@@ -1,8 +1,10 @@
 package dandi.dandi.post.acceptance;
 
+import static dandi.dandi.common.HttpMethodFixture.httpGet;
 import static dandi.dandi.common.HttpMethodFixture.httpPostWithAuthorization;
 import static dandi.dandi.common.HttpMethodFixture.httpPostWithAuthorizationAndImgFile;
 import static dandi.dandi.common.HttpResponseExtractor.extractExceptionMessage;
+import static dandi.dandi.common.RequestURI.POST_DETAILS_REQUEST_URI;
 import static dandi.dandi.common.RequestURI.POST_IMAGE_REGISTER_REQUEST_URI;
 import static dandi.dandi.common.RequestURI.POST_REGISTER_REQUEST_URI;
 import static dandi.dandi.post.PostFixture.ADDITIONAL_OUTFIT_FEELING_INDICES;
@@ -17,6 +19,7 @@ import static org.mockito.ArgumentMatchers.any;
 
 import com.amazonaws.AmazonClientException;
 import dandi.dandi.common.AcceptanceTest;
+import dandi.dandi.post.application.port.in.PostDetailResponse;
 import dandi.dandi.post.web.in.FeelingRequest;
 import dandi.dandi.post.web.in.PostRegisterRequest;
 import dandi.dandi.post.web.in.TemperatureRequest;
@@ -35,7 +38,7 @@ class PostAcceptanceTest extends AcceptanceTest {
 
     @DisplayName("게시글 등록에 성공하면 201과 게시글에 접근할 수 있는 URI를 Location 헤더에 반환한다.")
     @Test
-    void registerPost() {
+    void registerPost_Created() {
         String token = getToken();
         PostRegisterRequest postRegisterRequest = new PostRegisterRequest(POST_IMAGE_URL,
                 new TemperatureRequest(MIN_TEMPERATURE, MAX_TEMPERATURE),
@@ -96,6 +99,45 @@ class PostAcceptanceTest extends AcceptanceTest {
                 POST_IMAGE_REGISTER_REQUEST_URI, token, testImgFile, "postImage");
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
+    }
+
+    @DisplayName("게시글 상세 조회 요청에 성공하면 200과 게시글 상세 정보를 반환한다.")
+    @Test
+    void getPostDetails() {
+        String token = getToken();
+        Long postId = registerPost(token);
+
+        ExtractableResponse<Response> response = httpGet(POST_DETAILS_REQUEST_URI + "/" + postId);
+
+        PostDetailResponse postDetailResponse = response.jsonPath()
+                .getObject(".", PostDetailResponse.class);
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(postDetailResponse.getPostImageUrl()).isNotNull(),
+                () -> assertThat(postDetailResponse.getWriterNickname()).isNotNull(),
+                () -> assertThat(postDetailResponse.getOutfitFeelingResponse().getFeelingIndex())
+                        .isEqualTo(OUTFIT_FEELING_INDEX),
+                () -> assertThat(postDetailResponse.getOutfitFeelingResponse().getAdditionalFeelingIndex())
+                        .isEqualTo(ADDITIONAL_OUTFIT_FEELING_INDICES)
+        );
+    }
+
+    @DisplayName("존재하지 않는 게시글 상세 조회 요청에 대해 404를 반환한다.")
+    @Test
+    void getPostDetails_NotFount() {
+        ExtractableResponse<Response> response = httpGet(POST_DETAILS_REQUEST_URI + "/" + 1L);
+
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.NOT_FOUND.value());
+    }
+
+    private Long registerPost(String token) {
+        PostRegisterRequest postRegisterRequest = new PostRegisterRequest(POST_IMAGE_URL,
+                new TemperatureRequest(MIN_TEMPERATURE, MAX_TEMPERATURE),
+                new FeelingRequest(OUTFIT_FEELING_INDEX, ADDITIONAL_OUTFIT_FEELING_INDICES));
+        String locationHeader = httpPostWithAuthorization(POST_REGISTER_REQUEST_URI, postRegisterRequest, token)
+                .header(HttpHeaders.LOCATION);
+        String postId = locationHeader.split("/posts/")[1];
+        return Long.parseLong(postId);
     }
 
     private void mockAmazonS3Exception() {

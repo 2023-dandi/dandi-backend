@@ -1,5 +1,7 @@
 package dandi.dandi.post.application.service;
 
+import dandi.dandi.common.exception.NotFoundException;
+import dandi.dandi.post.application.port.in.PostDetailResponse;
 import dandi.dandi.post.application.port.in.PostRegisterCommand;
 import dandi.dandi.post.application.port.in.PostUseCase;
 import dandi.dandi.post.application.port.out.PostPersistencePort;
@@ -25,7 +27,15 @@ public class PostService implements PostUseCase {
                 postRegisterCommand.getMinTemperature(), postRegisterCommand.getMaxTemperature());
         WeatherFeeling weatherFeeling = new WeatherFeeling(
                 postRegisterCommand.getFeelingIndex(), postRegisterCommand.getAdditionalFeelingIndices());
-        Post post = new Post(memberId, temperatures, postRegisterCommand.getPostImageUrl(), weatherFeeling);
-        return postPersistencePort.save(post);
+        Post post = Post.initial(temperatures, postRegisterCommand.getPostImageUrl(), weatherFeeling);
+        return postPersistencePort.save(post, memberId);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public PostDetailResponse getPostDetails(Long postId) {
+        Post post = postPersistencePort.findById(postId)
+                .orElseThrow(NotFoundException::post);
+        return new PostDetailResponse(post);
     }
 }

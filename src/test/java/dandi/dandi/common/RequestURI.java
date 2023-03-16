@@ -18,4 +18,5 @@ public class RequestURI {
 
     public static final String POST_REGISTER_REQUEST_URI = "/posts";
     public static final String POST_IMAGE_REGISTER_REQUEST_URI = "/posts/images";
+    public static final String POST_DETAILS_REQUEST_URI = "/posts";
 }

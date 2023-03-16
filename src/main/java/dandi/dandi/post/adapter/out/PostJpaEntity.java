@@ -12,6 +12,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 @Entity
 @Table(name = "post")
@@ -22,6 +24,8 @@ public class PostJpaEntity {
     @Column(name = "post_id")
     private Long id;
 
+    private Long memberId;
+
     private Double minTemperature;
 
     private Double maxTemperature;
@@ -31,14 +35,16 @@ public class PostJpaEntity {
     private Long feelingIndex;
 
     @OneToMany(mappedBy = "postJpaEntity")
+    @Cascade(value = CascadeType.ALL)
     private List<AdditionalFeelingIndexJpaEntity> additionalFeelingIndicesJpaEntities;
 
     protected PostJpaEntity() {
     }
 
-    public PostJpaEntity(Long id, Double minTemperature, Double maxTemperature, String postImageUrl, Long feelingIndex,
-                         List<AdditionalFeelingIndexJpaEntity> additionalFeelingIndicesJpaEntities) {
+    public PostJpaEntity(Long id, Long memberId, Double minTemperature, Double maxTemperature, String postImageUrl,
+                         Long feelingIndex, List<AdditionalFeelingIndexJpaEntity> additionalFeelingIndicesJpaEntities) {
         this.id = id;
+        this.memberId = memberId;
         this.minTemperature = minTemperature;
         this.maxTemperature = maxTemperature;
         this.postImageUrl = postImageUrl;
@@ -48,13 +54,14 @@ public class PostJpaEntity {
                 additionalFeelingIndexJpaEntity -> additionalFeelingIndexJpaEntity.setPostJpaEntity(this));
     }
 
-    public static PostJpaEntity fromPost(Post post) {
+    public static PostJpaEntity fromPostAndMemberId(Post post, Long memberId) {
         List<AdditionalFeelingIndexJpaEntity> additionalFeelingIndices = post.getAdditionalWeatherFeelingIndices()
                 .stream()
                 .map(AdditionalFeelingIndexJpaEntity::new)
                 .collect(Collectors.toUnmodifiableList());
         return new PostJpaEntity(
                 null,
+                memberId,
                 post.getMinTemperature(),
                 post.getMaxTemperature(),
                 post.getPostImageUrl(),
@@ -63,12 +70,21 @@ public class PostJpaEntity {
         );
     }
 
-    public Post toPost() {
+    public Long getId() {
+        return id;
+    }
+
+    public Long getMemberId() {
+        return memberId;
+    }
+
+    public Post toPost(String writerNickname) {
         List<Long> additionalFeelingIndices = additionalFeelingIndicesJpaEntities.stream()
                 .map(AdditionalFeelingIndexJpaEntity::getValue)
                 .collect(Collectors.toUnmodifiableList());
         return new Post(
                 id,
+                writerNickname,
                 new Temperatures(minTemperature, maxTemperature),
                 postImageUrl,
                 new WeatherFeeling(feelingIndex, additionalFeelingIndices)

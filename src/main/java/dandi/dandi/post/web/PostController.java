@@ -1,11 +1,14 @@
 package dandi.dandi.post.web;
 
 import dandi.dandi.auth.web.support.Login;
+import dandi.dandi.post.application.port.in.PostDetailResponse;
 import dandi.dandi.post.application.port.in.PostImageUseCase;
 import dandi.dandi.post.application.port.in.PostUseCase;
 import dandi.dandi.post.web.in.PostRegisterRequest;
 import java.net.URI;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,5 +41,10 @@ public class PostController implements PostControllerDocs {
                                              @RequestBody PostRegisterRequest postRegisterRequest) {
         Long postId = postUseCase.registerPost(memberId, postRegisterRequest.toCommand());
         return ResponseEntity.created(URI.create("/posts/" + postId)).build();
+    }
+
+    @GetMapping("/{postId}")
+    public ResponseEntity<PostDetailResponse> getPostDetails(@PathVariable Long postId) {
+        return ResponseEntity.ok(postUseCase.getPostDetails(postId));
     }
 }

@@ -53,6 +53,10 @@ public class MemberJpaEntity {
         );
     }
 
+    public String getNickname() {
+        return nickname;
+    }
+
     public Member toMember() {
         return new Member(
                 id,
