@@ -1,9 +1,6 @@
 package dandi.dandi.post.application.service;
 
-import dandi.dandi.auth.exception.UnauthorizedException;
 import dandi.dandi.common.exception.NotFoundException;
-import dandi.dandi.member.application.port.out.MemberPersistencePort;
-import dandi.dandi.member.domain.Member;
 import dandi.dandi.post.application.port.in.PostDetailResponse;
 import dandi.dandi.post.application.port.in.PostRegisterCommand;
 import dandi.dandi.post.application.port.in.PostUseCase;
@@ -18,11 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class PostService implements PostUseCase {
 
     private final PostPersistencePort postPersistencePort;
-    private final MemberPersistencePort memberPersistencePort;
 
-    public PostService(PostPersistencePort postPersistencePort, MemberPersistencePort memberPersistencePort) {
+    public PostService(PostPersistencePort postPersistencePort) {
         this.postPersistencePort = postPersistencePort;
-        this.memberPersistencePort = memberPersistencePort;
     }
 
     @Override
@@ -33,9 +28,7 @@ public class PostService implements PostUseCase {
         WeatherFeeling weatherFeeling = new WeatherFeeling(
                 postRegisterCommand.getFeelingIndex(), postRegisterCommand.getAdditionalFeelingIndices());
         Post post = Post.initial(temperatures, postRegisterCommand.getPostImageUrl(), weatherFeeling);
-        Member member = memberPersistencePort.findById(memberId)
-                .orElseThrow(UnauthorizedException::notExistentMember);
-        return postPersistencePort.save(post, member);
+        return postPersistencePort.save(post, memberId);
     }
 
     @Override
