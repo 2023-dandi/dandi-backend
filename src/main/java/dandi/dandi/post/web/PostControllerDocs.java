@@ -47,7 +47,8 @@ public interface PostControllerDocs {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "닉네임 정상 변경", headers = {
                     @Header(name = HttpHeaders.LOCATION)}),
-            @ApiResponse(responseCode = "400", description = "입력 값 중에 null 혹은 빈문자열이 존재할 경우",
+            @ApiResponse(responseCode = "400", description = "입력 값 중에 null 혹은 빈문자열이 존재할 경우 \r\n"
+                    + "착장 느낌 Index가 0 ~ 4 범위가 아닌 경우",
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
     })
     ResponseEntity<Void> registerPost(@Parameter(hidden = true) Long memberId, PostRegisterRequest postRegisterRequest);
