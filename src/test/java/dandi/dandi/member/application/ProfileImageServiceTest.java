@@ -3,6 +3,7 @@ package dandi.dandi.member.application;
 import static dandi.dandi.member.MemberTestFixture.INITIAL_PROFILE_IMAGE_URL;
 import static dandi.dandi.member.MemberTestFixture.NICKNAME;
 import static dandi.dandi.member.MemberTestFixture.OAUTH_ID;
+import static dandi.dandi.utils.image.TestImageUtils.IMAGE_ACCESS_URL;
 import static dandi.dandi.utils.image.TestImageUtils.TEST_IMAGE_FILE_NAME;
 import static dandi.dandi.utils.image.TestImageUtils.generateTestImgMultipartFile;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -44,22 +45,23 @@ class ProfileImageServiceTest {
     private final MemberPersistencePort memberPersistencePort = Mockito.mock(MemberPersistencePort.class);
     private final ImageUploader imageUploader = Mockito.mock(ImageUploader.class);
     private final ProfileImageService profileImageService = new ProfileImageService(memberPersistencePort,
-            imageUploader, INITIAL_PROFILE_IMAGE_URL, TEST_PROFILE_BUCKET_IMG_DIR);
+            imageUploader, INITIAL_PROFILE_IMAGE_URL, TEST_PROFILE_BUCKET_IMG_DIR, IMAGE_ACCESS_URL);
 
     @DisplayName("기본 프로필 사진이 아닌 회원의 프로필 사진을 변경하면 기존 사진을 삭제하고 사진을 업로드 한 후, 사진의 식별값을 반환한다.")
     @Test
     void updateProfileImage_NotInitialProfileImage() throws IOException {
         Long memberId = 1L;
-        Member notInitialProfileImageMember =
-                Member.initial(OAUTH_ID, NICKNAME, NOT_INITIAL_PROFILE_IMAGE_URL);
+        Member initialProfileImageMember = Member.initial(OAUTH_ID, NICKNAME, NOT_INITIAL_PROFILE_IMAGE_URL);
         when(memberPersistencePort.findById(memberId))
-                .thenReturn(Optional.of(notInitialProfileImageMember));
+                .thenReturn(Optional.of(initialProfileImageMember));
 
         String imgUrl = profileImageService.updateProfileImage(memberId, generateTestImgMultipartFile())
                 .getProfileImageUrl();
 
         assertAll(
-                () -> assertThat(imgUrl).contains(TEST_PROFILE_BUCKET_IMG_DIR, TEST_IMAGE_FILE_NAME),
+                () -> assertThat(imgUrl)
+                        .startsWith(IMAGE_ACCESS_URL + TEST_PROFILE_BUCKET_IMG_DIR)
+                        .contains(TEST_IMAGE_FILE_NAME),
                 () -> verify(imageUploader).delete(anyString())
         );
     }

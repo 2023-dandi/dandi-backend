@@ -26,9 +26,9 @@ public class MemberInfoResponse {
         this.profileImageUrl = member.getProfileImgUrl();
     }
 
-    public static MemberInfoResponse fromCustomProfileImageMember(Member member) {
+    public static MemberInfoResponse fromCustomProfileImageMember(Member member, String imageAccessUrl) {
         return new MemberInfoResponse(member.getNickname(), member.getLatitude(),
-                member.getLongitude(), member.getProfileImgUrl());
+                member.getLongitude(), imageAccessUrl + member.getProfileImgUrl());
     }
 
     public static MemberInfoResponse fromInitialProfileImageMember(Member member) {
