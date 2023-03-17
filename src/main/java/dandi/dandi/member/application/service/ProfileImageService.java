@@ -28,14 +28,17 @@ public class ProfileImageService implements ProfileImageUseCase {
     private final ImageUploader imageUploader;
     private final String initialProfileImageUrl;
     private final String profileImageDir;
+    private final String imageAccessUrl;
 
     public ProfileImageService(MemberPersistencePort memberPersistencePort, ImageUploader imageUploader,
                                @Value("${image.member-initial-profile-image-url}") String initialProfileImageUrl,
-                               @Value("${image.profile-dir}") String profileImageDir) {
+                               @Value("${image.profile-dir}") String profileImageDir,
+                               @Value("${cloud.aws.cloud-front.uri}") String imageAccessUrl) {
         this.memberPersistencePort = memberPersistencePort;
         this.imageUploader = imageUploader;
         this.initialProfileImageUrl = initialProfileImageUrl;
         this.profileImageDir = profileImageDir;
+        this.imageAccessUrl = imageAccessUrl;
     }
 
     @Override
@@ -47,7 +50,7 @@ public class ProfileImageService implements ProfileImageUseCase {
         memberPersistencePort.updateProfileImageUrl(member.getId(), fileKey);
         uploadImage(fileKey, profileImage);
         deleteCurrentProfileImageIfNotProfileImage(member);
-        return new ProfileImageUpdateResponse(fileKey);
+        return new ProfileImageUpdateResponse(imageAccessUrl + fileKey);
     }
 
     private void uploadImage(String fileKey, MultipartFile profileImage) {

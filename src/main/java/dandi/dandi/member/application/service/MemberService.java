@@ -18,11 +18,14 @@ public class MemberService implements MemberUseCase {
 
     private final MemberPersistencePort memberPersistencePort;
     private final String initialProfileImageUrl;
+    private final String imageAccessUrl;
 
     public MemberService(MemberPersistencePort memberPersistencePort,
-                         @Value("${image.member-initial-profile-image-url}") String initialProfileImageUrl) {
+                         @Value("${image.member-initial-profile-image-url}") String initialProfileImageUrl,
+                         @Value("${cloud.aws.cloud-front.uri}") String imageAccessUrl) {
         this.memberPersistencePort = memberPersistencePort;
         this.initialProfileImageUrl = initialProfileImageUrl;
+        this.imageAccessUrl = imageAccessUrl;
     }
 
     @Override
@@ -32,7 +35,7 @@ public class MemberService implements MemberUseCase {
         if (member.hasProfileImgUrl(initialProfileImageUrl)) {
             return MemberInfoResponse.fromInitialProfileImageMember(member);
         }
-        return MemberInfoResponse.fromCustomProfileImageMember(member);
+        return MemberInfoResponse.fromCustomProfileImageMember(member, imageAccessUrl);
     }
 
     @Override
