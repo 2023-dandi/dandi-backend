@@ -6,6 +6,7 @@ import static dandi.dandi.post.PostFixture.MIN_TEMPERATURE;
 import static dandi.dandi.post.PostFixture.OUTFIT_FEELING_INDEX;
 import static dandi.dandi.post.PostFixture.POST_IMAGE_URL;
 import static dandi.dandi.post.PostFixture.TEST_POST;
+import static dandi.dandi.utils.image.TestImageUtils.IMAGE_ACCESS_URL;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -21,18 +22,14 @@ import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class PostServiceTest {
 
-    @Mock
-    private PostPersistencePort postPersistencePort;
-
-    @InjectMocks
-    private PostService postService;
+    private final PostPersistencePort postPersistencePort = Mockito.mock(PostPersistencePort.class);
+    private final PostService postService = new PostService(postPersistencePort, IMAGE_ACCESS_URL);
 
     @DisplayName("게시글을 작성할 수 있다.")
     @Test
@@ -59,7 +56,7 @@ class PostServiceTest {
 
         assertAll(
                 () -> assertThat(postDetailsResponse.getPostImageUrl())
-                        .isEqualTo(TEST_POST.getPostImageUrl()),
+                        .startsWith(IMAGE_ACCESS_URL + TEST_POST.getPostImageUrl()),
                 () -> assertThat(postDetailsResponse.getWriterNickname())
                         .isEqualTo(TEST_POST.getWriterNickname()),
                 () -> assertThat(postDetailsResponse.getTemperatures().getMin())

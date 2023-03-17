@@ -14,12 +14,12 @@ public class PostDetailResponse {
     public PostDetailResponse() {
     }
 
-    public PostDetailResponse(Post post) {
+    public PostDetailResponse(Post post, String imageAccessUrl) {
         this.writerNickname = post.getWriterNickname();
         this.temperatures = new TemperatureResponse(post.getMinTemperature(), post.getMaxTemperature());
         this.outfitFeelings = new OutfitFeelingResponse(
                 post.getWeatherFeelingIndex(), post.getAdditionalWeatherFeelingIndices());
-        this.postImageUrl = post.getPostImageUrl();
+        this.postImageUrl = imageAccessUrl + post.getPostImageUrl();
         this.createdAt = post.getCreatedAt();
     }
 

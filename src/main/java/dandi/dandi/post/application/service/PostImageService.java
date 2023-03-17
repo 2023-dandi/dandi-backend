@@ -18,18 +18,20 @@ public class PostImageService implements PostImageUseCase {
 
     private final ImageUploader imageUploader;
     private final String postImageDir;
+    private final String imageAccessUrl;
 
-    public PostImageService(ImageUploader imageUploader,
-                            @Value("${image.post-dir}") String postImageDir) {
+    public PostImageService(ImageUploader imageUploader, @Value("${image.post-dir}") String postImageDir,
+                            @Value("${cloud.aws.cloud-front.uri}") String imageAccessUrl) {
         this.imageUploader = imageUploader;
         this.postImageDir = postImageDir;
+        this.imageAccessUrl = imageAccessUrl;
     }
 
     @Override
     public PostImageRegisterResponse uploadPostImage(Long memberId, MultipartFile multipartFile) {
         String fileKey = generateFileKey(memberId, multipartFile);
         uploadImage(multipartFile, fileKey);
-        return new PostImageRegisterResponse(fileKey);
+        return new PostImageRegisterResponse(imageAccessUrl + fileKey);
     }
 
     private void uploadImage(MultipartFile multipartFile, String fileKey) {
