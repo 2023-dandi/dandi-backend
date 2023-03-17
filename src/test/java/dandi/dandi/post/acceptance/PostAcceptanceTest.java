@@ -57,7 +57,7 @@ class PostAcceptanceTest extends AcceptanceTest {
 
     @DisplayName("1 ~ 5 범위가 아닌 착장 느낌을 포함한 게시글 등록 요청에 대해 400을 반환한다.")
     @ParameterizedTest
-    @ValueSource(longs = {0, 6})
+    @ValueSource(longs = {-1, 5})
     void registerPost_BadRequest_InvalidRangeOutfitFeelingIndex(Long outfitFeelingIndex) {
         String token = getToken();
         PostRegisterRequest invalidRangeOutfitFeelingIndexPostRegisterRequest = new PostRegisterRequest(
