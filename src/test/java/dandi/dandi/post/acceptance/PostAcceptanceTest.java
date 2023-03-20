@@ -1,5 +1,6 @@
 package dandi.dandi.post.acceptance;
 
+import static dandi.dandi.common.HttpMethodFixture.httpDeleteWithAuthorization;
 import static dandi.dandi.common.HttpMethodFixture.httpGetWithAuthorization;
 import static dandi.dandi.common.HttpMethodFixture.httpPostWithAuthorization;
 import static dandi.dandi.common.HttpMethodFixture.httpPostWithAuthorizationAndImgFile;
@@ -144,6 +145,23 @@ class PostAcceptanceTest extends AcceptanceTest {
                 httpGetWithAuthorization(POST_DETAILS_REQUEST_URI + "/" + 1L, token);
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.NOT_FOUND.value());
+    }
+
+    @DisplayName("게시글을 삭제할 수 있다.")
+    @Test
+    void deletePost() {
+        String token = getToken();
+        Long postId = registerPost(token);
+
+        ExtractableResponse<Response> response = httpDeleteWithAuthorization("/posts/" + postId, token);
+
+        ExtractableResponse<Response> postDetailResponseAfterPostDeletion =
+                httpGetWithAuthorization("/posts/" + postId, token);
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value()),
+                () -> assertThat(postDetailResponseAfterPostDeletion.statusCode())
+                        .isEqualTo(HttpStatus.NOT_FOUND.value())
+        );
     }
 
     private void mockAmazonS3Exception() {
