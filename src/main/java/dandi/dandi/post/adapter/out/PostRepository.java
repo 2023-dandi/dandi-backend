@@ -9,4 +9,6 @@ public interface PostRepository extends JpaRepository<PostJpaEntity, Long> {
     @Query(value = "SELECT p FROM PostJpaEntity p "
             + "JOIN FETCH p.additionalFeelingIndicesJpaEntities WHERE p.id = :id")
     Optional<PostJpaEntity> findByIdWithAdditionalFeelingIndicesJpaEntities(Long id);
+
+    boolean existsById(Long id);
 }

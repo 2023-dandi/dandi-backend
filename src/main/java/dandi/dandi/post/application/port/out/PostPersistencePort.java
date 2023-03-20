@@ -8,4 +8,6 @@ public interface PostPersistencePort {
     Long save(Post post, Long memberId);
 
     Optional<Post> findById(Long postId);
+
+    boolean existsById(Long postId);
 }

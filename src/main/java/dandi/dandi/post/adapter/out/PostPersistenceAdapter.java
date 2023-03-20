@@ -7,8 +7,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Component;
 
 @Component
-public class
-PostPersistenceAdapter implements PostPersistencePort {
+public class PostPersistenceAdapter implements PostPersistencePort {
 
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
@@ -29,6 +28,11 @@ PostPersistenceAdapter implements PostPersistencePort {
     public Optional<Post> findById(Long postId) {
         return postRepository.findByIdWithAdditionalFeelingIndicesJpaEntities(postId)
                 .map(this::toPost);
+    }
+
+    @Override
+    public boolean existsById(Long postId) {
+        return postRepository.existsById(postId);
     }
 
     private Post toPost(PostJpaEntity postJpaEntity) {
