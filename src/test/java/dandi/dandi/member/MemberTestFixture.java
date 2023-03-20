@@ -9,7 +9,7 @@ public class MemberTestFixture {
     public static final Long MEMBER_ID = 1L;
     public static final String OAUTH_ID = "oAuthId";
     public static final String NICKNAME = "memberNickname";
-    public static final String INITIAL_PROFILE_IMAGE_URL = "profile/profile.jpg";
+    public static final String INITIAL_PROFILE_IMAGE_URL = "profile/default.jpg";
 
     public static final Member TEST_MEMBER = new Member(
             MEMBER_ID, OAUTH_ID, NICKNAME, new Location(0.0, 0.0), INITIAL_PROFILE_IMAGE_URL);

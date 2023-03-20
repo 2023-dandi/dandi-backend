@@ -17,14 +17,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberService implements MemberUseCase {
 
     private final MemberPersistencePort memberPersistencePort;
-    private final String initialProfileImageUrl;
     private final String imageAccessUrl;
 
     public MemberService(MemberPersistencePort memberPersistencePort,
-                         @Value("${image.member-initial-profile-image-url}") String initialProfileImageUrl,
                          @Value("${cloud.aws.cloud-front.uri}") String imageAccessUrl) {
         this.memberPersistencePort = memberPersistencePort;
-        this.initialProfileImageUrl = initialProfileImageUrl;
         this.imageAccessUrl = imageAccessUrl;
     }
 
@@ -32,10 +29,7 @@ public class MemberService implements MemberUseCase {
     @Transactional(readOnly = true)
     public MemberInfoResponse findMemberInfo(Long memberId) {
         Member member = findMember(memberId);
-        if (member.hasProfileImgUrl(initialProfileImageUrl)) {
-            return MemberInfoResponse.fromInitialProfileImageMember(member);
-        }
-        return MemberInfoResponse.fromCustomProfileImageMember(member, imageAccessUrl);
+        return new MemberInfoResponse(member, imageAccessUrl);
     }
 
     @Override

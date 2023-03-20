@@ -11,6 +11,7 @@ import static dandi.dandi.post.PostFixture.ADDITIONAL_OUTFIT_FEELING_INDICES;
 import static dandi.dandi.post.PostFixture.MAX_TEMPERATURE;
 import static dandi.dandi.post.PostFixture.MIN_TEMPERATURE;
 import static dandi.dandi.post.PostFixture.OUTFIT_FEELING_INDEX;
+import static dandi.dandi.post.PostFixture.POST_IMAGE_FULL_URL;
 import static dandi.dandi.post.PostFixture.POST_IMAGE_URL;
 import static dandi.dandi.utils.image.TestImageUtils.generatetestImgFile;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -38,11 +39,11 @@ import org.springframework.http.HttpStatus;
 
 class PostAcceptanceTest extends AcceptanceTest {
 
-    @DisplayName("게시글 등록에 성공하면 201과 게시글에 접근할 수 있는 URI를 Location 헤더에 반환한다.")
+    @DisplayName("게시글 등록에 성공하면 201과 게시글 ID를 반환한다.")
     @Test
     void registerPost_Created() {
         String token = getToken();
-        PostRegisterRequest postRegisterRequest = new PostRegisterRequest(POST_IMAGE_URL,
+        PostRegisterRequest postRegisterRequest = new PostRegisterRequest(POST_IMAGE_FULL_URL,
                 new TemperatureRequest(MIN_TEMPERATURE, MAX_TEMPERATURE),
                 new OutfitFeelingRequest(OUTFIT_FEELING_INDEX, ADDITIONAL_OUTFIT_FEELING_INDICES));
 
@@ -123,7 +124,7 @@ class PostAcceptanceTest extends AcceptanceTest {
                 () -> assertThat(postDetailResponse.getPostImageUrl()).isNotNull(),
                 () -> assertThat(postWriterResponse.getId()).isNotNull(),
                 () -> assertThat(postWriterResponse.getNickname()).isNotNull(),
-                () -> assertThat(postWriterResponse.getProfileImageUrl()).isNull(),
+                () -> assertThat(postWriterResponse.getProfileImageUrl()).isNotNull(),
                 () -> assertThat(postDetailResponse.getOutfitFeelings().getFeelingIndex())
                         .isEqualTo(OUTFIT_FEELING_INDEX),
                 () -> assertThat(postDetailResponse.getOutfitFeelings().getAdditionalFeelingIndices())

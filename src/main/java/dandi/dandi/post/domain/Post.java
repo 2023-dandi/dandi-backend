@@ -66,8 +66,4 @@ public class Post {
     public String getWriterProfileImageUrl() {
         return member.getProfileImgUrl();
     }
-
-    public boolean isWrittenByProfileImageUrl(String profileImageUrl) {
-        return member.hasProfileImgUrl(profileImageUrl);
-    }
 }

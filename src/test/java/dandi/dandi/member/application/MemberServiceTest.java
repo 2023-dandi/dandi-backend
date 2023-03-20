@@ -32,11 +32,11 @@ class MemberServiceTest {
 
     private final MemberPersistencePort memberPersistencePort = Mockito.mock(MemberPersistencePort.class);
     private final MemberService memberService =
-            new MemberService(memberPersistencePort, INITIAL_PROFILE_IMAGE_URL, IMAGE_ACCESS_URL);
+            new MemberService(memberPersistencePort, IMAGE_ACCESS_URL);
 
-    @DisplayName("기본 프로필 이미지의 회원 정보를 반환할 수 있다.라면 프로필 이미지가 null이 반환되고 변경했다면 이미지 url을 반환한다.")
+    @DisplayName("기본 프로필 이미지의 회원 정보를 반환할 수 있다.")
     @Test
-    void findMemberInfo_InitialProfileImage() {
+    void findMemberInfo() {
         Long memberId = 1L;
         when(memberPersistencePort.findById(memberId))
                 .thenReturn(Optional.of(Member.initial(OAUTH_ID, NICKNAME, INITIAL_PROFILE_IMAGE_URL)));
@@ -47,26 +47,8 @@ class MemberServiceTest {
                 () -> assertThat(memberInfoResponse.getNickname()).isEqualTo(NICKNAME),
                 () -> assertThat(memberInfoResponse.getLatitude()).isEqualTo(0.0),
                 () -> assertThat(memberInfoResponse.getLongitude()).isEqualTo(0.0),
-                () -> assertThat(memberInfoResponse.getProfileImageUrl()).isNull()
-        );
-    }
-
-    @DisplayName("자신이 변경한 프로필 이미지의 회원 정보를 반환할 수 있다.")
-    @Test
-    void findMemberInfo_CustomProfileImage() {
-        Long memberId = 1L;
-        String customProfileImageUrl = "customProfileImageUrl";
-        when(memberPersistencePort.findById(memberId))
-                .thenReturn(Optional.of(Member.initial(OAUTH_ID, NICKNAME, customProfileImageUrl)));
-
-        MemberInfoResponse memberInfoResponse = memberService.findMemberInfo(memberId);
-
-        assertAll(
-                () -> assertThat(memberInfoResponse.getNickname()).isEqualTo(NICKNAME),
-                () -> assertThat(memberInfoResponse.getLatitude()).isEqualTo(0.0),
-                () -> assertThat(memberInfoResponse.getLongitude()).isEqualTo(0.0),
                 () -> assertThat(memberInfoResponse.getProfileImageUrl())
-                        .startsWith(IMAGE_ACCESS_URL + customProfileImageUrl)
+                        .startsWith(IMAGE_ACCESS_URL + INITIAL_PROFILE_IMAGE_URL)
         );
     }
 

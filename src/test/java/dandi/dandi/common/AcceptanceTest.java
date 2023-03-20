@@ -8,7 +8,7 @@ import static dandi.dandi.post.PostFixture.ADDITIONAL_OUTFIT_FEELING_INDICES;
 import static dandi.dandi.post.PostFixture.MAX_TEMPERATURE;
 import static dandi.dandi.post.PostFixture.MIN_TEMPERATURE;
 import static dandi.dandi.post.PostFixture.OUTFIT_FEELING_INDEX;
-import static dandi.dandi.post.PostFixture.POST_IMAGE_URL;
+import static dandi.dandi.post.PostFixture.POST_IMAGE_FULL_URL;
 import static org.mockito.Mockito.when;
 
 import com.amazonaws.services.s3.AmazonS3;
@@ -34,7 +34,8 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.Import;
 
 
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT,
+        properties = "cloud.aws.cloud-front.uri=https://www.cloud-front.com/")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Import(AsyncTestConfig.class)
 public class AcceptanceTest {
@@ -76,7 +77,7 @@ public class AcceptanceTest {
     }
 
     protected Long registerPost(String token) {
-        PostRegisterRequest postRegisterRequest = new PostRegisterRequest(POST_IMAGE_URL,
+        PostRegisterRequest postRegisterRequest = new PostRegisterRequest(POST_IMAGE_FULL_URL,
                 new TemperatureRequest(MIN_TEMPERATURE, MAX_TEMPERATURE),
                 new OutfitFeelingRequest(OUTFIT_FEELING_INDEX, ADDITIONAL_OUTFIT_FEELING_INDICES));
         return httpPostWithAuthorization(POST_REGISTER_REQUEST_URI, postRegisterRequest, token)
