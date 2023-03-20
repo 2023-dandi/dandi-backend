@@ -1,6 +1,7 @@
 package dandi.dandi.post;
 
 import static dandi.dandi.member.MemberTestFixture.TEST_MEMBER;
+import static dandi.dandi.utils.image.TestImageUtils.IMAGE_ACCESS_URL;
 
 import dandi.dandi.post.domain.Post;
 import dandi.dandi.post.domain.Temperatures;
@@ -10,12 +11,13 @@ import java.util.List;
 
 public class PostFixture {
 
-    public static final String POST_IMAGE_DIR = "post";
+    public static final String POST_IMAGE_DIR = "post/";
     public static final Long POST_ID = 1L;
     public static final double MIN_TEMPERATURE = 20.0;
     public static final double MAX_TEMPERATURE = 30.0;
     public static final Temperatures TEMPERATURES = new Temperatures(MIN_TEMPERATURE, MAX_TEMPERATURE);
-    public static final String POST_IMAGE_URL = POST_IMAGE_DIR + "/postImageUrl";
+    public static final String POST_IMAGE_URL = "postImageUrl";
+    public static final String POST_IMAGE_FULL_URL = IMAGE_ACCESS_URL + POST_IMAGE_DIR + POST_IMAGE_URL;
     public static final Long OUTFIT_FEELING_INDEX = 1L;
     public static final List<Long> ADDITIONAL_OUTFIT_FEELING_INDICES = List.of(1L, 2L);
     public static final WeatherFeeling WEATHER_FEELING =

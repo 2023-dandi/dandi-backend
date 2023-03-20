@@ -5,8 +5,7 @@ import static dandi.dandi.post.PostFixture.ADDITIONAL_OUTFIT_FEELING_INDICES;
 import static dandi.dandi.post.PostFixture.MAX_TEMPERATURE;
 import static dandi.dandi.post.PostFixture.MIN_TEMPERATURE;
 import static dandi.dandi.post.PostFixture.OUTFIT_FEELING_INDEX;
-import static dandi.dandi.post.PostFixture.POST_IMAGE_DIR;
-import static dandi.dandi.post.PostFixture.POST_IMAGE_URL;
+import static dandi.dandi.post.PostFixture.POST_IMAGE_FULL_URL;
 import static dandi.dandi.post.PostFixture.TEST_POST;
 import static dandi.dandi.utils.image.TestImageUtils.IMAGE_ACCESS_URL;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -32,15 +31,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class PostServiceTest {
 
     private final PostPersistencePort postPersistencePort = Mockito.mock(PostPersistencePort.class);
-    private final PostService postService = new PostService(postPersistencePort, IMAGE_ACCESS_URL,
-            POST_IMAGE_DIR);
+    private final PostService postService = new PostService(postPersistencePort, IMAGE_ACCESS_URL);
 
     @DisplayName("게시글을 작성할 수 있다.")
     @Test
     void registerPost() {
         Long memberId = 1L;
         PostRegisterCommand postRegisterCommand = new PostRegisterCommand(MIN_TEMPERATURE, MAX_TEMPERATURE,
-                POST_IMAGE_URL, OUTFIT_FEELING_INDEX, ADDITIONAL_OUTFIT_FEELING_INDICES);
+                POST_IMAGE_FULL_URL, OUTFIT_FEELING_INDEX, ADDITIONAL_OUTFIT_FEELING_INDICES);
         when(postPersistencePort.save(any(Post.class), any(Long.class)))
                 .thenReturn(1L);
 

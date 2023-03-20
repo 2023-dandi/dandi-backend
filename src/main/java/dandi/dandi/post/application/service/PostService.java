@@ -16,16 +16,15 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class PostService implements PostUseCase {
 
+    private static final int POST_IMAGE_URL_INDEX = 1;
+
     private final PostPersistencePort postPersistencePort;
     private final String imageAccessUrl;
-    private final String postImageDir;
 
     public PostService(PostPersistencePort postPersistencePort,
-                       @Value("${cloud.aws.cloud-front.uri}") String imageAccessUrl,
-                       @Value("${image.post-dir}") String postImageDir) {
+                       @Value("${cloud.aws.cloud-front.uri}") String imageAccessUrl) {
         this.postPersistencePort = postPersistencePort;
         this.imageAccessUrl = imageAccessUrl;
-        this.postImageDir = postImageDir;
     }
 
     @Override
@@ -36,13 +35,14 @@ public class PostService implements PostUseCase {
         WeatherFeeling weatherFeeling = new WeatherFeeling(
                 postRegisterCommand.getFeelingIndex(), postRegisterCommand.getAdditionalFeelingIndices());
         String postImageUrl = removeImageAccessUrl(postRegisterCommand.getPostImageUrl());
+
         Post post = Post.initial(temperatures, postImageUrl, weatherFeeling);
         Long postId = postPersistencePort.save(post, memberId);
         return new PostRegisterResponse(postId);
     }
 
     private String removeImageAccessUrl(String postImageUrl) {
-        return postImageUrl.substring(postImageUrl.indexOf(postImageDir));
+        return postImageUrl.split(imageAccessUrl)[POST_IMAGE_URL_INDEX];
     }
 
     @Override
