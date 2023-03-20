@@ -40,7 +40,8 @@ class PostServiceTest {
         when(postPersistencePort.save(any(Post.class), any(Long.class)))
                 .thenReturn(1L);
 
-        Long postId = postService.registerPost(memberId, postRegisterCommand);
+        Long postId = postService.registerPost(memberId, postRegisterCommand)
+                .getPostId();
 
         assertThat(postId).isEqualTo(1L);
     }
