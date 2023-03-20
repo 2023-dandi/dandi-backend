@@ -13,8 +13,10 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import dandi.dandi.common.exception.ForbiddenException;
 import dandi.dandi.common.exception.NotFoundException;
 import dandi.dandi.post.application.port.in.PostDetailResponse;
 import dandi.dandi.post.application.port.in.PostRegisterCommand;
@@ -99,5 +101,30 @@ class PostServiceTest {
         assertThatThrownBy(() -> postService.getPostDetails(MEMBER_ID, postId))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessage(NotFoundException.post().getMessage());
+    }
+
+    @DisplayName("자신이 작성한 게시글을 삭제할 수 있다.")
+    @Test
+    void deletePost() {
+        Long postId = 1L;
+        when(postPersistencePort.findById(postId))
+                .thenReturn(Optional.of(TEST_POST));
+
+        postService.deletePost(MEMBER_ID, postId);
+
+        verify(postPersistencePort).deleteById(postId);
+    }
+
+    @DisplayName("자신이 작성하지 않은 게시글을 삭제하려고 할 시에 예외를 발생시킨다.")
+    @Test
+    void deletePost_Forbidden() {
+        Long postId = 1L;
+        Long postDeletionForbiddenMemberId = 2L;
+        when(postPersistencePort.findById(postId))
+                .thenReturn(Optional.of(TEST_POST));
+
+        assertThatThrownBy(() -> postService.deletePost(postDeletionForbiddenMemberId, postId))
+                .isInstanceOf(ForbiddenException.class)
+                .hasMessage(ForbiddenException.postDeletion().getMessage());
     }
 }

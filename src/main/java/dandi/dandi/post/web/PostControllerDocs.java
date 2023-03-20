@@ -59,4 +59,12 @@ public interface PostControllerDocs {
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
     })
     ResponseEntity<PostDetailResponse> getPostDetails(@Parameter(hidden = true) Long memberId, Long postId);
+
+    @Operation(summary = "게시글 상세 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "게시글 삭제 성공"),
+            @ApiResponse(responseCode = "403", description = "자신이 작성하지 않은 게시글 삭제 요청",
+                    content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
+    })
+    ResponseEntity<Void> deletePost(@Parameter(hidden = true) Long memberId, Long postId);
 }

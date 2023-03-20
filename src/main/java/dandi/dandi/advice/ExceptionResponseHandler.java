@@ -3,6 +3,7 @@ package dandi.dandi.advice;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 import dandi.dandi.auth.exception.UnauthorizedException;
+import dandi.dandi.common.exception.ForbiddenException;
 import dandi.dandi.common.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +33,12 @@ public class ExceptionResponseHandler {
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ExceptionResponse> notFound(NotFoundException exception) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ExceptionResponse(exception.getMessage()));
+    }
+
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<ExceptionResponse> forbidden(ForbiddenException exception) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(new ExceptionResponse(exception.getMessage()));
     }
 

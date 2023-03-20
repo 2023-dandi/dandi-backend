@@ -9,6 +9,7 @@ import dandi.dandi.post.application.port.in.PostUseCase;
 import dandi.dandi.post.web.in.PostRegisterRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -49,5 +50,11 @@ public class PostController implements PostControllerDocs {
     @GetMapping("/{postId}")
     public ResponseEntity<PostDetailResponse> getPostDetails(@Login Long memberId, @PathVariable Long postId) {
         return ResponseEntity.ok(postUseCase.getPostDetails(memberId, postId));
+    }
+
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<Void> deletePost(@Login Long memberId, @PathVariable Long postId) {
+        postUseCase.deletePost(memberId, postId);
+        return ResponseEntity.noContent().build();
     }
 }

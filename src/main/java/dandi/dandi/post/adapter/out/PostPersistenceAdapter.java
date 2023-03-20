@@ -45,4 +45,9 @@ public class PostPersistenceAdapter implements PostPersistencePort {
         Member member = postWriter.toMember();
         return postJpaEntity.toPost(member);
     }
+
+    @Override
+    public void deleteById(Long postId) {
+        postRepository.deleteById(postId);
+    }
 }
