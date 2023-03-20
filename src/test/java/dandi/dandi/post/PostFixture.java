@@ -1,6 +1,6 @@
 package dandi.dandi.post;
 
-import static dandi.dandi.member.MemberTestFixture.NICKNAME;
+import static dandi.dandi.member.MemberTestFixture.TEST_MEMBER;
 
 import dandi.dandi.post.domain.Post;
 import dandi.dandi.post.domain.Temperatures;
@@ -22,5 +22,5 @@ public class PostFixture {
             new WeatherFeeling(OUTFIT_FEELING_INDEX, ADDITIONAL_OUTFIT_FEELING_INDICES);
 
     public static final Post TEST_POST = new Post(
-            POST_ID, NICKNAME, TEMPERATURES, POST_IMAGE_URL, WEATHER_FEELING, LocalDate.now());
+            POST_ID, TEST_MEMBER, TEMPERATURES, POST_IMAGE_URL, WEATHER_FEELING, LocalDate.now());
 }

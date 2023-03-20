@@ -1,5 +1,6 @@
 package dandi.dandi.post.adapter.out;
 
+import dandi.dandi.member.domain.Member;
 import dandi.dandi.post.domain.Post;
 import dandi.dandi.post.domain.Temperatures;
 import dandi.dandi.post.domain.WeatherFeeling;
@@ -86,13 +87,13 @@ public class PostJpaEntity {
         return memberId;
     }
 
-    public Post toPost(String writerNickname) {
+    public Post toPost(Member member) {
         List<Long> additionalFeelingIndices = additionalFeelingIndicesJpaEntities.stream()
                 .map(AdditionalFeelingIndexJpaEntity::getValue)
                 .collect(Collectors.toUnmodifiableList());
         return new Post(
                 id,
-                writerNickname,
+                member,
                 new Temperatures(minTemperature, maxTemperature),
                 postImageUrl,
                 new WeatherFeeling(feelingIndex, additionalFeelingIndices),

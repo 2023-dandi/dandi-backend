@@ -1,6 +1,9 @@
 package dandi.dandi.post.adapter.out;
 
+import dandi.dandi.advice.InternalServerException;
+import dandi.dandi.member.adapter.out.persistence.MemberJpaEntity;
 import dandi.dandi.member.adapter.out.persistence.MemberRepository;
+import dandi.dandi.member.domain.Member;
 import dandi.dandi.post.application.port.out.PostPersistencePort;
 import dandi.dandi.post.domain.Post;
 import java.util.Optional;
@@ -36,8 +39,10 @@ public class PostPersistenceAdapter implements PostPersistencePort {
     }
 
     private Post toPost(PostJpaEntity postJpaEntity) {
-        Long postWriterId = postJpaEntity.getMemberId();
-        String postWriterNickname = memberRepository.findNicknameById(postWriterId);
-        return postJpaEntity.toPost(postWriterNickname);
+        MemberJpaEntity postWriter = memberRepository.findById(postJpaEntity.getMemberId())
+                .orElseThrow(() -> InternalServerException.withdrawnMemberPost(
+                        postJpaEntity.getMemberId(), postJpaEntity.getId()));
+        Member member = postWriter.toMember();
+        return postJpaEntity.toPost(member);
     }
 }
