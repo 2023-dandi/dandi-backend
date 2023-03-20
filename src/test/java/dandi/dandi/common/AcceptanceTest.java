@@ -75,7 +75,7 @@ public class AcceptanceTest {
                 .getAccessToken();
     }
 
-    public Long registerPost(String token) {
+    protected Long registerPost(String token) {
         PostRegisterRequest postRegisterRequest = new PostRegisterRequest(POST_IMAGE_URL,
                 new TemperatureRequest(MIN_TEMPERATURE, MAX_TEMPERATURE),
                 new OutfitFeelingRequest(OUTFIT_FEELING_INDEX, ADDITIONAL_OUTFIT_FEELING_INDICES));
