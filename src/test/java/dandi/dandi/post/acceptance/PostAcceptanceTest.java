@@ -134,7 +134,7 @@ class PostAcceptanceTest extends AcceptanceTest {
         assertThat(response.statusCode()).isEqualTo(HttpStatus.NOT_FOUND.value());
     }
 
-    private Long registerPost(String token) {
+    public Long registerPost(String token) {
         PostRegisterRequest postRegisterRequest = new PostRegisterRequest(POST_IMAGE_URL,
                 new TemperatureRequest(MIN_TEMPERATURE, MAX_TEMPERATURE),
                 new OutfitFeelingRequest(OUTFIT_FEELING_INDEX, ADDITIONAL_OUTFIT_FEELING_INDICES));
