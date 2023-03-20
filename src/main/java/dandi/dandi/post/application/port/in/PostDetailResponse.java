@@ -14,11 +14,11 @@ public class PostDetailResponse {
     public PostDetailResponse() {
     }
 
-    public PostDetailResponse(Post post, PostWriterResponse postWriterResponse, String imageAccessUrl) {
-        this.writer = postWriterResponse;
+    public PostDetailResponse(Post post, String imageAccessUrl) {
+        this.writer = new PostWriterResponse(post, imageAccessUrl);
         this.temperatures = new TemperatureResponse(post.getMinTemperature(), post.getMaxTemperature());
-        this.outfitFeelings = new OutfitFeelingResponse(
-                post.getWeatherFeelingIndex(), post.getAdditionalWeatherFeelingIndices());
+        this.outfitFeelings =
+                new OutfitFeelingResponse(post.getWeatherFeelingIndex(), post.getAdditionalWeatherFeelingIndices());
         this.postImageUrl = imageAccessUrl + post.getPostImageUrl();
         this.createdAt = post.getCreatedAt();
     }
