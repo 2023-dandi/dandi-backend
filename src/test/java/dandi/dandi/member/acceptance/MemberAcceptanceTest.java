@@ -41,33 +41,12 @@ import org.springframework.http.HttpStatus;
 
 class MemberAcceptanceTest extends AcceptanceTest {
 
-    @DisplayName("기본 프로필 이미지 회원 정보 요청에 대해 200을 반환한다.(커스텀 프로필 이미지 URL 포함)")
+    @DisplayName("기본 프로필 이미지 회원 정보 요청에 대해 200을 반환한다.")
     @Test
-    void getMemberNickname_CustomProfileImageMember() {
+    void getMemberInfo() {
         String token = getToken();
         double initialLatitude = 0.0;
         double initialLongitude = 0.0;
-
-        ExtractableResponse<Response> response = httpGetWithAuthorization(MEMBER_INFO_URI, token);
-
-        MemberInfoResponse memberInfoResponse = response.jsonPath()
-                .getObject(".", MemberInfoResponse.class);
-        assertAll(
-                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
-                () -> assertThat(memberInfoResponse.getNickname()).isEqualTo(memberInfoResponse.getNickname()),
-                () -> assertThat(memberInfoResponse.getLatitude()).isEqualTo(initialLatitude),
-                () -> assertThat(memberInfoResponse.getLongitude()).isEqualTo(initialLongitude),
-                () -> assertThat(memberInfoResponse.getProfileImageUrl()).isNull()
-        );
-    }
-
-    @DisplayName("변경된 프로필 이미지 회원 정보 요청에 대해 200을 반환한다.(프로필 이미지은 null 반환)")
-    @Test
-    void getMemberNickname_InitialProfileImageMember() {
-        String token = getToken();
-        double initialLatitude = 0.0;
-        double initialLongitude = 0.0;
-        httpPutWithAuthorizationAndImgFile(MEMBER_PROFILE_IMAGE_URI, token, generatetestImgFile());
 
         ExtractableResponse<Response> response = httpGetWithAuthorization(MEMBER_INFO_URI, token);
 

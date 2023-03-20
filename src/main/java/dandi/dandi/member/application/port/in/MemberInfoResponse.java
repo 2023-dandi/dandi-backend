@@ -12,28 +12,11 @@ public class MemberInfoResponse {
     public MemberInfoResponse() {
     }
 
-    private MemberInfoResponse(String nickname, double latitude, double longitude, String profileImageUrl) {
-        this.nickname = nickname;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.profileImageUrl = profileImageUrl;
-    }
-
-    public MemberInfoResponse(Member member) {
+    public MemberInfoResponse(Member member, String imageAccessUrl) {
         this.nickname = member.getNickname();
         this.latitude = member.getLatitude();
         this.longitude = member.getLongitude();
-        this.profileImageUrl = member.getProfileImgUrl();
-    }
-
-    public static MemberInfoResponse fromCustomProfileImageMember(Member member, String imageAccessUrl) {
-        return new MemberInfoResponse(member.getNickname(), member.getLatitude(),
-                member.getLongitude(), imageAccessUrl + member.getProfileImgUrl());
-    }
-
-    public static MemberInfoResponse fromInitialProfileImageMember(Member member) {
-        return new MemberInfoResponse(member.getNickname(), member.getLatitude(),
-                member.getLongitude(), null);
+        this.profileImageUrl = imageAccessUrl + member.getProfileImgUrl();
     }
 
     public String getNickname() {
