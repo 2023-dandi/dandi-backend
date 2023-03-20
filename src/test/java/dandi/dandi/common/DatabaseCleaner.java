@@ -12,7 +12,7 @@ public class DatabaseCleaner implements InitializingBean {
 
 
     private static final List<String> TABLE_NAMES = List.of("member", "refresh_token", "push_notification",
-            "post", "additional_feeling_index");
+            "post", "additional_feeling_index", "post_like");
 
     @PersistenceContext
     private EntityManager entityManager;
