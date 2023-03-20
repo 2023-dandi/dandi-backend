@@ -47,7 +47,7 @@ public class PostController implements PostControllerDocs {
     }
 
     @GetMapping("/{postId}")
-    public ResponseEntity<PostDetailResponse> getPostDetails(@PathVariable Long postId) {
-        return ResponseEntity.ok(postUseCase.getPostDetails(postId));
+    public ResponseEntity<PostDetailResponse> getPostDetails(@Login Long memberId, @PathVariable Long postId) {
+        return ResponseEntity.ok(postUseCase.getPostDetails(memberId, postId));
     }
 }

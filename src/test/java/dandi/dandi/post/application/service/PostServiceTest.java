@@ -1,5 +1,6 @@
 package dandi.dandi.post.application.service;
 
+import static dandi.dandi.member.MemberTestFixture.MEMBER_ID;
 import static dandi.dandi.member.MemberTestFixture.TEST_MEMBER;
 import static dandi.dandi.post.PostFixture.ADDITIONAL_OUTFIT_FEELING_INDICES;
 import static dandi.dandi.post.PostFixture.MAX_TEMPERATURE;
@@ -24,6 +25,8 @@ import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -49,13 +52,14 @@ class PostServiceTest {
     }
 
     @DisplayName("게시글의 상세정보를 반환할 수 있다.")
-    @Test
-    void getPostDetails() {
+    @ParameterizedTest
+    @CsvSource({"1, true", "2, false"})
+    void getPostDetails(Long memberId, boolean expectedMine) {
         Long postId = 1L;
         when(postPersistencePort.findById(postId))
                 .thenReturn(Optional.of(TEST_POST));
 
-        PostDetailResponse postDetailsResponse = postService.getPostDetails(postId);
+        PostDetailResponse postDetailsResponse = postService.getPostDetails(memberId, postId);
 
         PostWriterResponse postWriterResponse = postDetailsResponse.getWriter();
         assertAll(
@@ -65,6 +69,7 @@ class PostServiceTest {
                         .isEqualTo(TEST_POST.getWriterId()),
                 () -> assertThat(postWriterResponse.getNickname())
                         .isEqualTo(TEST_POST.getWriterNickname()),
+                () -> assertThat(postDetailsResponse.isMine()).isEqualTo(expectedMine),
                 () -> assertThat(postDetailsResponse.getPostImageUrl())
                         .startsWith(IMAGE_ACCESS_URL + TEST_POST.getPostImageUrl()),
                 () -> assertThat(postDetailsResponse.getTemperatures().getMin())
@@ -85,7 +90,7 @@ class PostServiceTest {
         when(postPersistencePort.findById(postId))
                 .thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> postService.getPostDetails(postId))
+        assertThatThrownBy(() -> postService.getPostDetails(MEMBER_ID, postId))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessage(NotFoundException.post().getMessage());
     }

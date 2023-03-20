@@ -4,5 +4,5 @@ public interface PostUseCase {
 
     PostRegisterResponse registerPost(Long memberId, PostRegisterCommand postRegisterCommand);
 
-    PostDetailResponse getPostDetails(Long postId);
+    PostDetailResponse getPostDetails(Long memberId, Long postId);
 }
