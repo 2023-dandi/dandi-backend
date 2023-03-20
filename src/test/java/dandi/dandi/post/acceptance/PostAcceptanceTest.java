@@ -134,16 +134,6 @@ class PostAcceptanceTest extends AcceptanceTest {
         assertThat(response.statusCode()).isEqualTo(HttpStatus.NOT_FOUND.value());
     }
 
-    private Long registerPost(String token) {
-        PostRegisterRequest postRegisterRequest = new PostRegisterRequest(POST_IMAGE_URL,
-                new TemperatureRequest(MIN_TEMPERATURE, MAX_TEMPERATURE),
-                new OutfitFeelingRequest(OUTFIT_FEELING_INDEX, ADDITIONAL_OUTFIT_FEELING_INDICES));
-        String locationHeader = httpPostWithAuthorization(POST_REGISTER_REQUEST_URI, postRegisterRequest, token)
-                .header(HttpHeaders.LOCATION);
-        String postId = locationHeader.split("/posts/")[1];
-        return Long.parseLong(postId);
-    }
-
     private void mockAmazonS3Exception() {
         Mockito.doThrow(AmazonClientException.class)
                 .when(amazonS3)

@@ -10,6 +10,7 @@ import java.util.List;
 
 public class PostFixture {
 
+    public static final Long POST_ID = 1L;
     public static final double MIN_TEMPERATURE = 20.0;
     public static final double MAX_TEMPERATURE = 30.0;
     public static final Temperatures TEMPERATURES = new Temperatures(MIN_TEMPERATURE, MAX_TEMPERATURE);
@@ -20,5 +21,5 @@ public class PostFixture {
             new WeatherFeeling(OUTFIT_FEELING_INDEX, ADDITIONAL_OUTFIT_FEELING_INDICES);
 
     public static final Post TEST_POST = new Post(
-            1L, NICKNAME, TEMPERATURES, POST_IMAGE_URL, WEATHER_FEELING, LocalDate.now());
+            POST_ID, NICKNAME, TEMPERATURES, POST_IMAGE_URL, WEATHER_FEELING, LocalDate.now());
 }
