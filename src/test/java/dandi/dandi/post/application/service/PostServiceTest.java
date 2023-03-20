@@ -15,8 +15,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import dandi.dandi.common.exception.NotFoundException;
+import dandi.dandi.member.application.service.ProfileImageService;
 import dandi.dandi.post.application.port.in.PostDetailResponse;
 import dandi.dandi.post.application.port.in.PostRegisterCommand;
+import dandi.dandi.post.application.port.in.PostWriterResponse;
 import dandi.dandi.post.application.port.out.PostPersistencePort;
 import dandi.dandi.post.domain.Post;
 import java.util.Optional;
@@ -30,7 +32,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class PostServiceTest {
 
     private final PostPersistencePort postPersistencePort = Mockito.mock(PostPersistencePort.class);
-    private final PostService postService = new PostService(postPersistencePort, IMAGE_ACCESS_URL, POST_IMAGE_DIR);
+    private final ProfileImageService profileImageService = Mockito.mock(ProfileImageService.class);
+    private final PostService postService = new PostService(postPersistencePort, profileImageService, IMAGE_ACCESS_URL,
+            POST_IMAGE_DIR);
 
     @DisplayName("게시글을 작성할 수 있다.")
     @Test
@@ -47,20 +51,58 @@ class PostServiceTest {
         assertThat(postId).isEqualTo(1L);
     }
 
-    @DisplayName("게시글의 상세정보를 반환할 수 있다.")
+    @DisplayName("게시글의 상세정보를 반환할 수 있다. (기본 프로필 이미지 작성자)")
     @Test
-    void getPostDetails() {
+    void getPostDetails_InitialProfileImagePostWriter() {
         Long postId = 1L;
         when(postPersistencePort.findById(postId))
                 .thenReturn(Optional.of(TEST_POST));
+        when(profileImageService.isInitialProfileImage(TEST_POST.getWriterProfileImageUrl()))
+                .thenReturn(true);
 
         PostDetailResponse postDetailsResponse = postService.getPostDetails(postId);
 
+        PostWriterResponse postWriterResponse = postDetailsResponse.getWriter();
         assertAll(
+                () -> assertThat(postWriterResponse.getProfileImageUrl()).isNull(),
+                () -> assertThat(postWriterResponse.getId())
+                        .isEqualTo(TEST_POST.getWriterId()),
+                () -> assertThat(postWriterResponse.getNickname())
+                        .isEqualTo(TEST_POST.getWriterNickname()),
                 () -> assertThat(postDetailsResponse.getPostImageUrl())
                         .startsWith(IMAGE_ACCESS_URL + TEST_POST.getPostImageUrl()),
-                () -> assertThat(postDetailsResponse.getWriterNickname())
+                () -> assertThat(postDetailsResponse.getTemperatures().getMin())
+                        .isEqualTo(TEST_POST.getMinTemperature()),
+                () -> assertThat(postDetailsResponse.getTemperatures().getMax())
+                        .isEqualTo(TEST_POST.getMaxTemperature()),
+                () -> assertThat(postDetailsResponse.getOutfitFeelings().getFeelingIndex())
+                        .isEqualTo(TEST_POST.getWeatherFeelingIndex()),
+                () -> assertThat(postDetailsResponse.getOutfitFeelings().getAdditionalFeelingIndices())
+                        .isEqualTo(TEST_POST.getAdditionalWeatherFeelingIndices())
+        );
+    }
+
+    @DisplayName("게시글의 상세정보를 반환할 수 있다. (기본이 아닌 프로필 이미지 작성자)")
+    @Test
+    void getPostDetails_CustomProfileImagePostWriter() {
+        Long postId = 1L;
+        when(postPersistencePort.findById(postId))
+                .thenReturn(Optional.of(TEST_POST));
+        when(profileImageService.isInitialProfileImage(TEST_POST.getWriterProfileImageUrl()))
+                .thenReturn(false);
+
+        PostDetailResponse postDetailsResponse = postService.getPostDetails(postId);
+
+        PostWriterResponse postWriterResponse = postDetailsResponse.getWriter();
+        assertAll(
+                () -> assertThat(postWriterResponse.getProfileImageUrl())
+                        .startsWith(IMAGE_ACCESS_URL + TEST_POST.getWriterProfileImageUrl()),
+                () -> assertThat(postWriterResponse.getId())
+                        .isEqualTo(TEST_POST.getWriterId()),
+                () -> assertThat(postWriterResponse.getNickname())
                         .isEqualTo(TEST_POST.getWriterNickname()),
+                () -> assertThat(postDetailsResponse.getPostImageUrl())
+                        .startsWith(IMAGE_ACCESS_URL + TEST_POST.getPostImageUrl()),
                 () -> assertThat(postDetailsResponse.getTemperatures().getMin())
                         .isEqualTo(TEST_POST.getMinTemperature()),
                 () -> assertThat(postDetailsResponse.getTemperatures().getMax())

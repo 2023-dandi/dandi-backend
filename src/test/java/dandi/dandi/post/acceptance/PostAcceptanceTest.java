@@ -22,6 +22,7 @@ import dandi.dandi.common.AcceptanceTest;
 import dandi.dandi.post.application.port.in.PostDetailResponse;
 import dandi.dandi.post.application.port.in.PostImageRegisterResponse;
 import dandi.dandi.post.application.port.in.PostRegisterResponse;
+import dandi.dandi.post.application.port.in.PostWriterResponse;
 import dandi.dandi.post.web.in.OutfitFeelingRequest;
 import dandi.dandi.post.web.in.PostRegisterRequest;
 import dandi.dandi.post.web.in.TemperatureRequest;
@@ -116,10 +117,13 @@ class PostAcceptanceTest extends AcceptanceTest {
 
         PostDetailResponse postDetailResponse = response.jsonPath()
                 .getObject(".", PostDetailResponse.class);
+        PostWriterResponse postWriterResponse = postDetailResponse.getWriter();
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
                 () -> assertThat(postDetailResponse.getPostImageUrl()).isNotNull(),
-                () -> assertThat(postDetailResponse.getWriterNickname()).isNotNull(),
+                () -> assertThat(postWriterResponse.getId()).isNotNull(),
+                () -> assertThat(postWriterResponse.getNickname()).isNotNull(),
+                () -> assertThat(postWriterResponse.getProfileImageUrl()).isNull(),
                 () -> assertThat(postDetailResponse.getOutfitFeelings().getFeelingIndex())
                         .isEqualTo(OUTFIT_FEELING_INDEX),
                 () -> assertThat(postDetailResponse.getOutfitFeelings().getAdditionalFeelingIndices())

@@ -1,21 +1,22 @@
 package dandi.dandi.post.domain;
 
+import dandi.dandi.member.domain.Member;
 import java.time.LocalDate;
 import java.util.List;
 
 public class Post {
 
     private final Long id;
-    private final String writerNickname;
+    private final Member member;
     private final Temperatures temperatures;
     private final String postImageUrl;
     private final WeatherFeeling weatherFeeling;
     private final LocalDate createdAt;
 
-    public Post(Long id, String writerNickname, Temperatures temperatures, String postImageUrl,
-                WeatherFeeling weatherFeeling, LocalDate createdAt) {
+    public Post(Long id, Member member, Temperatures temperatures, String postImageUrl, WeatherFeeling weatherFeeling,
+                LocalDate createdAt) {
         this.id = id;
-        this.writerNickname = writerNickname;
+        this.member = member;
         this.temperatures = temperatures;
         this.postImageUrl = postImageUrl;
         this.weatherFeeling = weatherFeeling;
@@ -28,10 +29,6 @@ public class Post {
 
     public Long getId() {
         return id;
-    }
-
-    public String getWriterNickname() {
-        return writerNickname;
     }
 
     public Double getMinTemperature() {
@@ -56,5 +53,21 @@ public class Post {
 
     public LocalDate getCreatedAt() {
         return createdAt;
+    }
+
+    public String getWriterNickname() {
+        return member.getNickname();
+    }
+
+    public Long getWriterId() {
+        return member.getId();
+    }
+
+    public String getWriterProfileImageUrl() {
+        return member.getProfileImgUrl();
+    }
+
+    public boolean isWrittenByProfileImageUrl(String profileImageUrl) {
+        return member.hasProfileImgUrl(profileImageUrl);
     }
 }
