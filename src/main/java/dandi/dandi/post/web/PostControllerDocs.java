@@ -58,5 +58,5 @@ public interface PostControllerDocs {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 게시글",
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
     })
-    ResponseEntity<PostDetailResponse> getPostDetails(@Parameter(hidden = true) Long memberId);
+    ResponseEntity<PostDetailResponse> getPostDetails(@Parameter(hidden = true) Long memberId, Long postId);
 }

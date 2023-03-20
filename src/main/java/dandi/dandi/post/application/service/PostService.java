@@ -47,9 +47,10 @@ public class PostService implements PostUseCase {
 
     @Override
     @Transactional(readOnly = true)
-    public PostDetailResponse getPostDetails(Long postId) {
+    public PostDetailResponse getPostDetails(Long memberId, Long postId) {
         Post post = postPersistencePort.findById(postId)
                 .orElseThrow(NotFoundException::post);
-        return new PostDetailResponse(post, imageAccessUrl);
+        boolean mine = post.isWrittenBy(memberId);
+        return new PostDetailResponse(post, mine, imageAccessUrl);
     }
 }

@@ -7,16 +7,16 @@ import java.util.List;
 public class Post {
 
     private final Long id;
-    private final Member member;
+    private final Member writer;
     private final Temperatures temperatures;
     private final String postImageUrl;
     private final WeatherFeeling weatherFeeling;
     private final LocalDate createdAt;
 
-    public Post(Long id, Member member, Temperatures temperatures, String postImageUrl, WeatherFeeling weatherFeeling,
+    public Post(Long id, Member writer, Temperatures temperatures, String postImageUrl, WeatherFeeling weatherFeeling,
                 LocalDate createdAt) {
         this.id = id;
-        this.member = member;
+        this.writer = writer;
         this.temperatures = temperatures;
         this.postImageUrl = postImageUrl;
         this.weatherFeeling = weatherFeeling;
@@ -56,14 +56,18 @@ public class Post {
     }
 
     public String getWriterNickname() {
-        return member.getNickname();
+        return writer.getNickname();
     }
 
     public Long getWriterId() {
-        return member.getId();
+        return writer.getId();
     }
 
     public String getWriterProfileImageUrl() {
-        return member.getProfileImgUrl();
+        return writer.getProfileImgUrl();
+    }
+
+    public boolean isWrittenBy(Long memberId) {
+        return writer.hasId(memberId);
     }
 }

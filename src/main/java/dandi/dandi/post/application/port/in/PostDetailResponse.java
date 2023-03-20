@@ -6,6 +6,7 @@ import java.time.LocalDate;
 public class PostDetailResponse {
 
     private PostWriterResponse writer;
+    private boolean mine;
     private TemperatureResponse temperatures;
     private OutfitFeelingResponse outfitFeelings;
     private String postImageUrl;
@@ -14,8 +15,9 @@ public class PostDetailResponse {
     public PostDetailResponse() {
     }
 
-    public PostDetailResponse(Post post, String imageAccessUrl) {
+    public PostDetailResponse(Post post, boolean mine, String imageAccessUrl) {
         this.writer = new PostWriterResponse(post, imageAccessUrl);
+        this.mine = mine;
         this.temperatures = new TemperatureResponse(post.getMinTemperature(), post.getMaxTemperature());
         this.outfitFeelings =
                 new OutfitFeelingResponse(post.getWeatherFeelingIndex(), post.getAdditionalWeatherFeelingIndices());
@@ -25,6 +27,10 @@ public class PostDetailResponse {
 
     public PostWriterResponse getWriter() {
         return writer;
+    }
+
+    public boolean isMine() {
+        return mine;
     }
 
     public TemperatureResponse getTemperatures() {

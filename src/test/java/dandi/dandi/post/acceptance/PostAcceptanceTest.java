@@ -1,6 +1,6 @@
 package dandi.dandi.post.acceptance;
 
-import static dandi.dandi.common.HttpMethodFixture.httpGet;
+import static dandi.dandi.common.HttpMethodFixture.httpGetWithAuthorization;
 import static dandi.dandi.common.HttpMethodFixture.httpPostWithAuthorization;
 import static dandi.dandi.common.HttpMethodFixture.httpPostWithAuthorizationAndImgFile;
 import static dandi.dandi.common.HttpResponseExtractor.extractExceptionMessage;
@@ -114,7 +114,8 @@ class PostAcceptanceTest extends AcceptanceTest {
         String token = getToken();
         Long postId = registerPost(token);
 
-        ExtractableResponse<Response> response = httpGet(POST_DETAILS_REQUEST_URI + "/" + postId);
+        ExtractableResponse<Response> response =
+                httpGetWithAuthorization(POST_DETAILS_REQUEST_URI + "/" + postId, token);
 
         PostDetailResponse postDetailResponse = response.jsonPath()
                 .getObject(".", PostDetailResponse.class);
@@ -125,6 +126,7 @@ class PostAcceptanceTest extends AcceptanceTest {
                 () -> assertThat(postWriterResponse.getId()).isNotNull(),
                 () -> assertThat(postWriterResponse.getNickname()).isNotNull(),
                 () -> assertThat(postWriterResponse.getProfileImageUrl()).isNotNull(),
+                () -> assertThat(postDetailResponse.isMine()).isTrue(),
                 () -> assertThat(postDetailResponse.getOutfitFeelings().getFeelingIndex())
                         .isEqualTo(OUTFIT_FEELING_INDEX),
                 () -> assertThat(postDetailResponse.getOutfitFeelings().getAdditionalFeelingIndices())
@@ -136,7 +138,9 @@ class PostAcceptanceTest extends AcceptanceTest {
     @DisplayName("존재하지 않는 게시글 상세 조회 요청에 대해 404를 반환한다.")
     @Test
     void getPostDetails_NotFount() {
-        ExtractableResponse<Response> response = httpGet(POST_DETAILS_REQUEST_URI + "/" + 1L);
+        String token = getToken();
+        ExtractableResponse<Response> response =
+                httpGetWithAuthorization(POST_DETAILS_REQUEST_URI + "/" + 1L, token);
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.NOT_FOUND.value());
     }
