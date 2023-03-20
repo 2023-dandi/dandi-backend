@@ -21,6 +21,7 @@ import com.amazonaws.AmazonClientException;
 import dandi.dandi.common.AcceptanceTest;
 import dandi.dandi.post.application.port.in.PostDetailResponse;
 import dandi.dandi.post.application.port.in.PostImageRegisterResponse;
+import dandi.dandi.post.application.port.in.PostRegisterResponse;
 import dandi.dandi.post.web.in.OutfitFeelingRequest;
 import dandi.dandi.post.web.in.PostRegisterRequest;
 import dandi.dandi.post.web.in.TemperatureRequest;
@@ -32,7 +33,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mockito;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 
 class PostAcceptanceTest extends AcceptanceTest {
@@ -48,10 +48,12 @@ class PostAcceptanceTest extends AcceptanceTest {
         ExtractableResponse<Response> response =
                 httpPostWithAuthorization(POST_REGISTER_REQUEST_URI, postRegisterRequest, token);
 
-        String locationHeader = response.header(HttpHeaders.LOCATION);
+        Long postId = response.jsonPath()
+                .getObject(".", PostRegisterResponse.class)
+                .getPostId();
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value()),
-                () -> assertThat(locationHeader).contains("/posts")
+                () -> assertThat(postId).isNotNull()
         );
     }
 

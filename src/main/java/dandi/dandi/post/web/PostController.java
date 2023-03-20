@@ -4,9 +4,9 @@ import dandi.dandi.auth.web.support.Login;
 import dandi.dandi.post.application.port.in.PostDetailResponse;
 import dandi.dandi.post.application.port.in.PostImageRegisterResponse;
 import dandi.dandi.post.application.port.in.PostImageUseCase;
+import dandi.dandi.post.application.port.in.PostRegisterResponse;
 import dandi.dandi.post.application.port.in.PostUseCase;
 import dandi.dandi.post.web.in.PostRegisterRequest;
-import java.net.URI;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,10 +39,11 @@ public class PostController implements PostControllerDocs {
     }
 
     @PostMapping
-    public ResponseEntity<Void> registerPost(@Login Long memberId,
-                                             @RequestBody PostRegisterRequest postRegisterRequest) {
-        Long postId = postUseCase.registerPost(memberId, postRegisterRequest.toCommand());
-        return ResponseEntity.created(URI.create("/posts/" + postId)).build();
+    public ResponseEntity<PostRegisterResponse> registerPost(@Login Long memberId,
+                                                             @RequestBody PostRegisterRequest postRegisterRequest) {
+        postUseCase.registerPost(memberId, postRegisterRequest.toCommand());
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(postUseCase.registerPost(memberId, postRegisterRequest.toCommand()));
     }
 
     @GetMapping("/{postId}")
