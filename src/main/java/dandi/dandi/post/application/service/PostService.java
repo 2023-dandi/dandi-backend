@@ -18,11 +18,14 @@ public class PostService implements PostUseCase {
 
     private final PostPersistencePort postPersistencePort;
     private final String imageAccessUrl;
+    private final String postImageDir;
 
     public PostService(PostPersistencePort postPersistencePort,
-                       @Value("${cloud.aws.cloud-front.uri}") String imageAccessUrl) {
+                       @Value("${cloud.aws.cloud-front.uri}") String imageAccessUrl,
+                       @Value("${image.post-dir}") String postImageDir) {
         this.postPersistencePort = postPersistencePort;
         this.imageAccessUrl = imageAccessUrl;
+        this.postImageDir = postImageDir;
     }
 
     @Override
@@ -32,9 +35,14 @@ public class PostService implements PostUseCase {
                 postRegisterCommand.getMinTemperature(), postRegisterCommand.getMaxTemperature());
         WeatherFeeling weatherFeeling = new WeatherFeeling(
                 postRegisterCommand.getFeelingIndex(), postRegisterCommand.getAdditionalFeelingIndices());
-        Post post = Post.initial(temperatures, postRegisterCommand.getPostImageUrl(), weatherFeeling);
+        String postImageUrl = removeImageAccessUrl(postRegisterCommand.getPostImageUrl());
+        Post post = Post.initial(temperatures, postImageUrl, weatherFeeling);
         Long postId = postPersistencePort.save(post, memberId);
         return new PostRegisterResponse(postId);
+    }
+
+    private String removeImageAccessUrl(String postImageUrl) {
+        return postImageUrl.substring(postImageUrl.indexOf(postImageDir));
     }
 
     @Override
