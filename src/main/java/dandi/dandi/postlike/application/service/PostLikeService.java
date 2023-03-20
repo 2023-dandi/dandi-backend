@@ -6,6 +6,7 @@ import dandi.dandi.postlike.application.port.in.PostLikeUseCase;
 import dandi.dandi.postlike.application.port.out.PostLikePersistencePort;
 import dandi.dandi.postlike.domain.PostLike;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class PostLikeService implements PostLikeUseCase {
@@ -19,6 +20,7 @@ public class PostLikeService implements PostLikeUseCase {
     }
 
     @Override
+    @Transactional
     public void reverseLike(Long memberId, Long postId) {
         validatePostNotFound(postId);
         postLikePersistencePort.findByMemberIdAndPostId(memberId, postId)

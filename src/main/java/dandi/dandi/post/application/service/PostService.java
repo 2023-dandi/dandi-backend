@@ -9,6 +9,7 @@ import dandi.dandi.post.application.port.out.PostPersistencePort;
 import dandi.dandi.post.domain.Post;
 import dandi.dandi.post.domain.Temperatures;
 import dandi.dandi.post.domain.WeatherFeeling;
+import dandi.dandi.postlike.application.port.out.PostLikePersistencePort;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,11 +20,13 @@ public class PostService implements PostUseCase {
     private static final int POST_IMAGE_URL_INDEX = 1;
 
     private final PostPersistencePort postPersistencePort;
+    private final PostLikePersistencePort postLikePersistencePort;
     private final String imageAccessUrl;
 
-    public PostService(PostPersistencePort postPersistencePort,
+    public PostService(PostPersistencePort postPersistencePort, PostLikePersistencePort postLikePersistencePort,
                        @Value("${cloud.aws.cloud-front.uri}") String imageAccessUrl) {
         this.postPersistencePort = postPersistencePort;
+        this.postLikePersistencePort = postLikePersistencePort;
         this.imageAccessUrl = imageAccessUrl;
     }
 
@@ -51,6 +54,7 @@ public class PostService implements PostUseCase {
         Post post = postPersistencePort.findById(postId)
                 .orElseThrow(NotFoundException::post);
         boolean mine = post.isWrittenBy(memberId);
-        return new PostDetailResponse(post, mine, imageAccessUrl);
+        boolean liked = postLikePersistencePort.existsByPostIdAndMemberId(memberId, postId);
+        return new PostDetailResponse(post, mine, liked, imageAccessUrl);
     }
 }

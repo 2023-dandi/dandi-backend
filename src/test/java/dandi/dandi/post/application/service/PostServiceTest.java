@@ -21,6 +21,7 @@ import dandi.dandi.post.application.port.in.PostRegisterCommand;
 import dandi.dandi.post.application.port.in.PostWriterResponse;
 import dandi.dandi.post.application.port.out.PostPersistencePort;
 import dandi.dandi.post.domain.Post;
+import dandi.dandi.postlike.application.port.out.PostLikePersistencePort;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,7 +35,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class PostServiceTest {
 
     private final PostPersistencePort postPersistencePort = Mockito.mock(PostPersistencePort.class);
-    private final PostService postService = new PostService(postPersistencePort, IMAGE_ACCESS_URL);
+    private final PostLikePersistencePort postLikePersistencePort = Mockito.mock(PostLikePersistencePort.class);
+    private final PostService postService =
+            new PostService(postPersistencePort, postLikePersistencePort, IMAGE_ACCESS_URL);
 
     @DisplayName("게시글을 작성할 수 있다.")
     @Test
@@ -58,6 +61,8 @@ class PostServiceTest {
         Long postId = 1L;
         when(postPersistencePort.findById(postId))
                 .thenReturn(Optional.of(TEST_POST));
+        when(postLikePersistencePort.existsByPostIdAndMemberId(memberId, postId))
+                .thenReturn(true);
 
         PostDetailResponse postDetailsResponse = postService.getPostDetails(memberId, postId);
 
@@ -70,6 +75,7 @@ class PostServiceTest {
                 () -> assertThat(postWriterResponse.getNickname())
                         .isEqualTo(TEST_POST.getWriterNickname()),
                 () -> assertThat(postDetailsResponse.isMine()).isEqualTo(expectedMine),
+                () -> assertThat(postDetailsResponse.isLiked()).isTrue(),
                 () -> assertThat(postDetailsResponse.getPostImageUrl())
                         .startsWith(IMAGE_ACCESS_URL + TEST_POST.getPostImageUrl()),
                 () -> assertThat(postDetailsResponse.getTemperatures().getMin())

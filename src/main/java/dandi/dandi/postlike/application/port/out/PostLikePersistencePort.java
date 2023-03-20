@@ -10,4 +10,6 @@ public interface PostLikePersistencePort {
     void save(PostLike postLike);
 
     void deleteById(Long id);
+
+    boolean existsByPostIdAndMemberId(Long memberId, Long postId);
 }

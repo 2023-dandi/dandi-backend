@@ -127,6 +127,7 @@ class PostAcceptanceTest extends AcceptanceTest {
                 () -> assertThat(postWriterResponse.getNickname()).isNotNull(),
                 () -> assertThat(postWriterResponse.getProfileImageUrl()).isNotNull(),
                 () -> assertThat(postDetailResponse.isMine()).isTrue(),
+                () -> assertThat(postDetailResponse.isLiked()).isFalse(),
                 () -> assertThat(postDetailResponse.getOutfitFeelings().getFeelingIndex())
                         .isEqualTo(OUTFIT_FEELING_INDEX),
                 () -> assertThat(postDetailResponse.getOutfitFeelings().getAdditionalFeelingIndices())
