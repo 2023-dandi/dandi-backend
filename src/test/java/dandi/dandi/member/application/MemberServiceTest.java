@@ -34,7 +34,7 @@ class MemberServiceTest {
     private final MemberService memberService =
             new MemberService(memberPersistencePort, IMAGE_ACCESS_URL);
 
-    @DisplayName("기본 프로필 이미지의 회원 정보를 반환할 수 있다.라면 프로필 이미지가 null이 반환되고 변경했다면 이미지 url을 반환한다.")
+    @DisplayName("기본 프로필 이미지의 회원 정보를 반환할 수 있다.")
     @Test
     void findMemberInfo() {
         Long memberId = 1L;
