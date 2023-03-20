@@ -4,6 +4,7 @@ import static dandi.dandi.post.PostFixture.ADDITIONAL_OUTFIT_FEELING_INDICES;
 import static dandi.dandi.post.PostFixture.MAX_TEMPERATURE;
 import static dandi.dandi.post.PostFixture.MIN_TEMPERATURE;
 import static dandi.dandi.post.PostFixture.OUTFIT_FEELING_INDEX;
+import static dandi.dandi.post.PostFixture.POST_IMAGE_DIR;
 import static dandi.dandi.post.PostFixture.POST_IMAGE_URL;
 import static dandi.dandi.post.PostFixture.TEST_POST;
 import static dandi.dandi.utils.image.TestImageUtils.IMAGE_ACCESS_URL;
@@ -29,7 +30,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class PostServiceTest {
 
     private final PostPersistencePort postPersistencePort = Mockito.mock(PostPersistencePort.class);
-    private final PostService postService = new PostService(postPersistencePort, IMAGE_ACCESS_URL);
+    private final PostService postService = new PostService(postPersistencePort, IMAGE_ACCESS_URL, POST_IMAGE_DIR);
 
     @DisplayName("게시글을 작성할 수 있다.")
     @Test

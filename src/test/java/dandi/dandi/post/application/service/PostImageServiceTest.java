@@ -1,5 +1,6 @@
 package dandi.dandi.post.application.service;
 
+import static dandi.dandi.post.PostFixture.POST_IMAGE_DIR;
 import static dandi.dandi.utils.image.TestImageUtils.IMAGE_ACCESS_URL;
 import static dandi.dandi.utils.image.TestImageUtils.generateTestImgMultipartFile;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -25,10 +26,9 @@ import org.springframework.web.multipart.MultipartFile;
 @ExtendWith(MockitoExtension.class)
 class PostImageServiceTest {
 
-    private final String postImageDir = "post-image";
     private final ImageUploader imageUploader = Mockito.mock(ImageUploader.class);
     private final PostImageService postImageService =
-            new PostImageService(imageUploader, postImageDir, IMAGE_ACCESS_URL);
+            new PostImageService(imageUploader, POST_IMAGE_DIR, IMAGE_ACCESS_URL);
 
     @DisplayName("게시글 사진을 업로드할 수 있다.")
     @Test
@@ -41,7 +41,7 @@ class PostImageServiceTest {
         assertAll(
                 () -> verify(imageUploader).upload(anyString(), any(InputStream.class)),
                 () -> assertThat(postImageRegisterResponse.getPostImageUrl())
-                        .startsWith(IMAGE_ACCESS_URL + postImageDir)
+                        .startsWith(IMAGE_ACCESS_URL + POST_IMAGE_DIR)
                         .contains(multipartFile.getOriginalFilename())
                         .contains(String.valueOf(memberId))
         );
