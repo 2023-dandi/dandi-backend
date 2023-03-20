@@ -30,4 +30,9 @@ public class PostLikePersistenceAdapter implements PostLikePersistencePort {
     public void deleteById(Long id) {
         postLikeRepository.deleteById(id);
     }
+
+    @Override
+    public boolean existsByPostIdAndMemberId(Long memberId, Long postId) {
+        return postLikeRepository.existsByMemberIdAndPostId(memberId, postId);
+    }
 }
