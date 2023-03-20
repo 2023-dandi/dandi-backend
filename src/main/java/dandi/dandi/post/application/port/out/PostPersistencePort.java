@@ -10,4 +10,6 @@ public interface PostPersistencePort {
     Optional<Post> findById(Long postId);
 
     boolean existsById(Long postId);
+
+    void deleteById(Long postId);
 }
