@@ -1,6 +1,5 @@
 package dandi.dandi.member.acceptance;
 
-import static dandi.dandi.common.HttpMethodFixture.httpGet;
 import static dandi.dandi.common.HttpMethodFixture.httpGetWithAuthorization;
 import static dandi.dandi.common.HttpMethodFixture.httpPatchWithAuthorization;
 import static dandi.dandi.common.HttpMethodFixture.httpPost;
@@ -120,9 +119,10 @@ class MemberAcceptanceTest extends AcceptanceTest {
     void checkNicknameDuplication(String nickname, boolean expected) {
         String token = getToken();
         httpPatchWithAuthorization(MEMBER_NICKNAME_URI, new NicknameUpdateRequest("nickname123"), token);
+        String anotherMemberToken = getAnotherMemberToken();
 
-        ExtractableResponse<Response> response =
-                httpGet(MEMBER_NICKNAME_DUPLICATION_CHECK_URI + "?nickname=" + nickname);
+        ExtractableResponse<Response> response = httpGetWithAuthorization(
+                MEMBER_NICKNAME_DUPLICATION_CHECK_URI + "?nickname=" + nickname, anotherMemberToken);
 
         boolean duplicated = response.jsonPath()
                 .getObject(".", NicknameDuplicationCheckResponse.class)
@@ -130,6 +130,25 @@ class MemberAcceptanceTest extends AcceptanceTest {
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
                 () -> assertThat(duplicated).isEqualTo(expected)
+        );
+    }
+
+    @DisplayName("자신의 닉네임에 대한 닉네임 중복확인 요청에 대해 200과 body에 false와 반환한다.")
+    @Test
+    void checkNicknameDuplication_MyNickname() {
+        String token = getToken();
+        String nickname = "nickname123";
+        httpPatchWithAuthorization(MEMBER_NICKNAME_URI, new NicknameUpdateRequest(nickname), token);
+
+        ExtractableResponse<Response> response =
+                httpGetWithAuthorization(MEMBER_NICKNAME_DUPLICATION_CHECK_URI + "?nickname=" + nickname, token);
+
+        boolean duplicated = response.jsonPath()
+                .getObject(".", NicknameDuplicationCheckResponse.class)
+                .isDuplicated();
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(duplicated).isFalse()
         );
     }
 
