@@ -42,15 +42,4 @@ class MemberRepositoryTest {
 
         assertThat(actual).isEqualTo(expected);
     }
-
-    @DisplayName("존재하는 nickname인지 반환한다.")
-    @ParameterizedTest
-    @CsvSource({"memberNickname, true", "asdas521, false"})
-    void existsByNicknameValue(String nickname, boolean expected) {
-        memberRepository.save(TEST_MEMBER_JPA_ENTITY);
-
-        boolean actual = memberRepository.existsByNickname(nickname);
-
-        assertThat(actual).isEqualTo(expected);
-    }
 }

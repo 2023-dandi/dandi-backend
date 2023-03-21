@@ -12,10 +12,9 @@ public interface MemberRepository extends JpaRepository<MemberJpaEntity, Long> {
     @Query("SELECT m FROM MemberJpaEntity m WHERE m.oAuthId = :oAuthId")
     Optional<MemberJpaEntity> findByOAuthId(String oAuthId);
 
-    @Query("SELECT m.nickname FROM MemberJpaEntity m WHERE m.id = :id")
-    String findNicknameById(Long id);
-
     boolean existsMemberByNickname(String nickname);
+
+    boolean existsByNicknameAndIdIsNot(String nickname, Long memberId);
 
     @Modifying
     @Query("UPDATE MemberJpaEntity m SET m.profileImgUrl = :profileImageUrl WHERE m.id = :memberId")
@@ -24,8 +23,6 @@ public interface MemberRepository extends JpaRepository<MemberJpaEntity, Long> {
     @Modifying
     @Query("UPDATE MemberJpaEntity m SET m.nickname = :nickname WHERE m.id = :memberId")
     void updateNickname(Long memberId, String nickname);
-
-    boolean existsByNickname(String nickname);
 
     @Modifying
     @Query("UPDATE MemberJpaEntity m SET m.latitude = :latitude, m.longitude = :longitude WHERE m.id = :memberId")

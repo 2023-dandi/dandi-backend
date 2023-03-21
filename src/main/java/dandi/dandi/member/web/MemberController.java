@@ -38,8 +38,9 @@ public class MemberController implements MemberControllerDocs {
     }
 
     @GetMapping(value = "/nickname/duplication", params = "nickname")
-    public ResponseEntity<NicknameDuplicationCheckResponse> checkNicknameDuplication(@RequestParam String nickname) {
-        return ResponseEntity.ok(memberUseCase.checkDuplication(nickname));
+    public ResponseEntity<NicknameDuplicationCheckResponse> checkNicknameDuplication(@Login Long memberId,
+                                                                                     @RequestParam String nickname) {
+        return ResponseEntity.ok(memberUseCase.checkDuplication(memberId, nickname));
     }
 
     @PatchMapping("/nickname")

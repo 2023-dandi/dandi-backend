@@ -41,6 +41,8 @@ import org.springframework.context.annotation.Import;
 public class AcceptanceTest {
 
     private static final String APPLE_IDENTITY_TOKEN = "appleIdentityToken";
+    private static final String APPLE_IDENTITY_TOKEN2 = "appleIdentityToken2";
+    private static final String OAUTH_ID2 = "oAuthId2";
 
     @LocalServerPort
     int port;
@@ -71,6 +73,15 @@ public class AcceptanceTest {
         when(oAuthClientPort.getOAuthMemberId(APPLE_IDENTITY_TOKEN))
                 .thenReturn(OAUTH_ID);
         return HttpMethodFixture.httpPost(new LoginRequest(APPLE_IDENTITY_TOKEN), LOGIN_REQUEST_URI)
+                .jsonPath()
+                .getObject(".", TokenResponse.class)
+                .getAccessToken();
+    }
+
+    public String getAnotherMemberToken() {
+        when(oAuthClientPort.getOAuthMemberId(APPLE_IDENTITY_TOKEN2))
+                .thenReturn(OAUTH_ID2);
+        return HttpMethodFixture.httpPost(new LoginRequest(APPLE_IDENTITY_TOKEN2), LOGIN_REQUEST_URI)
                 .jsonPath()
                 .getObject(".", TokenResponse.class)
                 .getAccessToken();

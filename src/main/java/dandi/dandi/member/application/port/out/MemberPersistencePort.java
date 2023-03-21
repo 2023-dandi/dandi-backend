@@ -9,7 +9,7 @@ public interface MemberPersistencePort {
 
     Optional<Member> findByOAuthId(String oAuthId);
 
-    boolean existsMemberByNickname(String nickname);
+    boolean existsMemberByNicknameExceptMine(Long memberId, String nickname);
 
     void updateProfileImageUrl(Long memberId, String profileImageUrl);
 
@@ -18,4 +18,6 @@ public interface MemberPersistencePort {
     void updateNickname(Long memberId, String newNickname);
 
     void updateLocation(Long memberId, Double latitude, Double longitude);
+
+    boolean existsMemberByNickname(String nickname);
 }

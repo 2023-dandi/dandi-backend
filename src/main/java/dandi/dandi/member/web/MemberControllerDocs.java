@@ -32,9 +32,10 @@ public interface MemberControllerDocs {
     @ApiResponse(responseCode = "200", description = "사용자 정보 정상 반환")
     ResponseEntity<MemberInfoResponse> getMemberInfo(@Parameter(hidden = true) Long memberId);
 
-    @Operation(summary = "닉네임 중복 확인")
+    @Operation(summary = "닉네임 중복 확인", parameters = @Parameter(name = AUTHORIZATION, in = ParameterIn.HEADER, required = true, example = "Bearer ${token}"))
     @ApiResponse(responseCode = "200", description = "닉네임 중복 확인 성공")
-    ResponseEntity<NicknameDuplicationCheckResponse> checkNicknameDuplication(@RequestParam String nickname);
+    ResponseEntity<NicknameDuplicationCheckResponse> checkNicknameDuplication(@Parameter(hidden = true) Long memberId,
+                                                                              @RequestParam String nickname);
 
     @Operation(summary = "닉네임 변경", parameters = @Parameter(name = AUTHORIZATION, in = ParameterIn.HEADER, required = true, example = "Bearer ${token}"))
     @ApiResponses(value = {
