@@ -58,8 +58,8 @@ public class MemberService implements MemberUseCase {
 
     @Override
     @Transactional(readOnly = true)
-    public NicknameDuplicationCheckResponse checkDuplication(String nickname) {
-        boolean duplicated = memberPersistencePort.existsMemberByNickname(nickname);
+    public NicknameDuplicationCheckResponse checkDuplication(Long memberId, String nickname) {
+        boolean duplicated = memberPersistencePort.existsMemberByNicknameExceptMine(memberId, nickname);
         return new NicknameDuplicationCheckResponse(duplicated);
     }
 }

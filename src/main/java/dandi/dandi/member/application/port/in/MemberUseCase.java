@@ -8,5 +8,5 @@ public interface MemberUseCase {
 
     void updateLocation(Long memberId, LocationUpdateCommand locationUpdateCommand);
 
-    NicknameDuplicationCheckResponse checkDuplication(String nickname);
+    NicknameDuplicationCheckResponse checkDuplication(Long memberId, String nickname);
 }
