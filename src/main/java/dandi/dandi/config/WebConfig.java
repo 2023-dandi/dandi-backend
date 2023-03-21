@@ -33,7 +33,6 @@ public class WebConfig implements WebMvcConfigurer {
                 .addPathPatterns("/**")
                 .excludePathPatterns("/auth/login/oauth/apple")
                 .excludePathPatterns("/auth/refresh")
-                .excludePathPatterns("/members/nickname/duplication")
                 .excludePathPatterns(SWAGGER_REQUEST_URIS);
     }
 }
