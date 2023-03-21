@@ -42,7 +42,6 @@ public class PostController implements PostControllerDocs {
     @PostMapping
     public ResponseEntity<PostRegisterResponse> registerPost(@Login Long memberId,
                                                              @RequestBody PostRegisterRequest postRegisterRequest) {
-        postUseCase.registerPost(memberId, postRegisterRequest.toCommand());
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(postUseCase.registerPost(memberId, postRegisterRequest.toCommand()));
     }
