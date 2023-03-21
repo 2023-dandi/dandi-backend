@@ -38,6 +38,11 @@ public class MemberPersistenceAdapter implements MemberPersistencePort {
     }
 
     @Override
+    public boolean existsMemberByNicknameExceptMine(Long memberId, String nickname) {
+        return memberRepository.existsByNicknameAndIdIsNot(nickname, memberId);
+    }
+
+    @Override
     public void updateProfileImageUrl(Long memberId, String profileImageUrl) {
         memberRepository.updateProfileImageUrl(memberId, profileImageUrl);
     }

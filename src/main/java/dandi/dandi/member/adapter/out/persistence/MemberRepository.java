@@ -17,6 +17,8 @@ public interface MemberRepository extends JpaRepository<MemberJpaEntity, Long> {
 
     boolean existsMemberByNickname(String nickname);
 
+    boolean existsByNicknameAndIdIsNot(String nickname, Long memberId);
+
     @Modifying
     @Query("UPDATE MemberJpaEntity m SET m.profileImgUrl = :profileImageUrl WHERE m.id = :memberId")
     void updateProfileImageUrl(Long memberId, String profileImageUrl);
