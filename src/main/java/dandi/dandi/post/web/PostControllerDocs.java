@@ -4,6 +4,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
 
 import dandi.dandi.advice.ExceptionResponse;
+import dandi.dandi.post.application.port.in.MyPostResponses;
 import dandi.dandi.post.application.port.in.PostDetailResponse;
 import dandi.dandi.post.application.port.in.PostImageRegisterResponse;
 import dandi.dandi.post.application.port.in.PostRegisterResponse;
@@ -67,4 +68,8 @@ public interface PostControllerDocs {
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
     })
     ResponseEntity<Void> deletePost(@Parameter(hidden = true) Long memberId, Long postId);
+
+    @Operation(summary = "내가 올린 게시글")
+    @ApiResponse(responseCode = "200", description = "내가 올린 게시글 정상 반환")
+    ResponseEntity<MyPostResponses> getMyPostIdsAndPostImageUrls(@Parameter(hidden = true) Long memberId);
 }
