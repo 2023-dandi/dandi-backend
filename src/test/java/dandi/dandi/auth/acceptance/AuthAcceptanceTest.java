@@ -105,11 +105,10 @@ class AuthAcceptanceTest extends AcceptanceTest {
         TokenResponse tokenResponse = httpPost(new LoginRequest(VALID_OAUTH_ID_TOKEN), LOGIN_REQUEST_URI)
                 .jsonPath()
                 .getObject(".", TokenResponse.class);
-        String accessTokenBeforeRefresh = tokenResponse.getAccessToken();
         String refreshTokenBeforeRefresh = tokenResponse.getRefreshToken();
 
-        ExtractableResponse<Response> response = HttpMethodFixture.httpPostWithAuthorizationAndCookie(
-                TOKEN_REFRESH_REQUEST_URI, accessTokenBeforeRefresh, Map.of(REFRESH_TOKEN, refreshTokenBeforeRefresh));
+        ExtractableResponse<Response> response = HttpMethodFixture.httpPostWithCookie(
+                TOKEN_REFRESH_REQUEST_URI, Map.of(REFRESH_TOKEN, refreshTokenBeforeRefresh));
 
         TokenResponse tokenRefreshResponse = response.jsonPath()
                 .getObject(".", TokenResponse.class);
@@ -124,16 +123,10 @@ class AuthAcceptanceTest extends AcceptanceTest {
     @Test
     void refresh_NotFountRefreshToken() {
         mockAppleIdToken(VALID_OAUTH_ID_TOKEN);
-        mockNotFoundRefreshToken();
-        TokenResponse tokenResponse = httpPost(new LoginRequest(VALID_OAUTH_ID_TOKEN), LOGIN_REQUEST_URI)
-                .jsonPath()
-                .getObject(".", TokenResponse.class);
-        String accessTokenBeforeRefresh = tokenResponse.getAccessToken();
-        String refreshTokenBeforeRefresh = tokenResponse.getRefreshToken();
+        String notFoundRefreshToken = "notFoundRefreshToken";
 
-        ExtractableResponse<Response> response = HttpMethodFixture.httpPostWithAuthorizationAndCookie(
-                TOKEN_REFRESH_REQUEST_URI, accessTokenBeforeRefresh, Map.of(REFRESH_TOKEN, refreshTokenBeforeRefresh));
-
+        ExtractableResponse<Response> response = HttpMethodFixture.httpPostWithCookie(
+                TOKEN_REFRESH_REQUEST_URI, Map.of(REFRESH_TOKEN, notFoundRefreshToken));
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value()),
                 () -> assertThat(extractExceptionMessage(response))
@@ -149,11 +142,10 @@ class AuthAcceptanceTest extends AcceptanceTest {
         TokenResponse tokenResponse = httpPost(new LoginRequest(VALID_OAUTH_ID_TOKEN), LOGIN_REQUEST_URI)
                 .jsonPath()
                 .getObject(".", TokenResponse.class);
-        String accessTokenBeforeRefresh = tokenResponse.getAccessToken();
         String refreshTokenBeforeRefresh = tokenResponse.getRefreshToken();
 
-        ExtractableResponse<Response> response = HttpMethodFixture.httpPostWithAuthorizationAndCookie(
-                TOKEN_REFRESH_REQUEST_URI, accessTokenBeforeRefresh, Map.of(REFRESH_TOKEN, refreshTokenBeforeRefresh));
+        ExtractableResponse<Response> response = HttpMethodFixture.httpPostWithCookie(
+                TOKEN_REFRESH_REQUEST_URI, Map.of(REFRESH_TOKEN, refreshTokenBeforeRefresh));
 
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value()),
@@ -194,11 +186,6 @@ class AuthAcceptanceTest extends AcceptanceTest {
     private void mockInvalidToken(String accessToken) {
         when(oAuthClientPort.getOAuthMemberId(accessToken))
                 .thenThrow(UnauthorizedException.rigged());
-    }
-
-    private void mockNotFoundRefreshToken() {
-        when(refreshTokenManager.generateToken(any()))
-                .thenReturn(RefreshToken.generateNewWithExpiration(1000L, LocalDateTime.now()));
     }
 
     private void mockExpiredRefreshToken() {

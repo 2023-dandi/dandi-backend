@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface RefreshTokenRepository extends JpaRepository<RefreshTokenJpaEntity, Long> {
 
-    Optional<RefreshTokenJpaEntity> findRefreshTokenByMemberIdAndValue(Long memberId, String value);
+    Optional<RefreshTokenJpaEntity> findByValue(String value);
 
     void deleteByMemberId(Long memberId);
 

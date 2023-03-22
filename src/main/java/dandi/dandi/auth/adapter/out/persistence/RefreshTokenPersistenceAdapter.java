@@ -21,8 +21,8 @@ public class RefreshTokenPersistenceAdapter implements RefreshTokenPersistencePo
     }
 
     @Override
-    public Optional<RefreshToken> findRefreshTokenByMemberIdAndValue(Long memberId, String value) {
-        return refreshTokenRepository.findRefreshTokenByMemberIdAndValue(memberId, value)
+    public Optional<RefreshToken> findByValue(String value) {
+        return refreshTokenRepository.findByValue(value)
                 .map(RefreshTokenJpaEntity::toRefreshToken);
     }
 

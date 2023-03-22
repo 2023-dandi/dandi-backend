@@ -29,7 +29,6 @@ public interface AuthControllerDocs {
     ResponseEntity<TokenResponse> login(@Parameter(description = "사용자 id") LoginRequest loginRequest);
 
     @Operation(summary = "Token Refresh", parameters = {
-            @Parameter(name = AUTHORIZATION, in = ParameterIn.HEADER, required = true, example = "Bearer ${token}"),
             @Parameter(name = COOKIE, in = ParameterIn.COOKIE, required = true, example = "Refresh-Token={$refreshToken}")})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Refresh 성공"),
@@ -37,8 +36,7 @@ public interface AuthControllerDocs {
                     "존재하지 않거나 조작된 Refresh Token",
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
     })
-    ResponseEntity<TokenResponse> refresh(@Parameter(hidden = true) Long memberId,
-                                          @Parameter(hidden = true) String refreshToken);
+    ResponseEntity<TokenResponse> refresh(@Parameter(hidden = true) String refreshToken);
 
     @Operation(summary = "로그아웃", parameters = @Parameter(name = AUTHORIZATION, in = ParameterIn.HEADER, required = true, example = "Bearer ${token}"))
     @ApiResponse(responseCode = "204", description = "로그아웃 성공")
