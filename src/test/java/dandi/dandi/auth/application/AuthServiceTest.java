@@ -101,12 +101,12 @@ class AuthServiceTest {
         );
     }
 
-    @DisplayName("MemberId와 Refresh Token을 받아, 새로운 Access Token과 Refresh Token을 반환한다.")
+    @DisplayName("Refresh Token을 받아, 새로운 Access Token과 Refresh Token을 반환한다.")
     @Test
     void refresh() {
         RefreshToken refreshToken =
                 new RefreshToken(REFRESH_TOKEN_ID, EXISTING_MEMBER_ID, LocalDateTime.MAX, REFRESH_TOKEN_VALUE);
-        when(refreshTokenPersistencePort.findRefreshTokenByMemberIdAndValue(EXISTING_MEMBER_ID, REFRESH_TOKEN_VALUE))
+        when(refreshTokenPersistencePort.findByValue(REFRESH_TOKEN_VALUE))
                 .thenReturn(Optional.of(refreshToken));
         RefreshToken updateRefreshToken =
                 new RefreshToken(REFRESH_TOKEN_ID, EXISTING_MEMBER_ID, LocalDateTime.MAX, UPDATED_REFRESH_TOKEN_VALUE);
@@ -115,7 +115,7 @@ class AuthServiceTest {
         when(accessTokenManagerPort.generateToken(anyString()))
                 .thenReturn(TOKEN);
 
-        TokenResponse tokenResponse = authService.refresh(EXISTING_MEMBER_ID, REFRESH_TOKEN_VALUE);
+        TokenResponse tokenResponse = authService.refresh(REFRESH_TOKEN_VALUE);
 
         assertAll(
                 () -> assertThat(tokenResponse.getAccessToken()).isEqualTo(TOKEN),
@@ -124,15 +124,14 @@ class AuthServiceTest {
         );
     }
 
-    @DisplayName("MemberId와 Refresh Token 값에 해당하는 Refresh Token 객체가 존재하지 않는다면 예외를 발생시킨다.")
+    @DisplayName("Refresh Token 값에 해당하는 Refresh Token 객체가 존재하지 않는다면 예외를 발생시킨다.")
     @Test
     void refresh_RefreshTokenNotFound() {
-        Long notFountMemberId = 2L;
         String notFountRefreshToken = "notFoundRefreshToken";
-        when(refreshTokenPersistencePort.findRefreshTokenByMemberIdAndValue(any(), any()))
+        when(refreshTokenPersistencePort.findByValue(notFountRefreshToken))
                 .thenThrow(UnauthorizedException.refreshTokenNotFound());
 
-        assertThatThrownBy(() -> authService.refresh(notFountMemberId, notFountRefreshToken))
+        assertThatThrownBy(() -> authService.refresh(notFountRefreshToken))
                 .isInstanceOf(UnauthorizedException.class)
                 .hasMessage(UnauthorizedException.refreshTokenNotFound().getMessage());
     }
@@ -142,10 +141,10 @@ class AuthServiceTest {
     void refresh_ExpiredRefreshToken() {
         RefreshToken expiredRefreshToken =
                 RefreshToken.generateNewWithExpiration(EXISTING_MEMBER_ID, LocalDateTime.MIN);
-        when(refreshTokenPersistencePort.findRefreshTokenByMemberIdAndValue(EXISTING_MEMBER_ID, REFRESH_TOKEN_VALUE))
+        when(refreshTokenPersistencePort.findByValue(REFRESH_TOKEN_VALUE))
                 .thenReturn(Optional.of(expiredRefreshToken));
 
-        assertThatThrownBy(() -> authService.refresh(EXISTING_MEMBER_ID, REFRESH_TOKEN_VALUE))
+        assertThatThrownBy(() -> authService.refresh(REFRESH_TOKEN_VALUE))
                 .isInstanceOf(UnauthorizedException.class)
                 .hasMessage(UnauthorizedException.expiredRefreshToken().getMessage());
     }

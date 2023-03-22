@@ -5,7 +5,7 @@ import java.util.Optional;
 
 public interface RefreshTokenPersistencePort {
 
-    Optional<RefreshToken> findRefreshTokenByMemberIdAndValue(Long memberId, String value);
+    Optional<RefreshToken> findByValue(String value);
 
     void deleteByMemberId(Long memberId);
 

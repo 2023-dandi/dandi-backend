@@ -63,11 +63,9 @@ public class HttpMethodFixture {
                 .extract();
     }
 
-    public static ExtractableResponse<Response> httpPostWithAuthorizationAndCookie(String path, String token,
-                                                                                   Map<String, Object> cookies) {
+    public static ExtractableResponse<Response> httpPostWithCookie(String path, Map<String, Object> cookies) {
         return RestAssured
                 .given().log().all()
-                .header(AUTHORIZATION, AUTHORIZATION_TYPE + token)
                 .cookies(cookies)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when().post(path)
