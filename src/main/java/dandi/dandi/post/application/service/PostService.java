@@ -2,6 +2,7 @@ package dandi.dandi.post.application.service;
 
 import dandi.dandi.common.exception.ForbiddenException;
 import dandi.dandi.common.exception.NotFoundException;
+import dandi.dandi.post.application.port.in.MyPostResponses;
 import dandi.dandi.post.application.port.in.PostDetailResponse;
 import dandi.dandi.post.application.port.in.PostRegisterCommand;
 import dandi.dandi.post.application.port.in.PostRegisterResponse;
@@ -72,5 +73,11 @@ public class PostService implements PostUseCase {
         if (!post.isWrittenBy(memberId)) {
             throw ForbiddenException.postDeletion();
         }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public MyPostResponses getMyPostIdsAndPostImageUrls(Long memberId) {
+        return new MyPostResponses(postPersistencePort.findPostIdAndPostImageUrlByMemberId(memberId));
     }
 }

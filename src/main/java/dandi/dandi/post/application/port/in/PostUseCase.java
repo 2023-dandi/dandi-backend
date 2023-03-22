@@ -7,4 +7,6 @@ public interface PostUseCase {
     PostDetailResponse getPostDetails(Long memberId, Long postId);
 
     void deletePost(Long memberId, Long postId);
+
+    MyPostResponses getMyPostIdsAndPostImageUrls(Long memberId);
 }
