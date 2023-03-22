@@ -60,7 +60,7 @@ public interface PostControllerDocs {
     })
     ResponseEntity<PostDetailResponse> getPostDetails(@Parameter(hidden = true) Long memberId, Long postId);
 
-    @Operation(summary = "게시글 상세 조회")
+    @Operation(summary = "게시글 삭제")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "게시글 삭제 성공"),
             @ApiResponse(responseCode = "403", description = "자신이 작성하지 않은 게시글 삭제 요청",
