@@ -1,6 +1,7 @@
 package dandi.dandi.post.web;
 
 import dandi.dandi.auth.web.support.Login;
+import dandi.dandi.post.application.port.in.MyPostResponses;
 import dandi.dandi.post.application.port.in.PostDetailResponse;
 import dandi.dandi.post.application.port.in.PostImageRegisterResponse;
 import dandi.dandi.post.application.port.in.PostImageUseCase;
@@ -55,5 +56,10 @@ public class PostController implements PostControllerDocs {
     public ResponseEntity<Void> deletePost(@Login Long memberId, @PathVariable Long postId) {
         postUseCase.deletePost(memberId, postId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("my")
+    public ResponseEntity<MyPostResponses> getMyPostIdsAndPostImageUrls(@Login Long memberId) {
+        return ResponseEntity.ok(postUseCase.getMyPostIdsAndPostImageUrls(memberId));
     }
 }
