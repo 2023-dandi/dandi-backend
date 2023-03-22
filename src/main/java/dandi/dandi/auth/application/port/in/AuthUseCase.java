@@ -4,7 +4,7 @@ public interface AuthUseCase {
 
     LoginResponse getToken(LoginCommand loginCommand);
 
-    TokenResponse refresh(Long memberId, String refreshToken);
+    TokenResponse refresh(String refreshToken);
 
     void logout(Long memberId);
 }

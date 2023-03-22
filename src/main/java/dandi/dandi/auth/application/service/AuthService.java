@@ -67,14 +67,14 @@ public class AuthService implements AuthUseCase {
 
     @Override
     @Transactional
-    public TokenResponse refresh(Long memberId, String refreshTokenValue) {
+    public TokenResponse refresh(String refreshTokenValue) {
         RefreshToken refreshToken = refreshTokenPersistencePort
-                .findRefreshTokenByMemberIdAndValue(memberId, refreshTokenValue)
+                .findByValue(refreshTokenValue)
                 .orElseThrow(UnauthorizedException::refreshTokenNotFound);
         validateExpiration(refreshToken);
-        RefreshToken updatedRefreshToken = refreshTokenManagerPort.generateToken(memberId);
+        RefreshToken updatedRefreshToken = refreshTokenManagerPort.generateToken(refreshToken.getMemberId());
         refreshTokenPersistencePort.update(refreshToken.getId(), updatedRefreshToken);
-        String accessToken = accessTokenManagerPort.generateToken(String.valueOf(memberId));
+        String accessToken = accessTokenManagerPort.generateToken(String.valueOf(refreshToken.getMemberId()));
         return new TokenResponse(accessToken, updatedRefreshToken.getValue());
     }
 

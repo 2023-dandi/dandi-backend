@@ -35,9 +35,9 @@ public class AuthController implements AuthControllerDocs {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<TokenResponse> refresh(@Login Long memberId,
-                                                 @CookieValue(value = REFRESH_TOKEN, required = false) String refreshToken) {
-        TokenResponse tokenResponse = authUseCase.refresh(memberId, refreshToken);
+    public ResponseEntity<TokenResponse> refresh(@CookieValue(value = REFRESH_TOKEN, required = false)
+                                                 String refreshToken) {
+        TokenResponse tokenResponse = authUseCase.refresh(refreshToken);
         return ResponseEntity.ok(tokenResponse);
     }
 
