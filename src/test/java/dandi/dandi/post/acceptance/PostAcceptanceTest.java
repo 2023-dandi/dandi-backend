@@ -5,6 +5,7 @@ import static dandi.dandi.common.HttpMethodFixture.httpGetWithAuthorization;
 import static dandi.dandi.common.HttpMethodFixture.httpPostWithAuthorization;
 import static dandi.dandi.common.HttpMethodFixture.httpPostWithAuthorizationAndImgFile;
 import static dandi.dandi.common.HttpResponseExtractor.extractExceptionMessage;
+import static dandi.dandi.common.RequestURI.MY_POST_REQUEST_URI;
 import static dandi.dandi.common.RequestURI.POST_DETAILS_REQUEST_URI;
 import static dandi.dandi.common.RequestURI.POST_IMAGE_REGISTER_REQUEST_URI;
 import static dandi.dandi.common.RequestURI.POST_REGISTER_REQUEST_URI;
@@ -15,12 +16,14 @@ import static dandi.dandi.post.PostFixture.OUTFIT_FEELING_INDEX;
 import static dandi.dandi.post.PostFixture.POST_IMAGE_FULL_URL;
 import static dandi.dandi.post.PostFixture.POST_IMAGE_URL;
 import static dandi.dandi.utils.image.TestImageUtils.generatetestImgFile;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 
 import com.amazonaws.AmazonClientException;
 import dandi.dandi.common.AcceptanceTest;
+import dandi.dandi.post.application.port.in.MyPostResponse;
+import dandi.dandi.post.application.port.in.MyPostResponses;
 import dandi.dandi.post.application.port.in.PostDetailResponse;
 import dandi.dandi.post.application.port.in.PostImageRegisterResponse;
 import dandi.dandi.post.application.port.in.PostRegisterResponse;
@@ -31,6 +34,7 @@ import dandi.dandi.post.web.in.TemperatureRequest;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.io.File;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -161,6 +165,28 @@ class PostAcceptanceTest extends AcceptanceTest {
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value()),
                 () -> assertThat(postDetailResponseAfterPostDeletion.statusCode())
                         .isEqualTo(HttpStatus.NOT_FOUND.value())
+        );
+    }
+
+    @DisplayName("내가 작성한 게시글 목록 요청에 대해 200과 게시글들의 id와 image url을 응답한다.")
+    @Test
+    void getMyPostIdsAndPostImageUrls() {
+        String token = getToken();
+        registerPost(token);
+        registerPost(token);
+
+        ExtractableResponse<Response> response = httpGetWithAuthorization(MY_POST_REQUEST_URI, token);
+
+        List<MyPostResponse> myPostResponses = response.jsonPath()
+                .getObject(".", MyPostResponses.class)
+                .getPosts();
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(myPostResponses).hasSize(2),
+                () -> assertThat(myPostResponses.get(0).getId()).isEqualTo(1L),
+                () -> assertThat(myPostResponses.get(1).getId()).isEqualTo(2L),
+                () -> assertThat(myPostResponses.get(0).getPostImageUrl()).isNotNull(),
+                () -> assertThat(myPostResponses.get(1).getPostImageUrl()).isNotNull()
         );
     }
 
