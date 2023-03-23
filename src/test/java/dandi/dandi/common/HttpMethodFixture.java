@@ -9,6 +9,7 @@ import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.io.File;
 import java.util.Map;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.MediaType;
 
 public class HttpMethodFixture {
@@ -86,6 +87,17 @@ public class HttpMethodFixture {
                 .given().log().all()
                 .header(AUTHORIZATION, AUTHORIZATION_TYPE + token)
                 .when().get(path)
+                .then().log().all()
+                .extract();
+    }
+
+    public static ExtractableResponse<Response> httpGetWithAuthorizationAndPagination(String path, String token,
+                                                                                      int size, int page, String sort,
+                                                                                      Direction direction) {
+        return RestAssured
+                .given().log().all()
+                .header(AUTHORIZATION, AUTHORIZATION_TYPE + token)
+                .when().get(path + "?size=" + size + "&page=" + page + "&sort=" + sort + "," + direction)
                 .then().log().all()
                 .extract();
     }

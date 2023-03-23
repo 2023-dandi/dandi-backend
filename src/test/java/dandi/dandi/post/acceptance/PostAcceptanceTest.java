@@ -2,6 +2,7 @@ package dandi.dandi.post.acceptance;
 
 import static dandi.dandi.common.HttpMethodFixture.httpDeleteWithAuthorization;
 import static dandi.dandi.common.HttpMethodFixture.httpGetWithAuthorization;
+import static dandi.dandi.common.HttpMethodFixture.httpGetWithAuthorizationAndPagination;
 import static dandi.dandi.common.HttpMethodFixture.httpPostWithAuthorization;
 import static dandi.dandi.common.HttpMethodFixture.httpPostWithAuthorizationAndImgFile;
 import static dandi.dandi.common.HttpResponseExtractor.extractExceptionMessage;
@@ -38,8 +39,10 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mockito;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
 
 class PostAcceptanceTest extends AcceptanceTest {
@@ -168,25 +171,55 @@ class PostAcceptanceTest extends AcceptanceTest {
         );
     }
 
-    @DisplayName("내가 작성한 게시글 목록 요청에 대해 200과 게시글들의 id와 image url을 응답한다.")
-    @Test
-    void getMyPostIdsAndPostImageUrls() {
+    @DisplayName("내가 작성한 게시글 목록 요청(페이지네이션 o)에 200과 게시글들의 id와 image url을 응답한다.")
+    @ParameterizedTest
+    @CsvSource({"3, false", "4, true"})
+    void getMyPostIdsAndPostImageUrls_SpecifiedPagination(int size, boolean expectedLastPage) {
         String token = getToken();
+        registerPost(token);
+        registerPost(token);
+        registerPost(token);
+        registerPost(token);
+
+        ExtractableResponse<Response> response = httpGetWithAuthorizationAndPagination(
+                MY_POST_REQUEST_URI, token, size, 0, "createdAt", Direction.DESC);
+
+        MyPostResponses myPostsPageableResponses = response.jsonPath()
+                .getObject(".", MyPostResponses.class);
+        List<MyPostResponse> posts = myPostsPageableResponses.getPosts();
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(myPostsPageableResponses.isLastPage()).isEqualTo(expectedLastPage),
+                () -> assertThat(posts).hasSize(size),
+                () -> assertThat(posts.get(0).getId()).isEqualTo(4L),
+                () -> assertThat(posts.get(1).getId()).isEqualTo(3L),
+                () -> assertThat(posts.get(0).getPostImageUrl()).isNotNull(),
+                () -> assertThat(posts.get(1).getPostImageUrl()).isNotNull()
+        );
+    }
+
+    @DisplayName("내가 작성한 게시글 목록(페이지네이션 x) 요청에 200과 500개 이하의 게시글들의 id와 image url을 생성 내림차순으로 응답한다.")
+    @Test
+    void getMyPostIdsAndPostImageUrls_UnspecifiedPagination() {
+        String token = getToken();
+        registerPost(token);
+        registerPost(token);
         registerPost(token);
         registerPost(token);
 
         ExtractableResponse<Response> response = httpGetWithAuthorization(MY_POST_REQUEST_URI, token);
 
-        List<MyPostResponse> myPostResponses = response.jsonPath()
-                .getObject(".", MyPostResponses.class)
-                .getPosts();
+        MyPostResponses myPostsPageableResponses = response.jsonPath()
+                .getObject(".", MyPostResponses.class);
+        List<MyPostResponse> posts = myPostsPageableResponses.getPosts();
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
-                () -> assertThat(myPostResponses).hasSize(2),
-                () -> assertThat(myPostResponses.get(0).getId()).isEqualTo(1L),
-                () -> assertThat(myPostResponses.get(1).getId()).isEqualTo(2L),
-                () -> assertThat(myPostResponses.get(0).getPostImageUrl()).isNotNull(),
-                () -> assertThat(myPostResponses.get(1).getPostImageUrl()).isNotNull()
+                () -> assertThat(myPostsPageableResponses.isLastPage()).isTrue(),
+                () -> assertThat(posts).hasSize(4),
+                () -> assertThat(posts.get(0).getId()).isEqualTo(4L),
+                () -> assertThat(posts.get(1).getId()).isEqualTo(3L),
+                () -> assertThat(posts.get(0).getPostImageUrl()).isNotNull(),
+                () -> assertThat(posts.get(1).getPostImageUrl()).isNotNull()
         );
     }
 
