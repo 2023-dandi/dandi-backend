@@ -15,6 +15,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.springframework.data.annotation.CreatedDate;
@@ -45,6 +46,7 @@ public class PostJpaEntity {
 
     @OneToMany(mappedBy = "postJpaEntity")
     @Cascade(value = CascadeType.ALL)
+    @BatchSize(size = 10)
     private List<AdditionalFeelingIndexJpaEntity> additionalFeelingIndicesJpaEntities;
 
     protected PostJpaEntity() {
