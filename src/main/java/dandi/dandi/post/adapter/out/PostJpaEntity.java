@@ -4,7 +4,7 @@ import dandi.dandi.member.domain.Member;
 import dandi.dandi.post.domain.Post;
 import dandi.dandi.post.domain.Temperatures;
 import dandi.dandi.post.domain.WeatherFeeling;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.persistence.Column;
@@ -41,7 +41,7 @@ public class PostJpaEntity {
     private Long feelingIndex;
 
     @CreatedDate
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "postJpaEntity")
     @Cascade(value = CascadeType.ALL)
@@ -97,7 +97,7 @@ public class PostJpaEntity {
                 new Temperatures(minTemperature, maxTemperature),
                 postImageUrl,
                 new WeatherFeeling(feelingIndex, additionalFeelingIndices),
-                createdAt
+                createdAt.toLocalDate()
         );
     }
 }
