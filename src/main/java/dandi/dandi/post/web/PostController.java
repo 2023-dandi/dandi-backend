@@ -1,12 +1,16 @@
 package dandi.dandi.post.web;
 
 import dandi.dandi.auth.web.support.Login;
+import dandi.dandi.post.application.port.in.MyPostResponses;
 import dandi.dandi.post.application.port.in.PostDetailResponse;
 import dandi.dandi.post.application.port.in.PostImageRegisterResponse;
 import dandi.dandi.post.application.port.in.PostImageUseCase;
 import dandi.dandi.post.application.port.in.PostRegisterResponse;
 import dandi.dandi.post.application.port.in.PostUseCase;
 import dandi.dandi.post.web.in.PostRegisterRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -55,5 +59,13 @@ public class PostController implements PostControllerDocs {
     public ResponseEntity<Void> deletePost(@Login Long memberId, @PathVariable Long postId) {
         postUseCase.deletePost(memberId, postId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping(path = "my")
+    public ResponseEntity<MyPostResponses> getMyPostIdsAndPostImageUrls(@Login Long memberId,
+                                                                        @PageableDefault(size = 500, sort = "createdAt",
+                                                                                direction = Direction.DESC)
+                                                                        Pageable pageable) {
+        return ResponseEntity.ok(postUseCase.getMyPostIdsAndPostImageUrls(memberId, pageable));
     }
 }

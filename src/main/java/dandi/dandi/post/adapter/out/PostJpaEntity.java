@@ -4,7 +4,7 @@ import dandi.dandi.member.domain.Member;
 import dandi.dandi.post.domain.Post;
 import dandi.dandi.post.domain.Temperatures;
 import dandi.dandi.post.domain.WeatherFeeling;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.persistence.Column;
@@ -15,6 +15,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.springframework.data.annotation.CreatedDate;
@@ -41,10 +42,11 @@ public class PostJpaEntity {
     private Long feelingIndex;
 
     @CreatedDate
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "postJpaEntity")
     @Cascade(value = CascadeType.ALL)
+    @BatchSize(size = 10)
     private List<AdditionalFeelingIndexJpaEntity> additionalFeelingIndicesJpaEntities;
 
     protected PostJpaEntity() {
@@ -97,7 +99,7 @@ public class PostJpaEntity {
                 new Temperatures(minTemperature, maxTemperature),
                 postImageUrl,
                 new WeatherFeeling(feelingIndex, additionalFeelingIndices),
-                createdAt
+                createdAt.toLocalDate()
         );
     }
 }

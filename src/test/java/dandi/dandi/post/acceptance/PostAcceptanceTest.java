@@ -2,9 +2,11 @@ package dandi.dandi.post.acceptance;
 
 import static dandi.dandi.common.HttpMethodFixture.httpDeleteWithAuthorization;
 import static dandi.dandi.common.HttpMethodFixture.httpGetWithAuthorization;
+import static dandi.dandi.common.HttpMethodFixture.httpGetWithAuthorizationAndPagination;
 import static dandi.dandi.common.HttpMethodFixture.httpPostWithAuthorization;
 import static dandi.dandi.common.HttpMethodFixture.httpPostWithAuthorizationAndImgFile;
 import static dandi.dandi.common.HttpResponseExtractor.extractExceptionMessage;
+import static dandi.dandi.common.RequestURI.MY_POST_REQUEST_URI;
 import static dandi.dandi.common.RequestURI.POST_DETAILS_REQUEST_URI;
 import static dandi.dandi.common.RequestURI.POST_IMAGE_REGISTER_REQUEST_URI;
 import static dandi.dandi.common.RequestURI.POST_REGISTER_REQUEST_URI;
@@ -15,12 +17,14 @@ import static dandi.dandi.post.PostFixture.OUTFIT_FEELING_INDEX;
 import static dandi.dandi.post.PostFixture.POST_IMAGE_FULL_URL;
 import static dandi.dandi.post.PostFixture.POST_IMAGE_URL;
 import static dandi.dandi.utils.image.TestImageUtils.generatetestImgFile;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 
 import com.amazonaws.AmazonClientException;
 import dandi.dandi.common.AcceptanceTest;
+import dandi.dandi.post.application.port.in.MyPostResponse;
+import dandi.dandi.post.application.port.in.MyPostResponses;
 import dandi.dandi.post.application.port.in.PostDetailResponse;
 import dandi.dandi.post.application.port.in.PostImageRegisterResponse;
 import dandi.dandi.post.application.port.in.PostRegisterResponse;
@@ -31,11 +35,14 @@ import dandi.dandi.post.web.in.TemperatureRequest;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.io.File;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mockito;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
 
 class PostAcceptanceTest extends AcceptanceTest {
@@ -161,6 +168,58 @@ class PostAcceptanceTest extends AcceptanceTest {
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value()),
                 () -> assertThat(postDetailResponseAfterPostDeletion.statusCode())
                         .isEqualTo(HttpStatus.NOT_FOUND.value())
+        );
+    }
+
+    @DisplayName("내가 작성한 게시글 목록 요청(페이지네이션 o)에 200과 게시글들의 id와 image url을 응답한다.")
+    @ParameterizedTest
+    @CsvSource({"3, false", "4, true"})
+    void getMyPostIdsAndPostImageUrls_SpecifiedPagination(int size, boolean expectedLastPage) {
+        String token = getToken();
+        registerPost(token);
+        registerPost(token);
+        registerPost(token);
+        registerPost(token);
+
+        ExtractableResponse<Response> response = httpGetWithAuthorizationAndPagination(
+                MY_POST_REQUEST_URI, token, size, 0, "createdAt", Direction.DESC);
+
+        MyPostResponses myPostsPageableResponses = response.jsonPath()
+                .getObject(".", MyPostResponses.class);
+        List<MyPostResponse> posts = myPostsPageableResponses.getPosts();
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(myPostsPageableResponses.isLastPage()).isEqualTo(expectedLastPage),
+                () -> assertThat(posts).hasSize(size),
+                () -> assertThat(posts.get(0).getId()).isEqualTo(4L),
+                () -> assertThat(posts.get(1).getId()).isEqualTo(3L),
+                () -> assertThat(posts.get(0).getPostImageUrl()).isNotNull(),
+                () -> assertThat(posts.get(1).getPostImageUrl()).isNotNull()
+        );
+    }
+
+    @DisplayName("내가 작성한 게시글 목록(페이지네이션 x) 요청에 200과 500개 이하의 게시글들의 id와 image url을 생성 내림차순으로 응답한다.")
+    @Test
+    void getMyPostIdsAndPostImageUrls_UnspecifiedPagination() {
+        String token = getToken();
+        registerPost(token);
+        registerPost(token);
+        registerPost(token);
+        registerPost(token);
+
+        ExtractableResponse<Response> response = httpGetWithAuthorization(MY_POST_REQUEST_URI, token);
+
+        MyPostResponses myPostsPageableResponses = response.jsonPath()
+                .getObject(".", MyPostResponses.class);
+        List<MyPostResponse> posts = myPostsPageableResponses.getPosts();
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(myPostsPageableResponses.isLastPage()).isTrue(),
+                () -> assertThat(posts).hasSize(4),
+                () -> assertThat(posts.get(0).getId()).isEqualTo(4L),
+                () -> assertThat(posts.get(1).getId()).isEqualTo(3L),
+                () -> assertThat(posts.get(0).getPostImageUrl()).isNotNull(),
+                () -> assertThat(posts.get(1).getPostImageUrl()).isNotNull()
         );
     }
 

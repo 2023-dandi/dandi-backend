@@ -2,6 +2,8 @@ package dandi.dandi.post.application.service;
 
 import dandi.dandi.common.exception.ForbiddenException;
 import dandi.dandi.common.exception.NotFoundException;
+import dandi.dandi.post.application.port.in.MyPostResponse;
+import dandi.dandi.post.application.port.in.MyPostResponses;
 import dandi.dandi.post.application.port.in.PostDetailResponse;
 import dandi.dandi.post.application.port.in.PostRegisterCommand;
 import dandi.dandi.post.application.port.in.PostRegisterResponse;
@@ -11,7 +13,11 @@ import dandi.dandi.post.domain.Post;
 import dandi.dandi.post.domain.Temperatures;
 import dandi.dandi.post.domain.WeatherFeeling;
 import dandi.dandi.postlike.application.port.out.PostLikePersistencePort;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -72,5 +78,15 @@ public class PostService implements PostUseCase {
         if (!post.isWrittenBy(memberId)) {
             throw ForbiddenException.postDeletion();
         }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public MyPostResponses getMyPostIdsAndPostImageUrls(Long memberId, Pageable pageable) {
+        Slice<Post> posts = postPersistencePort.findByMemberId(memberId, pageable);
+        List<MyPostResponse> myPostResponses = posts.stream()
+                .map(MyPostResponse::new)
+                .collect(Collectors.toUnmodifiableList());
+        return new MyPostResponses(myPostResponses, posts.isLast());
     }
 }
