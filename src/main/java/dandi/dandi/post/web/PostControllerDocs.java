@@ -19,6 +19,7 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
@@ -69,7 +70,9 @@ public interface PostControllerDocs {
     })
     ResponseEntity<Void> deletePost(@Parameter(hidden = true) Long memberId, Long postId);
 
-    @Operation(summary = "내가 올린 게시글")
+    @Operation(summary = "내가 올린 게시글", parameters = {@Parameter(name = "size"), @Parameter(name = "page"),
+            @Parameter(name = "sort"), @Parameter(example = "DESC")})
     @ApiResponse(responseCode = "200", description = "내가 올린 게시글 정상 반환")
-    ResponseEntity<MyPostResponses> getMyPostIdsAndPostImageUrls(@Parameter(hidden = true) Long memberId);
+    ResponseEntity<MyPostResponses> getMyPostIdsAndPostImageUrls(@Parameter(hidden = true) Long memberId,
+                                                                 @Parameter(hidden = true) Pageable pageable);
 }
