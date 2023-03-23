@@ -1,5 +1,6 @@
 package dandi.dandi.post.adapter.out;
 
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -11,4 +12,8 @@ public interface PostRepository extends JpaRepository<PostJpaEntity, Long> {
     Optional<PostJpaEntity> findByIdWithAdditionalFeelingIndicesJpaEntities(Long id);
 
     boolean existsById(Long id);
+
+    @Query("SELECT DISTINCT p FROM PostJpaEntity p "
+            + "JOIN FETCH p.additionalFeelingIndicesJpaEntities WHERE p.memberId = :memberId")
+    List<PostJpaEntity> findAllByMemberId(Long memberId);
 }

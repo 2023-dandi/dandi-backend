@@ -1,5 +1,7 @@
 package dandi.dandi.post.application.port.in;
 
+import dandi.dandi.post.domain.Post;
+
 public class MyPostResponse {
 
     private Long id;
@@ -8,9 +10,9 @@ public class MyPostResponse {
     public MyPostResponse() {
     }
 
-    public MyPostResponse(Long id, String postImageUrl) {
-        this.id = id;
-        this.postImageUrl = postImageUrl;
+    public MyPostResponse(Post post) {
+        this.id = post.getId();
+        this.postImageUrl = post.getPostImageUrl();
     }
 
     public Long getId() {

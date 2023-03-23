@@ -2,6 +2,7 @@ package dandi.dandi.post.application.service;
 
 import dandi.dandi.common.exception.ForbiddenException;
 import dandi.dandi.common.exception.NotFoundException;
+import dandi.dandi.post.application.port.in.MyPostResponse;
 import dandi.dandi.post.application.port.in.MyPostResponses;
 import dandi.dandi.post.application.port.in.PostDetailResponse;
 import dandi.dandi.post.application.port.in.PostRegisterCommand;
@@ -12,6 +13,8 @@ import dandi.dandi.post.domain.Post;
 import dandi.dandi.post.domain.Temperatures;
 import dandi.dandi.post.domain.WeatherFeeling;
 import dandi.dandi.postlike.application.port.out.PostLikePersistencePort;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -78,6 +81,10 @@ public class PostService implements PostUseCase {
     @Override
     @Transactional(readOnly = true)
     public MyPostResponses getMyPostIdsAndPostImageUrls(Long memberId) {
-        return new MyPostResponses(postPersistencePort.findPostIdAndPostImageUrlByMemberId(memberId));
+        List<Post> posts = postPersistencePort.findByMemberId(memberId);
+        List<MyPostResponse> myPostResponses = posts.stream()
+                .map(MyPostResponse::new)
+                .collect(Collectors.toUnmodifiableList());
+        return new MyPostResponses(myPostResponses);
     }
 }
