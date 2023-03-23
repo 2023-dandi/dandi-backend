@@ -1,7 +1,8 @@
 package dandi.dandi.post.adapter.out;
 
-import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -13,7 +14,5 @@ public interface PostRepository extends JpaRepository<PostJpaEntity, Long> {
 
     boolean existsById(Long id);
 
-    @Query("SELECT DISTINCT p FROM PostJpaEntity p "
-            + "JOIN FETCH p.additionalFeelingIndicesJpaEntities WHERE p.memberId = :memberId")
-    List<PostJpaEntity> findAllByMemberId(Long memberId);
+    Slice<PostJpaEntity> findAllByMemberId(Long memberId, Pageable pageable);
 }

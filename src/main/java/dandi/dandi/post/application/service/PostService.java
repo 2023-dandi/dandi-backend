@@ -16,6 +16,8 @@ import dandi.dandi.postlike.application.port.out.PostLikePersistencePort;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -80,11 +82,11 @@ public class PostService implements PostUseCase {
 
     @Override
     @Transactional(readOnly = true)
-    public MyPostResponses getMyPostIdsAndPostImageUrls(Long memberId) {
-        List<Post> posts = postPersistencePort.findByMemberId(memberId);
+    public MyPostResponses getMyPostIdsAndPostImageUrls(Long memberId, Pageable pageable) {
+        Slice<Post> posts = postPersistencePort.findByMemberId(memberId, pageable);
         List<MyPostResponse> myPostResponses = posts.stream()
                 .map(MyPostResponse::new)
                 .collect(Collectors.toUnmodifiableList());
-        return new MyPostResponses(myPostResponses);
+        return new MyPostResponses(myPostResponses, posts.isLast());
     }
 }

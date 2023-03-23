@@ -1,5 +1,7 @@
 package dandi.dandi.post.application.port.in;
 
+import org.springframework.data.domain.Pageable;
+
 public interface PostUseCase {
 
     PostRegisterResponse registerPost(Long memberId, PostRegisterCommand postRegisterCommand);
@@ -8,5 +10,5 @@ public interface PostUseCase {
 
     void deletePost(Long memberId, Long postId);
 
-    MyPostResponses getMyPostIdsAndPostImageUrls(Long memberId);
+    MyPostResponses getMyPostIdsAndPostImageUrls(Long memberId, Pageable pageable);
 }

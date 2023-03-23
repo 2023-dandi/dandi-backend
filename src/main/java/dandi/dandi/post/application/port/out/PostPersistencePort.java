@@ -1,8 +1,9 @@
 package dandi.dandi.post.application.port.out;
 
 import dandi.dandi.post.domain.Post;
-import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 
 public interface PostPersistencePort {
 
@@ -14,5 +15,5 @@ public interface PostPersistencePort {
 
     void deleteById(Long postId);
 
-    List<Post> findByMemberId(Long memberId);
+    Slice<Post> findByMemberId(Long memberId, Pageable pageable);
 }

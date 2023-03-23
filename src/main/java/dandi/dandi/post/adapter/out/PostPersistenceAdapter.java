@@ -8,6 +8,9 @@ import dandi.dandi.post.domain.Post;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Component;
 
 
@@ -46,12 +49,13 @@ public class PostPersistenceAdapter implements PostPersistencePort {
     }
 
     @Override
-    public List<Post> findByMemberId(Long memberId) {
-        List<PostJpaEntity> postJpaEntities = postRepository.findAllByMemberId(memberId);
-        Member member = findMember(postJpaEntities.get(0));
-        return postJpaEntities.stream()
+    public Slice<Post> findByMemberId(Long memberId, Pageable pageable) {
+        Slice<PostJpaEntity> postJpaEntities = postRepository.findAllByMemberId(memberId, pageable);
+        Member member = findMember(postJpaEntities.getContent().get(0));
+        List<Post> posts = postJpaEntities.stream()
                 .map(postJpaEntity -> postJpaEntity.toPost(member))
                 .collect(Collectors.toUnmodifiableList());
+        return new SliceImpl<>(posts, pageable, postJpaEntities.hasNext());
     }
 
     private Member findMember(PostJpaEntity postJpaEntity) {
