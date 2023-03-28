@@ -6,6 +6,7 @@ import static dandi.dandi.common.HttpMethodFixture.httpGetWithAuthorizationAndPa
 import static dandi.dandi.common.HttpMethodFixture.httpPostWithAuthorization;
 import static dandi.dandi.common.HttpMethodFixture.httpPostWithAuthorizationAndImgFile;
 import static dandi.dandi.common.HttpResponseExtractor.extractExceptionMessage;
+import static dandi.dandi.common.RequestURI.FEED_REQUEST_URI;
 import static dandi.dandi.common.RequestURI.MY_POST_REQUEST_URI;
 import static dandi.dandi.common.RequestURI.POST_DETAILS_REQUEST_URI;
 import static dandi.dandi.common.RequestURI.POST_IMAGE_REGISTER_REQUEST_URI;
@@ -23,6 +24,7 @@ import static org.mockito.ArgumentMatchers.any;
 
 import com.amazonaws.AmazonClientException;
 import dandi.dandi.common.AcceptanceTest;
+import dandi.dandi.post.application.port.in.FeedResponse;
 import dandi.dandi.post.application.port.in.MyPostResponse;
 import dandi.dandi.post.application.port.in.MyPostResponses;
 import dandi.dandi.post.application.port.in.PostDetailResponse;
@@ -221,6 +223,36 @@ class PostAcceptanceTest extends AcceptanceTest {
                 () -> assertThat(posts.get(0).getPostImageUrl()).isNotNull(),
                 () -> assertThat(posts.get(1).getPostImageUrl()).isNotNull()
         );
+    }
+
+    @DisplayName("최저 최고 기온의 +- 3도 게시글 요청에 게시글들과 200을 응답한다.")
+    @Test
+    void getFeedsByTemperature() {
+        String token = getToken();
+        registerPostWithTemperature(token, 10.0, 20.0);
+        registerPostWithTemperature(token, 11.0, 20.0);
+        registerPostWithTemperature(token, 12.0, 20.0);
+        registerPostWithTemperature(token, 20.0, 20.0);
+        String feedQueryString = "?min=11.0&max=20.0&page=0&size=10&sort=createdAt,DESC";
+
+        ExtractableResponse<Response> response = httpGetWithAuthorization(FEED_REQUEST_URI + feedQueryString, token);
+
+        FeedResponse feedResponse = response.jsonPath()
+                .getObject(".", FeedResponse.class);
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(feedResponse.isLastPage()).isTrue(),
+                () -> assertThat(feedResponse.getPosts()).hasSize(3)
+        );
+    }
+
+    private void registerPostWithTemperature(String token, Double minTemperature, Double maxTemperature) {
+        PostRegisterRequest postRegisterRequest = new PostRegisterRequest(POST_IMAGE_FULL_URL,
+                new TemperatureRequest(minTemperature, maxTemperature),
+                new OutfitFeelingRequest(OUTFIT_FEELING_INDEX, ADDITIONAL_OUTFIT_FEELING_INDICES));
+        httpPostWithAuthorization(POST_REGISTER_REQUEST_URI, postRegisterRequest, token)
+                .jsonPath()
+                .getObject(".", PostRegisterResponse.class);
     }
 
     private void mockAmazonS3Exception() {

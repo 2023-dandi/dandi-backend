@@ -102,6 +102,17 @@ public class HttpMethodFixture {
                 .extract();
     }
 
+    public static ExtractableResponse<Response> httpGetWithAuthorizationAndQueryString(String path, String token,
+                                                                                       int size, int page, String sort,
+                                                                                       Direction direction) {
+        return RestAssured
+                .given().log().all()
+                .header(AUTHORIZATION, AUTHORIZATION_TYPE + token)
+                .when().get(path + "?size=" + size + "&page=" + page + "&sort=" + sort + "," + direction)
+                .then().log().all()
+                .extract();
+    }
+
     public static ExtractableResponse<Response> httpPatchWithAuthorization(String path,
                                                                            String token) {
         return RestAssured
