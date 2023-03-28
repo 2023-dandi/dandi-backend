@@ -12,19 +12,21 @@ public class Post {
     private final String postImageUrl;
     private final WeatherFeeling weatherFeeling;
     private final LocalDate createdAt;
+    private final List<Long> likingMembers;
 
     public Post(Long id, Member writer, Temperatures temperatures, String postImageUrl, WeatherFeeling weatherFeeling,
-                LocalDate createdAt) {
+                LocalDate createdAt, List<Long> likingMembers) {
         this.id = id;
         this.writer = writer;
         this.temperatures = temperatures;
         this.postImageUrl = postImageUrl;
         this.weatherFeeling = weatherFeeling;
         this.createdAt = createdAt;
+        this.likingMembers = likingMembers;
     }
 
     public static Post initial(Temperatures temperatures, String postImageUrl, WeatherFeeling weatherFeeling) {
-        return new Post(null, null, temperatures, postImageUrl, weatherFeeling, null);
+        return new Post(null, null, temperatures, postImageUrl, weatherFeeling, null, null);
     }
 
     public Long getId() {
@@ -69,5 +71,9 @@ public class Post {
 
     public boolean isWrittenBy(Long memberId) {
         return writer.hasId(memberId);
+    }
+
+    public boolean isLikedBy(Long memberId) {
+        return likingMembers.contains(memberId);
     }
 }

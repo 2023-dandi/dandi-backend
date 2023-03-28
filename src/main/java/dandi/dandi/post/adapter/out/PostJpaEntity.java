@@ -89,7 +89,7 @@ public class PostJpaEntity {
         return memberId;
     }
 
-    public Post toPost(Member member) {
+    public Post toPost(Member member, List<Long> likingMemberIds) {
         List<Long> additionalFeelingIndices = additionalFeelingIndicesJpaEntities.stream()
                 .map(AdditionalFeelingIndexJpaEntity::getValue)
                 .collect(Collectors.toUnmodifiableList());
@@ -99,7 +99,8 @@ public class PostJpaEntity {
                 new Temperatures(minTemperature, maxTemperature),
                 postImageUrl,
                 new WeatherFeeling(feelingIndex, additionalFeelingIndices),
-                createdAt.toLocalDate()
+                createdAt.toLocalDate(),
+                likingMemberIds
         );
     }
 }

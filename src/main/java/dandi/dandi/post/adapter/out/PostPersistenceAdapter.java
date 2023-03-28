@@ -5,6 +5,8 @@ import dandi.dandi.member.adapter.out.persistence.MemberRepository;
 import dandi.dandi.member.domain.Member;
 import dandi.dandi.post.application.port.out.PostPersistencePort;
 import dandi.dandi.post.domain.Post;
+import dandi.dandi.postlike.adapter.PostLikeJpaEntity;
+import dandi.dandi.postlike.adapter.PostLikeRepository;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -19,10 +21,13 @@ public class PostPersistenceAdapter implements PostPersistencePort {
 
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
+    private final PostLikeRepository postLikeRepository;
 
-    public PostPersistenceAdapter(PostRepository postRepository, MemberRepository memberRepository) {
+    public PostPersistenceAdapter(PostRepository postRepository, MemberRepository memberRepository,
+                                  PostLikeRepository postLikeRepository) {
         this.postRepository = postRepository;
         this.memberRepository = memberRepository;
+        this.postLikeRepository = postLikeRepository;
     }
 
     @Override
@@ -35,7 +40,7 @@ public class PostPersistenceAdapter implements PostPersistencePort {
     @Override
     public Optional<Post> findById(Long postId) {
         return postRepository.findByIdWithAdditionalFeelingIndicesJpaEntities(postId)
-                .map(postJpaEntity -> postJpaEntity.toPost(findMember(postJpaEntity)));
+                .map(this::toPost);
     }
 
     @Override
@@ -51,9 +56,8 @@ public class PostPersistenceAdapter implements PostPersistencePort {
     @Override
     public Slice<Post> findByMemberId(Long memberId, Pageable pageable) {
         Slice<PostJpaEntity> postJpaEntities = postRepository.findAllByMemberId(memberId, pageable);
-        Member member = findMember(postJpaEntities.getContent().get(0));
         List<Post> posts = postJpaEntities.stream()
-                .map(postJpaEntity -> postJpaEntity.toPost(member))
+                .map(this::toPost)
                 .collect(Collectors.toUnmodifiableList());
         return new SliceImpl<>(posts, pageable, postJpaEntities.hasNext());
     }
@@ -62,5 +66,18 @@ public class PostPersistenceAdapter implements PostPersistencePort {
         return memberRepository.findById(postJpaEntity.getMemberId())
                 .orElseThrow(() -> InternalServerException.withdrawnMemberPost(postJpaEntity.getMemberId()))
                 .toMember();
+    }
+
+    private Post toPost(PostJpaEntity postJpaEntity) {
+        Member member = findMember(postJpaEntity);
+        List<Long> postLikingMemberIds = findPostLikingMemberIds(postJpaEntity);
+        return postJpaEntity.toPost(member, postLikingMemberIds);
+    }
+
+    private List<Long> findPostLikingMemberIds(PostJpaEntity postJpaEntity) {
+        return postLikeRepository.findByPostId(postJpaEntity.getId())
+                .stream()
+                .map(PostLikeJpaEntity::getMemberId)
+                .collect(Collectors.toUnmodifiableList());
     }
 }

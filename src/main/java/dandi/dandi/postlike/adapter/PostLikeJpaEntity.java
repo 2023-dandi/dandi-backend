@@ -39,6 +39,10 @@ public class PostLikeJpaEntity {
         );
     }
 
+    public Long getMemberId() {
+        return memberId;
+    }
+
     public PostLike toPostLike() {
         return new PostLike(
                 id,
