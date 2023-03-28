@@ -10,9 +10,9 @@ public class MyPostResponse {
     public MyPostResponse() {
     }
 
-    public MyPostResponse(Post post) {
+    public MyPostResponse(Post post, String imageAccessUrl) {
         this.id = post.getId();
-        this.postImageUrl = post.getPostImageUrl();
+        this.postImageUrl = imageAccessUrl + post.getPostImageUrl();
     }
 
     public Long getId() {

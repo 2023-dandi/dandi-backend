@@ -89,7 +89,7 @@ public class PostService implements PostUseCase {
     public MyPostResponses getMyPostIdsAndPostImageUrls(Long memberId, Pageable pageable) {
         Slice<Post> posts = postPersistencePort.findByMemberId(memberId, pageable);
         List<MyPostResponse> myPostResponses = posts.stream()
-                .map(MyPostResponse::new)
+                .map(post -> new MyPostResponse(post, imageAccessUrl))
                 .collect(Collectors.toUnmodifiableList());
         return new MyPostResponses(myPostResponses, posts.isLast());
     }
