@@ -9,7 +9,7 @@ public class PostResponse {
     private PostWriterResponse writer;
     private boolean liked;
     private TemperatureResponse temperatures;
-    private OutfitFeelingResponse outfitFeelings;
+    private long feelingIndex;
     private String postImageUrl;
     private LocalDate createdAt;
 
@@ -21,8 +21,7 @@ public class PostResponse {
         this.writer = new PostWriterResponse(post, imageAccessUrl);
         this.liked = liked;
         this.temperatures = new TemperatureResponse(post.getMinTemperature(), post.getMaxTemperature());
-        this.outfitFeelings =
-                new OutfitFeelingResponse(post.getWeatherFeelingIndex(), post.getAdditionalWeatherFeelingIndices());
+        this.feelingIndex = post.getWeatherFeelingIndex();
         this.postImageUrl = imageAccessUrl + post.getPostImageUrl();
         this.createdAt = post.getCreatedAt();
     }
@@ -43,8 +42,8 @@ public class PostResponse {
         return temperatures;
     }
 
-    public OutfitFeelingResponse getOutfitFeelings() {
-        return outfitFeelings;
+    public long getFeelingIndex() {
+        return feelingIndex;
     }
 
     public String getPostImageUrl() {
