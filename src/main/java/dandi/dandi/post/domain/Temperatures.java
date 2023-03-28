@@ -17,4 +17,13 @@ public class Temperatures {
     public double getMaxTemperature() {
         return maxTemperature;
     }
+
+    public TemperatureSearchCondition calculateTemperatureSearchCondition(double threadHold) {
+        return new TemperatureSearchCondition(
+                minTemperature - threadHold,
+                minTemperature + threadHold,
+                maxTemperature - threadHold,
+                maxTemperature + threadHold
+        );
+    }
 }

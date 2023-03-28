@@ -1,6 +1,7 @@
 package dandi.dandi.post.web;
 
 import dandi.dandi.auth.web.support.Login;
+import dandi.dandi.post.application.port.in.FeedResponse;
 import dandi.dandi.post.application.port.in.MyPostResponses;
 import dandi.dandi.post.application.port.in.PostDetailResponse;
 import dandi.dandi.post.application.port.in.PostImageRegisterResponse;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -67,5 +69,12 @@ public class PostController implements PostControllerDocs {
                                                                                 direction = Direction.DESC)
                                                                         Pageable pageable) {
         return ResponseEntity.ok(postUseCase.getMyPostIdsAndPostImageUrls(memberId, pageable));
+    }
+
+    @GetMapping("/feed/weather")
+    public ResponseEntity<FeedResponse> getFeedsByTemperature(@Login Long memberId, Pageable pageable,
+                                                              @RequestParam(value = "min") Double minTemperature,
+                                                              @RequestParam(value = "max") Double maxTemperature) {
+        return ResponseEntity.ok(postUseCase.getPostsByTemperature(memberId, minTemperature, maxTemperature, pageable));
     }
 }
