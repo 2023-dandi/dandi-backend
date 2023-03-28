@@ -11,4 +11,6 @@ public interface PostUseCase {
     void deletePost(Long memberId, Long postId);
 
     MyPostResponses getMyPostIdsAndPostImageUrls(Long memberId, Pageable pageable);
+
+    FeedResponse getPostsByTemperature(Long memberId, Double minTemperature, Double maxTemperature, Pageable pageable);
 }

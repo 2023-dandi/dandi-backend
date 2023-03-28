@@ -2,14 +2,17 @@ package dandi.dandi.post.application.service;
 
 import dandi.dandi.common.exception.ForbiddenException;
 import dandi.dandi.common.exception.NotFoundException;
+import dandi.dandi.post.application.port.in.FeedResponse;
 import dandi.dandi.post.application.port.in.MyPostResponse;
 import dandi.dandi.post.application.port.in.MyPostResponses;
 import dandi.dandi.post.application.port.in.PostDetailResponse;
 import dandi.dandi.post.application.port.in.PostRegisterCommand;
 import dandi.dandi.post.application.port.in.PostRegisterResponse;
+import dandi.dandi.post.application.port.in.PostResponse;
 import dandi.dandi.post.application.port.in.PostUseCase;
 import dandi.dandi.post.application.port.out.PostPersistencePort;
 import dandi.dandi.post.domain.Post;
+import dandi.dandi.post.domain.TemperatureSearchCondition;
 import dandi.dandi.post.domain.Temperatures;
 import dandi.dandi.post.domain.WeatherFeeling;
 import dandi.dandi.postlike.application.port.out.PostLikePersistencePort;
@@ -25,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class PostService implements PostUseCase {
 
     private static final int POST_IMAGE_URL_INDEX = 1;
+    private static final int TEMPERATURE_SEARCH_THRESHOLD = 3;
 
     private final PostPersistencePort postPersistencePort;
     private final PostLikePersistencePort postLikePersistencePort;
@@ -88,5 +92,23 @@ public class PostService implements PostUseCase {
                 .map(MyPostResponse::new)
                 .collect(Collectors.toUnmodifiableList());
         return new MyPostResponses(myPostResponses, posts.isLast());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public FeedResponse getPostsByTemperature(Long memberId, Double minTemperature, Double maxTemperature,
+                                              Pageable pageable) {
+        Temperatures temperatures = new Temperatures(minTemperature, maxTemperature);
+        TemperatureSearchCondition searchCondition =
+                temperatures.calculateTemperatureSearchCondition(TEMPERATURE_SEARCH_THRESHOLD);
+        Slice<Post> posts = postPersistencePort.findByTemperature(searchCondition, pageable);
+        return convertToFeedResponse(memberId, posts);
+    }
+
+    private FeedResponse convertToFeedResponse(Long memberId, Slice<Post> posts) {
+        List<PostResponse> postResponses = posts.stream()
+                .map(post -> new PostResponse(post, post.isLikedBy(memberId), imageAccessUrl))
+                .collect(Collectors.toUnmodifiableList());
+        return new FeedResponse(postResponses, posts.isLast());
     }
 }
