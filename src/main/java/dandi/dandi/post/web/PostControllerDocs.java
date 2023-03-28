@@ -4,6 +4,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
 
 import dandi.dandi.advice.ExceptionResponse;
+import dandi.dandi.post.application.port.in.FeedResponse;
 import dandi.dandi.post.application.port.in.MyPostResponses;
 import dandi.dandi.post.application.port.in.PostDetailResponse;
 import dandi.dandi.post.application.port.in.PostImageRegisterResponse;
@@ -22,6 +23,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "게시글")
@@ -75,4 +77,13 @@ public interface PostControllerDocs {
     @ApiResponse(responseCode = "200", description = "내가 올린 게시글 정상 반환")
     ResponseEntity<MyPostResponses> getMyPostIdsAndPostImageUrls(@Parameter(hidden = true) Long memberId,
                                                                  @Parameter(hidden = true) Pageable pageable);
+
+    @Operation(summary = "기온에 따른 게시글 조회(피드)", parameters = {
+            @Parameter(name = "size"), @Parameter(name = "page"),
+            @Parameter(name = "sort"), @Parameter(example = "DESC")})
+    @ApiResponse(responseCode = "200", description = "기온에 따른 게시글 정상 반환")
+    ResponseEntity<FeedResponse> getFeedsByTemperature(@Parameter(hidden = true) Long memberId,
+                                                       @Parameter(hidden = true) Pageable pageable,
+                                                       @RequestParam(value = "min") Double minTemperature,
+                                                       @RequestParam(value = "max") Double maxTemperature);
 }
