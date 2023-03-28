@@ -5,6 +5,7 @@ import dandi.dandi.member.adapter.out.persistence.MemberRepository;
 import dandi.dandi.member.domain.Member;
 import dandi.dandi.post.application.port.out.PostPersistencePort;
 import dandi.dandi.post.domain.Post;
+import dandi.dandi.post.domain.TemperatureSearchCondition;
 import dandi.dandi.postlike.adapter.PostLikeJpaEntity;
 import dandi.dandi.postlike.adapter.PostLikeRepository;
 import java.util.List;
@@ -56,6 +57,21 @@ public class PostPersistenceAdapter implements PostPersistencePort {
     @Override
     public Slice<Post> findByMemberId(Long memberId, Pageable pageable) {
         Slice<PostJpaEntity> postJpaEntities = postRepository.findAllByMemberId(memberId, pageable);
+        List<Post> posts = postJpaEntities.stream()
+                .map(this::toPost)
+                .collect(Collectors.toUnmodifiableList());
+        return new SliceImpl<>(posts, pageable, postJpaEntities.hasNext());
+    }
+
+    @Override
+    public Slice<Post> findByTemperature(TemperatureSearchCondition temperatureSearchCondition, Pageable pageable) {
+        Slice<PostJpaEntity> postJpaEntities = postRepository.findByTemperature(
+                temperatureSearchCondition.getMinTemperatureMinSearchCondition(),
+                temperatureSearchCondition.getMinTemperatureMaxSearchCondition(),
+                temperatureSearchCondition.getMaxTemperatureMinSearchCondition(),
+                temperatureSearchCondition.getMaxTemperatureMaxSearchCondition(),
+                pageable);
+
         List<Post> posts = postJpaEntities.stream()
                 .map(this::toPost)
                 .collect(Collectors.toUnmodifiableList());

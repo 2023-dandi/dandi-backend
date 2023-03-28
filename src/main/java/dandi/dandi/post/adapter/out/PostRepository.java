@@ -15,4 +15,14 @@ public interface PostRepository extends JpaRepository<PostJpaEntity, Long> {
     boolean existsById(Long id);
 
     Slice<PostJpaEntity> findAllByMemberId(Long memberId, Pageable pageable);
+
+    @Query("SELECT p FROM PostJpaEntity p WHERE "
+            + "p.minTemperature BETWEEN :minTemperatureMinSearchCondition AND :minTemperatureMaxSearchCondition "
+            + "AND "
+            + "p.maxTemperature BETWEEN :maxTemperatureMinSearchCondition AND :maxTemperatureMaxSearchCondition")
+    Slice<PostJpaEntity> findByTemperature(Double minTemperatureMinSearchCondition,
+                                           Double minTemperatureMaxSearchCondition,
+                                           Double maxTemperatureMinSearchCondition,
+                                           Double maxTemperatureMaxSearchCondition,
+                                           Pageable pageable);
 }
