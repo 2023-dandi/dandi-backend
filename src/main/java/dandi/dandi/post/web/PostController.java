@@ -72,7 +72,7 @@ public class PostController implements PostControllerDocs {
         return ResponseEntity.ok(postUseCase.getMyPostIdsAndPostImageUrls(memberId, pageable));
     }
 
-    @GetMapping("/feed/weather")
+    @GetMapping("/feed/temperature")
     public ResponseEntity<FeedResponse> getFeedsByTemperature(@Login Long memberId, Pageable pageable,
                                                               @RequestParam(value = "min") Double minTemperature,
                                                               @RequestParam(value = "max") Double maxTemperature) {

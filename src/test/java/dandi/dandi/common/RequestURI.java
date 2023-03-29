@@ -21,5 +21,5 @@ public class RequestURI {
     public static final String POST_DETAILS_REQUEST_URI = "/posts";
     public static final String MY_POST_REQUEST_URI = "/posts/my";
     public static final String MY_POST_BY_TEMPERATURE_REQUEST_URI = "/posts/my/temperature";
-    public static final String FEED_REQUEST_URI = "/posts/feed/weather";
+    public static final String FEED_REQUEST_URI = "/posts/feed/temperature";
 }
