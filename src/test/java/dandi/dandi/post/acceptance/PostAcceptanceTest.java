@@ -7,6 +7,7 @@ import static dandi.dandi.common.HttpMethodFixture.httpPostWithAuthorization;
 import static dandi.dandi.common.HttpMethodFixture.httpPostWithAuthorizationAndImgFile;
 import static dandi.dandi.common.HttpResponseExtractor.extractExceptionMessage;
 import static dandi.dandi.common.RequestURI.FEED_REQUEST_URI;
+import static dandi.dandi.common.RequestURI.MY_POST_BY_TEMPERATURE_REQUEST_URI;
 import static dandi.dandi.common.RequestURI.MY_POST_REQUEST_URI;
 import static dandi.dandi.common.RequestURI.POST_DETAILS_REQUEST_URI;
 import static dandi.dandi.common.RequestURI.POST_IMAGE_REGISTER_REQUEST_URI;
@@ -27,6 +28,7 @@ import dandi.dandi.common.AcceptanceTest;
 import dandi.dandi.post.application.port.in.FeedResponse;
 import dandi.dandi.post.application.port.in.MyPostResponse;
 import dandi.dandi.post.application.port.in.MyPostResponses;
+import dandi.dandi.post.application.port.in.MyPostsByTemperatureResponses;
 import dandi.dandi.post.application.port.in.PostDetailResponse;
 import dandi.dandi.post.application.port.in.PostImageRegisterResponse;
 import dandi.dandi.post.application.port.in.PostRegisterResponse;
@@ -229,8 +231,10 @@ class PostAcceptanceTest extends AcceptanceTest {
     @Test
     void getFeedsByTemperature() {
         String token = getToken();
+        String anotherMemberToken = getAnotherMemberToken();
         registerPostWithTemperature(token, 10.0, 20.0);
         registerPostWithTemperature(token, 11.0, 20.0);
+        registerPostWithTemperature(anotherMemberToken, 11.0, 20.0);
         registerPostWithTemperature(token, 12.0, 20.0);
         registerPostWithTemperature(token, 20.0, 20.0);
         String feedQueryString = "?min=11.0&max=20.0&page=0&size=10&sort=createdAt,DESC";
@@ -242,7 +246,31 @@ class PostAcceptanceTest extends AcceptanceTest {
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
                 () -> assertThat(feedResponse.isLastPage()).isTrue(),
-                () -> assertThat(feedResponse.getPosts()).hasSize(3)
+                () -> assertThat(feedResponse.getPosts()).hasSize(4)
+        );
+    }
+
+    @DisplayName("최저 최고 기온의 +- 3도인 본인의 게시글 요청에 게시글들과 200을 응답한다.")
+    @Test
+    void getMyPostsByTemperature() {
+        String token = getToken();
+        String anotherMemberToken = getAnotherMemberToken();
+        registerPostWithTemperature(token, 12.0, 20.0);
+        registerPostWithTemperature(token, 10.0, 20.0);
+        registerPostWithTemperature(anotherMemberToken, 10.0, 20.0);
+        registerPostWithTemperature(token, 20.0, 20.0);
+
+        String queryString = "?min=10&max=20&page=0&size=10&sort=createdAt,DESC";
+        ExtractableResponse<Response> response =
+                httpGetWithAuthorization(MY_POST_BY_TEMPERATURE_REQUEST_URI + queryString, token);
+
+        MyPostsByTemperatureResponses myPostsByTemperatureResponses = response.jsonPath()
+                .getObject(".", MyPostsByTemperatureResponses.class);
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(myPostsByTemperatureResponses.isLastPage()).isTrue(),
+                () -> assertThat(myPostsByTemperatureResponses.getWriter()).isNotNull(),
+                () -> assertThat(myPostsByTemperatureResponses.getPosts()).hasSize(2)
         );
     }
 

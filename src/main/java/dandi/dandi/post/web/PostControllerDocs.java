@@ -6,6 +6,7 @@ import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
 import dandi.dandi.advice.ExceptionResponse;
 import dandi.dandi.post.application.port.in.FeedResponse;
 import dandi.dandi.post.application.port.in.MyPostResponses;
+import dandi.dandi.post.application.port.in.MyPostsByTemperatureResponses;
 import dandi.dandi.post.application.port.in.PostDetailResponse;
 import dandi.dandi.post.application.port.in.PostImageRegisterResponse;
 import dandi.dandi.post.application.port.in.PostRegisterResponse;
@@ -86,4 +87,15 @@ public interface PostControllerDocs {
                                                        @Parameter(hidden = true) Pageable pageable,
                                                        @RequestParam(value = "min") Double minTemperature,
                                                        @RequestParam(value = "max") Double maxTemperature);
+
+    @Operation(summary = "기온에 따른 내 게시글 조회", parameters = {
+            @Parameter(name = "size"), @Parameter(name = "page"),
+            @Parameter(name = "sort"), @Parameter(example = "DESC")})
+    @ApiResponse(responseCode = "200", description = "기온에 따른 내 게시글 정상 반환")
+    ResponseEntity<MyPostsByTemperatureResponses> getMyPostsByTemperature(@Parameter(hidden = true) Long memberId,
+                                                                          @Parameter(hidden = true) Pageable pageable,
+                                                                          @RequestParam(value = "min")
+                                                                          Double minTemperature,
+                                                                          @RequestParam(value = "max")
+                                                                          Double maxTemperature);
 }

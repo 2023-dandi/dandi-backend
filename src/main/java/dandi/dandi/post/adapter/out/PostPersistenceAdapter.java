@@ -78,6 +78,25 @@ public class PostPersistenceAdapter implements PostPersistencePort {
         return new SliceImpl<>(posts, pageable, postJpaEntities.hasNext());
     }
 
+    @Override
+    public Slice<Post> findByMemberIdAndTemperature(Long memberId,
+                                                    TemperatureSearchCondition temperatureSearchCondition,
+                                                    Pageable pageable) {
+        Slice<PostJpaEntity> myPostsByTemperature = postRepository.findByMemberIdAndTemperature(
+                memberId,
+                temperatureSearchCondition.getMinTemperatureMinSearchCondition(),
+                temperatureSearchCondition.getMinTemperatureMaxSearchCondition(),
+                temperatureSearchCondition.getMaxTemperatureMinSearchCondition(),
+                temperatureSearchCondition.getMaxTemperatureMaxSearchCondition(),
+                pageable);
+
+        Member member = findMember(myPostsByTemperature.getContent().get(0));
+        List<Post> posts = myPostsByTemperature.stream()
+                .map(postJpaEntity -> postJpaEntity.toPost(member, findPostLikingMemberIds(postJpaEntity)))
+                .collect(Collectors.toUnmodifiableList());
+        return new SliceImpl<>(posts, pageable, myPostsByTemperature.hasNext());
+    }
+
     private Member findMember(PostJpaEntity postJpaEntity) {
         return memberRepository.findById(postJpaEntity.getMemberId())
                 .orElseThrow(() -> InternalServerException.withdrawnMemberPost(postJpaEntity.getMemberId()))

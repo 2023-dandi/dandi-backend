@@ -12,5 +12,8 @@ public interface PostUseCase {
 
     MyPostResponses getMyPostIdsAndPostImageUrls(Long memberId, Pageable pageable);
 
+    MyPostsByTemperatureResponses getMyPostsByTemperature(Long memberId, Double minTemperature,
+                                                          Double maxTemperature, Pageable pageable);
+
     FeedResponse getPostsByTemperature(Long memberId, Double minTemperature, Double maxTemperature, Pageable pageable);
 }

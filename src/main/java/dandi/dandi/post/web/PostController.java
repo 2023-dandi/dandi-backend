@@ -3,6 +3,7 @@ package dandi.dandi.post.web;
 import dandi.dandi.auth.web.support.Login;
 import dandi.dandi.post.application.port.in.FeedResponse;
 import dandi.dandi.post.application.port.in.MyPostResponses;
+import dandi.dandi.post.application.port.in.MyPostsByTemperatureResponses;
 import dandi.dandi.post.application.port.in.PostDetailResponse;
 import dandi.dandi.post.application.port.in.PostImageRegisterResponse;
 import dandi.dandi.post.application.port.in.PostImageUseCase;
@@ -76,5 +77,16 @@ public class PostController implements PostControllerDocs {
                                                               @RequestParam(value = "min") Double minTemperature,
                                                               @RequestParam(value = "max") Double maxTemperature) {
         return ResponseEntity.ok(postUseCase.getPostsByTemperature(memberId, minTemperature, maxTemperature, pageable));
+    }
+
+    @GetMapping("/my/temperature")
+    public ResponseEntity<MyPostsByTemperatureResponses> getMyPostsByTemperature(@Login Long memberId,
+                                                                                 Pageable pageable,
+                                                                                 @RequestParam(value = "min")
+                                                                                 Double minTemperature,
+                                                                                 @RequestParam(value = "max")
+                                                                                 Double maxTemperature) {
+        return ResponseEntity.ok(
+                postUseCase.getMyPostsByTemperature(memberId, minTemperature, maxTemperature, pageable));
     }
 }
