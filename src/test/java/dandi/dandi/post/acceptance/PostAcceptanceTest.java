@@ -231,8 +231,10 @@ class PostAcceptanceTest extends AcceptanceTest {
     @Test
     void getFeedsByTemperature() {
         String token = getToken();
+        String anotherMemberToken = getAnotherMemberToken();
         registerPostWithTemperature(token, 10.0, 20.0);
         registerPostWithTemperature(token, 11.0, 20.0);
+        registerPostWithTemperature(anotherMemberToken, 11.0, 20.0);
         registerPostWithTemperature(token, 12.0, 20.0);
         registerPostWithTemperature(token, 20.0, 20.0);
         String feedQueryString = "?min=11.0&max=20.0&page=0&size=10&sort=createdAt,DESC";
@@ -244,7 +246,7 @@ class PostAcceptanceTest extends AcceptanceTest {
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
                 () -> assertThat(feedResponse.isLastPage()).isTrue(),
-                () -> assertThat(feedResponse.getPosts()).hasSize(3)
+                () -> assertThat(feedResponse.getPosts()).hasSize(4)
         );
     }
 
