@@ -47,15 +47,20 @@ public class DatabaseCleaner implements InitializingBean {
     }
 
     @Transactional
-    public void clear() {
+    public void truncate() {
         entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS = 0").executeUpdate();
         entityManager.flush();
         for (String tableName : tableNames) {
             entityManager.createNativeQuery("TRUNCATE TABLE " + tableName).executeUpdate();
-            entityManager.createNativeQuery(
-                            "ALTER TABLE " + tableName + " AUTO_INCREMENT = 1")
-                    .executeUpdate();
         }
         entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS = 1").executeUpdate();
+    }
+
+    @Transactional
+    public void initializeAutoIncrement() {
+        for (String tableName : tableNames) {
+            entityManager.createNativeQuery("ALTER TABLE " + tableName + " AUTO_INCREMENT = 1")
+                    .executeUpdate();
+        }
     }
 }
