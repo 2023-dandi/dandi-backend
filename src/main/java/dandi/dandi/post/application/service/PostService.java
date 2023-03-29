@@ -3,13 +3,16 @@ package dandi.dandi.post.application.service;
 import dandi.dandi.common.exception.ForbiddenException;
 import dandi.dandi.common.exception.NotFoundException;
 import dandi.dandi.post.application.port.in.FeedResponse;
+import dandi.dandi.post.application.port.in.MyPostByTemperatureResponse;
 import dandi.dandi.post.application.port.in.MyPostResponse;
 import dandi.dandi.post.application.port.in.MyPostResponses;
+import dandi.dandi.post.application.port.in.MyPostsByTemperatureResponses;
 import dandi.dandi.post.application.port.in.PostDetailResponse;
 import dandi.dandi.post.application.port.in.PostRegisterCommand;
 import dandi.dandi.post.application.port.in.PostRegisterResponse;
 import dandi.dandi.post.application.port.in.PostResponse;
 import dandi.dandi.post.application.port.in.PostUseCase;
+import dandi.dandi.post.application.port.in.PostWriterResponse;
 import dandi.dandi.post.application.port.out.PostPersistencePort;
 import dandi.dandi.post.domain.Post;
 import dandi.dandi.post.domain.TemperatureSearchCondition;
@@ -110,5 +113,28 @@ public class PostService implements PostUseCase {
                 .map(post -> new PostResponse(post, post.isLikedBy(memberId), imageAccessUrl))
                 .collect(Collectors.toUnmodifiableList());
         return new FeedResponse(postResponses, posts.isLast());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public MyPostsByTemperatureResponses getMyPostsByTemperature(Long memberId, Double minTemperature,
+                                                                 Double maxTemperature, Pageable pageable) {
+        Temperatures temperatures = new Temperatures(minTemperature, maxTemperature);
+        TemperatureSearchCondition searchCondition =
+                temperatures.calculateTemperatureSearchCondition(TEMPERATURE_SEARCH_THRESHOLD);
+        Slice<Post> myPostsByTemperature =
+                postPersistencePort.findByMemberIdAndTemperature(memberId, searchCondition, pageable);
+        return convertToMyPostsByTemperatureResponses(memberId, myPostsByTemperature);
+    }
+
+    private MyPostsByTemperatureResponses convertToMyPostsByTemperatureResponses(Long memberId,
+                                                                                 Slice<Post> myPostsByTemperature) {
+        List<MyPostByTemperatureResponse> myPostByTemperatureResponses = myPostsByTemperature.stream()
+                .map(post -> new MyPostByTemperatureResponse(post, post.isLikedBy(memberId), imageAccessUrl))
+                .collect(Collectors.toUnmodifiableList());
+        Post post = myPostsByTemperature.getContent().get(0);
+        PostWriterResponse postWriterResponse = new PostWriterResponse(post, imageAccessUrl);
+        return new MyPostsByTemperatureResponses(
+                myPostByTemperatureResponses, postWriterResponse, myPostsByTemperature.isLast());
     }
 }
