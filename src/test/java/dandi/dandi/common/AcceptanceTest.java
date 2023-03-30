@@ -66,7 +66,8 @@ public class AcceptanceTest {
 
     @AfterEach
     void clearDatabase() {
-        databaseCleaner.clear();
+        databaseCleaner.truncate();
+        databaseCleaner.initializeAutoIncrement();
     }
 
     public String getToken() {

@@ -1,5 +1,7 @@
 package dandi.dandi.member.domain;
 
+import java.util.Objects;
+
 public class Member {
 
     private final Long id;
@@ -50,5 +52,24 @@ public class Member {
 
     public String getProfileImgUrl() {
         return profileImgUrl;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Member)) {
+            return false;
+        }
+        Member member = (Member) o;
+        return Objects.equals(id, member.id) && Objects.equals(oAuthId, member.oAuthId)
+                && Objects.equals(nickname, member.nickname) && Objects.equals(location,
+                member.location) && Objects.equals(profileImgUrl, member.profileImgUrl);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, oAuthId, nickname, location, profileImgUrl);
     }
 }
