@@ -57,7 +57,7 @@ class ProfileImageServiceTest {
                 () -> assertThat(imgUrl)
                         .startsWith(IMAGE_ACCESS_URL + TEST_PROFILE_BUCKET_IMG_DIR)
                         .contains(TEST_IMAGE_FILE_NAME),
-                () -> verify(imageManager).delete(anyString())
+                () -> verify(imageManager).delete(initialProfileImageMember.getProfileImgUrl())
         );
     }
 
