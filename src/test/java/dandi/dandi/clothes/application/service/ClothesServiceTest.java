@@ -1,12 +1,14 @@
 package dandi.dandi.clothes.application.service;
 
+import static dandi.dandi.clothes.ClothesFixture.CLOTHES_CATEGORY;
+import static dandi.dandi.clothes.ClothesFixture.CLOTHES_IMAGE_URL;
+import static dandi.dandi.clothes.ClothesFixture.CLOTHES_SEASONS;
 import static dandi.dandi.member.MemberTestFixture.MEMBER_ID;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 
 import dandi.dandi.clothes.application.port.in.ClothesRegisterCommand;
 import dandi.dandi.clothes.application.port.out.persistence.ClothesPersistencePort;
-import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,7 +29,7 @@ class ClothesServiceTest {
     @Test
     void registerClothes() {
         ClothesRegisterCommand clothesRegisterCommand =
-                new ClothesRegisterCommand("TOP", List.of("SPRING", "SUMMER"), "clothesImageUrl");
+                new ClothesRegisterCommand(CLOTHES_CATEGORY, CLOTHES_SEASONS, CLOTHES_IMAGE_URL);
 
         clothesService.registerClothes(MEMBER_ID, clothesRegisterCommand);
 

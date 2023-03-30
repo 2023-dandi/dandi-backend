@@ -1,5 +1,6 @@
 package dandi.dandi.clothes.adapter.persistence;
 
+import static dandi.dandi.clothes.ClothesFixture.CLOTHES_IMAGE_URL;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatCode;
 
 import dandi.dandi.clothes.domain.Category;
@@ -19,7 +20,7 @@ class ClothesPersistenceAdapterTest extends PersistenceAdapterTest {
     @DisplayName("옷을 저장할 수 있다.")
     @Test
     void save() {
-        Clothes clothes = Clothes.initial(Category.TOP, List.of(Season.SPRING, Season.SUMMER), "clothesImageUrl");
+        Clothes clothes = Clothes.initial(Category.TOP, List.of(Season.SPRING, Season.SUMMER), CLOTHES_IMAGE_URL);
 
         assertThatCode(() -> clothesPersistenceAdapter.save(clothes, 1L))
                 .doesNotThrowAnyException();

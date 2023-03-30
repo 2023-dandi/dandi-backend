@@ -1,5 +1,8 @@
 package dandi.dandi.clothes.acceptance;
 
+import static dandi.dandi.clothes.ClothesFixture.CLOTHES_CATEGORY;
+import static dandi.dandi.clothes.ClothesFixture.CLOTHES_IMAGE_URL;
+import static dandi.dandi.clothes.ClothesFixture.CLOTHES_SEASONS;
 import static dandi.dandi.common.HttpMethodFixture.httpPostWithAuthorization;
 import static dandi.dandi.common.HttpMethodFixture.httpPostWithAuthorizationAndImgFile;
 import static dandi.dandi.common.RequestURI.CLOTHES_IMAGE_REGISTER_REQUEST_URI;
@@ -61,7 +64,7 @@ class ClothesAcceptanceTest extends AcceptanceTest {
     void registerClothes_Created() {
         String token = getToken();
         ClothesRegisterCommand clothesRegisterCommand =
-                new ClothesRegisterCommand("TOP", List.of("SPRING", "SUMMER"), "clothesImageUrl");
+                new ClothesRegisterCommand(CLOTHES_CATEGORY, CLOTHES_SEASONS, CLOTHES_IMAGE_URL);
 
         ExtractableResponse<Response> response =
                 httpPostWithAuthorization(CLOTHES_REQUEST_URI, clothesRegisterCommand, token);
