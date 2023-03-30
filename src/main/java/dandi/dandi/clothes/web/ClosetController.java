@@ -7,6 +7,8 @@ import dandi.dandi.clothes.application.port.in.ClothesRegisterCommand;
 import dandi.dandi.clothes.application.port.in.ClothesUseCase;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,5 +42,11 @@ public class ClosetController implements ClosetControllerDocs {
                                                 @RequestBody ClothesRegisterCommand clothesRegisterCommand) {
         clothesUseCase.registerClothes(memberId, clothesRegisterCommand);
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @DeleteMapping({"/{clothesId}"})
+    public ResponseEntity<Void> deleteClothes(@Login Long memberId, @PathVariable Long clothesId) {
+        clothesUseCase.deleteClothes(memberId, clothesId);
+        return ResponseEntity.noContent().build();
     }
 }

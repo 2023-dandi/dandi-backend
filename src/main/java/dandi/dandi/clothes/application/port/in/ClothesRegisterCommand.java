@@ -33,11 +33,11 @@ public class ClothesRegisterCommand {
         return clothesImageUrl;
     }
 
-    public Clothes toClothes() {
+    public Clothes toClothes(Long memberId) {
         Category category = Category.from(this.category);
         List<Season> seasons = this.seasons.stream()
                 .map(Season::from)
                 .collect(Collectors.toUnmodifiableList());
-        return Clothes.initial(category, seasons, clothesImageUrl);
+        return Clothes.initial(memberId, category, seasons, clothesImageUrl);
     }
 }

@@ -1,5 +1,6 @@
 package dandi.dandi.clothes.application.service;
 
+import static dandi.dandi.clothes.ClothesFixture.CLOTHES;
 import static dandi.dandi.utils.image.TestImageUtils.IMAGE_ACCESS_URL;
 import static dandi.dandi.utils.image.TestImageUtils.generateTestImgMultipartFile;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -12,6 +13,7 @@ import static org.mockito.Mockito.verify;
 import com.amazonaws.SdkClientException;
 import dandi.dandi.clothes.application.port.in.ClothesImageRegisterResponse;
 import dandi.dandi.image.application.out.ImageUploader;
+import dandi.dandi.image.exception.ImageDeletionFailedException;
 import dandi.dandi.image.exception.ImageUploadFailedException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -55,5 +57,24 @@ class ClothesImageServiceTest {
 
         assertThatThrownBy(() -> clothesImageService.uploadClothesImage(memberId, multipartFile))
                 .isInstanceOf(ImageUploadFailedException.class);
+    }
+
+    @DisplayName("옷 사진을 삭제할 수 있다.")
+    @Test
+    void deleteClothesImage() throws IOException {
+        clothesImageService.deleteClothesImage(CLOTHES);
+
+        verify(imageUploader).delete(CLOTHES.getClothesImageUrl());
+    }
+
+    @DisplayName("옷 사진 삭제에 실패하면 예외를 발생시킨다.")
+    @Test
+    void deleteClothesImage_DeletionFailed() throws IOException {
+        doThrow(new SdkClientException("이미지 삭제 실패"), new IOException())
+                .when(imageUploader)
+                .delete(CLOTHES.getClothesImageUrl());
+
+        assertThatThrownBy(() -> clothesImageService.deleteClothesImage(CLOTHES))
+                .isInstanceOf(ImageDeletionFailedException.class);
     }
 }

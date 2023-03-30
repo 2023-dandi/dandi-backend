@@ -2,6 +2,7 @@ package dandi.dandi.clothes.adapter.persistence;
 
 import dandi.dandi.clothes.domain.Category;
 import dandi.dandi.clothes.domain.Clothes;
+import dandi.dandi.clothes.domain.Season;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -48,14 +49,14 @@ public class ClothesJpaEntity {
         seasons.forEach(clothesSeasonJpaEntity -> clothesSeasonJpaEntity.setClothesJpaEntity(this));
     }
 
-    public static ClothesJpaEntity fromClothesAndMemberId(Clothes clothes, Long memberId) {
+    public static ClothesJpaEntity fromClothes(Clothes clothes) {
         List<ClothesSeasonJpaEntity> clothesSeasonJpaEntities = clothes.getSeasons()
                 .stream()
                 .map(ClothesSeasonJpaEntity::fromSeason)
                 .collect(Collectors.toUnmodifiableList());
         return new ClothesJpaEntity(
                 null,
-                memberId,
+                clothes.getMemberId(),
                 clothesSeasonJpaEntities,
                 clothes.getCategory(),
                 clothes.getClothesImageUrl()
@@ -64,5 +65,13 @@ public class ClothesJpaEntity {
 
     public List<ClothesSeasonJpaEntity> getSeasons() {
         return seasons;
+    }
+
+
+    public Clothes toClothes() {
+        List<Season> seasons = this.seasons.stream()
+                .map(ClothesSeasonJpaEntity::getSeason)
+                .collect(Collectors.toUnmodifiableList());
+        return new Clothes(id, memberId, category, seasons, clothesImageUrl);
     }
 }

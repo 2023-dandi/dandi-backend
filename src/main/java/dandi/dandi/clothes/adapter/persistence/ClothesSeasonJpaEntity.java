@@ -45,4 +45,8 @@ public class ClothesSeasonJpaEntity {
     public void setClothesJpaEntity(ClothesJpaEntity clothesJpaEntity) {
         this.clothesJpaEntity = clothesJpaEntity;
     }
+
+    public Season getSeason() {
+        return season;
+    }
 }

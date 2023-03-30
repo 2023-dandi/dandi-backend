@@ -3,6 +3,7 @@ package dandi.dandi.clothes.acceptance;
 import static dandi.dandi.clothes.ClothesFixture.CLOTHES_CATEGORY;
 import static dandi.dandi.clothes.ClothesFixture.CLOTHES_IMAGE_URL;
 import static dandi.dandi.clothes.ClothesFixture.CLOTHES_SEASONS;
+import static dandi.dandi.common.HttpMethodFixture.httpDeleteWithAuthorization;
 import static dandi.dandi.common.HttpMethodFixture.httpPostWithAuthorization;
 import static dandi.dandi.common.HttpMethodFixture.httpPostWithAuthorizationAndImgFile;
 import static dandi.dandi.common.RequestURI.CLOTHES_IMAGE_REGISTER_REQUEST_URI;
@@ -84,5 +85,45 @@ class ClothesAcceptanceTest extends AcceptanceTest {
                 httpPostWithAuthorization(CLOTHES_REQUEST_URI, invalidClothesRegisterCommand, token);
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+    }
+
+    @DisplayName("옷 삭제 요청에 성공하면 204를 응답한다.")
+    @Test
+    void deleteClothes_NoContent() {
+        String token = getToken();
+        registerClothes(token);
+
+        ExtractableResponse<Response> response = httpDeleteWithAuthorization(CLOTHES_REQUEST_URI + "/1", token);
+
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
+    }
+
+    @DisplayName("존재하지 않는 옷 삭제 요청에 404를 응답한다.")
+    @Test
+    void deleteClothes_NotFound() {
+        String token = getToken();
+
+        ExtractableResponse<Response> response = httpDeleteWithAuthorization(CLOTHES_REQUEST_URI + "/1", token);
+
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.NOT_FOUND.value());
+    }
+
+    @DisplayName("다른 사람의 옷 삭제 요청에 403을 응답한다.")
+    @Test
+    void deleteClothes_Forbidden() {
+        String token = getToken();
+        registerClothes(token);
+        String anotherMemberToken = getAnotherMemberToken();
+
+        ExtractableResponse<Response> response =
+                httpDeleteWithAuthorization(CLOTHES_REQUEST_URI + "/1", anotherMemberToken);
+
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.FORBIDDEN.value());
+    }
+
+    private void registerClothes(String token) {
+        ClothesRegisterCommand clothesRegisterCommand =
+                new ClothesRegisterCommand(CLOTHES_CATEGORY, CLOTHES_SEASONS, CLOTHES_IMAGE_URL);
+        httpPostWithAuthorization(CLOTHES_REQUEST_URI, clothesRegisterCommand, token);
     }
 }
