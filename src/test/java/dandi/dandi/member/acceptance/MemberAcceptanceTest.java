@@ -16,10 +16,8 @@ import static dandi.dandi.utils.image.TestImageUtils.TEST_IMAGE_FILE_NAME;
 import static dandi.dandi.utils.image.TestImageUtils.generatetestImgFile;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-import com.amazonaws.AmazonClientException;
 import dandi.dandi.auth.application.port.in.TokenResponse;
 import dandi.dandi.auth.web.in.LoginRequest;
 import dandi.dandi.common.AcceptanceTest;
@@ -35,7 +33,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 
 class MemberAcceptanceTest extends AcceptanceTest {
@@ -218,12 +215,6 @@ class MemberAcceptanceTest extends AcceptanceTest {
                 httpPutWithAuthorizationAndImgFile(MEMBER_PROFILE_IMAGE_URI, token, testImgFile);
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
-    }
-
-    private void mockAmazonS3Exception() {
-        Mockito.doThrow(AmazonClientException.class)
-                .when(amazonS3)
-                .putObject(any(), any(), any(), any());
     }
 
     private String getNickname(String token) {
