@@ -37,4 +37,8 @@ public class Clothes {
     public String getClothesImageUrl() {
         return clothesImageUrl;
     }
+
+    public boolean isOwnedBy(Long memberId) {
+        return this.memberId.equals(memberId);
+    }
 }
