@@ -4,7 +4,7 @@ import com.amazonaws.SdkClientException;
 import java.io.IOException;
 import java.io.InputStream;
 
-public interface ImageUploader {
+public interface ImageManager {
 
     void upload(String fileKey, InputStream inputStream) throws IOException, SdkClientException;
 
