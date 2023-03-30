@@ -3,6 +3,7 @@ package dandi.dandi.clothes.domain;
 import static dandi.dandi.clothes.ClothesFixture.CLOTHES_CATEGORY;
 import static dandi.dandi.clothes.ClothesFixture.CLOTHES_IMAGE_URL;
 import static dandi.dandi.clothes.ClothesFixture.CLOTHES_SEASONS;
+import static dandi.dandi.member.MemberTestFixture.MEMBER_ID;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 import org.junit.jupiter.api.DisplayName;
@@ -15,7 +16,7 @@ class ClothesTest {
     @ParameterizedTest
     @CsvSource({"1, true", "2, false"})
     void isOwnedBy(Long memberId, boolean expected) {
-        Clothes clothes = Clothes.initial(1L, CLOTHES_CATEGORY, CLOTHES_SEASONS, CLOTHES_IMAGE_URL);
+        Clothes clothes = Clothes.initial(MEMBER_ID, CLOTHES_CATEGORY, CLOTHES_SEASONS, CLOTHES_IMAGE_URL);
 
         boolean actual = clothes.isOwnedBy(memberId);
 
