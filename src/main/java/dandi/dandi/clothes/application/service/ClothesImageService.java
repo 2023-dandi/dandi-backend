@@ -1,11 +1,9 @@
 package dandi.dandi.clothes.application.service;
 
-import com.amazonaws.SdkClientException;
 import dandi.dandi.clothes.application.port.in.ClothesImageRegisterResponse;
 import dandi.dandi.clothes.application.port.in.ClothesImageUseCase;
 import dandi.dandi.clothes.domain.Clothes;
-import dandi.dandi.image.application.out.ImageUploader;
-import dandi.dandi.image.exception.ImageDeletionFailedException;
+import dandi.dandi.image.application.out.ImageManager;
 import dandi.dandi.image.exception.ImageUploadFailedException;
 import java.io.IOException;
 import java.util.UUID;
@@ -18,14 +16,14 @@ public class ClothesImageService implements ClothesImageUseCase {
 
     private static final String CLOTHES_IMAGE_FILE_KEY_FORMAT = "%s/%s_%s_%s";
 
-    private final ImageUploader imageUploader;
+    private final ImageManager imageManager;
     private final String clothesImageDir;
     private final String imageAccessUrl;
 
-    public ClothesImageService(ImageUploader imageUploader,
+    public ClothesImageService(ImageManager imageManager,
                                @Value("${image.clothes-dir}") String clothesImageDir,
                                @Value("${cloud.aws.cloud-front.uri}") String imageAccessUrl) {
-        this.imageUploader = imageUploader;
+        this.imageManager = imageManager;
         this.clothesImageDir = clothesImageDir;
         this.imageAccessUrl = imageAccessUrl;
     }
@@ -39,8 +37,8 @@ public class ClothesImageService implements ClothesImageUseCase {
 
     private void uploadImage(MultipartFile multipartFile, String fileKey) {
         try {
-            imageUploader.upload(fileKey, multipartFile.getInputStream());
-        } catch (SdkClientException | IOException e) {
+            imageManager.upload(fileKey, multipartFile.getInputStream());
+        } catch (IOException e) {
             throw new ImageUploadFailedException();
         }
     }
@@ -52,10 +50,6 @@ public class ClothesImageService implements ClothesImageUseCase {
     }
 
     public void deleteClothesImage(Clothes clothes) {
-        try {
-            imageUploader.delete(clothes.getClothesImageUrl());
-        } catch (SdkClientException | IOException e) {
-            throw new ImageDeletionFailedException();
-        }
+        imageManager.delete(clothes.getClothesImageUrl());
     }
 }

@@ -11,7 +11,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 
-import dandi.dandi.image.application.out.ImageUploader;
+import dandi.dandi.image.application.out.ImageManager;
 import dandi.dandi.image.exception.ImageUploadFailedException;
 import dandi.dandi.post.application.port.in.PostImageRegisterResponse;
 import java.io.IOException;
@@ -26,9 +26,9 @@ import org.springframework.web.multipart.MultipartFile;
 @ExtendWith(MockitoExtension.class)
 class PostImageServiceTest {
 
-    private final ImageUploader imageUploader = Mockito.mock(ImageUploader.class);
+    private final ImageManager imageManager = Mockito.mock(ImageManager.class);
     private final PostImageService postImageService =
-            new PostImageService(imageUploader, POST_IMAGE_DIR, IMAGE_ACCESS_URL);
+            new PostImageService(imageManager, POST_IMAGE_DIR, IMAGE_ACCESS_URL);
 
     @DisplayName("게시글 사진을 업로드할 수 있다.")
     @Test
@@ -39,7 +39,7 @@ class PostImageServiceTest {
         PostImageRegisterResponse postImageRegisterResponse = postImageService.uploadPostImage(memberId, multipartFile);
 
         assertAll(
-                () -> verify(imageUploader).upload(anyString(), any(InputStream.class)),
+                () -> verify(imageManager).upload(anyString(), any(InputStream.class)),
                 () -> assertThat(postImageRegisterResponse.getPostImageUrl())
                         .startsWith(IMAGE_ACCESS_URL + POST_IMAGE_DIR)
                         .contains(multipartFile.getOriginalFilename())
@@ -53,7 +53,7 @@ class PostImageServiceTest {
         Long memberId = 1L;
         MultipartFile multipartFile = generateTestImgMultipartFile();
         doThrow(new ImageUploadFailedException())
-                .when(imageUploader)
+                .when(imageManager)
                 .upload(anyString(), any(InputStream.class));
 
         assertThatThrownBy(() -> postImageService.uploadPostImage(memberId, multipartFile))

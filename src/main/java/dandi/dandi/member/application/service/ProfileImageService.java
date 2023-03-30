@@ -1,8 +1,8 @@
 package dandi.dandi.member.application.service;
 
-import com.amazonaws.SdkClientException;
 import dandi.dandi.auth.exception.UnauthorizedException;
-import dandi.dandi.image.application.out.ImageUploader;
+import dandi.dandi.image.application.out.ImageManager;
+import dandi.dandi.image.exception.ImageDeletionFailedException;
 import dandi.dandi.image.exception.ImageUploadFailedException;
 import dandi.dandi.member.application.port.in.ProfileImageUpdateResponse;
 import dandi.dandi.member.application.port.in.ProfileImageUseCase;
@@ -25,17 +25,17 @@ public class ProfileImageService implements ProfileImageUseCase {
     private static final String S3_FILE_KEY_FORMAT = "%s/%s_%s";
 
     private final MemberPersistencePort memberPersistencePort;
-    private final ImageUploader imageUploader;
+    private final ImageManager imageManager;
     private final String initialProfileImageUrl;
     private final String profileImageDir;
     private final String imageAccessUrl;
 
-    public ProfileImageService(MemberPersistencePort memberPersistencePort, ImageUploader imageUploader,
+    public ProfileImageService(MemberPersistencePort memberPersistencePort, ImageManager imageManager,
                                @Value("${image.member-initial-profile-image-url}") String initialProfileImageUrl,
                                @Value("${image.profile-dir}") String profileImageDir,
                                @Value("${cloud.aws.cloud-front.uri}") String imageAccessUrl) {
         this.memberPersistencePort = memberPersistencePort;
-        this.imageUploader = imageUploader;
+        this.imageManager = imageManager;
         this.initialProfileImageUrl = initialProfileImageUrl;
         this.profileImageDir = profileImageDir;
         this.imageAccessUrl = imageAccessUrl;
@@ -55,8 +55,8 @@ public class ProfileImageService implements ProfileImageUseCase {
 
     private void uploadImage(String fileKey, MultipartFile profileImage) {
         try {
-            imageUploader.upload(fileKey, profileImage.getInputStream());
-        } catch (SdkClientException | IOException e) {
+            imageManager.upload(fileKey, profileImage.getInputStream());
+        } catch (IOException e) {
             throw new ImageUploadFailedException();
         }
     }
@@ -74,8 +74,8 @@ public class ProfileImageService implements ProfileImageUseCase {
 
     private void deletePreviousProfileImage(String currentProfileImageUrl) {
         try {
-            imageUploader.delete(currentProfileImageUrl);
-        } catch (SdkClientException | IOException e) {
+            imageManager.delete(currentProfileImageUrl);
+        } catch (ImageDeletionFailedException e) {
             logger.info("Profile Image Deletion Failed : " + currentProfileImageUrl);
         }
     }

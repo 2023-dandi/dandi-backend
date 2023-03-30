@@ -1,7 +1,6 @@
 package dandi.dandi.post.application.service;
 
-import com.amazonaws.SdkClientException;
-import dandi.dandi.image.application.out.ImageUploader;
+import dandi.dandi.image.application.out.ImageManager;
 import dandi.dandi.image.exception.ImageUploadFailedException;
 import dandi.dandi.post.application.port.in.PostImageRegisterResponse;
 import dandi.dandi.post.application.port.in.PostImageUseCase;
@@ -16,13 +15,13 @@ public class PostImageService implements PostImageUseCase {
 
     private static final String POST_IMAGE_FILE_KEY_FORMAT = "%s/%s_%s_%s";
 
-    private final ImageUploader imageUploader;
+    private final ImageManager imageManager;
     private final String postImageDir;
     private final String imageAccessUrl;
 
-    public PostImageService(ImageUploader imageUploader, @Value("${image.post-dir}") String postImageDir,
+    public PostImageService(ImageManager imageManager, @Value("${image.post-dir}") String postImageDir,
                             @Value("${cloud.aws.cloud-front.uri}") String imageAccessUrl) {
-        this.imageUploader = imageUploader;
+        this.imageManager = imageManager;
         this.postImageDir = postImageDir;
         this.imageAccessUrl = imageAccessUrl;
     }
@@ -36,8 +35,8 @@ public class PostImageService implements PostImageUseCase {
 
     private void uploadImage(MultipartFile multipartFile, String fileKey) {
         try {
-            imageUploader.upload(fileKey, multipartFile.getInputStream());
-        } catch (SdkClientException | IOException e) {
+            imageManager.upload(fileKey, multipartFile.getInputStream());
+        } catch (IOException e) {
             throw new ImageUploadFailedException();
         }
     }

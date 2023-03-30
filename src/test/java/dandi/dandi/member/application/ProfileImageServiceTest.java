@@ -16,22 +16,17 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.amazonaws.SdkClientException;
 import dandi.dandi.auth.exception.UnauthorizedException;
-import dandi.dandi.image.application.out.ImageUploader;
+import dandi.dandi.image.application.out.ImageManager;
 import dandi.dandi.image.exception.ImageUploadFailedException;
 import dandi.dandi.member.application.port.out.MemberPersistencePort;
 import dandi.dandi.member.application.service.ProfileImageService;
 import dandi.dandi.member.domain.Member;
 import java.io.IOException;
 import java.util.Optional;
-import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -43,9 +38,9 @@ class ProfileImageServiceTest {
     private static final String TEST_PROFILE_BUCKET_IMG_DIR = "test-dir";
 
     private final MemberPersistencePort memberPersistencePort = Mockito.mock(MemberPersistencePort.class);
-    private final ImageUploader imageUploader = Mockito.mock(ImageUploader.class);
+    private final ImageManager imageManager = Mockito.mock(ImageManager.class);
     private final ProfileImageService profileImageService = new ProfileImageService(memberPersistencePort,
-            imageUploader, INITIAL_PROFILE_IMAGE_URL, TEST_PROFILE_BUCKET_IMG_DIR, IMAGE_ACCESS_URL);
+            imageManager, INITIAL_PROFILE_IMAGE_URL, TEST_PROFILE_BUCKET_IMG_DIR, IMAGE_ACCESS_URL);
 
     @DisplayName("기본 프로필 사진이 아닌 회원의 프로필 사진을 변경하면 기존 사진을 삭제하고 사진을 업로드 한 후, 사진의 식별값을 반환한다.")
     @Test
@@ -62,7 +57,7 @@ class ProfileImageServiceTest {
                 () -> assertThat(imgUrl)
                         .startsWith(IMAGE_ACCESS_URL + TEST_PROFILE_BUCKET_IMG_DIR)
                         .contains(TEST_IMAGE_FILE_NAME),
-                () -> verify(imageUploader).delete(anyString())
+                () -> verify(imageManager).delete(initialProfileImageMember.getProfileImgUrl())
         );
     }
 
@@ -78,30 +73,22 @@ class ProfileImageServiceTest {
 
         assertAll(
                 () -> assertThat(imgUrl).contains(TEST_PROFILE_BUCKET_IMG_DIR, TEST_IMAGE_FILE_NAME),
-                () -> verify(imageUploader, never()).delete(anyString())
+                () -> verify(imageManager, never()).delete(anyString())
         );
     }
 
     @DisplayName("새로운 프로필 사진 업로드에 실패하면 사진 업로드 실패 예외를 발생시킨다.")
-    @ParameterizedTest
-    @MethodSource("provideImageUploadAvailableException")
-    void updateProfileImageUrl_ImageUploadFailed(Exception exception) throws IOException {
+    @Test
+    void updateProfileImageUrl_ImageUploadFailed() throws IOException {
         Long memberId = 1L;
         when(memberPersistencePort.findById(memberId))
                 .thenReturn(Optional.of(Member.initial(OAUTH_ID, NICKNAME, INITIAL_PROFILE_IMAGE_URL)));
-        doThrow(exception)
-                .when(imageUploader)
+        doThrow(new ImageUploadFailedException())
+                .when(imageManager)
                 .upload(anyString(), any());
 
         assertThatThrownBy(() -> profileImageService.updateProfileImage(memberId, generateTestImgMultipartFile()))
                 .isInstanceOf(ImageUploadFailedException.class);
-    }
-
-    private static Stream<Arguments> provideImageUploadAvailableException() {
-        return Stream.of(
-                Arguments.of(new SdkClientException("사진 저장 실패")),
-                Arguments.of(new IOException())
-        );
     }
 
     @DisplayName("존재하지 않는 회원의 프로필 사진을 업로드하려고 하면 예외를 발생시킨다.")
