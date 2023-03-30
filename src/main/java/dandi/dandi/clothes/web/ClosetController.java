@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-public class ClosetController {
+public class ClosetController implements ClosetControllerDocs {
 
     private final ClothesImageUseCase clothesImageUseCase;
 
