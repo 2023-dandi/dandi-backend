@@ -4,6 +4,7 @@ import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
 
 import dandi.dandi.advice.ExceptionResponse;
 import dandi.dandi.clothes.application.port.in.ClothesImageRegisterResponse;
+import dandi.dandi.clothes.application.port.in.ClothesRegisterCommand;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -37,4 +38,13 @@ public interface ClosetControllerDocs {
     ResponseEntity<ClothesImageRegisterResponse> registerClothesImage(@Parameter(hidden = true) Long memberId,
                                                                       @Parameter(hidden = true)
                                                                       MultipartFile clothesImage);
+
+    @Operation(summary = "옷 등록")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "옷 이미지 등록 성공"),
+            @ApiResponse(responseCode = "400", description = "존재하지 않는 계절 혹은 옷 카테고리",
+                    content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
+    })
+    ResponseEntity<Void> registerClothes(@Parameter(hidden = true) Long memberId,
+                                         ClothesRegisterCommand clothesRegisterCommand);
 }
