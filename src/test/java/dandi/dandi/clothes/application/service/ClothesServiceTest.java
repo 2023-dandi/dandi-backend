@@ -3,11 +3,13 @@ package dandi.dandi.clothes.application.service;
 import static dandi.dandi.clothes.ClothesFixture.CLOTHES;
 import static dandi.dandi.clothes.ClothesFixture.CLOTHES_CATEGORY;
 import static dandi.dandi.clothes.ClothesFixture.CLOTHES_ID;
+import static dandi.dandi.clothes.ClothesFixture.CLOTHES_IMAGE_FULL_URL;
 import static dandi.dandi.clothes.ClothesFixture.CLOTHES_IMAGE_URL;
 import static dandi.dandi.clothes.ClothesFixture.CLOTHES_SEASONS;
 import static dandi.dandi.clothes.domain.Category.TOP;
 import static dandi.dandi.clothes.domain.Season.SUMMER;
 import static dandi.dandi.member.MemberTestFixture.MEMBER_ID;
+import static dandi.dandi.utils.image.TestImageUtils.IMAGE_ACCESS_URL;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -23,27 +25,22 @@ import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class ClothesServiceTest {
 
-    @Mock
-    private ClothesPersistencePort clothesPersistencePort;
-
-    @Mock
-    private ClothesImageService clothesImageService;
-
-    @InjectMocks
-    private ClothesService clothesService;
+    private final ClothesPersistencePort clothesPersistencePort = Mockito.mock(ClothesPersistencePort.class);
+    private final ClothesImageService clothesImageService = Mockito.mock(ClothesImageService.class);
+    private final ClothesService clothesService =
+            new ClothesService(clothesPersistencePort, clothesImageService, IMAGE_ACCESS_URL);
 
     @DisplayName("옷을 저장할 수 있다.")
     @Test
     void registerClothes() {
         ClothesRegisterCommand clothesRegisterCommand =
-                new ClothesRegisterCommand(CLOTHES_CATEGORY, CLOTHES_SEASONS, CLOTHES_IMAGE_URL);
+                new ClothesRegisterCommand(CLOTHES_CATEGORY, CLOTHES_SEASONS, CLOTHES_IMAGE_FULL_URL);
 
         clothesService.registerClothes(MEMBER_ID, clothesRegisterCommand);
 
