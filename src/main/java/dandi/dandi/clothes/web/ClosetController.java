@@ -9,11 +9,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
+@RequestMapping("/clothes")
 public class ClosetController implements ClosetControllerDocs {
 
     private final ClothesImageUseCase clothesImageUseCase;
@@ -24,7 +26,7 @@ public class ClosetController implements ClosetControllerDocs {
         this.clothesUseCase = clothesUseCase;
     }
 
-    @PostMapping("/clothes/image")
+    @PostMapping("/image")
     public ResponseEntity<ClothesImageRegisterResponse> registerClothesImage(@Login Long memberId,
                                                                              @RequestPart(value = "clothesImage")
                                                                              MultipartFile clothesImage) {
@@ -33,7 +35,7 @@ public class ClosetController implements ClosetControllerDocs {
         return ResponseEntity.status(HttpStatus.CREATED).body(clothesImageRegisterResponse);
     }
 
-    @PostMapping("/clothes")
+    @PostMapping
     public ResponseEntity<Void> registerClothes(@Login Long memberId,
                                                 @RequestBody ClothesRegisterCommand clothesRegisterCommand) {
         clothesUseCase.registerClothes(memberId, clothesRegisterCommand);
