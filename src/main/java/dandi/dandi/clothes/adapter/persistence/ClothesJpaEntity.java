@@ -49,14 +49,14 @@ public class ClothesJpaEntity {
         seasons.forEach(clothesSeasonJpaEntity -> clothesSeasonJpaEntity.setClothesJpaEntity(this));
     }
 
-    public static ClothesJpaEntity fromClothesAndMemberId(Clothes clothes, Long memberId) {
+    public static ClothesJpaEntity fromClothes(Clothes clothes) {
         List<ClothesSeasonJpaEntity> clothesSeasonJpaEntities = clothes.getSeasons()
                 .stream()
                 .map(ClothesSeasonJpaEntity::fromSeason)
                 .collect(Collectors.toUnmodifiableList());
         return new ClothesJpaEntity(
                 null,
-                memberId,
+                clothes.getMemberId(),
                 clothesSeasonJpaEntities,
                 clothes.getCategory(),
                 clothes.getClothesImageUrl()
@@ -72,6 +72,6 @@ public class ClothesJpaEntity {
         List<Season> seasons = this.seasons.stream()
                 .map(ClothesSeasonJpaEntity::getSeason)
                 .collect(Collectors.toUnmodifiableList());
-        return new Clothes(id, category, seasons, clothesImageUrl);
+        return new Clothes(id, memberId, category, seasons, clothesImageUrl);
     }
 }

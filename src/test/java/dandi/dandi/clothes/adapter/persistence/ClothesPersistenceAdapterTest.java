@@ -1,6 +1,7 @@
 package dandi.dandi.clothes.adapter.persistence;
 
 import static dandi.dandi.clothes.ClothesFixture.CLOTHES_IMAGE_URL;
+import static dandi.dandi.member.MemberTestFixture.MEMBER_ID;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatCode;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
@@ -22,17 +23,19 @@ class ClothesPersistenceAdapterTest extends PersistenceAdapterTest {
     @DisplayName("옷을 저장할 수 있다.")
     @Test
     void save() {
-        Clothes clothes = Clothes.initial(Category.TOP, List.of(Season.SPRING, Season.SUMMER), CLOTHES_IMAGE_URL);
+        Clothes clothes = Clothes.initial(MEMBER_ID, Category.TOP, List.of(Season.SPRING, Season.SUMMER),
+                CLOTHES_IMAGE_URL);
 
-        assertThatCode(() -> clothesPersistenceAdapter.save(clothes, 1L))
+        assertThatCode(() -> clothesPersistenceAdapter.save(clothes))
                 .doesNotThrowAnyException();
     }
 
     @DisplayName("id로 옷을 찾을 수 있다.")
     @Test
     void findById() {
-        Clothes clothes = Clothes.initial(Category.TOP, List.of(Season.SPRING, Season.SUMMER), CLOTHES_IMAGE_URL);
-        clothesPersistenceAdapter.save(clothes, 1L);
+        Clothes clothes = Clothes.initial(MEMBER_ID, Category.TOP, List.of(Season.SPRING, Season.SUMMER),
+                CLOTHES_IMAGE_URL);
+        clothesPersistenceAdapter.save(clothes);
 
         Optional<Clothes> actual = clothesPersistenceAdapter.findById(1L);
 

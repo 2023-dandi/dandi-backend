@@ -15,8 +15,8 @@ public class ClothesPersistenceAdapter implements ClothesPersistencePort {
     }
 
     @Override
-    public void save(Clothes clothes, Long memberId) {
-        ClothesJpaEntity clothesJpaEntity = ClothesJpaEntity.fromClothesAndMemberId(clothes, memberId);
+    public void save(Clothes clothes) {
+        ClothesJpaEntity clothesJpaEntity = ClothesJpaEntity.fromClothes(clothes);
         clothesRepository.save(clothesJpaEntity);
     }
 

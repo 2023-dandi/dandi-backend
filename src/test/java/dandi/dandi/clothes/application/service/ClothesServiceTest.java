@@ -9,6 +9,7 @@ import static org.mockito.Mockito.verify;
 
 import dandi.dandi.clothes.application.port.in.ClothesRegisterCommand;
 import dandi.dandi.clothes.application.port.out.persistence.ClothesPersistencePort;
+import dandi.dandi.clothes.domain.Clothes;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,6 +34,6 @@ class ClothesServiceTest {
 
         clothesService.registerClothes(MEMBER_ID, clothesRegisterCommand);
 
-        verify(clothesPersistencePort).save(any(), any());
+        verify(clothesPersistencePort).save(any(Clothes.class));
     }
 }

@@ -5,7 +5,7 @@ import java.util.Optional;
 
 public interface ClothesPersistencePort {
 
-    void save(Clothes clothes, Long memberId);
+    void save(Clothes clothes);
 
     Optional<Clothes> findById(Long id);
 }

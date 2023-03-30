@@ -19,7 +19,7 @@ public class ClothesService implements ClothesUseCase {
     @Override
     @Transactional
     public void registerClothes(Long memberId, ClothesRegisterCommand clothesRegisterCommand) {
-        Clothes clothes = clothesRegisterCommand.toClothes();
-        clothesPersistencePort.save(clothes, memberId);
+        Clothes clothes = clothesRegisterCommand.toClothes(memberId);
+        clothesPersistencePort.save(clothes);
     }
 }
