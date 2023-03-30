@@ -2,12 +2,14 @@ package dandi.dandi.clothes.adapter.persistence;
 
 import static dandi.dandi.clothes.ClothesFixture.CLOTHES_IMAGE_URL;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatCode;
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 import dandi.dandi.clothes.domain.Category;
 import dandi.dandi.clothes.domain.Clothes;
 import dandi.dandi.clothes.domain.Season;
 import dandi.dandi.common.PersistenceAdapterTest;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,5 +26,16 @@ class ClothesPersistenceAdapterTest extends PersistenceAdapterTest {
 
         assertThatCode(() -> clothesPersistenceAdapter.save(clothes, 1L))
                 .doesNotThrowAnyException();
+    }
+
+    @DisplayName("id로 옷을 찾을 수 있다.")
+    @Test
+    void findById() {
+        Clothes clothes = Clothes.initial(Category.TOP, List.of(Season.SPRING, Season.SUMMER), CLOTHES_IMAGE_URL);
+        clothesPersistenceAdapter.save(clothes, 1L);
+
+        Optional<Clothes> actual = clothesPersistenceAdapter.findById(1L);
+
+        assertThat(actual).isPresent();
     }
 }

@@ -2,6 +2,7 @@ package dandi.dandi.clothes.adapter.persistence;
 
 import dandi.dandi.clothes.domain.Category;
 import dandi.dandi.clothes.domain.Clothes;
+import dandi.dandi.clothes.domain.Season;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -64,5 +65,13 @@ public class ClothesJpaEntity {
 
     public List<ClothesSeasonJpaEntity> getSeasons() {
         return seasons;
+    }
+
+
+    public Clothes toClothes() {
+        List<Season> seasons = this.seasons.stream()
+                .map(ClothesSeasonJpaEntity::getSeason)
+                .collect(Collectors.toUnmodifiableList());
+        return new Clothes(id, category, seasons, clothesImageUrl);
     }
 }
