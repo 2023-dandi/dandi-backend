@@ -1,6 +1,7 @@
 package dandi.dandi.clothes.adapter.persistence;
 
 import dandi.dandi.clothes.domain.Season;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -15,6 +16,7 @@ public class ClothesSeasonJpaEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "clothes_season_id")
     private Long id;
 
     @ManyToOne
