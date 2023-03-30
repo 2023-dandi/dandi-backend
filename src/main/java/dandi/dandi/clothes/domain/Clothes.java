@@ -1,6 +1,7 @@
 package dandi.dandi.clothes.domain;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Clothes {
 
@@ -18,8 +19,11 @@ public class Clothes {
         this.clothesImageUrl = clothesImageUrl;
     }
 
-    public static Clothes initial(Long memberId, Category category, List<Season> seasons, String clothesImageUrl) {
-        return new Clothes(null, memberId, category, seasons, clothesImageUrl);
+    public static Clothes initial(Long memberId, String category, List<String> seasons, String clothesImageUrl) {
+        List<Season> clothesSeasons = seasons.stream()
+                .map(Season::from)
+                .collect(Collectors.toUnmodifiableList());
+        return new Clothes(null, memberId, Category.from(category), clothesSeasons, clothesImageUrl);
     }
 
     public Long getMemberId() {

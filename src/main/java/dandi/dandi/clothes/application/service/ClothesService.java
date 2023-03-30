@@ -6,25 +6,37 @@ import dandi.dandi.clothes.application.port.out.persistence.ClothesPersistencePo
 import dandi.dandi.clothes.domain.Clothes;
 import dandi.dandi.common.exception.ForbiddenException;
 import dandi.dandi.common.exception.NotFoundException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ClothesService implements ClothesUseCase {
 
+    private static final int CLOTHES_IMAGE_URL_INDEX = 1;
+
     private final ClothesPersistencePort clothesPersistencePort;
     private final ClothesImageService clothesImageService;
+    private final String imageAccessUrl;
 
-    public ClothesService(ClothesPersistencePort clothesPersistencePort, ClothesImageService clothesImageService) {
+    public ClothesService(ClothesPersistencePort clothesPersistencePort, ClothesImageService clothesImageService,
+                          @Value("${cloud.aws.cloud-front.uri}") String imageAccessUrl) {
         this.clothesPersistencePort = clothesPersistencePort;
         this.clothesImageService = clothesImageService;
+        this.imageAccessUrl = imageAccessUrl;
     }
 
     @Override
     @Transactional
     public void registerClothes(Long memberId, ClothesRegisterCommand clothesRegisterCommand) {
-        Clothes clothes = clothesRegisterCommand.toClothes(memberId);
+        String clothesImageUrl = removeImageAccessUrl(clothesRegisterCommand.getClothesImageUrl());
+        Clothes clothes = Clothes.initial(memberId, clothesRegisterCommand.getCategory(),
+                clothesRegisterCommand.getSeasons(), clothesImageUrl);
         clothesPersistencePort.save(clothes);
+    }
+
+    private String removeImageAccessUrl(String clothesImageUrl) {
+        return clothesImageUrl.split(imageAccessUrl)[CLOTHES_IMAGE_URL_INDEX];
     }
 
     @Override
