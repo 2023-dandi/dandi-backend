@@ -1,7 +1,7 @@
 package dandi.dandi.clothes.acceptance;
 
 import static dandi.dandi.clothes.ClothesFixture.CLOTHES_CATEGORY;
-import static dandi.dandi.clothes.ClothesFixture.CLOTHES_IMAGE_URL;
+import static dandi.dandi.clothes.ClothesFixture.CLOTHES_IMAGE_FULL_URL;
 import static dandi.dandi.clothes.ClothesFixture.CLOTHES_SEASONS;
 import static dandi.dandi.common.HttpMethodFixture.httpDeleteWithAuthorization;
 import static dandi.dandi.common.HttpMethodFixture.httpPostWithAuthorization;
@@ -65,7 +65,7 @@ class ClothesAcceptanceTest extends AcceptanceTest {
     void registerClothes_Created() {
         String token = getToken();
         ClothesRegisterCommand clothesRegisterCommand =
-                new ClothesRegisterCommand(CLOTHES_CATEGORY, CLOTHES_SEASONS, CLOTHES_IMAGE_URL);
+                new ClothesRegisterCommand(CLOTHES_CATEGORY, CLOTHES_SEASONS, CLOTHES_IMAGE_FULL_URL);
 
         ExtractableResponse<Response> response =
                 httpPostWithAuthorization(CLOTHES_REQUEST_URI, clothesRegisterCommand, token);
@@ -79,7 +79,7 @@ class ClothesAcceptanceTest extends AcceptanceTest {
     void registerClothes_BadRequest(String category, String season) {
         String token = getToken();
         ClothesRegisterCommand invalidClothesRegisterCommand =
-                new ClothesRegisterCommand(category, List.of(season), "clothesImageUrl");
+                new ClothesRegisterCommand(category, List.of(season), CLOTHES_IMAGE_FULL_URL);
 
         ExtractableResponse<Response> response =
                 httpPostWithAuthorization(CLOTHES_REQUEST_URI, invalidClothesRegisterCommand, token);
@@ -123,7 +123,7 @@ class ClothesAcceptanceTest extends AcceptanceTest {
 
     private void registerClothes(String token) {
         ClothesRegisterCommand clothesRegisterCommand =
-                new ClothesRegisterCommand(CLOTHES_CATEGORY, CLOTHES_SEASONS, CLOTHES_IMAGE_URL);
+                new ClothesRegisterCommand(CLOTHES_CATEGORY, CLOTHES_SEASONS, CLOTHES_IMAGE_FULL_URL);
         httpPostWithAuthorization(CLOTHES_REQUEST_URI, clothesRegisterCommand, token);
     }
 }
