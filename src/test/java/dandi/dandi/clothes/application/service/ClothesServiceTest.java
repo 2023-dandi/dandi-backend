@@ -1,6 +1,8 @@
 package dandi.dandi.clothes.application.service;
 
+import static dandi.dandi.clothes.ClothesFixture.CLOTHES;
 import static dandi.dandi.clothes.ClothesFixture.CLOTHES_CATEGORY;
+import static dandi.dandi.clothes.ClothesFixture.CLOTHES_ID;
 import static dandi.dandi.clothes.ClothesFixture.CLOTHES_IMAGE_URL;
 import static dandi.dandi.clothes.ClothesFixture.CLOTHES_SEASONS;
 import static dandi.dandi.clothes.domain.Category.TOP;
@@ -31,6 +33,9 @@ class ClothesServiceTest {
     @Mock
     private ClothesPersistencePort clothesPersistencePort;
 
+    @Mock
+    private ClothesImageService clothesImageService;
+
     @InjectMocks
     private ClothesService clothesService;
 
@@ -43,6 +48,18 @@ class ClothesServiceTest {
         clothesService.registerClothes(MEMBER_ID, clothesRegisterCommand);
 
         verify(clothesPersistencePort).save(any(Clothes.class));
+    }
+
+    @DisplayName("자신의 옷을 삭제할 수 있다.")
+    @Test
+    void deleteClothes() {
+        when(clothesPersistencePort.findById(CLOTHES_ID))
+                .thenReturn(Optional.of(CLOTHES));
+
+        clothesService.deleteClothes(MEMBER_ID, CLOTHES_ID);
+
+        verify(clothesPersistencePort).deleteById(CLOTHES_ID);
+        verify(clothesImageService).deleteClothesImage(CLOTHES);
     }
 
     @DisplayName("존재하지 않는 옷을 삭제하려하면 예외를 발생시킨다.")
