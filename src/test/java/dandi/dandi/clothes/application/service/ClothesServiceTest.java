@@ -4,12 +4,16 @@ import static dandi.dandi.clothes.ClothesFixture.CLOTHES_CATEGORY;
 import static dandi.dandi.clothes.ClothesFixture.CLOTHES_IMAGE_URL;
 import static dandi.dandi.clothes.ClothesFixture.CLOTHES_SEASONS;
 import static dandi.dandi.member.MemberTestFixture.MEMBER_ID;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import dandi.dandi.clothes.application.port.in.ClothesRegisterCommand;
 import dandi.dandi.clothes.application.port.out.persistence.ClothesPersistencePort;
 import dandi.dandi.clothes.domain.Clothes;
+import dandi.dandi.common.exception.NotFoundException;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,5 +39,17 @@ class ClothesServiceTest {
         clothesService.registerClothes(MEMBER_ID, clothesRegisterCommand);
 
         verify(clothesPersistencePort).save(any(Clothes.class));
+    }
+
+    @DisplayName("존재하지 않는 옷을 삭제하려하면 예외를 발생시킨다.")
+    @Test
+    void deleteClothes_NotFound() {
+        Long notFountClothesId = 1L;
+        when(clothesPersistencePort.findById(notFountClothesId))
+                .thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> clothesService.deleteClothes(MEMBER_ID, notFountClothesId))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessage(NotFoundException.clothes().getMessage());
     }
 }
