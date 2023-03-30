@@ -4,6 +4,7 @@ import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import dandi.dandi.image.application.out.ImageManager;
+import dandi.dandi.image.exception.ImageUploadFailedException;
 import java.io.IOException;
 import java.io.InputStream;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,14 +22,22 @@ public class AwsS3ImageManager implements ImageManager {
     }
 
     @Override
-    public void upload(String fileKey, InputStream inputStream) throws IOException, SdkClientException {
+    public void upload(String fileKey, InputStream inputStream) throws ImageUploadFailedException {
         ObjectMetadata objectMetadata = new ObjectMetadata();
-        objectMetadata.setContentLength(inputStream.available());
-        amazonS3.putObject(bucketName, fileKey, inputStream, objectMetadata);
+        try {
+            objectMetadata.setContentLength(inputStream.available());
+            amazonS3.putObject(bucketName, fileKey, inputStream, objectMetadata);
+        } catch (IOException | SdkClientException e) {
+            throw new ImageUploadFailedException();
+        }
     }
 
     @Override
     public void delete(String fileKey) {
-        amazonS3.deleteObject(bucketName, fileKey);
+        try {
+            amazonS3.deleteObject(bucketName, fileKey);
+        } catch (SdkClientException e) {
+            throw new ImageUploadFailedException();
+        }
     }
 }

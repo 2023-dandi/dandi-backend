@@ -1,8 +1,8 @@
 package dandi.dandi.member.application.service;
 
-import com.amazonaws.SdkClientException;
 import dandi.dandi.auth.exception.UnauthorizedException;
 import dandi.dandi.image.application.out.ImageManager;
+import dandi.dandi.image.exception.ImageDeletionFailedException;
 import dandi.dandi.image.exception.ImageUploadFailedException;
 import dandi.dandi.member.application.port.in.ProfileImageUpdateResponse;
 import dandi.dandi.member.application.port.in.ProfileImageUseCase;
@@ -56,7 +56,7 @@ public class ProfileImageService implements ProfileImageUseCase {
     private void uploadImage(String fileKey, MultipartFile profileImage) {
         try {
             imageManager.upload(fileKey, profileImage.getInputStream());
-        } catch (SdkClientException | IOException e) {
+        } catch (IOException e) {
             throw new ImageUploadFailedException();
         }
     }
@@ -75,7 +75,7 @@ public class ProfileImageService implements ProfileImageUseCase {
     private void deletePreviousProfileImage(String currentProfileImageUrl) {
         try {
             imageManager.delete(currentProfileImageUrl);
-        } catch (SdkClientException | IOException e) {
+        } catch (ImageDeletionFailedException e) {
             logger.info("Profile Image Deletion Failed : " + currentProfileImageUrl);
         }
     }

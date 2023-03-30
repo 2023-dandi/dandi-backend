@@ -1,11 +1,9 @@
 package dandi.dandi.clothes.application.service;
 
-import com.amazonaws.SdkClientException;
 import dandi.dandi.clothes.application.port.in.ClothesImageRegisterResponse;
 import dandi.dandi.clothes.application.port.in.ClothesImageUseCase;
 import dandi.dandi.clothes.domain.Clothes;
 import dandi.dandi.image.application.out.ImageManager;
-import dandi.dandi.image.exception.ImageDeletionFailedException;
 import dandi.dandi.image.exception.ImageUploadFailedException;
 import java.io.IOException;
 import java.util.UUID;
@@ -40,7 +38,7 @@ public class ClothesImageService implements ClothesImageUseCase {
     private void uploadImage(MultipartFile multipartFile, String fileKey) {
         try {
             imageManager.upload(fileKey, multipartFile.getInputStream());
-        } catch (SdkClientException | IOException e) {
+        } catch (IOException e) {
             throw new ImageUploadFailedException();
         }
     }
@@ -52,10 +50,6 @@ public class ClothesImageService implements ClothesImageUseCase {
     }
 
     public void deleteClothesImage(Clothes clothes) {
-        try {
-            imageManager.delete(clothes.getClothesImageUrl());
-        } catch (SdkClientException | IOException e) {
-            throw new ImageDeletionFailedException();
-        }
+        imageManager.delete(clothes.getClothesImageUrl());
     }
 }

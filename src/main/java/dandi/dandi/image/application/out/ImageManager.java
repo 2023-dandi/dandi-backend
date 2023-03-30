@@ -8,5 +8,5 @@ public interface ImageManager {
 
     void upload(String fileKey, InputStream inputStream) throws IOException, SdkClientException;
 
-    void delete(String fileKey) throws IOException, SdkClientException;
+    void delete(String fileKey) throws SdkClientException;
 }

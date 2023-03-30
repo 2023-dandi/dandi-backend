@@ -10,10 +10,8 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 
-import com.amazonaws.SdkClientException;
 import dandi.dandi.clothes.application.port.in.ClothesImageRegisterResponse;
 import dandi.dandi.image.application.out.ImageManager;
-import dandi.dandi.image.exception.ImageDeletionFailedException;
 import dandi.dandi.image.exception.ImageUploadFailedException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -51,7 +49,7 @@ class ClothesImageServiceTest {
     void uploadClothesImage_Exception() throws IOException {
         Long memberId = 1L;
         MultipartFile multipartFile = generateTestImgMultipartFile();
-        doThrow(new SdkClientException("S3 이미지 업로드 실패"))
+        doThrow(new ImageUploadFailedException())
                 .when(imageManager)
                 .upload(anyString(), any(InputStream.class));
 
@@ -61,20 +59,9 @@ class ClothesImageServiceTest {
 
     @DisplayName("옷 사진을 삭제할 수 있다.")
     @Test
-    void deleteClothesImage() throws IOException {
+    void deleteClothesImage() {
         clothesImageService.deleteClothesImage(CLOTHES);
 
         verify(imageManager).delete(CLOTHES.getClothesImageUrl());
-    }
-
-    @DisplayName("옷 사진 삭제에 실패하면 예외를 발생시킨다.")
-    @Test
-    void deleteClothesImage_DeletionFailed() throws IOException {
-        doThrow(new SdkClientException("이미지 삭제 실패"), new IOException())
-                .when(imageManager)
-                .delete(CLOTHES.getClothesImageUrl());
-
-        assertThatThrownBy(() -> clothesImageService.deleteClothesImage(CLOTHES))
-                .isInstanceOf(ImageDeletionFailedException.class);
     }
 }

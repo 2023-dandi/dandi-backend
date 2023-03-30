@@ -1,6 +1,5 @@
 package dandi.dandi.post.application.service;
 
-import com.amazonaws.SdkClientException;
 import dandi.dandi.image.application.out.ImageManager;
 import dandi.dandi.image.exception.ImageUploadFailedException;
 import dandi.dandi.post.application.port.in.PostImageRegisterResponse;
@@ -37,7 +36,7 @@ public class PostImageService implements PostImageUseCase {
     private void uploadImage(MultipartFile multipartFile, String fileKey) {
         try {
             imageManager.upload(fileKey, multipartFile.getInputStream());
-        } catch (SdkClientException | IOException e) {
+        } catch (IOException e) {
             throw new ImageUploadFailedException();
         }
     }
