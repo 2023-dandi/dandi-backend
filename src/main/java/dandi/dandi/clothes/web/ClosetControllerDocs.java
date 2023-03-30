@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "옷장")
@@ -47,4 +48,14 @@ public interface ClosetControllerDocs {
     })
     ResponseEntity<Void> registerClothes(@Parameter(hidden = true) Long memberId,
                                          ClothesRegisterCommand clothesRegisterCommand);
+
+    @Operation(summary = "옷 삭제")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "옷 삭제 성공"),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 옷 삭제",
+                    content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
+            @ApiResponse(responseCode = "403", description = "다른 사람의 옷 삭제",
+                    content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
+    })
+    ResponseEntity<Void> deleteClothes(@Parameter(hidden = true) Long memberId, @PathVariable Long clothesId);
 }
