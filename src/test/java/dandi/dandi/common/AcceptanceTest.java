@@ -9,8 +9,10 @@ import static dandi.dandi.post.PostFixture.MAX_TEMPERATURE;
 import static dandi.dandi.post.PostFixture.MIN_TEMPERATURE;
 import static dandi.dandi.post.PostFixture.OUTFIT_FEELING_INDEX;
 import static dandi.dandi.post.PostFixture.POST_IMAGE_FULL_URL;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import com.amazonaws.AmazonClientException;
 import com.amazonaws.services.s3.AmazonS3;
 import dandi.dandi.auth.adapter.out.jwt.RefreshTokenManagerAdapter;
 import dandi.dandi.auth.application.port.in.TokenResponse;
@@ -24,6 +26,7 @@ import dandi.dandi.post.web.in.TemperatureRequest;
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -96,5 +99,11 @@ public class AcceptanceTest {
                 .jsonPath()
                 .getObject(".", PostRegisterResponse.class)
                 .getPostId();
+    }
+
+    protected void mockAmazonS3Exception() {
+        Mockito.doThrow(AmazonClientException.class)
+                .when(amazonS3)
+                .putObject(any(), any(), any(), any());
     }
 }

@@ -21,9 +21,7 @@ import static dandi.dandi.post.PostFixture.POST_IMAGE_URL;
 import static dandi.dandi.utils.image.TestImageUtils.generatetestImgFile;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.ArgumentMatchers.any;
 
-import com.amazonaws.AmazonClientException;
 import dandi.dandi.common.AcceptanceTest;
 import dandi.dandi.post.application.port.in.FeedResponse;
 import dandi.dandi.post.application.port.in.MyPostResponse;
@@ -45,7 +43,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.mockito.Mockito;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
 
@@ -281,11 +278,5 @@ class PostAcceptanceTest extends AcceptanceTest {
         httpPostWithAuthorization(POST_REGISTER_REQUEST_URI, postRegisterRequest, token)
                 .jsonPath()
                 .getObject(".", PostRegisterResponse.class);
-    }
-
-    private void mockAmazonS3Exception() {
-        Mockito.doThrow(AmazonClientException.class)
-                .when(amazonS3)
-                .putObject(any(), any(), any(), any());
     }
 }
