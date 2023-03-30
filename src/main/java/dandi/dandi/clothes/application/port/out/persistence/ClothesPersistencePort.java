@@ -8,4 +8,6 @@ public interface ClothesPersistencePort {
     void save(Clothes clothes);
 
     Optional<Clothes> findById(Long id);
+
+    void deleteById(Long clothesId);
 }

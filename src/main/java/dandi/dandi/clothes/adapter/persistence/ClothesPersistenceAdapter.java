@@ -25,4 +25,9 @@ public class ClothesPersistenceAdapter implements ClothesPersistencePort {
         return clothesRepository.findById(id)
                 .map(ClothesJpaEntity::toClothes);
     }
+
+    @Override
+    public void deleteById(Long clothesId) {
+        clothesRepository.deleteById(clothesId);
+    }
 }

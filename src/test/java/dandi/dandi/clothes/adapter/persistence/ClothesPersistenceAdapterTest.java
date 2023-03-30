@@ -4,6 +4,7 @@ import static dandi.dandi.clothes.ClothesFixture.CLOTHES_IMAGE_URL;
 import static dandi.dandi.member.MemberTestFixture.MEMBER_ID;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatCode;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import dandi.dandi.clothes.domain.Category;
 import dandi.dandi.clothes.domain.Clothes;
@@ -40,5 +41,22 @@ class ClothesPersistenceAdapterTest extends PersistenceAdapterTest {
         Optional<Clothes> actual = clothesPersistenceAdapter.findById(1L);
 
         assertThat(actual).isPresent();
+    }
+
+    @DisplayName("id에 해당하는 옷을 삭제할 수 있다.")
+    @Test
+    void deleteById() {
+        Clothes clothes = Clothes.initial(MEMBER_ID, Category.TOP, List.of(Season.SPRING, Season.SUMMER),
+                CLOTHES_IMAGE_URL);
+        clothesPersistenceAdapter.save(clothes);
+        Optional<Clothes> foundBeforeDeletion = clothesPersistenceAdapter.findById(1L);
+
+        clothesPersistenceAdapter.deleteById(1L);
+
+        Optional<Clothes> foundAfterDeletion = clothesPersistenceAdapter.findById(1L);
+        assertAll(
+                () -> assertThat(foundBeforeDeletion).isPresent(),
+                () -> assertThat(foundAfterDeletion).isEmpty()
+        );
     }
 }
