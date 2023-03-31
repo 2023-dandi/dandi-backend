@@ -1,12 +1,21 @@
 package dandi.dandi.clothes.application.service;
 
 import dandi.dandi.clothes.application.port.in.ClothesRegisterCommand;
+import dandi.dandi.clothes.application.port.in.ClothesResponse;
+import dandi.dandi.clothes.application.port.in.ClothesResponses;
 import dandi.dandi.clothes.application.port.in.ClothesUseCase;
 import dandi.dandi.clothes.application.port.out.persistence.ClothesPersistencePort;
+import dandi.dandi.clothes.domain.Category;
 import dandi.dandi.clothes.domain.Clothes;
+import dandi.dandi.clothes.domain.Season;
 import dandi.dandi.common.exception.ForbiddenException;
 import dandi.dandi.common.exception.NotFoundException;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +46,22 @@ public class ClothesService implements ClothesUseCase {
 
     private String removeImageAccessUrl(String clothesImageUrl) {
         return clothesImageUrl.split(imageAccessUrl)[CLOTHES_IMAGE_URL_INDEX];
+    }
+
+    @Override
+    public ClothesResponses getClothes(Long memberId, String category, Set<String> seasons, Pageable pageable) {
+        Slice<Clothes> clothesSearchResult = clothesPersistencePort
+                .findByMemberIdAndCategoryAndSeasons(memberId, Category.from(category), mapToSeason(seasons), pageable);
+        List<ClothesResponse> clothesResponses = clothesSearchResult.stream()
+                .map(clothes -> new ClothesResponse(clothes.getId(), imageAccessUrl + clothes.getClothesImageUrl()))
+                .collect(Collectors.toUnmodifiableList());
+        return new ClothesResponses(clothesResponses, clothesSearchResult.isLast());
+    }
+
+    private Set<Season> mapToSeason(Set<String> seasons) {
+        return seasons.stream()
+                .map(Season::from)
+                .collect(Collectors.toUnmodifiableSet());
     }
 
     @Override
