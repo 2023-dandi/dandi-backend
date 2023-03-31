@@ -13,9 +13,9 @@ public class ClothesFixture {
     public static final Long CLOTHES_ID = 1L;
     public static final String CLOTHES_CATEGORY = "TOP";
     public static final List<String> CLOTHES_SEASONS = List.of("SPRING", "SUMMER");
-    public static final String CLOTHES_IMAGE_URL = "clothesImageUrl";
-    private static final String CLOTHES_IMAGE_DIR = "clothes/";
-    public static final String CLOTHES_IMAGE_FULL_URL = IMAGE_ACCESS_URL + CLOTHES_IMAGE_DIR + CLOTHES_IMAGE_DIR;
+    public static final String CLOTHES_IMAGE_URL = "clothes/clothesImageUrl";
+    public static final String CLOTHES_IMAGE_FULL_URL = IMAGE_ACCESS_URL + CLOTHES_IMAGE_URL;
 
-    public static final Clothes CLOTHES = new Clothes(CLOTHES_ID, MEMBER_ID, TOP, List.of(SUMMER), CLOTHES_IMAGE_URL);
+    public static final Clothes CLOTHES =
+            new Clothes(CLOTHES_ID, MEMBER_ID, TOP, List.of(SUMMER), CLOTHES_IMAGE_URL);
 }
