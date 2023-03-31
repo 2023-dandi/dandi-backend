@@ -26,6 +26,10 @@ public class Clothes {
         return new Clothes(null, memberId, Category.from(category), clothesSeasons, clothesImageUrl);
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public Long getMemberId() {
         return memberId;
     }
