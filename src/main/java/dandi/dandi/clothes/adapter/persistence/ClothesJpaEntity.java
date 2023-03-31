@@ -73,11 +73,6 @@ public class ClothesJpaEntity {
         );
     }
 
-    public List<ClothesSeasonJpaEntity> getSeasons() {
-        return seasons;
-    }
-
-
     public Clothes toClothes() {
         List<Season> seasons = this.seasons.stream()
                 .map(ClothesSeasonJpaEntity::getSeason)
