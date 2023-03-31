@@ -37,10 +37,6 @@ public class ClothesSeasonJpaEntity {
         this.season = season;
     }
 
-    public ClothesSeasonJpaEntity(ClothesJpaEntity clothesJpaEntity, Season season) {
-        this(null, clothesJpaEntity, season);
-    }
-
     public static ClothesSeasonJpaEntity fromSeason(Season season) {
         return new ClothesSeasonJpaEntity(null, null, season);
     }
