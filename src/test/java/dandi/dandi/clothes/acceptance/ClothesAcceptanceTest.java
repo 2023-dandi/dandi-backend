@@ -4,6 +4,7 @@ import static dandi.dandi.clothes.ClothesFixture.CLOTHES_CATEGORY;
 import static dandi.dandi.clothes.ClothesFixture.CLOTHES_IMAGE_FULL_URL;
 import static dandi.dandi.clothes.ClothesFixture.CLOTHES_SEASONS;
 import static dandi.dandi.common.HttpMethodFixture.httpDeleteWithAuthorization;
+import static dandi.dandi.common.HttpMethodFixture.httpGetWithAuthorization;
 import static dandi.dandi.common.HttpMethodFixture.httpPostWithAuthorization;
 import static dandi.dandi.common.HttpMethodFixture.httpPostWithAuthorizationAndImgFile;
 import static dandi.dandi.common.RequestURI.CLOTHES_IMAGE_REGISTER_REQUEST_URI;
@@ -14,6 +15,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import dandi.dandi.clothes.application.port.in.ClothesImageRegisterResponse;
 import dandi.dandi.clothes.application.port.in.ClothesRegisterCommand;
+import dandi.dandi.clothes.application.port.in.ClothesResponse;
+import dandi.dandi.clothes.application.port.in.ClothesResponses;
 import dandi.dandi.common.AcceptanceTest;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
@@ -85,6 +88,33 @@ class ClothesAcceptanceTest extends AcceptanceTest {
                 httpPostWithAuthorization(CLOTHES_REQUEST_URI, invalidClothesRegisterCommand, token);
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+    }
+
+    @DisplayName("카테고리, 계절에 따른 옷 조회 요청에 성공하면 200과 옷들을 반환한다.")
+    @Test
+    void getClothes() {
+        String token = getToken();
+        httpPostWithAuthorization(CLOTHES_REQUEST_URI, new ClothesRegisterCommand(
+                CLOTHES_CATEGORY, List.of("SPRING", "SUMMER"), CLOTHES_IMAGE_FULL_URL), token);
+        httpPostWithAuthorization(CLOTHES_REQUEST_URI, new ClothesRegisterCommand(
+                CLOTHES_CATEGORY, List.of("SPRING", "FALL"), CLOTHES_IMAGE_FULL_URL), token);
+        httpPostWithAuthorization(CLOTHES_REQUEST_URI, new ClothesRegisterCommand(
+                CLOTHES_CATEGORY, List.of("FALL", "WINTER"), CLOTHES_IMAGE_FULL_URL), token);
+        httpPostWithAuthorization(CLOTHES_REQUEST_URI, new ClothesRegisterCommand(
+                "BOTTOM", List.of("SPRING", "SUMMER"), CLOTHES_IMAGE_FULL_URL), token);
+        String queryString = "?category=TOP&season=SUMMER&season=SPRING";
+
+        ExtractableResponse<Response> response = httpGetWithAuthorization(CLOTHES_REQUEST_URI + queryString, token);
+
+        ClothesResponses clothesResponses = response.jsonPath()
+                .getObject(".", ClothesResponses.class);
+        List<ClothesResponse> clothesResponse = clothesResponses.getClothes();
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(clothesResponse).hasSize(2),
+                () -> assertThat(clothesResponses.isLastPage()).isTrue(),
+                () -> assertThat(clothesResponse.get(0).getClothesImageUrl()).isEqualTo(CLOTHES_IMAGE_FULL_URL)
+        );
     }
 
     @DisplayName("옷 삭제 요청에 성공하면 204를 응답한다.")

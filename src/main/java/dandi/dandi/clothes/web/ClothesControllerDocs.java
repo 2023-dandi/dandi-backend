@@ -5,6 +5,7 @@ import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
 import dandi.dandi.advice.ExceptionResponse;
 import dandi.dandi.clothes.application.port.in.ClothesImageRegisterResponse;
 import dandi.dandi.clothes.application.port.in.ClothesRegisterCommand;
+import dandi.dandi.clothes.application.port.in.ClothesResponses;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -14,13 +15,16 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.Set;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "옷장")
-public interface ClosetControllerDocs {
+public interface ClothesControllerDocs {
 
     @Operation(summary = "옷 이미지 등록",
             requestBody = @RequestBody(content = @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE,
@@ -48,6 +52,14 @@ public interface ClosetControllerDocs {
     })
     ResponseEntity<Void> registerClothes(@Parameter(hidden = true) Long memberId,
                                          ClothesRegisterCommand clothesRegisterCommand);
+
+    @Operation(summary = "옷 조회", parameters = {@Parameter(name = "size"), @Parameter(name = "page"),
+            @Parameter(name = "sort"), @Parameter(example = "DESC")})
+    @ApiResponse(responseCode = "200", description = "옷 조회 성공")
+    ResponseEntity<ClothesResponses> getClothes(@Parameter(hidden = true) Long memberId,
+                                                @RequestParam("category") String category,
+                                                @RequestParam("season") Set<String> seasons,
+                                                @Parameter(hidden = true) Pageable pageable);
 
     @Operation(summary = "옷 삭제")
     @ApiResponses(value = {
