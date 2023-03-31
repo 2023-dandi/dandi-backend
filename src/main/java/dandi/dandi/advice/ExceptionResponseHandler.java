@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 @RestControllerAdvice
 public class ExceptionResponseHandler {
@@ -40,6 +41,12 @@ public class ExceptionResponseHandler {
     public ResponseEntity<ExceptionResponse> forbidden(ForbiddenException exception) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(new ExceptionResponse(exception.getMessage()));
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<ExceptionResponse> badRequestFileSizeLimit() {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ExceptionResponse("등록 가능한 사진 파일 크기는 최대 1MB입니다."));
     }
 
     @ExceptionHandler({InternalServerException.class, RuntimeException.class})
