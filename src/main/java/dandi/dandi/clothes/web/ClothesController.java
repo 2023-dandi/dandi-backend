@@ -4,14 +4,19 @@ import dandi.dandi.auth.web.support.Login;
 import dandi.dandi.clothes.application.port.in.ClothesImageRegisterResponse;
 import dandi.dandi.clothes.application.port.in.ClothesImageUseCase;
 import dandi.dandi.clothes.application.port.in.ClothesRegisterCommand;
+import dandi.dandi.clothes.application.port.in.ClothesResponses;
 import dandi.dandi.clothes.application.port.in.ClothesUseCase;
+import java.util.Set;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,6 +40,13 @@ public class ClothesController implements ClothesControllerDocs {
         ClothesImageRegisterResponse clothesImageRegisterResponse =
                 clothesImageUseCase.uploadClothesImage(memberId, clothesImage);
         return ResponseEntity.status(HttpStatus.CREATED).body(clothesImageRegisterResponse);
+    }
+
+    @GetMapping
+    public ResponseEntity<ClothesResponses> getClothes(@Login Long memberId, @RequestParam("category") String category,
+                                                       @RequestParam("season") Set<String> seasons,
+                                                       Pageable pageable) {
+        return ResponseEntity.ok(clothesUseCase.getClothes(memberId, category, seasons, pageable));
     }
 
     @PostMapping
