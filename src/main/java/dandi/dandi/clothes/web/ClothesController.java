@@ -18,12 +18,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/clothes")
-public class ClosetController implements ClosetControllerDocs {
+public class ClothesController implements ClothesControllerDocs {
 
     private final ClothesImageUseCase clothesImageUseCase;
     private final ClothesUseCase clothesUseCase;
 
-    public ClosetController(ClothesImageUseCase clothesImageUseCase, ClothesUseCase clothesUseCase) {
+    public ClothesController(ClothesImageUseCase clothesImageUseCase, ClothesUseCase clothesUseCase) {
         this.clothesImageUseCase = clothesImageUseCase;
         this.clothesUseCase = clothesUseCase;
     }

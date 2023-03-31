@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "옷장")
-public interface ClosetControllerDocs {
+public interface ClothesControllerDocs {
 
     @Operation(summary = "옷 이미지 등록",
             requestBody = @RequestBody(content = @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE,
