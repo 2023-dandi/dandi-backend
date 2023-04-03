@@ -1,5 +1,6 @@
 package dandi.dandi.comment.adapter.persistence;
 
+import static dandi.dandi.comment.CommentFixture.COMMENT_CONTENT;
 import static dandi.dandi.member.MemberTestFixture.MEMBER_ID;
 import static dandi.dandi.post.PostFixture.POST_ID;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatCode;
@@ -18,7 +19,7 @@ class CommentPersistenceAdapterTest extends PersistenceAdapterTest {
     @DisplayName("댓글을 저장할 수 있다.")
     @Test
     void save() {
-        Comment comment = Comment.initial("댓글 내용");
+        Comment comment = Comment.initial(COMMENT_CONTENT);
         assertThatCode(() -> commentPersistenceAdapter.save(comment, POST_ID, MEMBER_ID))
                 .doesNotThrowAnyException();
     }
