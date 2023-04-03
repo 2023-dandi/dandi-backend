@@ -1,5 +1,6 @@
 package dandi.dandi.clothes.adapter.persistence;
 
+import dandi.dandi.clothes.application.port.out.persistence.CategorySeasonProjection;
 import dandi.dandi.clothes.application.port.out.persistence.ClothesPersistencePort;
 import dandi.dandi.clothes.domain.Category;
 import dandi.dandi.clothes.domain.Clothes;
@@ -43,6 +44,11 @@ public class ClothesPersistenceAdapter implements ClothesPersistencePort {
                 .map(ClothesJpaEntity::toClothes)
                 .collect(Collectors.toUnmodifiableList());
         return new SliceImpl<>(clothes, pageable, clothesJpaEntities.hasNext());
+    }
+
+    @Override
+    public List<CategorySeasonProjection> findDistinctCategoryAndSeason(Long memberId) {
+        return clothesRepository.findAllByCategoryDistinct(memberId);
     }
 
     @Override

@@ -13,6 +13,7 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.springframework.data.domain.Sort.Direction.DESC;
 
+import dandi.dandi.clothes.application.port.out.persistence.CategorySeasonProjection;
 import dandi.dandi.clothes.domain.Clothes;
 import dandi.dandi.common.PersistenceAdapterTest;
 import java.util.List;
@@ -47,6 +48,29 @@ class ClothesPersistenceAdapterTest extends PersistenceAdapterTest {
         Optional<Clothes> actual = clothesPersistenceAdapter.findById(1L);
 
         assertThat(actual).isPresent();
+    }
+
+    @DisplayName("회원의 옷을 카테고리와 계절 기준으로 중복을 제거해서 찾을 수 있다.")
+    @Test
+    void findDistinctByCategoryAndSeason() {
+        saveClothes(List.of(
+                Clothes.initial(MEMBER_ID, "TOP", List.of("SPRING", "SUMMER"), CLOTHES_IMAGE_URL),
+                Clothes.initial(MEMBER_ID, "TOP", List.of("FALL", "SUMMER"), CLOTHES_IMAGE_URL),
+                Clothes.initial(MEMBER_ID, "TOP", List.of("FALL", "WINTER"), CLOTHES_IMAGE_URL),
+                Clothes.initial(MEMBER_ID, "BOTTOM", List.of("FALL", "SUMMER"), CLOTHES_IMAGE_URL),
+                Clothes.initial(MEMBER_ID, "BAG", List.of("SPRING", "SUMMER"), CLOTHES_IMAGE_URL)
+        ));
+
+        List<CategorySeasonProjection> actual = clothesPersistenceAdapter.findDistinctCategoryAndSeason(MEMBER_ID);
+
+        int categoriesDistinctCount = (int) actual.stream()
+                .map(CategorySeasonProjection::getCategory)
+                .distinct()
+                .count();
+        assertAll(
+                () -> assertThat(actual).hasSize(8),
+                () -> assertThat(categoriesDistinctCount).isEqualTo(3)
+        );
     }
 
     @DisplayName("id에 해당하는 옷을 삭제할 수 있다.")
