@@ -20,9 +20,8 @@ public class CommentService implements CommentUseCase {
     }
 
     @Override
-    public void registerComment(Long memberId, CommentRegisterCommand commentRegisterCommand) {
+    public void registerComment(Long memberId, Long postId, CommentRegisterCommand commentRegisterCommand) {
         Comment comment = commentRegisterCommand.toComment();
-        Long postId = commentRegisterCommand.getPostId();
         validatePostId(postId);
         commentPersistencePort.save(comment, postId, memberId);
     }

@@ -4,12 +4,13 @@ import dandi.dandi.auth.web.support.Login;
 import dandi.dandi.comment.application.port.in.CommentRegisterCommand;
 import dandi.dandi.comment.application.port.in.CommentUseCase;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class CommentController {
+public class CommentController implements CommentControllerDocs {
 
     private final CommentUseCase commentUseCase;
 
@@ -17,10 +18,10 @@ public class CommentController {
         this.commentUseCase = commentUseCase;
     }
 
-    @PostMapping("/comments")
-    public ResponseEntity<Void> registerComment(@Login Long memberId,
+    @PostMapping("/posts/{postId}/comments")
+    public ResponseEntity<Void> registerComment(@Login Long memberId, @PathVariable Long postId,
                                                 @RequestBody CommentRegisterCommand commentRegisterCommand) {
-        commentUseCase.registerComment(memberId, commentRegisterCommand);
+        commentUseCase.registerComment(memberId, postId, commentRegisterCommand);
         return ResponseEntity.noContent().build();
     }
 }
