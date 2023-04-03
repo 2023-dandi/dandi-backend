@@ -3,6 +3,7 @@ package dandi.dandi.clothes.adapter.persistence;
 import static dandi.dandi.clothes.ClothesFixture.CLOTHES_CATEGORY;
 import static dandi.dandi.clothes.ClothesFixture.CLOTHES_IMAGE_URL;
 import static dandi.dandi.clothes.ClothesFixture.CLOTHES_SEASONS;
+import static dandi.dandi.clothes.domain.Category.BOTTOM;
 import static dandi.dandi.clothes.domain.Category.TOP;
 import static dandi.dandi.clothes.domain.Season.SPRING;
 import static dandi.dandi.clothes.domain.Season.SUMMER;
@@ -67,19 +68,22 @@ class ClothesPersistenceAdapterTest extends PersistenceAdapterTest {
     @DisplayName("카테고리, 온도에 따른 특정 회원의 옷을 찾을 수 있다.")
     @Test
     void findByMemberIdAndCategoryAndSeasons() {
-        Clothes clothes1 = Clothes.initial(MEMBER_ID, "TOP", List.of("SPRING", "SUMMER"), CLOTHES_IMAGE_URL);
-        Clothes clothes2 = Clothes.initial(MEMBER_ID, "TOP", List.of("FALL", "SUMMER"), CLOTHES_IMAGE_URL);
-        Clothes clothes3 = Clothes.initial(MEMBER_ID, "TOP", List.of("FALL", "WINTER"), CLOTHES_IMAGE_URL);
-        Clothes clothes4 = Clothes.initial(MEMBER_ID, "BOTTOM", List.of("SPRING", "SUMMER"), CLOTHES_IMAGE_URL);
-        clothesPersistenceAdapter.save(clothes1);
-        clothesPersistenceAdapter.save(clothes2);
-        clothesPersistenceAdapter.save(clothes3);
-        clothesPersistenceAdapter.save(clothes4);
+        saveClothes(List.of(
+                Clothes.initial(MEMBER_ID, "TOP", List.of("SPRING", "SUMMER"), CLOTHES_IMAGE_URL),
+                Clothes.initial(MEMBER_ID, "TOP", List.of("FALL", "SUMMER"), CLOTHES_IMAGE_URL),
+                Clothes.initial(MEMBER_ID, "TOP", List.of("FALL", "WINTER"), CLOTHES_IMAGE_URL),
+                Clothes.initial(MEMBER_ID, "BOTTOM", List.of("FALL", "SUMMER"), CLOTHES_IMAGE_URL),
+                Clothes.initial(MEMBER_ID, "BAG", List.of("SPRING", "SUMMER"), CLOTHES_IMAGE_URL)
+        ));
         PageRequest pageable = PageRequest.of(0, 10, DESC, "createdAt");
 
         Slice<Clothes> actual = clothesPersistenceAdapter.findByMemberIdAndCategoryAndSeasons(
-                MEMBER_ID, TOP, Set.of(SPRING, SUMMER), pageable);
+                MEMBER_ID, Set.of(TOP, BOTTOM), Set.of(SPRING, SUMMER), pageable);
 
-        assertThat(actual).hasSize(2);
+        assertThat(actual).hasSize(3);
+    }
+
+    private void saveClothes(List<Clothes> clothes) {
+        clothes.forEach(it -> clothesPersistenceAdapter.save(it));
     }
 }

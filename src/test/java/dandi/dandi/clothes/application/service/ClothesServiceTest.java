@@ -7,6 +7,7 @@ import static dandi.dandi.clothes.ClothesFixture.CLOTHES_IMAGE_FULL_URL;
 import static dandi.dandi.clothes.ClothesFixture.CLOTHES_IMAGE_URL;
 import static dandi.dandi.clothes.ClothesFixture.CLOTHES_SEASONS;
 import static dandi.dandi.clothes.domain.Category.TOP;
+import static dandi.dandi.clothes.domain.Category.getAllCategories;
 import static dandi.dandi.clothes.domain.Season.FALL;
 import static dandi.dandi.clothes.domain.Season.SPRING;
 import static dandi.dandi.clothes.domain.Season.SUMMER;
@@ -102,8 +103,8 @@ class ClothesServiceTest {
         PageRequest pageable = PageRequest.of(0, 10, DESC, "createdAt");
         Clothes clothes1 = new Clothes(1L, MEMBER_ID, TOP, List.of(SUMMER, FALL), CLOTHES_IMAGE_URL);
         Clothes clothes2 = new Clothes(1L, MEMBER_ID, TOP, List.of(SPRING, FALL), CLOTHES_IMAGE_URL);
-        when(clothesPersistencePort.findByMemberIdAndCategoryAndSeasons(MEMBER_ID, TOP, Set.of(SPRING, SUMMER),
-                pageable))
+        when(clothesPersistencePort.findByMemberIdAndCategoryAndSeasons(
+                MEMBER_ID, Set.of(TOP), Set.of(SPRING, SUMMER), pageable))
                 .thenReturn(new SliceImpl<>(List.of(clothes2, clothes1), pageable, false));
 
         ClothesResponses actual = clothesService.getClothes(MEMBER_ID, TOP.name(),
@@ -114,5 +115,22 @@ class ClothesServiceTest {
                 () -> assertThat(actual.isLastPage()).isTrue(),
                 () -> assertThat(firstClothesResponse.getClothesImageUrl()).isEqualTo(CLOTHES_IMAGE_FULL_URL)
         );
+    }
+
+    @DisplayName("카테고리가 ALL이라면 모든 Category들을 검색할 수 있다.")
+    @Test
+    void getClothes_AllCategories() {
+        PageRequest pageable = PageRequest.of(0, 10, DESC, "createdAt");
+        Set<String> seasons = Set.of(SPRING.name(), SUMMER.name());
+        Clothes clothes1 = new Clothes(1L, MEMBER_ID, TOP, List.of(SUMMER, FALL), CLOTHES_IMAGE_URL);
+        Clothes clothes2 = new Clothes(1L, MEMBER_ID, TOP, List.of(SPRING, FALL), CLOTHES_IMAGE_URL);
+        when(clothesPersistencePort.findByMemberIdAndCategoryAndSeasons(
+                MEMBER_ID, getAllCategories(), Set.of(SPRING, SUMMER), pageable))
+                .thenReturn(new SliceImpl<>(List.of(clothes2, clothes1), pageable, false));
+
+        clothesService.getClothes(MEMBER_ID, "ALL", seasons, pageable);
+
+        verify(clothesPersistencePort)
+                .findByMemberIdAndCategoryAndSeasons(MEMBER_ID, getAllCategories(), Set.of(SPRING, SUMMER), pageable);
     }
 }

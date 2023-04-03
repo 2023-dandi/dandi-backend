@@ -14,7 +14,7 @@ public interface ClothesPersistencePort {
 
     Optional<Clothes> findById(Long id);
 
-    Slice<Clothes> findByMemberIdAndCategoryAndSeasons(Long memberId, Category category,
+    Slice<Clothes> findByMemberIdAndCategoryAndSeasons(Long memberId, Set<Category> categories,
                                                        Set<Season> seasons, Pageable pageable);
 
     void deleteById(Long clothesId);

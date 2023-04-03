@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ClothesService implements ClothesUseCase {
 
     private static final int CLOTHES_IMAGE_URL_INDEX = 1;
+    private static final String ALL = "ALL";
 
     private final ClothesPersistencePort clothesPersistencePort;
     private final ClothesImageService clothesImageService;
@@ -50,12 +51,19 @@ public class ClothesService implements ClothesUseCase {
 
     @Override
     public ClothesResponses getClothes(Long memberId, String category, Set<String> seasons, Pageable pageable) {
-        Slice<Clothes> clothesSearchResult = clothesPersistencePort
-                .findByMemberIdAndCategoryAndSeasons(memberId, Category.from(category), mapToSeason(seasons), pageable);
+        Slice<Clothes> clothesSearchResult = clothesPersistencePort.findByMemberIdAndCategoryAndSeasons(
+                memberId, mapToCategory(category), mapToSeason(seasons), pageable);
         List<ClothesResponse> clothesResponses = clothesSearchResult.stream()
                 .map(clothes -> new ClothesResponse(clothes.getId(), imageAccessUrl + clothes.getClothesImageUrl()))
                 .collect(Collectors.toUnmodifiableList());
         return new ClothesResponses(clothesResponses, clothesSearchResult.isLast());
+    }
+
+    private Set<Category> mapToCategory(String category) {
+        if (category.equals(ALL)) {
+            return Category.getAllCategories();
+        }
+        return Set.of(Category.from(category));
     }
 
     private Set<Season> mapToSeason(Set<String> seasons) {
