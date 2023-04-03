@@ -3,16 +3,21 @@ package dandi.dandi.clothes.acceptance;
 import static dandi.dandi.clothes.ClothesFixture.CLOTHES_CATEGORY;
 import static dandi.dandi.clothes.ClothesFixture.CLOTHES_IMAGE_FULL_URL;
 import static dandi.dandi.clothes.ClothesFixture.CLOTHES_SEASONS;
+import static dandi.dandi.clothes.domain.Category.BOTTOM;
+import static dandi.dandi.clothes.domain.Category.TOP;
 import static dandi.dandi.common.HttpMethodFixture.httpDeleteWithAuthorization;
 import static dandi.dandi.common.HttpMethodFixture.httpGetWithAuthorization;
 import static dandi.dandi.common.HttpMethodFixture.httpPostWithAuthorization;
 import static dandi.dandi.common.HttpMethodFixture.httpPostWithAuthorizationAndImgFile;
+import static dandi.dandi.common.RequestURI.CLOTHES_CATEGORIES_URI;
 import static dandi.dandi.common.RequestURI.CLOTHES_IMAGE_REGISTER_REQUEST_URI;
 import static dandi.dandi.common.RequestURI.CLOTHES_REQUEST_URI;
 import static dandi.dandi.utils.image.TestImageUtils.generatetestImgFile;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import dandi.dandi.clothes.application.port.in.CategorySeasonsResponse;
+import dandi.dandi.clothes.application.port.in.CategorySeasonsResponses;
 import dandi.dandi.clothes.application.port.in.ClothesImageRegisterResponse;
 import dandi.dandi.clothes.application.port.in.ClothesRegisterCommand;
 import dandi.dandi.clothes.application.port.in.ClothesResponse;
@@ -88,6 +93,34 @@ class ClothesAcceptanceTest extends AcceptanceTest {
                 httpPostWithAuthorization(CLOTHES_REQUEST_URI, invalidClothesRegisterCommand, token);
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+    }
+
+    @DisplayName("옷 카테고리, 계절 조회 요청에 성공하면 200고 옷들을 반환한다.")
+    @Test
+    void getCategories_OK() {
+        String token = getToken();
+        httpPostWithAuthorization(CLOTHES_REQUEST_URI, new ClothesRegisterCommand(
+                CLOTHES_CATEGORY, List.of("SPRING", "SUMMER"), CLOTHES_IMAGE_FULL_URL), token);
+        httpPostWithAuthorization(CLOTHES_REQUEST_URI, new ClothesRegisterCommand(
+                CLOTHES_CATEGORY, List.of("SPRING", "FALL"), CLOTHES_IMAGE_FULL_URL), token);
+        httpPostWithAuthorization(CLOTHES_REQUEST_URI, new ClothesRegisterCommand(
+                CLOTHES_CATEGORY, List.of("FALL", "WINTER"), CLOTHES_IMAGE_FULL_URL), token);
+        httpPostWithAuthorization(CLOTHES_REQUEST_URI, new ClothesRegisterCommand(
+                "BOTTOM", List.of("SPRING", "SUMMER"), CLOTHES_IMAGE_FULL_URL), token);
+
+        ExtractableResponse<Response> response = httpGetWithAuthorization(CLOTHES_CATEGORIES_URI, token);
+
+        List<CategorySeasonsResponse> categories = response.jsonPath()
+                .getObject(".", CategorySeasonsResponses.class)
+                .getCategories();
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(categories).hasSize(2),
+                () -> assertThat(categories.get(0).getCategory()).isEqualTo(TOP.name()),
+                () -> assertThat(categories.get(0).getSeasons()).hasSize(4),
+                () -> assertThat(categories.get(1).getCategory()).isEqualTo(BOTTOM.name()),
+                () -> assertThat(categories.get(1).getSeasons()).hasSize(2)
+        );
     }
 
     @DisplayName("카테고리, 계절에 따른 옷 조회 요청에 성공하면 200과 옷들을 반환한다.")

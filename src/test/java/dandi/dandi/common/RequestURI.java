@@ -24,5 +24,6 @@ public class RequestURI {
     public static final String FEED_REQUEST_URI = "/posts/feed/temperature";
 
     public static final String CLOTHES_REQUEST_URI = "/clothes";
+    public static final String CLOTHES_CATEGORIES_URI = CLOTHES_REQUEST_URI + "/categories-seasons";
     public static final String CLOTHES_IMAGE_REGISTER_REQUEST_URI = "/clothes/image";
 }
