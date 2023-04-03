@@ -10,6 +10,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @Tag(name = "댓글")
 public interface CommentControllerDocs {
@@ -20,6 +22,6 @@ public interface CommentControllerDocs {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 게시글에 댓글 작성",
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
     })
-    ResponseEntity<Void> registerComment(@Parameter(hidden = true) Long memberId,
-                                         CommentRegisterCommand commentRegisterCommand);
+    ResponseEntity<Void> registerComment(@Parameter(hidden = true) Long memberId, @PathVariable Long postId,
+                                         @RequestBody CommentRegisterCommand commentRegisterCommand);
 }
