@@ -33,11 +33,11 @@ class CommentServiceTest {
     @DisplayName("댓글을 저장할 수 있다.")
     @Test
     void registerComment() {
-        CommentRegisterCommand commentRegisterCommand = new CommentRegisterCommand(POST_ID, "댓글 내용");
+        CommentRegisterCommand commentRegisterCommand = new CommentRegisterCommand("댓글 내용");
         when(postPersistencePort.existsById(POST_ID))
                 .thenReturn(true);
 
-        commentService.registerComment(MEMBER_ID, commentRegisterCommand);
+        commentService.registerComment(MEMBER_ID, POST_ID, commentRegisterCommand);
 
         verify(commentPersistencePort).save(any(), any(), any());
     }
@@ -45,11 +45,11 @@ class CommentServiceTest {
     @DisplayName("존재하지 않는 게시글에 댓글을 등록하려하면 예외를 발생시킨다.")
     @Test
     void registerComment_NotFoundPost() {
-        CommentRegisterCommand commentRegisterCommand = new CommentRegisterCommand(POST_ID, "댓글 내용");
+        CommentRegisterCommand commentRegisterCommand = new CommentRegisterCommand("댓글 내용");
         when(postPersistencePort.existsById(POST_ID))
                 .thenReturn(false);
 
-        assertThatThrownBy(() -> commentService.registerComment(MEMBER_ID, commentRegisterCommand))
+        assertThatThrownBy(() -> commentService.registerComment(MEMBER_ID, POST_ID, commentRegisterCommand))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessage(NotFoundException.post().getMessage());
     }

@@ -18,9 +18,10 @@ class CommentAcceptanceTest extends AcceptanceTest {
     void registerComment_NoContent() {
         String token = getToken();
         Long postId = registerPost(token);
-        CommentRegisterCommand commentRegisterCommand = new CommentRegisterCommand(postId, "댓글 내용");
+        CommentRegisterCommand commentRegisterCommand = new CommentRegisterCommand("댓글 내용");
 
-        ExtractableResponse<Response> response = httpPostWithAuthorization("comments", commentRegisterCommand, token);
+        ExtractableResponse<Response> response =
+                httpPostWithAuthorization("/posts/" + postId + "/comments", commentRegisterCommand, token);
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
     }
@@ -30,9 +31,10 @@ class CommentAcceptanceTest extends AcceptanceTest {
     void registerComment_NotFound() {
         String token = getToken();
         Long notFoundPostId = 1L;
-        CommentRegisterCommand commentRegisterCommand = new CommentRegisterCommand(notFoundPostId, "댓글 내용");
+        CommentRegisterCommand commentRegisterCommand = new CommentRegisterCommand("댓글 내용");
 
-        ExtractableResponse<Response> response = httpPostWithAuthorization("comments", commentRegisterCommand, token);
+        ExtractableResponse<Response> response =
+                httpPostWithAuthorization("/posts/" + notFoundPostId + "/comments", commentRegisterCommand, token);
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.NOT_FOUND.value());
     }
