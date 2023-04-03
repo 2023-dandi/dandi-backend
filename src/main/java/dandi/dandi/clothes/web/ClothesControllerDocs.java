@@ -3,6 +3,7 @@ package dandi.dandi.clothes.web;
 import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
 
 import dandi.dandi.advice.ExceptionResponse;
+import dandi.dandi.clothes.application.port.in.CategorySeasonsResponses;
 import dandi.dandi.clothes.application.port.in.ClothesImageRegisterResponse;
 import dandi.dandi.clothes.application.port.in.ClothesRegisterCommand;
 import dandi.dandi.clothes.application.port.in.ClothesResponses;
@@ -52,6 +53,10 @@ public interface ClothesControllerDocs {
     })
     ResponseEntity<Void> registerClothes(@Parameter(hidden = true) Long memberId,
                                          ClothesRegisterCommand clothesRegisterCommand);
+
+    @Operation(summary = "옷들의 카테고리-계절 조회")
+    @ApiResponse(responseCode = "200", description = "옷들의 카테고리-계절 조회 성공")
+    ResponseEntity<CategorySeasonsResponses> getCategoriesAndSeasons(@Parameter(hidden = true) Long memberId);
 
     @Operation(summary = "옷 조회", parameters = {@Parameter(name = "size"), @Parameter(name = "page"),
             @Parameter(name = "sort"), @Parameter(example = "DESC")})
