@@ -10,5 +10,7 @@ public interface ClothesUseCase {
 
     ClothesResponses getClothes(Long memberId, String category, Set<String> season, Pageable pageable);
 
+    CategorySeasonsResponses getCategoriesAndSeasons(Long memberId);
+
     void deleteClothes(Long memberId, Long clothesId);
 }

@@ -6,6 +6,7 @@ import static dandi.dandi.clothes.ClothesFixture.CLOTHES_ID;
 import static dandi.dandi.clothes.ClothesFixture.CLOTHES_IMAGE_FULL_URL;
 import static dandi.dandi.clothes.ClothesFixture.CLOTHES_IMAGE_URL;
 import static dandi.dandi.clothes.ClothesFixture.CLOTHES_SEASONS;
+import static dandi.dandi.clothes.domain.Category.BOTTOM;
 import static dandi.dandi.clothes.domain.Category.TOP;
 import static dandi.dandi.clothes.domain.Category.getAllCategories;
 import static dandi.dandi.clothes.domain.Season.FALL;
@@ -21,9 +22,12 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.data.domain.Sort.Direction.DESC;
 
+import dandi.dandi.clothes.application.port.in.CategorySeasonsResponse;
+import dandi.dandi.clothes.application.port.in.CategorySeasonsResponses;
 import dandi.dandi.clothes.application.port.in.ClothesRegisterCommand;
 import dandi.dandi.clothes.application.port.in.ClothesResponse;
 import dandi.dandi.clothes.application.port.in.ClothesResponses;
+import dandi.dandi.clothes.application.port.out.persistence.CategorySeasonProjection;
 import dandi.dandi.clothes.application.port.out.persistence.ClothesPersistencePort;
 import dandi.dandi.clothes.domain.Clothes;
 import dandi.dandi.common.exception.ForbiddenException;
@@ -97,6 +101,29 @@ class ClothesServiceTest {
                 .hasMessage(ForbiddenException.clothesDeletion().getMessage());
     }
 
+    @DisplayName("카테고리와 카테코리에 따른 계절들을 조회할 수 있다.")
+    @Test
+    void getCategoriesAndSeasons() {
+        when(clothesPersistencePort.findDistinctCategoryAndSeason(MEMBER_ID))
+                .thenReturn(List.of(new CategorySeasonProjectionTestImpl(TOP.name(), SUMMER.name()),
+                        new CategorySeasonProjectionTestImpl(TOP.name(), FALL.name()),
+                        new CategorySeasonProjectionTestImpl(BOTTOM.name(), SUMMER.name())));
+
+        CategorySeasonsResponses actual = clothesService.getCategoriesAndSeasons(MEMBER_ID);
+
+        List<CategorySeasonsResponse> categorySeasonsResponses = actual.getCategories();
+        assertAll(
+                () -> assertThat(categorySeasonsResponses.get(0).getCategory())
+                        .isEqualTo("TOP"),
+                () -> assertThat(categorySeasonsResponses.get(0).getSeasons())
+                        .isEqualTo(List.of("SUMMER", "FALL")),
+                () -> assertThat(categorySeasonsResponses.get(1).getCategory())
+                        .isEqualTo("BOTTOM"),
+                () -> assertThat(categorySeasonsResponses.get(1).getSeasons())
+                        .isEqualTo(List.of("SUMMER"))
+        );
+    }
+
     @DisplayName("카테고리, 계절 조건에 따른 내 옷을 조회할 수 있다.")
     @Test
     void getClothes() {
@@ -132,5 +159,25 @@ class ClothesServiceTest {
 
         verify(clothesPersistencePort)
                 .findByMemberIdAndCategoryAndSeasons(MEMBER_ID, getAllCategories(), Set.of(SPRING, SUMMER), pageable);
+    }
+
+    static class CategorySeasonProjectionTestImpl implements CategorySeasonProjection {
+        private final String category;
+        private final String season;
+
+        public CategorySeasonProjectionTestImpl(String category, String season) {
+            this.category = category;
+            this.season = season;
+        }
+
+        @Override
+        public String getCategory() {
+            return category;
+        }
+
+        @Override
+        public String getSeason() {
+            return season;
+        }
     }
 }

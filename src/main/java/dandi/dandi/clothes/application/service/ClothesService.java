@@ -1,16 +1,22 @@
 package dandi.dandi.clothes.application.service;
 
+import dandi.dandi.clothes.application.port.in.CategorySeasonsResponse;
+import dandi.dandi.clothes.application.port.in.CategorySeasonsResponses;
 import dandi.dandi.clothes.application.port.in.ClothesRegisterCommand;
 import dandi.dandi.clothes.application.port.in.ClothesResponse;
 import dandi.dandi.clothes.application.port.in.ClothesResponses;
 import dandi.dandi.clothes.application.port.in.ClothesUseCase;
+import dandi.dandi.clothes.application.port.out.persistence.CategorySeasonProjection;
 import dandi.dandi.clothes.application.port.out.persistence.ClothesPersistencePort;
 import dandi.dandi.clothes.domain.Category;
 import dandi.dandi.clothes.domain.Clothes;
 import dandi.dandi.clothes.domain.Season;
 import dandi.dandi.common.exception.ForbiddenException;
 import dandi.dandi.common.exception.NotFoundException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Value;
@@ -47,6 +53,27 @@ public class ClothesService implements ClothesUseCase {
 
     private String removeImageAccessUrl(String clothesImageUrl) {
         return clothesImageUrl.split(imageAccessUrl)[CLOTHES_IMAGE_URL_INDEX];
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public CategorySeasonsResponses getCategoriesAndSeasons(Long memberId) {
+        Map<String, List<String>> categoriesAndSeasons = new HashMap<>();
+        for (CategorySeasonProjection categorySeason :
+                clothesPersistencePort.findDistinctCategoryAndSeason(memberId)) {
+            List<String> seasons = categoriesAndSeasons.computeIfAbsent(
+                    categorySeason.getCategory(), ignored -> new ArrayList<>());
+            seasons.add(categorySeason.getSeason());
+        }
+        return mapToCategoryResponses(categoriesAndSeasons);
+    }
+
+    private CategorySeasonsResponses mapToCategoryResponses(Map<String, List<String>> categories) {
+        List<CategorySeasonsResponse> categorySeasonsResponses = categories.entrySet()
+                .stream()
+                .map(entry -> new CategorySeasonsResponse(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toUnmodifiableList());
+        return new CategorySeasonsResponses(categorySeasonsResponses);
     }
 
     @Override

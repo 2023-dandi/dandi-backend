@@ -1,6 +1,7 @@
 package dandi.dandi.clothes.web;
 
 import dandi.dandi.auth.web.support.Login;
+import dandi.dandi.clothes.application.port.in.CategorySeasonsResponses;
 import dandi.dandi.clothes.application.port.in.ClothesImageRegisterResponse;
 import dandi.dandi.clothes.application.port.in.ClothesImageUseCase;
 import dandi.dandi.clothes.application.port.in.ClothesRegisterCommand;
@@ -47,6 +48,11 @@ public class ClothesController implements ClothesControllerDocs {
                                                        @RequestParam("season") Set<String> seasons,
                                                        Pageable pageable) {
         return ResponseEntity.ok(clothesUseCase.getClothes(memberId, category, seasons, pageable));
+    }
+
+    @GetMapping("/categories-seasons")
+    public ResponseEntity<CategorySeasonsResponses> getCategoriesAndSeasons(@Login Long memberId) {
+        return ResponseEntity.ok(clothesUseCase.getCategoriesAndSeasons(memberId));
     }
 
     @PostMapping
