@@ -35,10 +35,10 @@ public class ClothesPersistenceAdapter implements ClothesPersistencePort {
     }
 
     @Override
-    public Slice<Clothes> findByMemberIdAndCategoryAndSeasons(Long memberId, Category category,
+    public Slice<Clothes> findByMemberIdAndCategoryAndSeasons(Long memberId, Set<Category> categories,
                                                               Set<Season> seasons, Pageable pageable) {
         Slice<ClothesJpaEntity> clothesJpaEntities =
-                clothesRepository.findByMemberIdAndCategoryAndSeasons(memberId, category, seasons, pageable);
+                clothesRepository.findByMemberIdAndCategoryAndSeasons(memberId, categories, seasons, pageable);
         List<Clothes> clothes = clothesJpaEntities.stream()
                 .map(ClothesJpaEntity::toClothes)
                 .collect(Collectors.toUnmodifiableList());
