@@ -91,8 +91,9 @@ class ClothesAcceptanceTest extends AcceptanceTest {
     }
 
     @DisplayName("카테고리, 계절에 따른 옷 조회 요청에 성공하면 200과 옷들을 반환한다.")
-    @Test
-    void getClothes() {
+    @ParameterizedTest
+    @CsvSource({"TOP, 2", "BOTTOM, 1", "ALL, 3"})
+    void getClothes(String category, int expectedSize) {
         String token = getToken();
         httpPostWithAuthorization(CLOTHES_REQUEST_URI, new ClothesRegisterCommand(
                 CLOTHES_CATEGORY, List.of("SPRING", "SUMMER"), CLOTHES_IMAGE_FULL_URL), token);
@@ -102,7 +103,7 @@ class ClothesAcceptanceTest extends AcceptanceTest {
                 CLOTHES_CATEGORY, List.of("FALL", "WINTER"), CLOTHES_IMAGE_FULL_URL), token);
         httpPostWithAuthorization(CLOTHES_REQUEST_URI, new ClothesRegisterCommand(
                 "BOTTOM", List.of("SPRING", "SUMMER"), CLOTHES_IMAGE_FULL_URL), token);
-        String queryString = "?category=TOP&season=SUMMER&season=SPRING";
+        String queryString = "?category="+ category + "&season=SUMMER&season=SPRING";
 
         ExtractableResponse<Response> response = httpGetWithAuthorization(CLOTHES_REQUEST_URI + queryString, token);
 
@@ -111,7 +112,7 @@ class ClothesAcceptanceTest extends AcceptanceTest {
         List<ClothesResponse> clothesResponse = clothesResponses.getClothes();
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
-                () -> assertThat(clothesResponse).hasSize(2),
+                () -> assertThat(clothesResponse).hasSize(expectedSize),
                 () -> assertThat(clothesResponses.isLastPage()).isTrue(),
                 () -> assertThat(clothesResponse.get(0).getClothesImageUrl()).isEqualTo(CLOTHES_IMAGE_FULL_URL)
         );
