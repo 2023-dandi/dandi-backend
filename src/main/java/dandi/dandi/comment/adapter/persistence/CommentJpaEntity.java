@@ -1,6 +1,7 @@
 package dandi.dandi.comment.adapter.persistence;
 
 import dandi.dandi.comment.domain.Comment;
+import dandi.dandi.member.domain.Member;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -44,5 +45,18 @@ public class CommentJpaEntity {
 
     public static CommentJpaEntity of(Comment comment, Long postId, Long memberId) {
         return new CommentJpaEntity(null, memberId, postId, comment.getContent(), null);
+    }
+
+    public Long getMemberId() {
+        return memberId;
+    }
+
+    public Comment toComment(Member member) {
+        return new Comment(
+                id,
+                content,
+                member,
+                createdAt.toLocalDate()
+        );
     }
 }
