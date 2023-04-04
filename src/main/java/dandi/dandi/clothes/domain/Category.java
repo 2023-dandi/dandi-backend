@@ -10,8 +10,8 @@ public enum Category {
     OUTER,
     ONE_PIECE,
     SHOES,
-    BAG,
     CAP,
+    BAG,
     ETC,
     ;
 
