@@ -14,6 +14,7 @@ import dandi.dandi.comment.domain.Comment;
 import dandi.dandi.common.PersistenceAdapterTest;
 import dandi.dandi.member.adapter.out.persistence.MemberPersistenceAdapter;
 import dandi.dandi.member.domain.Member;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,5 +52,17 @@ class CommentPersistenceAdapterTest extends PersistenceAdapterTest {
         Slice<Comment> comments = commentPersistenceAdapter.findByPostId(POST_ID, pageable);
 
         assertThat(comments).hasSize(2);
+    }
+
+    @DisplayName("id에 해당하는 댓글을 찾을 수 있다.")
+    @Test
+    void findById() {
+        Comment comment = Comment.initial(COMMENT_CONTENT);
+        commentPersistenceAdapter.save(comment, POST_ID, MEMBER_ID);
+        Long commentId = 1L;
+
+        Optional<Comment> actual = commentPersistenceAdapter.findById(commentId);
+
+        assertThat(actual.get().getId()).isEqualTo(commentId);
     }
 }
