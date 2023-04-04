@@ -29,7 +29,7 @@ class CommentAcceptanceTest extends AcceptanceTest {
         ExtractableResponse<Response> response = httpPostWithAuthorization(
                 "/posts/" + postId + "/comments", COMMENT_REGISTER_COMMAND, token);
 
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
     }
 
     @DisplayName("존재하지 않는 글에 대한 댓글 작성 요청에 대해 404를 응답한다.")
