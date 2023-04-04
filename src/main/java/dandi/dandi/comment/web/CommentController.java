@@ -5,6 +5,7 @@ import dandi.dandi.comment.application.port.in.CommentRegisterCommand;
 import dandi.dandi.comment.application.port.in.CommentResponses;
 import dandi.dandi.comment.application.port.in.CommentUseCase;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,7 +26,7 @@ public class CommentController implements CommentControllerDocs {
     public ResponseEntity<Void> registerComment(@Login Long memberId, @PathVariable Long postId,
                                                 @RequestBody CommentRegisterCommand commentRegisterCommand) {
         commentUseCase.registerComment(memberId, postId, commentRegisterCommand);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @GetMapping("/posts/{postId}/comments")
