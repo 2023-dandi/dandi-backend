@@ -75,6 +75,7 @@ public class CommentService implements CommentUseCase {
         Comment comment = commentPersistencePort.findById(commentId)
                 .orElseThrow(NotFoundException::comment);
         validateOwner(memberId, comment);
+        commentPersistencePort.deleteById(commentId);
     }
 
     private void validateOwner(Long memberId, Comment comment) {

@@ -99,6 +99,17 @@ class CommentServiceTest {
                 .hasMessage(NotFoundException.post().getMessage());
     }
 
+    @DisplayName("자신이 작성한 댓글을 삭제할 수 있다.")
+    @Test
+    void deleteComment() {
+        when(commentPersistencePort.findById(COMMENT_ID))
+                .thenReturn(Optional.of(new Comment(COMMENT_ID, COMMENT_CONTENT, MEMBER, LocalDate.now())));
+
+        commentService.deleteComment(MEMBER_ID, COMMENT_ID);
+
+        verify(commentPersistencePort).deleteById(COMMENT_ID);
+    }
+
     @DisplayName("존재하지 않는 댓글을 삭제하려하면 예외를 발생시킨다.")
     @Test
     void deleteComment_NotFound() {
