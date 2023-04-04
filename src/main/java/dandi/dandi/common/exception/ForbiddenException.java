@@ -16,4 +16,8 @@ public class ForbiddenException extends RuntimeException {
     public static ForbiddenException clothesDeletion() {
         return new ForbiddenException(CLOTHES_DELETION_FORBIDDEN_EXCEPTION_MESSAGE);
     }
+
+    public static ForbiddenException clothesLookUp() {
+        return new ForbiddenException("다른 사람의 옷은 조회할 수 없습니다.");
+    }
 }
