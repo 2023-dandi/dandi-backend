@@ -8,12 +8,14 @@ import static dandi.dandi.member.MemberTestFixture.OAUTH_ID;
 import static dandi.dandi.post.PostFixture.POST_ID;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatCode;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.springframework.data.domain.Sort.Direction.DESC;
 
 import dandi.dandi.comment.domain.Comment;
 import dandi.dandi.common.PersistenceAdapterTest;
 import dandi.dandi.member.adapter.out.persistence.MemberPersistenceAdapter;
 import dandi.dandi.member.domain.Member;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,5 +53,38 @@ class CommentPersistenceAdapterTest extends PersistenceAdapterTest {
         Slice<Comment> comments = commentPersistenceAdapter.findByPostId(POST_ID, pageable);
 
         assertThat(comments).hasSize(2);
+    }
+
+    @DisplayName("id에 해당하는 댓글을 찾을 수 있다.")
+    @Test
+    void findById() {
+        Long memberId = memberPersistenceAdapter.save(Member.initial(OAUTH_ID, NICKNAME, INITIAL_PROFILE_IMAGE_URL))
+                .getId();
+        Comment comment = Comment.initial(COMMENT_CONTENT);
+        commentPersistenceAdapter.save(comment, POST_ID, memberId);
+        Long commentId = 1L;
+
+        Optional<Comment> actual = commentPersistenceAdapter.findById(commentId);
+
+        assertThat(actual.get().getId()).isEqualTo(commentId);
+    }
+
+    @DisplayName("id에 해당하는 댓글을 삭제할 수 있다.")
+    @Test
+    void deleteById() {
+        Long memberId = memberPersistenceAdapter.save(Member.initial(OAUTH_ID, NICKNAME, INITIAL_PROFILE_IMAGE_URL))
+                .getId();
+        Comment comment = Comment.initial(COMMENT_CONTENT);
+        commentPersistenceAdapter.save(comment, POST_ID, memberId);
+        Long commentId = 1L;
+        Optional<Comment> foundBeforeDeletion = commentPersistenceAdapter.findById(commentId);
+
+        commentPersistenceAdapter.deleteById(commentId);
+
+        Optional<Comment> foundAfterDeletion = commentPersistenceAdapter.findById(commentId);
+        assertAll(
+                () -> assertThat(foundBeforeDeletion).isPresent(),
+                () -> assertThat(foundAfterDeletion).isEmpty()
+        );
     }
 }

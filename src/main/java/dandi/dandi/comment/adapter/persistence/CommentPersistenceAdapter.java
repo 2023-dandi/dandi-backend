@@ -6,6 +6,7 @@ import dandi.dandi.comment.domain.Comment;
 import dandi.dandi.member.adapter.out.persistence.MemberRepository;
 import dandi.dandi.member.domain.Member;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -38,9 +39,20 @@ public class CommentPersistenceAdapter implements CommentPersistencePort {
         return new SliceImpl<>(comments, pageable, commentJpaEntities.hasNext());
     }
 
+    @Override
+    public Optional<Comment> findById(Long id) {
+        return commentRepository.findById(id)
+                .map(commentJpaEntity -> commentJpaEntity.toComment(findMember(commentJpaEntity.getMemberId())));
+    }
+
     private Member findMember(Long memberId) {
         return memberRepository.findById(memberId)
                 .orElseThrow(() -> InternalServerException.withdrawnMemberPost(memberId))
                 .toMember();
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        commentRepository.deleteById(id);
     }
 }

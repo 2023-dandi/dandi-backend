@@ -37,4 +37,16 @@ public interface CommentControllerDocs {
     })
     ResponseEntity<CommentResponses> getComments(@Parameter(hidden = true) Long memberId, @PathVariable Long postId,
                                                  @Parameter(hidden = true) Pageable pageable);
+
+    @Operation(summary = "댓글 삭제")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "댓글 삭제 성공"),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 댓글 삭제 요청",
+                    content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
+            @ApiResponse(responseCode = "403", description = "다른 사용자의 댓글 삭제 요청",
+                    content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
+    }
+
+    )
+    ResponseEntity<Void> deleteComment(@Parameter(hidden = true) Long memberId, @PathVariable Long commentId);
 }

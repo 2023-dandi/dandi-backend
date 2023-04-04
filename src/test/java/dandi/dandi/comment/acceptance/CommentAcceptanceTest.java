@@ -1,6 +1,7 @@
 package dandi.dandi.comment.acceptance;
 
 import static dandi.dandi.comment.CommentFixture.COMMENT_REGISTER_COMMAND;
+import static dandi.dandi.common.HttpMethodFixture.httpDeleteWithAuthorization;
 import static dandi.dandi.common.HttpMethodFixture.httpGetWithAuthorization;
 import static dandi.dandi.common.HttpMethodFixture.httpPostWithAuthorization;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
@@ -80,5 +81,40 @@ class CommentAcceptanceTest extends AcceptanceTest {
                 httpGetWithAuthorization("/posts/" + notFountPostId + "/comments" + PAGEABLE_QUERY_STRING, token);
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.NOT_FOUND.value());
+    }
+
+    @DisplayName("존재하지 않는 댓글 삭제 요청에 대해 404를 응답한다.")
+    @Test
+    void deleteComment_NotFound() {
+        String token = getToken();
+
+        ExtractableResponse<Response> response = httpDeleteWithAuthorization("/comments/1", token);
+
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.NOT_FOUND.value());
+    }
+
+    @DisplayName("다른 사용자의 댓글 삭제 요청에 대해 404을 응답한다.")
+    @Test
+    void deleteComment_Forbidden() {
+        String anotherToken = getAnotherMemberToken();
+        String token = getToken();
+        Long postId = registerPost(token);
+        httpPostWithAuthorization("/posts/" + postId + "/comments", COMMENT_REGISTER_COMMAND, token);
+
+        ExtractableResponse<Response> response = httpDeleteWithAuthorization("/comments/1", anotherToken);
+
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.FORBIDDEN.value());
+    }
+
+    @DisplayName("자신의 댓글 삭제 요청에 성공하면 204를 응답한다.")
+    @Test
+    void deleteComment_NoContent() {
+        String token = getToken();
+        Long postId = registerPost(token);
+        httpPostWithAuthorization("/posts/" + postId + "/comments", COMMENT_REGISTER_COMMAND, token);
+
+        ExtractableResponse<Response> response = httpDeleteWithAuthorization("/comments/1", token);
+
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
     }
 }
