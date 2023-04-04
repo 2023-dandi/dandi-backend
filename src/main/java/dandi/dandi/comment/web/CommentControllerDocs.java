@@ -20,7 +20,7 @@ public interface CommentControllerDocs {
 
     @Operation(summary = "댓글 작성")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "댓글 작성 성공"),
+            @ApiResponse(responseCode = "201", description = "댓글 작성 성공"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 게시글에 댓글 작성",
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
     })
