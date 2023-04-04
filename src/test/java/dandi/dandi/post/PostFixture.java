@@ -1,6 +1,6 @@
 package dandi.dandi.post;
 
-import static dandi.dandi.member.MemberTestFixture.TEST_MEMBER;
+import static dandi.dandi.member.MemberTestFixture.MEMBER;
 import static dandi.dandi.utils.image.TestImageUtils.IMAGE_ACCESS_URL;
 
 import dandi.dandi.post.domain.Post;
@@ -25,6 +25,6 @@ public class PostFixture {
     private static final List<Long> POST_LIKING_MEMBER_IDS = List.of(1L, 2L);
 
     public static final Post TEST_POST = new Post(
-            POST_ID, TEST_MEMBER, TEMPERATURES, POST_IMAGE_URL, WEATHER_FEELING, LocalDate.now(),
+            POST_ID, MEMBER, TEMPERATURES, POST_IMAGE_URL, WEATHER_FEELING, LocalDate.now(),
             POST_LIKING_MEMBER_IDS);
 }

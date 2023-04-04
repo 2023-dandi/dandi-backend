@@ -11,8 +11,10 @@ public class MemberTestFixture {
     public static final String NICKNAME = "memberNickname";
     public static final String INITIAL_PROFILE_IMAGE_URL = "profile/default.jpg";
 
-    public static final Member TEST_MEMBER = new Member(
+    public static final Member MEMBER = new Member(
             MEMBER_ID, OAUTH_ID, NICKNAME, new Location(0.0, 0.0), INITIAL_PROFILE_IMAGE_URL);
-    public static final MemberJpaEntity TEST_MEMBER_JPA_ENTITY = MemberJpaEntity.fromMember(new Member(
+    public static final Member MEMBER2 = new Member(
+            2L, "oAuthId2", "nickname2", new Location(0.0, 0.0), INITIAL_PROFILE_IMAGE_URL);
+    public static final MemberJpaEntity MEMBER_JPA_ENTITY = MemberJpaEntity.fromMember(new Member(
             MEMBER_ID, OAUTH_ID, NICKNAME, new Location(0.0, 0.0), INITIAL_PROFILE_IMAGE_URL));
 }

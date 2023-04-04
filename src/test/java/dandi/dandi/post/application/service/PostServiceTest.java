@@ -1,7 +1,7 @@
 package dandi.dandi.post.application.service;
 
+import static dandi.dandi.member.MemberTestFixture.MEMBER;
 import static dandi.dandi.member.MemberTestFixture.MEMBER_ID;
-import static dandi.dandi.member.MemberTestFixture.TEST_MEMBER;
 import static dandi.dandi.post.PostFixture.ADDITIONAL_OUTFIT_FEELING_INDICES;
 import static dandi.dandi.post.PostFixture.MAX_TEMPERATURE;
 import static dandi.dandi.post.PostFixture.MIN_TEMPERATURE;
@@ -71,7 +71,7 @@ class PostServiceTest {
         PostWriterResponse postWriterResponse = postDetailsResponse.getWriter();
         assertAll(
                 () -> assertThat(postWriterResponse.getProfileImageUrl())
-                        .startsWith(IMAGE_ACCESS_URL + TEST_MEMBER.getProfileImgUrl()),
+                        .startsWith(IMAGE_ACCESS_URL + MEMBER.getProfileImgUrl()),
                 () -> assertThat(postWriterResponse.getId())
                         .isEqualTo(TEST_POST.getWriterId()),
                 () -> assertThat(postWriterResponse.getNickname())

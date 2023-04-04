@@ -1,8 +1,8 @@
 package dandi.dandi.member.domain;
 
+import static dandi.dandi.member.MemberTestFixture.MEMBER;
 import static dandi.dandi.member.MemberTestFixture.NICKNAME;
 import static dandi.dandi.member.MemberTestFixture.OAUTH_ID;
-import static dandi.dandi.member.MemberTestFixture.TEST_MEMBER;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -42,11 +42,11 @@ class MemberSignupManagerTest {
         when(memberPersistencePort.existsMemberByNickname(NICKNAME))
                 .thenReturn(false);
         when(memberPersistencePort.save(any(Member.class)))
-                .thenReturn(TEST_MEMBER);
+                .thenReturn(MEMBER);
 
         Long newMemberId = memberSignupManager.signup(OAUTH_ID);
 
-        assertThat(newMemberId).isEqualTo(TEST_MEMBER.getId());
-        verify(applicationEventPublisher).publishEvent(new NewMemberCreatedEvent(TEST_MEMBER.getId()));
+        assertThat(newMemberId).isEqualTo(MEMBER.getId());
+        verify(applicationEventPublisher).publishEvent(new NewMemberCreatedEvent(MEMBER.getId()));
     }
 }
