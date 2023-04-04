@@ -67,4 +67,11 @@ public class CommentService implements CommentUseCase {
                 comment.getContent()
         );
     }
+
+    @Override
+    @Transactional
+    public void deleteComment(Long memberId, Long commentId) {
+        Comment comment = commentPersistencePort.findById(commentId)
+                .orElseThrow(NotFoundException::comment);
+    }
 }

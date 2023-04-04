@@ -1,5 +1,6 @@
 package dandi.dandi.comment.application;
 
+import static dandi.dandi.comment.CommentFixture.COMMENT_ID;
 import static dandi.dandi.comment.CommentFixture.COMMENT_REGISTER_COMMAND;
 import static dandi.dandi.member.MemberTestFixture.MEMBER;
 import static dandi.dandi.member.MemberTestFixture.MEMBER2;
@@ -94,5 +95,16 @@ class CommentServiceTest {
         assertThatThrownBy(() -> commentService.getComments(MEMBER_ID, POST_ID, PAGEABLE))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessage(NotFoundException.post().getMessage());
+    }
+
+    @DisplayName("존재하지 않는 댓글을 삭제하려하면 예외를 발생시킨다.")
+    @Test
+    void deleteComment_NotFound() {
+        when(commentPersistencePort.findById(COMMENT_ID))
+                .thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> commentService.deleteComment(MEMBER_ID, COMMENT_ID))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessage(NotFoundException.comment().getMessage());
     }
 }
