@@ -64,7 +64,9 @@ class CommentAcceptanceTest extends AcceptanceTest {
                 () -> assertThat(commentResponses.isLastPage()).isTrue(),
                 () -> assertThat(comments).hasSize(2),
                 () -> assertThat(comments.get(0).isPostWriter()).isFalse(),
-                () -> assertThat(comments.get(1).isPostWriter()).isTrue()
+                () -> assertThat(comments.get(0).isMine()).isFalse(),
+                () -> assertThat(comments.get(1).isPostWriter()).isTrue(),
+                () -> assertThat(comments.get(1).isMine()).isTrue()
         );
     }
 

@@ -35,6 +35,6 @@ public interface CommentControllerDocs {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 게시글에 대한 댓글 조회 요청",
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
     })
-    ResponseEntity<CommentResponses> getComments(@PathVariable Long postId,
+    ResponseEntity<CommentResponses> getComments(@Parameter(hidden = true) Long memberId, @PathVariable Long postId,
                                                  @Parameter(hidden = true) Pageable pageable);
 }

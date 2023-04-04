@@ -75,11 +75,13 @@ class CommentServiceTest {
         when(commentPersistencePort.findByPostId(POST_ID, PAGEABLE))
                 .thenReturn(new SliceImpl<>(comments, PAGEABLE, false));
 
-        CommentResponses commentResponses = commentService.getComments(POST_ID, PAGEABLE);
+        CommentResponses commentResponses = commentService.getComments(MEMBER_ID, POST_ID, PAGEABLE);
 
         assertAll(
                 () -> assertThat(commentResponses.getComments().get(0).isPostWriter()).isTrue(),
-                () -> assertThat(commentResponses.getComments().get(1).isPostWriter()).isFalse()
+                () -> assertThat(commentResponses.getComments().get(0).isMine()).isTrue(),
+                () -> assertThat(commentResponses.getComments().get(1).isPostWriter()).isFalse(),
+                () -> assertThat(commentResponses.getComments().get(1).isMine()).isFalse()
         );
     }
 
@@ -89,7 +91,7 @@ class CommentServiceTest {
         when(postPersistencePort.findById(POST_ID))
                 .thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> commentService.getComments(POST_ID, PAGEABLE))
+        assertThatThrownBy(() -> commentService.getComments(MEMBER_ID, POST_ID, PAGEABLE))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessage(NotFoundException.post().getMessage());
     }

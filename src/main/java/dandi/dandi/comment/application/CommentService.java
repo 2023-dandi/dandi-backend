@@ -47,21 +47,22 @@ public class CommentService implements CommentUseCase {
 
     @Override
     @Transactional(readOnly = true)
-    public CommentResponses getComments(Long postId, Pageable pageable) {
+    public CommentResponses getComments(Long memberId, Long postId, Pageable pageable) {
         Post post = postPersistencePort.findById(postId)
                 .orElseThrow(NotFoundException::post);
         Slice<Comment> comments = commentPersistencePort.findByPostId(postId, pageable);
         List<CommentResponse> commentResponses = comments.stream()
-                .map(comment -> mapToCommentResponse(comment, post))
+                .map(comment -> mapToCommentResponse(comment, post, memberId))
                 .collect(Collectors.toUnmodifiableList());
         return new CommentResponses(commentResponses, comments.isLast());
     }
 
-    private CommentResponse mapToCommentResponse(Comment comment, Post post) {
+    private CommentResponse mapToCommentResponse(Comment comment, Post post, Long memberId) {
         return new CommentResponse(
                 comment.getId(),
                 new CommentWriterResponse(comment.getWriter(), imageAccessUrl),
                 comment.isWittenBy(post.getWriterId()),
+                comment.isWittenBy(memberId),
                 comment.getCreatedAt(),
                 comment.getContent()
         );
