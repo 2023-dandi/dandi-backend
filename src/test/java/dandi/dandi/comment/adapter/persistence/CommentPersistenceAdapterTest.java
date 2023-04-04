@@ -57,8 +57,10 @@ class CommentPersistenceAdapterTest extends PersistenceAdapterTest {
     @DisplayName("id에 해당하는 댓글을 찾을 수 있다.")
     @Test
     void findById() {
+        Long memberId = memberPersistenceAdapter.save(Member.initial(OAUTH_ID, NICKNAME, INITIAL_PROFILE_IMAGE_URL))
+                .getId();
         Comment comment = Comment.initial(COMMENT_CONTENT);
-        commentPersistenceAdapter.save(comment, POST_ID, MEMBER_ID);
+        commentPersistenceAdapter.save(comment, POST_ID, memberId);
         Long commentId = 1L;
 
         Optional<Comment> actual = commentPersistenceAdapter.findById(commentId);
