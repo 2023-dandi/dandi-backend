@@ -24,6 +24,7 @@ import static org.springframework.data.domain.Sort.Direction.DESC;
 
 import dandi.dandi.clothes.application.port.in.CategorySeasonsResponse;
 import dandi.dandi.clothes.application.port.in.CategorySeasonsResponses;
+import dandi.dandi.clothes.application.port.in.ClothesDetailResponse;
 import dandi.dandi.clothes.application.port.in.ClothesRegisterCommand;
 import dandi.dandi.clothes.application.port.in.ClothesResponse;
 import dandi.dandi.clothes.application.port.in.ClothesResponses;
@@ -99,6 +100,34 @@ class ClothesServiceTest {
         assertThatThrownBy(() -> clothesService.deleteClothes(MEMBER_ID, clothesId))
                 .isInstanceOf(ForbiddenException.class)
                 .hasMessage(ForbiddenException.clothesDeletion().getMessage());
+    }
+
+    @DisplayName("옷 세부 정보를 조회할 수 있다.")
+    @Test
+    void getSingleClothesDetails() {
+        Long clothesId = 1L;
+        when(clothesPersistencePort.findById(clothesId))
+                .thenReturn(Optional.of(CLOTHES));
+
+        ClothesDetailResponse clothesDetailResponse = clothesService.getSingleClothesDetails(MEMBER_ID, clothesId);
+
+        assertAll(
+                () -> assertThat(clothesDetailResponse.getId()).isEqualTo(CLOTHES.getId()),
+                () -> assertThat(clothesDetailResponse.getClothesImageUrl()).isEqualTo(CLOTHES_IMAGE_FULL_URL)
+        );
+    }
+
+    @DisplayName("다른 사람의 옷 세부 정보를 조회하려하면 예외를 발생시킨다.")
+    @Test
+    void getSingleClothesDetails_AnotherMemberClothes() {
+        Long clothesId = 1L;
+        Long anotherMember = 10L;
+        when(clothesPersistencePort.findById(clothesId))
+                .thenReturn(Optional.of(CLOTHES));
+
+        assertThatThrownBy(() -> clothesService.getSingleClothesDetails(anotherMember, clothesId))
+                .isInstanceOf(ForbiddenException.class)
+                .hasMessage(ForbiddenException.clothesLookUp().getMessage());
     }
 
     @DisplayName("카테고리와 카테코리에 따른 계절들을 조회할 수 있다.")
