@@ -2,8 +2,11 @@ package dandi.dandi.comment.web;
 
 import dandi.dandi.auth.web.support.Login;
 import dandi.dandi.comment.application.port.in.CommentRegisterCommand;
+import dandi.dandi.comment.application.port.in.CommentResponses;
 import dandi.dandi.comment.application.port.in.CommentUseCase;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,5 +26,10 @@ public class CommentController implements CommentControllerDocs {
                                                 @RequestBody CommentRegisterCommand commentRegisterCommand) {
         commentUseCase.registerComment(memberId, postId, commentRegisterCommand);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/posts/{postId}/comments")
+    public ResponseEntity<CommentResponses> getComments(@PathVariable Long postId, Pageable pageable) {
+        return ResponseEntity.ok(commentUseCase.getComments(postId, pageable));
     }
 }
