@@ -12,4 +12,6 @@ public interface CommentPersistencePort {
     Slice<Comment> findByPostId(Long postId, Pageable pageable);
 
     Optional<Comment> findById(Long id);
+
+    void deleteById(Long id);
 }

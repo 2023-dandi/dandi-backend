@@ -50,4 +50,9 @@ public class CommentPersistenceAdapter implements CommentPersistencePort {
                 .orElseThrow(() -> InternalServerException.withdrawnMemberPost(memberId))
                 .toMember();
     }
+
+    @Override
+    public void deleteById(Long id) {
+        commentRepository.deleteById(id);
+    }
 }
