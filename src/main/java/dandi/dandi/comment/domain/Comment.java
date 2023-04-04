@@ -21,7 +21,23 @@ public class Comment {
         return new Comment(null, content, null, null);
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public String getContent() {
         return content;
+    }
+
+    public Member getWriter() {
+        return writer;
+    }
+
+    public LocalDate getCreatedAt() {
+        return createdAt;
+    }
+
+    public boolean isWittenBy(Long memberId) {
+        return writer.hasId(memberId);
     }
 }

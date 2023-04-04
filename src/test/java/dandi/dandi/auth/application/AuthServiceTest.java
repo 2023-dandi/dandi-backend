@@ -1,7 +1,7 @@
 package dandi.dandi.auth.application;
 
+import static dandi.dandi.member.MemberTestFixture.MEMBER;
 import static dandi.dandi.member.MemberTestFixture.OAUTH_ID;
-import static dandi.dandi.member.MemberTestFixture.TEST_MEMBER;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -86,7 +86,7 @@ class AuthServiceTest {
         when(oAuthClientPort.getOAuthMemberId(anyString()))
                 .thenReturn(OAUTH_ID);
         when(memberPersistencePort.findByOAuthId(OAUTH_ID))
-                .thenReturn(Optional.of(TEST_MEMBER));
+                .thenReturn(Optional.of(MEMBER));
         when(accessTokenManagerPort.generateToken(anyString()))
                 .thenReturn(TOKEN);
         when(refreshTokenManagerPort.generateToken(any()))

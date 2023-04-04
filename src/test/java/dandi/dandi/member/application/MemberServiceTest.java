@@ -1,9 +1,9 @@
 package dandi.dandi.member.application;
 
 import static dandi.dandi.member.MemberTestFixture.INITIAL_PROFILE_IMAGE_URL;
+import static dandi.dandi.member.MemberTestFixture.MEMBER;
 import static dandi.dandi.member.MemberTestFixture.NICKNAME;
 import static dandi.dandi.member.MemberTestFixture.OAUTH_ID;
-import static dandi.dandi.member.MemberTestFixture.TEST_MEMBER;
 import static dandi.dandi.utils.image.TestImageUtils.IMAGE_ACCESS_URL;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -69,12 +69,12 @@ class MemberServiceTest {
     void updateNickname() {
         String newNickname = "newNickname";
         NicknameUpdateCommand nicknameUpdateCommand = new NicknameUpdateCommand(newNickname);
-        when(memberPersistencePort.findById(TEST_MEMBER.getId()))
-                .thenReturn(Optional.of(TEST_MEMBER));
+        when(memberPersistencePort.findById(MEMBER.getId()))
+                .thenReturn(Optional.of(MEMBER));
 
-        memberService.updateNickname(TEST_MEMBER.getId(), nicknameUpdateCommand);
+        memberService.updateNickname(MEMBER.getId(), nicknameUpdateCommand);
 
-        verify(memberPersistencePort).updateNickname(TEST_MEMBER.getId(), newNickname);
+        verify(memberPersistencePort).updateNickname(MEMBER.getId(), newNickname);
     }
 
     @DisplayName("이미 존재하는 닉네임으로 변경하려하면 예외를 발생시킨다.")
@@ -82,12 +82,12 @@ class MemberServiceTest {
     void updateNickname_DuplicationNicknameException() {
         String newNickname = "newNickname";
         NicknameUpdateCommand nicknameUpdateCommand = new NicknameUpdateCommand(newNickname);
-        when(memberPersistencePort.findById(TEST_MEMBER.getId()))
-                .thenReturn(Optional.of(TEST_MEMBER));
+        when(memberPersistencePort.findById(MEMBER.getId()))
+                .thenReturn(Optional.of(MEMBER));
         doThrow(new DataIntegrityViolationException("unique constraint violation"))
-                .when(memberPersistencePort).updateNickname(TEST_MEMBER.getId(), newNickname);
+                .when(memberPersistencePort).updateNickname(MEMBER.getId(), newNickname);
 
-        assertThatThrownBy(() -> memberService.updateNickname(TEST_MEMBER.getId(), nicknameUpdateCommand))
+        assertThatThrownBy(() -> memberService.updateNickname(MEMBER.getId(), nicknameUpdateCommand))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("이미 존재하는 닉네임입니다.");
     }
@@ -98,11 +98,11 @@ class MemberServiceTest {
         double latitude = 1.0;
         double longitude = 1.0;
         LocationUpdateCommand locationUpdateCommand = new LocationUpdateCommand(latitude, longitude);
-        when(memberPersistencePort.findById(TEST_MEMBER.getId()))
-                .thenReturn(Optional.of(TEST_MEMBER));
+        when(memberPersistencePort.findById(MEMBER.getId()))
+                .thenReturn(Optional.of(MEMBER));
 
-        memberService.updateLocation(TEST_MEMBER.getId(), locationUpdateCommand);
+        memberService.updateLocation(MEMBER.getId(), locationUpdateCommand);
 
-        verify(memberPersistencePort).updateLocation(TEST_MEMBER.getId(), latitude, latitude);
+        verify(memberPersistencePort).updateLocation(MEMBER.getId(), latitude, latitude);
     }
 }
