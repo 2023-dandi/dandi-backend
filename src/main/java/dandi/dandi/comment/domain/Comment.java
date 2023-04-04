@@ -24,4 +24,8 @@ public class Comment {
     public String getContent() {
         return content;
     }
+
+    public boolean isWittenBy(Long memberId) {
+        return writer.hasId(memberId);
+    }
 }
