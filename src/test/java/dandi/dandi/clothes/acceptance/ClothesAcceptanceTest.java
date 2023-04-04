@@ -18,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import dandi.dandi.clothes.application.port.in.CategorySeasonsResponse;
 import dandi.dandi.clothes.application.port.in.CategorySeasonsResponses;
+import dandi.dandi.clothes.application.port.in.ClothesDetailResponse;
 import dandi.dandi.clothes.application.port.in.ClothesImageRegisterResponse;
 import dandi.dandi.clothes.application.port.in.ClothesRegisterCommand;
 import dandi.dandi.clothes.application.port.in.ClothesResponse;
@@ -95,6 +96,38 @@ class ClothesAcceptanceTest extends AcceptanceTest {
         assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
     }
 
+    @DisplayName("옷 상세 조회 요청에 성공하면 200과 옷 상세정보를 응답한다.")
+    @Test
+    void getSingleClothesDetails_OK() {
+        String token = getToken();
+        registerClothes(token);
+        Long clothesId = 1L;
+
+        ExtractableResponse<Response> response = httpGetWithAuthorization(CLOTHES_REQUEST_URI + "/" + clothesId, token);
+
+        ClothesDetailResponse clothesDetailResponse = response.jsonPath()
+                .getObject(".", ClothesDetailResponse.class);
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(clothesDetailResponse.getId()).isEqualTo(clothesId),
+                () -> assertThat(clothesDetailResponse.getClothesImageUrl()).isEqualTo(CLOTHES_IMAGE_FULL_URL)
+        );
+    }
+
+    @DisplayName("다른 사용자의 옷 상세 조회 요청에 대해 403을 응답한다.")
+    @Test
+    void getSingleClothesDetails_Forbidden() {
+        String token = getToken();
+        String anotherToken = getAnotherMemberToken();
+        registerClothes(token);
+        Long clothesId = 1L;
+
+        ExtractableResponse<Response> response =
+                httpGetWithAuthorization(CLOTHES_REQUEST_URI + "/" + clothesId, anotherToken);
+
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.FORBIDDEN.value());
+    }
+
     @DisplayName("옷 카테고리, 계절 조회 요청에 성공하면 200고 옷들을 반환한다.")
     @Test
     void getCategories_OK() {
@@ -136,7 +169,7 @@ class ClothesAcceptanceTest extends AcceptanceTest {
                 CLOTHES_CATEGORY, List.of("FALL", "WINTER"), CLOTHES_IMAGE_FULL_URL), token);
         httpPostWithAuthorization(CLOTHES_REQUEST_URI, new ClothesRegisterCommand(
                 "BOTTOM", List.of("SPRING", "SUMMER"), CLOTHES_IMAGE_FULL_URL), token);
-        String queryString = "?category="+ category + "&season=SUMMER&season=SPRING";
+        String queryString = "?category=" + category + "&season=SUMMER&season=SPRING";
 
         ExtractableResponse<Response> response = httpGetWithAuthorization(CLOTHES_REQUEST_URI + queryString, token);
 
