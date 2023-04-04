@@ -1,5 +1,6 @@
 package dandi.dandi.comment.application;
 
+import static dandi.dandi.comment.CommentFixture.COMMENT_CONTENT;
 import static dandi.dandi.comment.CommentFixture.COMMENT_ID;
 import static dandi.dandi.comment.CommentFixture.COMMENT_REGISTER_COMMAND;
 import static dandi.dandi.member.MemberTestFixture.MEMBER;
@@ -19,6 +20,7 @@ import static org.springframework.data.domain.Sort.Direction.DESC;
 import dandi.dandi.comment.application.port.in.CommentResponses;
 import dandi.dandi.comment.application.port.out.CommentPersistencePort;
 import dandi.dandi.comment.domain.Comment;
+import dandi.dandi.common.exception.ForbiddenException;
 import dandi.dandi.common.exception.NotFoundException;
 import dandi.dandi.post.application.port.out.PostPersistencePort;
 import java.time.LocalDate;
@@ -106,5 +108,17 @@ class CommentServiceTest {
         assertThatThrownBy(() -> commentService.deleteComment(MEMBER_ID, COMMENT_ID))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessage(NotFoundException.comment().getMessage());
+    }
+
+    @DisplayName("다른 사용자의 댓글을 삭제하려하면 예외를 발생시킨다.")
+    @Test
+    void deleteComment_Forbidden() {
+        when(commentPersistencePort.findById(COMMENT_ID))
+                .thenReturn(Optional.of(new Comment(COMMENT_ID, COMMENT_CONTENT, MEMBER, LocalDate.now())));
+        Long anotherMemberId = 2L;
+
+        assertThatThrownBy(() -> commentService.deleteComment(anotherMemberId, COMMENT_ID))
+                .isInstanceOf(ForbiddenException.class)
+                .hasMessage(ForbiddenException.commentDeletion().getMessage());
     }
 }
