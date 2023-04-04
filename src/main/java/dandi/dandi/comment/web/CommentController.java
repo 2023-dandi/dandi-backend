@@ -29,7 +29,8 @@ public class CommentController implements CommentControllerDocs {
     }
 
     @GetMapping("/posts/{postId}/comments")
-    public ResponseEntity<CommentResponses> getComments(@PathVariable Long postId, Pageable pageable) {
-        return ResponseEntity.ok(commentUseCase.getComments(postId, pageable));
+    public ResponseEntity<CommentResponses> getComments(@Login Long memberId, @PathVariable Long postId,
+                                                        Pageable pageable) {
+        return ResponseEntity.ok(commentUseCase.getComments(memberId, postId, pageable));
     }
 }

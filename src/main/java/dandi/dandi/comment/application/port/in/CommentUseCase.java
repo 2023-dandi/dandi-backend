@@ -6,5 +6,5 @@ public interface CommentUseCase {
 
     void registerComment(Long memberId, Long postId, CommentRegisterCommand commentRegisterCommand);
 
-    CommentResponses getComments(Long postId, Pageable pageable);
+    CommentResponses getComments(Long memberId, Long postId, Pageable pageable);
 }
