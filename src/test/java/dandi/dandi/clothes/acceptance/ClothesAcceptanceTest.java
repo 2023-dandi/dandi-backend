@@ -135,11 +135,11 @@ class ClothesAcceptanceTest extends AcceptanceTest {
         httpPostWithAuthorization(CLOTHES_REQUEST_URI, new ClothesRegisterCommand(
                 CLOTHES_CATEGORY, List.of("SPRING", "SUMMER"), CLOTHES_IMAGE_FULL_URL), token);
         httpPostWithAuthorization(CLOTHES_REQUEST_URI, new ClothesRegisterCommand(
+                "BOTTOM", List.of("SPRING", "SUMMER"), CLOTHES_IMAGE_FULL_URL), token);
+        httpPostWithAuthorization(CLOTHES_REQUEST_URI, new ClothesRegisterCommand(
                 CLOTHES_CATEGORY, List.of("SPRING", "FALL"), CLOTHES_IMAGE_FULL_URL), token);
         httpPostWithAuthorization(CLOTHES_REQUEST_URI, new ClothesRegisterCommand(
                 CLOTHES_CATEGORY, List.of("FALL", "WINTER"), CLOTHES_IMAGE_FULL_URL), token);
-        httpPostWithAuthorization(CLOTHES_REQUEST_URI, new ClothesRegisterCommand(
-                "BOTTOM", List.of("SPRING", "SUMMER"), CLOTHES_IMAGE_FULL_URL), token);
 
         ExtractableResponse<Response> response = httpGetWithAuthorization(CLOTHES_CATEGORIES_URI, token);
 
@@ -148,11 +148,13 @@ class ClothesAcceptanceTest extends AcceptanceTest {
                 .getCategories();
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
-                () -> assertThat(categories).hasSize(2),
-                () -> assertThat(categories.get(0).getCategory()).isEqualTo(TOP.name()),
+                () -> assertThat(categories).hasSize(3),
+                () -> assertThat(categories.get(0).getCategory()).isEqualTo("ALL"),
                 () -> assertThat(categories.get(0).getSeasons()).hasSize(4),
-                () -> assertThat(categories.get(1).getCategory()).isEqualTo(BOTTOM.name()),
-                () -> assertThat(categories.get(1).getSeasons()).hasSize(2)
+                () -> assertThat(categories.get(1).getCategory()).isEqualTo(TOP.name()),
+                () -> assertThat(categories.get(1).getSeasons()).hasSize(4),
+                () -> assertThat(categories.get(2).getCategory()).isEqualTo(BOTTOM.name()),
+                () -> assertThat(categories.get(2).getSeasons()).hasSize(2)
         );
     }
 

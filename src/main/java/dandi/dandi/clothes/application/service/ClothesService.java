@@ -14,7 +14,8 @@ import dandi.dandi.clothes.domain.Clothes;
 import dandi.dandi.clothes.domain.Season;
 import dandi.dandi.common.exception.ForbiddenException;
 import dandi.dandi.common.exception.NotFoundException;
-import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,17 +60,28 @@ public class ClothesService implements ClothesUseCase {
     @Override
     @Transactional(readOnly = true)
     public CategorySeasonsResponses getCategoriesAndSeasons(Long memberId) {
-        Map<String, List<String>> categoriesAndSeasons = new HashMap<>();
+        Map<Category, EnumSet<Season>> categoriesAndSeasons = new EnumMap<>(Category.class);
         for (CategorySeasonProjection categorySeason :
                 clothesPersistencePort.findDistinctCategoryAndSeason(memberId)) {
-            List<String> seasons = categoriesAndSeasons.computeIfAbsent(
-                    categorySeason.getCategory(), ignored -> new ArrayList<>());
-            seasons.add(categorySeason.getSeason());
+            EnumSet<Season> seasons = categoriesAndSeasons.computeIfAbsent(
+                    Category.from(categorySeason.getCategory()), ignored -> EnumSet.noneOf(Season.class));
+            seasons.add(Season.from(categorySeason.getSeason()));
         }
-        return mapToCategoryResponses(categoriesAndSeasons);
+        return mapToCategoryResponses(addAllCategorySeasons(categoriesAndSeasons));
     }
 
-    private CategorySeasonsResponses mapToCategoryResponses(Map<String, List<String>> categories) {
+    private Map<String, Set<Season>> addAllCategorySeasons(Map<Category, EnumSet<Season>> categoriesAndSeasons) {
+        Map<String, Set<Season>> sortedCategoriesAndSeasons = new HashMap<>();
+        Set<Season> allCategorySeasons = categoriesAndSeasons.values()
+                .stream()
+                .flatMap(Set::stream)
+                .collect(Collectors.toUnmodifiableSet());
+        sortedCategoriesAndSeasons.put(ALL, allCategorySeasons);
+        categoriesAndSeasons.forEach((key, value) -> sortedCategoriesAndSeasons.put(key.name(), value));
+        return sortedCategoriesAndSeasons;
+    }
+
+    private CategorySeasonsResponses mapToCategoryResponses(Map<String, Set<Season>> categories) {
         List<CategorySeasonsResponse> categorySeasonsResponses = categories.entrySet()
                 .stream()
                 .map(entry -> new CategorySeasonsResponse(entry.getKey(), entry.getValue()))

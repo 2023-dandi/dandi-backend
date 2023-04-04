@@ -134,22 +134,26 @@ class ClothesServiceTest {
     @Test
     void getCategoriesAndSeasons() {
         when(clothesPersistencePort.findDistinctCategoryAndSeason(MEMBER_ID))
-                .thenReturn(List.of(new CategorySeasonProjectionTestImpl(TOP.name(), SUMMER.name()),
-                        new CategorySeasonProjectionTestImpl(TOP.name(), FALL.name()),
-                        new CategorySeasonProjectionTestImpl(BOTTOM.name(), SUMMER.name())));
+                .thenReturn(List.of(new CategorySeasonProjectionTestImpl(TOP.name(), FALL.name()),
+                        new CategorySeasonProjectionTestImpl(TOP.name(), SUMMER.name()),
+                        new CategorySeasonProjectionTestImpl(BOTTOM.name(), SPRING.name())));
 
         CategorySeasonsResponses actual = clothesService.getCategoriesAndSeasons(MEMBER_ID);
 
         List<CategorySeasonsResponse> categorySeasonsResponses = actual.getCategories();
         assertAll(
                 () -> assertThat(categorySeasonsResponses.get(0).getCategory())
-                        .isEqualTo("TOP"),
+                        .isEqualTo("ALL"),
                 () -> assertThat(categorySeasonsResponses.get(0).getSeasons())
-                        .isEqualTo(List.of("SUMMER", "FALL")),
+                        .isEqualTo(Set.of("SPRING", "SUMMER", "FALL")),
                 () -> assertThat(categorySeasonsResponses.get(1).getCategory())
-                        .isEqualTo("BOTTOM"),
+                        .isEqualTo("TOP"),
                 () -> assertThat(categorySeasonsResponses.get(1).getSeasons())
-                        .isEqualTo(List.of("SUMMER"))
+                        .isEqualTo(Set.of("SUMMER", "FALL")),
+                () -> assertThat(categorySeasonsResponses.get(2).getCategory())
+                        .isEqualTo("BOTTOM"),
+                () -> assertThat(categorySeasonsResponses.get(2).getSeasons())
+                        .isEqualTo(Set.of("SPRING"))
         );
     }
 
