@@ -1,15 +1,19 @@
 package dandi.dandi.clothes.application.port.in;
 
-import java.util.List;
+import dandi.dandi.clothes.domain.Season;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class CategorySeasonsResponse {
 
     private String category;
-    private List<String> seasons;
+    private Set<String> seasons;
 
-    public CategorySeasonsResponse(String category, List<String> seasons) {
+    public CategorySeasonsResponse(String category, Set<Season> seasons) {
         this.category = category;
-        this.seasons = seasons;
+        this.seasons = seasons.stream()
+                .map(Season::name)
+                .collect(Collectors.toUnmodifiableSet());
     }
 
     public CategorySeasonsResponse() {
@@ -19,7 +23,7 @@ public class CategorySeasonsResponse {
         return category;
     }
 
-    public List<String> getSeasons() {
+    public Set<String> getSeasons() {
         return seasons;
     }
 }
