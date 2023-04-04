@@ -2,6 +2,7 @@ package dandi.dandi.clothes.web;
 
 import dandi.dandi.auth.web.support.Login;
 import dandi.dandi.clothes.application.port.in.CategorySeasonsResponses;
+import dandi.dandi.clothes.application.port.in.ClothesDetailResponse;
 import dandi.dandi.clothes.application.port.in.ClothesImageRegisterResponse;
 import dandi.dandi.clothes.application.port.in.ClothesImageUseCase;
 import dandi.dandi.clothes.application.port.in.ClothesRegisterCommand;
@@ -41,6 +42,12 @@ public class ClothesController implements ClothesControllerDocs {
         ClothesImageRegisterResponse clothesImageRegisterResponse =
                 clothesImageUseCase.uploadClothesImage(memberId, clothesImage);
         return ResponseEntity.status(HttpStatus.CREATED).body(clothesImageRegisterResponse);
+    }
+
+    @GetMapping("/{clothesId}")
+    public ResponseEntity<ClothesDetailResponse> getSingleClothesDetails(@Login Long memberId,
+                                                                         @PathVariable Long clothesId) {
+        return ResponseEntity.ok(clothesUseCase.getSingleClothesDetails(memberId, clothesId));
     }
 
     @GetMapping

@@ -2,6 +2,7 @@ package dandi.dandi.clothes.application.service;
 
 import dandi.dandi.clothes.application.port.in.CategorySeasonsResponse;
 import dandi.dandi.clothes.application.port.in.CategorySeasonsResponses;
+import dandi.dandi.clothes.application.port.in.ClothesDetailResponse;
 import dandi.dandi.clothes.application.port.in.ClothesRegisterCommand;
 import dandi.dandi.clothes.application.port.in.ClothesResponse;
 import dandi.dandi.clothes.application.port.in.ClothesResponses;
@@ -74,6 +75,21 @@ public class ClothesService implements ClothesUseCase {
                 .map(entry -> new CategorySeasonsResponse(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toUnmodifiableList());
         return new CategorySeasonsResponses(categorySeasonsResponses);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ClothesDetailResponse getSingleClothesDetails(Long memberId, Long clothesId) {
+        Clothes clothes = clothesPersistencePort.findById(clothesId)
+                .orElseThrow(NotFoundException::clothes);
+        validateLookUpPermission(memberId, clothes);
+        return new ClothesDetailResponse(clothes, imageAccessUrl);
+    }
+
+    private void validateLookUpPermission(Long memberId, Clothes clothes) {
+        if (!clothes.isOwnedBy(memberId)) {
+            throw ForbiddenException.clothesLookUp();
+        }
     }
 
     @Override

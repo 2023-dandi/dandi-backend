@@ -8,6 +8,8 @@ public interface ClothesUseCase {
 
     void registerClothes(Long memberId, ClothesRegisterCommand clothesRegisterCommand);
 
+    ClothesDetailResponse getSingleClothesDetails(Long memberId, Long clothesId);
+
     ClothesResponses getClothes(Long memberId, String category, Set<String> season, Pageable pageable);
 
     CategorySeasonsResponses getCategoriesAndSeasons(Long memberId);
