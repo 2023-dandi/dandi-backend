@@ -11,15 +11,13 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 class LocationUpdateCommandTest {
 
-    private static final String INVALID_LOCATION_EXCEPTION_MESSAGE = "위도, 경도 값이 잘못되었습니다";
-
     @DisplayName("null 값으로 LocationUpdateCommand를 생성하려 하면 예외를 발생시킨다.")
     @ParameterizedTest
     @MethodSource("provideNullLocation")
     void create_Null(Double latitude, Double longitude) {
         assertThatThrownBy(() -> new LocationUpdateCommand(latitude, longitude))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage(INVALID_LOCATION_EXCEPTION_MESSAGE);
+                .hasMessage("위도, 경도 값이 잘못되었습니다");
     }
 
     private static Stream<Arguments> provideNullLocation() {
@@ -36,6 +34,6 @@ class LocationUpdateCommandTest {
     void create_Exception(Double latitude, Double longitude) {
         assertThatThrownBy(() -> new LocationUpdateCommand(latitude, longitude))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage(INVALID_LOCATION_EXCEPTION_MESSAGE);
+                .hasMessage("위도, 경도 값이 잘못되었습니다");
     }
 }
