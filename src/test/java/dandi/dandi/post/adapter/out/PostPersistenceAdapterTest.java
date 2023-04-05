@@ -7,10 +7,10 @@ import static dandi.dandi.member.MemberTestFixture.OAUTH_ID;
 import static dandi.dandi.post.PostFixture.POST_IMAGE_URL;
 import static dandi.dandi.post.PostFixture.TEMPERATURES;
 import static dandi.dandi.post.PostFixture.WEATHER_FEELING;
+import static dandi.dandi.utils.PaginationUtils.CREATED_AT_DESC_TEST_SIZE_PAGEABLE;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatCode;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.springframework.data.domain.Sort.Direction.DESC;
 
 import dandi.dandi.common.PersistenceAdapterTest;
 import dandi.dandi.member.application.port.out.MemberPersistencePort;
@@ -25,13 +25,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
 class PostPersistenceAdapterTest extends PersistenceAdapterTest {
-
-    private static final Pageable PAGEABLE = PageRequest.of(0, 10, DESC, "createdAt");
 
     @Autowired
     private PostPersistenceAdapter postPersistenceAdapter;
@@ -94,14 +90,14 @@ class PostPersistenceAdapterTest extends PersistenceAdapterTest {
             postPersistenceAdapter.save(post, memberId);
         }
 
-        Slice<Post> actual = postPersistenceAdapter.findByMemberId(memberId, PAGEABLE);
+        Slice<Post> actual = postPersistenceAdapter.findByMemberId(memberId, CREATED_AT_DESC_TEST_SIZE_PAGEABLE);
 
         boolean allWrittenByMember = actual.stream()
                 .allMatch(it -> it.isWrittenBy(memberId));
         List<Post> posts = actual.getContent();
         assertAll(
                 () -> assertThat(actual.isLast()).isEqualTo(expectedLastPage),
-                () -> assertThat(posts).hasSize(PAGEABLE.getPageSize()),
+                () -> assertThat(posts).hasSize(CREATED_AT_DESC_TEST_SIZE_PAGEABLE.getPageSize()),
                 () -> assertThat(allWrittenByMember).isTrue(),
                 () -> assertThat(isDescendingDirectionByCreatedAt(posts)).isTrue()
         );
@@ -121,7 +117,8 @@ class PostPersistenceAdapterTest extends PersistenceAdapterTest {
         TemperatureSearchCondition temperatureSearchCondition =
                 new TemperatureSearchCondition(9.0, 12.0, 19.0, 21.0);
 
-        Slice<Post> actual = postPersistenceAdapter.findByTemperature(temperatureSearchCondition, PAGEABLE);
+        Slice<Post> actual = postPersistenceAdapter.findByTemperature(temperatureSearchCondition,
+                CREATED_AT_DESC_TEST_SIZE_PAGEABLE);
 
         boolean isPostsWrittenByMoreThanOneMember = actual.stream()
                 .map(Post::getWriterId)
@@ -152,7 +149,8 @@ class PostPersistenceAdapterTest extends PersistenceAdapterTest {
                 minTemperatureMinSearchCondition, minTemperatureMaxSearchCondition,
                 maxTemperatureMinSearchCondition, maxTemperatureMaxSearchCondition);
 
-        Slice<Post> actual = postPersistenceAdapter.findByTemperature(temperatureSearchCondition, PAGEABLE);
+        Slice<Post> actual = postPersistenceAdapter.findByTemperature(temperatureSearchCondition,
+                CREATED_AT_DESC_TEST_SIZE_PAGEABLE);
 
         assertThat(actual).isEmpty();
     }
@@ -175,7 +173,7 @@ class PostPersistenceAdapterTest extends PersistenceAdapterTest {
                 new TemperatureSearchCondition(9.0, 12.0, 19.0, 21.0);
 
         Slice<Post> actual = postPersistenceAdapter.findByMemberIdAndTemperature(
-                memberId, temperatureSearchCondition, PAGEABLE);
+                memberId, temperatureSearchCondition, CREATED_AT_DESC_TEST_SIZE_PAGEABLE);
 
         assertAll(
                 () -> assertThat(actual).hasSize(expectedPostSize),

@@ -9,13 +9,13 @@ import static dandi.dandi.member.MemberTestFixture.MEMBER_ID;
 import static dandi.dandi.post.PostFixture.POST_ID;
 import static dandi.dandi.post.PostFixture.TEST_POST;
 import static dandi.dandi.utils.TestImageUtils.IMAGE_ACCESS_URL;
+import static dandi.dandi.utils.PaginationUtils.CREATED_AT_DESC_TEST_SIZE_PAGEABLE;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.data.domain.Sort.Direction.DESC;
 
 import dandi.dandi.comment.application.port.in.CommentResponses;
 import dandi.dandi.comment.application.port.out.CommentPersistencePort;
@@ -31,14 +31,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.SliceImpl;
 
 @ExtendWith(MockitoExtension.class)
 class CommentServiceTest {
-
-    private static final Pageable PAGEABLE = PageRequest.of(0, 10, DESC, "createdAt");
 
     private final CommentPersistencePort commentPersistencePort = Mockito.mock(CommentPersistencePort.class);
     private final PostPersistencePort postPersistencePort = Mockito.mock(PostPersistencePort.class);
@@ -75,10 +71,11 @@ class CommentServiceTest {
         List<Comment> comments = List.of(
                 new Comment(2L, "댓글 내용2", MEMBER, LocalDate.now()),
                 new Comment(1L, "댓글 내용1", MEMBER2, LocalDate.now()));
-        when(commentPersistencePort.findByPostId(POST_ID, PAGEABLE))
-                .thenReturn(new SliceImpl<>(comments, PAGEABLE, false));
+        when(commentPersistencePort.findByPostId(POST_ID, CREATED_AT_DESC_TEST_SIZE_PAGEABLE))
+                .thenReturn(new SliceImpl<>(comments, CREATED_AT_DESC_TEST_SIZE_PAGEABLE, false));
 
-        CommentResponses commentResponses = commentService.getComments(MEMBER_ID, POST_ID, PAGEABLE);
+        CommentResponses commentResponses = commentService.getComments(MEMBER_ID, POST_ID,
+                CREATED_AT_DESC_TEST_SIZE_PAGEABLE);
 
         assertAll(
                 () -> assertThat(commentResponses.getComments().get(0).isPostWriter()).isTrue(),
@@ -94,7 +91,7 @@ class CommentServiceTest {
         when(postPersistencePort.findById(POST_ID))
                 .thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> commentService.getComments(MEMBER_ID, POST_ID, PAGEABLE))
+        assertThatThrownBy(() -> commentService.getComments(MEMBER_ID, POST_ID, CREATED_AT_DESC_TEST_SIZE_PAGEABLE))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessage(NotFoundException.post().getMessage());
     }
