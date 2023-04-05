@@ -8,7 +8,7 @@ import static dandi.dandi.post.PostFixture.MIN_TEMPERATURE;
 import static dandi.dandi.post.PostFixture.OUTFIT_FEELING_INDEX;
 import static dandi.dandi.post.PostFixture.POST_IMAGE_FULL_URL;
 import static dandi.dandi.post.PostFixture.TEST_POST;
-import static dandi.dandi.utils.image.TestImageUtils.IMAGE_ACCESS_URL;
+import static dandi.dandi.utils.TestImageUtils.IMAGE_ACCESS_URL;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;

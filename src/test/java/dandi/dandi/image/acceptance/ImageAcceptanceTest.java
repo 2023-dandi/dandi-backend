@@ -2,7 +2,7 @@ package dandi.dandi.image;
 
 import static dandi.dandi.common.HttpMethodFixture.httpPostWithAuthorizationAndImgFile;
 import static dandi.dandi.common.RequestURI.CLOTHES_IMAGE_REGISTER_REQUEST_URI;
-import static dandi.dandi.utils.image.TestImageUtils.TEST_IMAGE_RESOURCE_DIR;
+import static dandi.dandi.utils.TestImageUtils.TEST_IMAGE_RESOURCE_DIR;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 import dandi.dandi.common.AcceptanceTest;

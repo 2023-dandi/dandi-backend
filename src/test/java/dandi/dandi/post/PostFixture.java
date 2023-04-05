@@ -1,7 +1,7 @@
 package dandi.dandi.post;
 
 import static dandi.dandi.member.MemberTestFixture.MEMBER;
-import static dandi.dandi.utils.image.TestImageUtils.IMAGE_ACCESS_URL;
+import static dandi.dandi.utils.TestImageUtils.IMAGE_ACCESS_URL;
 
 import dandi.dandi.post.domain.Post;
 import dandi.dandi.post.domain.Temperatures;

@@ -4,7 +4,7 @@ import static dandi.dandi.member.MemberTestFixture.INITIAL_PROFILE_IMAGE_URL;
 import static dandi.dandi.member.MemberTestFixture.MEMBER;
 import static dandi.dandi.member.MemberTestFixture.NICKNAME;
 import static dandi.dandi.member.MemberTestFixture.OAUTH_ID;
-import static dandi.dandi.utils.image.TestImageUtils.IMAGE_ACCESS_URL;
+import static dandi.dandi.utils.TestImageUtils.IMAGE_ACCESS_URL;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;

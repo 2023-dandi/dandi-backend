@@ -1,4 +1,4 @@
-package dandi.dandi.utils.image;
+package dandi.dandi.utils;
 
 import com.amazonaws.util.IOUtils;
 import java.io.File;

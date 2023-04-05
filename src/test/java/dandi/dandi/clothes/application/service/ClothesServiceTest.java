@@ -13,7 +13,7 @@ import static dandi.dandi.clothes.domain.Season.FALL;
 import static dandi.dandi.clothes.domain.Season.SPRING;
 import static dandi.dandi.clothes.domain.Season.SUMMER;
 import static dandi.dandi.member.MemberTestFixture.MEMBER_ID;
-import static dandi.dandi.utils.image.TestImageUtils.IMAGE_ACCESS_URL;
+import static dandi.dandi.utils.TestImageUtils.IMAGE_ACCESS_URL;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;

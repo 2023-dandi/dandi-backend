@@ -1,8 +1,8 @@
 package dandi.dandi.clothes.application.service;
 
 import static dandi.dandi.clothes.ClothesFixture.CLOTHES;
-import static dandi.dandi.utils.image.TestImageUtils.IMAGE_ACCESS_URL;
-import static dandi.dandi.utils.image.TestImageUtils.generateTestImgMultipartFile;
+import static dandi.dandi.utils.TestImageUtils.IMAGE_ACCESS_URL;
+import static dandi.dandi.utils.TestImageUtils.generateTestImgMultipartFile;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
