@@ -18,7 +18,7 @@ import static dandi.dandi.post.PostFixture.MIN_TEMPERATURE;
 import static dandi.dandi.post.PostFixture.OUTFIT_FEELING_INDEX;
 import static dandi.dandi.post.PostFixture.POST_IMAGE_FULL_URL;
 import static dandi.dandi.post.PostFixture.POST_IMAGE_URL;
-import static dandi.dandi.utils.TestImageUtils.generatetestImgFile;
+import static dandi.dandi.utils.TestImageUtils.generateTestImgFile;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -90,7 +90,7 @@ class PostAcceptanceTest extends AcceptanceTest {
     @Test
     void registerPostImage_Created() {
         String token = getToken();
-        File testImgFile = generatetestImgFile();
+        File testImgFile = generateTestImgFile();
 
         ExtractableResponse<Response> response = httpPostWithAuthorizationAndImgFile(
                 POST_IMAGE_REGISTER_REQUEST_URI, token, testImgFile, "postImage");
@@ -109,7 +109,7 @@ class PostAcceptanceTest extends AcceptanceTest {
     void registerPostImage_InternalServerError() {
         String token = getToken();
         mockAmazonS3Exception();
-        File testImgFile = generatetestImgFile();
+        File testImgFile = generateTestImgFile();
 
         ExtractableResponse<Response> response = httpPostWithAuthorizationAndImgFile(
                 POST_IMAGE_REGISTER_REQUEST_URI, token, testImgFile, "postImage");

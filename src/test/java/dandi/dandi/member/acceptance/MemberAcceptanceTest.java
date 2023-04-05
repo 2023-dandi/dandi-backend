@@ -13,7 +13,7 @@ import static dandi.dandi.common.RequestURI.MEMBER_NICKNAME_URI;
 import static dandi.dandi.common.RequestURI.MEMBER_PROFILE_IMAGE_URI;
 import static dandi.dandi.member.MemberTestFixture.OAUTH_ID;
 import static dandi.dandi.utils.TestImageUtils.TEST_IMAGE_FILE_NAME;
-import static dandi.dandi.utils.TestImageUtils.generatetestImgFile;
+import static dandi.dandi.utils.TestImageUtils.generateTestImgFile;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.when;
@@ -190,7 +190,7 @@ class MemberAcceptanceTest extends AcceptanceTest {
     @Test
     void updateMemberProfileImage_OK() {
         String token = getToken();
-        File testImgFile = generatetestImgFile();
+        File testImgFile = generateTestImgFile();
 
         ExtractableResponse<Response> response =
                 httpPutWithAuthorizationAndImgFile(MEMBER_PROFILE_IMAGE_URI, token, testImgFile);
@@ -208,7 +208,7 @@ class MemberAcceptanceTest extends AcceptanceTest {
     @Test
     void updateMemberProfileImage_InternalServerError() {
         String token = getToken();
-        File testImgFile = generatetestImgFile();
+        File testImgFile = generateTestImgFile();
         mockAmazonS3Exception();
 
         ExtractableResponse<Response> response =
