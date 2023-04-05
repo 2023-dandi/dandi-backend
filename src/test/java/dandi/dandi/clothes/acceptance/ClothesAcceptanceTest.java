@@ -12,7 +12,7 @@ import static dandi.dandi.common.HttpMethodFixture.httpPostWithAuthorizationAndI
 import static dandi.dandi.common.RequestURI.CLOTHES_CATEGORIES_URI;
 import static dandi.dandi.common.RequestURI.CLOTHES_IMAGE_REGISTER_REQUEST_URI;
 import static dandi.dandi.common.RequestURI.CLOTHES_REQUEST_URI;
-import static dandi.dandi.utils.image.TestImageUtils.generatetestImgFile;
+import static dandi.dandi.utils.TestImageUtils.generateTestImgFile;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -40,7 +40,7 @@ class ClothesAcceptanceTest extends AcceptanceTest {
     @Test
     void registerClothesImage_Created() {
         String token = getToken();
-        File file = generatetestImgFile();
+        File file = generateTestImgFile();
         String multiPartControlName = "clothesImage";
 
         ExtractableResponse<Response> response = httpPostWithAuthorizationAndImgFile(
@@ -59,7 +59,7 @@ class ClothesAcceptanceTest extends AcceptanceTest {
     @Test
     void registerClothesImage_InternalServerError() {
         String token = getToken();
-        File file = generatetestImgFile();
+        File file = generateTestImgFile();
         String multiPartControlName = "clothesImage";
         mockAmazonS3Exception();
 

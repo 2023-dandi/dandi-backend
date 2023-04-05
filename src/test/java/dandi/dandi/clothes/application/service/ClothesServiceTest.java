@@ -13,14 +13,14 @@ import static dandi.dandi.clothes.domain.Season.FALL;
 import static dandi.dandi.clothes.domain.Season.SPRING;
 import static dandi.dandi.clothes.domain.Season.SUMMER;
 import static dandi.dandi.member.MemberTestFixture.MEMBER_ID;
-import static dandi.dandi.utils.image.TestImageUtils.IMAGE_ACCESS_URL;
+import static dandi.dandi.utils.PaginationUtils.CREATED_AT_DESC_TEST_SIZE_PAGEABLE;
+import static dandi.dandi.utils.TestImageUtils.IMAGE_ACCESS_URL;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.data.domain.Sort.Direction.DESC;
 
 import dandi.dandi.clothes.application.port.in.CategorySeasonsResponse;
 import dandi.dandi.clothes.application.port.in.CategorySeasonsResponses;
@@ -41,7 +41,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.SliceImpl;
 
 @ExtendWith(MockitoExtension.class)
@@ -160,15 +159,14 @@ class ClothesServiceTest {
     @DisplayName("카테고리, 계절 조건에 따른 내 옷을 조회할 수 있다.")
     @Test
     void getClothes() {
-        PageRequest pageable = PageRequest.of(0, 10, DESC, "createdAt");
         Clothes clothes1 = new Clothes(1L, MEMBER_ID, TOP, List.of(SUMMER, FALL), CLOTHES_IMAGE_URL);
         Clothes clothes2 = new Clothes(1L, MEMBER_ID, TOP, List.of(SPRING, FALL), CLOTHES_IMAGE_URL);
         when(clothesPersistencePort.findByMemberIdAndCategoryAndSeasons(
-                MEMBER_ID, Set.of(TOP), Set.of(SPRING, SUMMER), pageable))
-                .thenReturn(new SliceImpl<>(List.of(clothes2, clothes1), pageable, false));
+                MEMBER_ID, Set.of(TOP), Set.of(SPRING, SUMMER), CREATED_AT_DESC_TEST_SIZE_PAGEABLE))
+                .thenReturn(new SliceImpl<>(List.of(clothes2, clothes1), CREATED_AT_DESC_TEST_SIZE_PAGEABLE, false));
 
         ClothesResponses actual = clothesService.getClothes(MEMBER_ID, TOP.name(),
-                Set.of(SPRING.name(), SUMMER.name()), pageable);
+                Set.of(SPRING.name(), SUMMER.name()), CREATED_AT_DESC_TEST_SIZE_PAGEABLE);
 
         ClothesResponse firstClothesResponse = actual.getClothes().get(0);
         assertAll(
@@ -180,18 +178,18 @@ class ClothesServiceTest {
     @DisplayName("카테고리가 ALL이라면 모든 Category들을 검색할 수 있다.")
     @Test
     void getClothes_AllCategories() {
-        PageRequest pageable = PageRequest.of(0, 10, DESC, "createdAt");
         Set<String> seasons = Set.of(SPRING.name(), SUMMER.name());
         Clothes clothes1 = new Clothes(1L, MEMBER_ID, TOP, List.of(SUMMER, FALL), CLOTHES_IMAGE_URL);
         Clothes clothes2 = new Clothes(1L, MEMBER_ID, TOP, List.of(SPRING, FALL), CLOTHES_IMAGE_URL);
         when(clothesPersistencePort.findByMemberIdAndCategoryAndSeasons(
-                MEMBER_ID, getAllCategories(), Set.of(SPRING, SUMMER), pageable))
-                .thenReturn(new SliceImpl<>(List.of(clothes2, clothes1), pageable, false));
+                MEMBER_ID, getAllCategories(), Set.of(SPRING, SUMMER), CREATED_AT_DESC_TEST_SIZE_PAGEABLE))
+                .thenReturn(new SliceImpl<>(List.of(clothes2, clothes1), CREATED_AT_DESC_TEST_SIZE_PAGEABLE, false));
 
-        clothesService.getClothes(MEMBER_ID, "ALL", seasons, pageable);
+        clothesService.getClothes(MEMBER_ID, "ALL", seasons, CREATED_AT_DESC_TEST_SIZE_PAGEABLE);
 
         verify(clothesPersistencePort)
-                .findByMemberIdAndCategoryAndSeasons(MEMBER_ID, getAllCategories(), Set.of(SPRING, SUMMER), pageable);
+                .findByMemberIdAndCategoryAndSeasons(MEMBER_ID, getAllCategories(), Set.of(SPRING, SUMMER),
+                        CREATED_AT_DESC_TEST_SIZE_PAGEABLE);
     }
 
     static class CategorySeasonProjectionTestImpl implements CategorySeasonProjection {

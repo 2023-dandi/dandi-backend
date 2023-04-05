@@ -1,4 +1,4 @@
-package dandi.dandi.utils.image;
+package dandi.dandi.utils;
 
 import com.amazonaws.util.IOUtils;
 import java.io.File;
@@ -31,7 +31,7 @@ public class TestImageUtils {
         return new CommonsMultipartFile(fileItem);
     }
 
-    public static File generatetestImgFile() {
+    public static File generateTestImgFile() {
         return new File(new File("")
                 .getAbsolutePath() + TEST_IMAGE_RESOURCE_DIR + TEST_IMAGE_FILE_NAME);
     }

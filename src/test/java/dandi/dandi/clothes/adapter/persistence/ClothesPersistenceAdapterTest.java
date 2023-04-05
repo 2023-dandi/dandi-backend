@@ -8,10 +8,10 @@ import static dandi.dandi.clothes.domain.Category.TOP;
 import static dandi.dandi.clothes.domain.Season.SPRING;
 import static dandi.dandi.clothes.domain.Season.SUMMER;
 import static dandi.dandi.member.MemberTestFixture.MEMBER_ID;
+import static dandi.dandi.utils.PaginationUtils.CREATED_AT_DESC_TEST_SIZE_PAGEABLE;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatCode;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.springframework.data.domain.Sort.Direction.DESC;
 
 import dandi.dandi.clothes.application.port.out.persistence.CategorySeasonProjection;
 import dandi.dandi.clothes.domain.Clothes;
@@ -22,7 +22,6 @@ import java.util.Set;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 
 class ClothesPersistenceAdapterTest extends PersistenceAdapterTest {
@@ -99,10 +98,9 @@ class ClothesPersistenceAdapterTest extends PersistenceAdapterTest {
                 Clothes.initial(MEMBER_ID, "BOTTOM", List.of("FALL", "SUMMER"), CLOTHES_IMAGE_URL),
                 Clothes.initial(MEMBER_ID, "BAG", List.of("SPRING", "SUMMER"), CLOTHES_IMAGE_URL)
         ));
-        PageRequest pageable = PageRequest.of(0, 10, DESC, "createdAt");
 
         Slice<Clothes> actual = clothesPersistenceAdapter.findByMemberIdAndCategoryAndSeasons(
-                MEMBER_ID, Set.of(TOP, BOTTOM), Set.of(SPRING, SUMMER), pageable);
+                MEMBER_ID, Set.of(TOP, BOTTOM), Set.of(SPRING, SUMMER), CREATED_AT_DESC_TEST_SIZE_PAGEABLE);
 
         assertThat(actual).hasSize(3);
     }
