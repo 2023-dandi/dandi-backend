@@ -17,12 +17,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 class PostRegisterCommandTest {
 
-    private static final String MIN_TEMPERATURE_NULL_EXCEPTION_MESSAGE = "최저 기온이 null입니다.";
-    private static final String MAX_TEMPERATURE_NULL_EXCEPTION_MESSAGE = "최고 기온이 null입니다.";
-    private static final String POST_IMAGE_URL_NULL_OR_BLANK_EXCEPTION_MESSAGE = "게시글 사진이 null 혹은 빈문자열입니다.";
-    private static final String OUTFIT_FEELING_INDEX_NULL_EXCEPTION_MESSAGE = "착장 느낌이 null입니다.";
-    private static final String OUTFIT_FEELING_INDEX_RANGE_EXCEPTION_MESSAGE = "착장 느낌은 0 ~ 4의 값입니다.";
-
     @DisplayName("null인 최저 혹은 최고 기온으로 PostRegisterCommand를 생성하려하면 예외를 발생시킨다.")
     @ParameterizedTest
     @MethodSource("provideNullTemperatureAndExpectedExceptionMessage")
@@ -37,8 +31,8 @@ class PostRegisterCommandTest {
 
     private static Stream<Arguments> provideNullTemperatureAndExpectedExceptionMessage() {
         return Stream.of(
-                Arguments.of(null, MAX_TEMPERATURE, MIN_TEMPERATURE_NULL_EXCEPTION_MESSAGE),
-                Arguments.of(MIN_TEMPERATURE, null, MAX_TEMPERATURE_NULL_EXCEPTION_MESSAGE)
+                Arguments.of(null, MAX_TEMPERATURE, "최저 기온이 null입니다."),
+                Arguments.of(MIN_TEMPERATURE, null, "최고 기온이 null입니다.")
         );
     }
 
@@ -52,7 +46,7 @@ class PostRegisterCommandTest {
                         MIN_TEMPERATURE, MAX_TEMPERATURE, postImageUrl,
                         OUTFIT_FEELING_INDEX, ADDITIONAL_OUTFIT_FEELING_INDICES))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage(POST_IMAGE_URL_NULL_OR_BLANK_EXCEPTION_MESSAGE);
+                .hasMessage("게시글 사진이 null 혹은 빈문자열입니다.");
     }
 
     @DisplayName("null인 착장에 대한 느낌 Index으로 PostRegisterCommand를 생성하려하면 예외를 발생시킨다.")
@@ -64,7 +58,7 @@ class PostRegisterCommandTest {
                         MIN_TEMPERATURE, MAX_TEMPERATURE, POST_IMAGE_URL,
                         nullOutfitFeeling, ADDITIONAL_OUTFIT_FEELING_INDICES))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage(OUTFIT_FEELING_INDEX_NULL_EXCEPTION_MESSAGE);
+                .hasMessage("착장 느낌이 null입니다.");
     }
 
     @DisplayName("0 ~ 4 가 아닌 값의 착창에 대한 느낌 Index로 PostRegisterCommand를 생성하려하면 예외를 발생시킨다.")
@@ -76,6 +70,6 @@ class PostRegisterCommandTest {
                         MIN_TEMPERATURE, MAX_TEMPERATURE, POST_IMAGE_URL,
                         invalidRangeOutfitFeeling, ADDITIONAL_OUTFIT_FEELING_INDICES))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage(OUTFIT_FEELING_INDEX_RANGE_EXCEPTION_MESSAGE);
+                .hasMessage("착장 느낌은 0 ~ 4의 값입니다.");
     }
 }
