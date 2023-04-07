@@ -47,6 +47,10 @@ public class CommentJpaEntity {
         return new CommentJpaEntity(null, memberId, postId, comment.getContent(), null);
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public Long getMemberId() {
         return memberId;
     }
