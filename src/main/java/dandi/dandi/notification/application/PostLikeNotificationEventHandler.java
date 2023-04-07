@@ -2,7 +2,6 @@ package dandi.dandi.notification.application;
 
 import dandi.dandi.notification.application.port.out.NotificationPersistencePort;
 import dandi.dandi.notification.domain.Notification;
-import dandi.dandi.notification.domain.PostLikeNotification;
 import dandi.dandi.postlike.domain.PostLikedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +26,7 @@ public class PostLikeNotificationEventHandler {
 
     @TransactionalEventListener
     public void handlePostLikeNotificationEvent(PostLikedEvent postLikedEvent) {
-        Notification notification = PostLikeNotification.initial(
+        Notification notification = Notification.postLike(
                 postLikedEvent.getTargetMemberId(), postLikedEvent.getPostId());
         saveNotification(notification);
     }

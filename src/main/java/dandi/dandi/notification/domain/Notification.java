@@ -1,47 +1,46 @@
 package dandi.dandi.notification.domain;
 
+import static dandi.dandi.notification.domain.NotificationType.POST_LIKE;
+
 import java.time.LocalDateTime;
 
-public abstract class Notification {
+public class Notification {
 
     private final Long id;
     private final Long memberId;
     private final NotificationType type;
     private final LocalDateTime createdAt;
+    private final Long postId;
 
-    protected Notification(Long id, Long memberId, NotificationType type, LocalDateTime createdAt) {
+    public Notification(Long id, Long memberId, NotificationType type, LocalDateTime createdAt, Long postId) {
         this.id = id;
         this.memberId = memberId;
         this.type = type;
         this.createdAt = createdAt;
+        this.postId = postId;
     }
 
-    public final Long getId() {
+    public static Notification postLike(Long targetMemberId, Long postId) {
+        return new Notification(null, targetMemberId, POST_LIKE, null, postId);
+    }
+
+    public Long getId() {
         return id;
     }
 
-    public final Long getMemberId() {
+    public Long getMemberId() {
         return memberId;
     }
 
-    public final NotificationType getType() {
+    public NotificationType getType() {
         return type;
     }
 
-    public final LocalDateTime getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public abstract Long getContentId();
-
-    @Override
-    public String toString() {
-        return "Notification{" +
-                "id=" + id +
-                ", memberId=" + memberId +
-                ", type=" + type +
-                ", createdAt=" + createdAt +
-                ", contentId=" + getContentId() +
-                '}';
+    public Long getPostId() {
+        return postId;
     }
 }
