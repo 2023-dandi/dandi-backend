@@ -62,7 +62,7 @@ public class NotificationJpaEntity {
                 notification.getPostId(),
                 notification.getCommentId(),
                 notification.getWeatherDate(),
-                notification.getCreatedAt()
+                null
         );
     }
 }
