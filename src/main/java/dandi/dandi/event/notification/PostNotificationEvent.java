@@ -20,4 +20,8 @@ public class PostNotificationEvent {
     public static PostNotificationEvent postLike(Long targetMemberId, Long publisherId, Long postId) {
         return new PostNotificationEvent(targetMemberId, publisherId, postId, NotificationType.POST_LIKE);
     }
+
+    public boolean isNotifiable() {
+        return !targetMemberId.equals(publisherId);
+    }
 }
