@@ -9,11 +9,13 @@ import dandi.dandi.comment.application.port.out.CommentPersistencePort;
 import dandi.dandi.comment.domain.Comment;
 import dandi.dandi.common.exception.ForbiddenException;
 import dandi.dandi.common.exception.NotFoundException;
+import dandi.dandi.event.notification.PostNotificationEvent;
 import dandi.dandi.post.application.port.out.PostPersistencePort;
 import dandi.dandi.post.domain.Post;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -24,25 +26,31 @@ public class CommentService implements CommentUseCase {
 
     private final CommentPersistencePort commentPersistencePort;
     private final PostPersistencePort postPersistencePort;
+    private final ApplicationEventPublisher applicationEventPublisher;
     private final String imageAccessUrl;
 
     public CommentService(CommentPersistencePort commentPersistencePort, PostPersistencePort postPersistencePort,
+                          ApplicationEventPublisher applicationEventPublisher,
                           @Value("${cloud.aws.cloud-front.uri}") String imageAccessUrl) {
         this.commentPersistencePort = commentPersistencePort;
         this.postPersistencePort = postPersistencePort;
+        this.applicationEventPublisher = applicationEventPublisher;
         this.imageAccessUrl = imageAccessUrl;
     }
 
     @Override
     public void registerComment(Long memberId, Long postId, CommentRegisterCommand commentRegisterCommand) {
         Comment comment = commentRegisterCommand.toComment();
-        validatePostId(postId);
-        commentPersistencePort.save(comment, postId, memberId);
+        Post post = postPersistencePort.findById(postId)
+                .orElseThrow(NotFoundException::post);
+        Long commentId = commentPersistencePort.save(comment, postId, memberId);
+        publishPostNotificationIfNotifiable(memberId, post, commentId);
     }
 
-    private void validatePostId(Long postId) {
-        if (!postPersistencePort.existsById(postId)) {
-            throw NotFoundException.post();
+    private void publishPostNotificationIfNotifiable(Long memberId, Post post, Long commentId) {
+        if (!post.isWrittenBy(memberId)) {
+            applicationEventPublisher.publishEvent(
+                    PostNotificationEvent.comment(post.getWriterId(), post.getId(), commentId));
         }
     }
 
