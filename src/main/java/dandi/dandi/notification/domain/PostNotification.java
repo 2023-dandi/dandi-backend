@@ -6,8 +6,8 @@ public abstract class PostNotification extends Notification {
 
     private final Long postId;
 
-    protected PostNotification(Long id, Long memberId, NotificationType type, Long postId) {
-        super(id, memberId, type);
+    protected PostNotification(Long id, Long memberId, NotificationType type, LocalDate createdAt, Long postId) {
+        super(id, memberId, type, createdAt);
         this.postId = postId;
     }
 
