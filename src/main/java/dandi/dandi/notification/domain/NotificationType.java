@@ -4,4 +4,5 @@ public enum NotificationType {
 
     POST_LIKE,
     COMMENT,
+    WEATHER,
 }
