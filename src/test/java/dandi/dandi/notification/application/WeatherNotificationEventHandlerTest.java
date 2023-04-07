@@ -1,6 +1,5 @@
 package dandi.dandi.notification.application;
 
-
 import static dandi.dandi.member.MemberTestFixture.MEMBER_ID;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -35,5 +34,4 @@ class WeatherNotificationEventHandlerTest {
 
         verify(notificationPersistencePort).save(any(WeatherNotification.class));
     }
-
 }
