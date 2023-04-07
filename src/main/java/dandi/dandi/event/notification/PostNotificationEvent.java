@@ -24,4 +24,16 @@ public class PostNotificationEvent {
     public boolean isNotifiable() {
         return !targetMemberId.equals(publisherId);
     }
+
+    public Long getTargetMemberId() {
+        return targetMemberId;
+    }
+
+    public Long getPostId() {
+        return postId;
+    }
+
+    public NotificationType getNotificationType() {
+        return notificationType;
+    }
 }
