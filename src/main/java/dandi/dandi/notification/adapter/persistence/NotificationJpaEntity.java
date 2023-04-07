@@ -27,10 +27,12 @@ public class NotificationJpaEntity {
 
     private Long memberId;
 
-    private Long contentId;
-
     @Enumerated(value = EnumType.STRING)
     private NotificationType notificationType;
+
+    private Long postId;
+
+    private Long commentId;
 
     @CreatedDate
     private LocalDateTime createdAt;
@@ -38,12 +40,13 @@ public class NotificationJpaEntity {
     protected NotificationJpaEntity() {
     }
 
-    public NotificationJpaEntity(Long id, Long memberId, Long contentId, NotificationType notificationType,
+    public NotificationJpaEntity(Long id, Long memberId, NotificationType notificationType, Long postId, Long commentId,
                                  LocalDateTime createdAt) {
         this.id = id;
         this.memberId = memberId;
-        this.contentId = contentId;
         this.notificationType = notificationType;
+        this.postId = postId;
+        this.commentId = commentId;
         this.createdAt = createdAt;
     }
 
@@ -51,8 +54,9 @@ public class NotificationJpaEntity {
         return new NotificationJpaEntity(
                 notification.getId(),
                 notification.getMemberId(),
-                notification.getContentId(),
                 notification.getType(),
+                notification.getPostId(),
+                notification.getCommentId(),
                 notification.getCreatedAt()
         );
     }
