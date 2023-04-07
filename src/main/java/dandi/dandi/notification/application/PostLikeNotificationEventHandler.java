@@ -1,9 +1,9 @@
 package dandi.dandi.notification.application;
 
-import dandi.dandi.event.notification.PostNotificationEvent;
 import dandi.dandi.notification.application.port.out.NotificationPersistencePort;
 import dandi.dandi.notification.domain.Notification;
-import dandi.dandi.notification.domain.PostNotification;
+import dandi.dandi.notification.domain.PostLikeNotification;
+import dandi.dandi.postlike.domain.PostLikedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
@@ -15,24 +15,21 @@ import org.springframework.transaction.event.TransactionalEventListener;
 @Component
 @Async("asyncExecutor")
 @Transactional(propagation = Propagation.REQUIRES_NEW)
-public class PostNotificationEventHandler {
+public class PostLikeNotificationEventHandler {
 
-    private final Logger logger = LoggerFactory.getLogger(PostNotificationEventHandler.class);
+    private final Logger logger = LoggerFactory.getLogger(PostLikeNotificationEventHandler.class);
 
     private final NotificationPersistencePort notificationPersistencePort;
 
-    public PostNotificationEventHandler(NotificationPersistencePort notificationPersistencePort) {
+    public PostLikeNotificationEventHandler(NotificationPersistencePort notificationPersistencePort) {
         this.notificationPersistencePort = notificationPersistencePort;
     }
 
     @TransactionalEventListener
-    public void handlePostNotificationEvent(PostNotificationEvent postNotificationEvent) {
-        PostNotification postNotification = PostNotification.initial(
-                postNotificationEvent.getTargetMemberId(),
-                postNotificationEvent.getPostId(),
-                postNotificationEvent.getNotificationType()
-        );
-        saveNotification(postNotification);
+    public void handlePostLikeNotificationEvent(PostLikedEvent postLikedEvent) {
+        Notification notification = PostLikeNotification.initial(
+                postLikedEvent.getTargetMemberId(), postLikedEvent.getPostId());
+        saveNotification(notification);
     }
 
     private void saveNotification(Notification notification) {
