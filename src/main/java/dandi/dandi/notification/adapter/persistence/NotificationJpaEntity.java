@@ -2,6 +2,7 @@ package dandi.dandi.notification.adapter.persistence;
 
 import dandi.dandi.notification.domain.Notification;
 import dandi.dandi.notification.domain.NotificationType;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -34,6 +35,8 @@ public class NotificationJpaEntity {
 
     private Long commentId;
 
+    private LocalDate weatherDate;
+
     @CreatedDate
     private LocalDateTime createdAt;
 
@@ -41,12 +44,13 @@ public class NotificationJpaEntity {
     }
 
     public NotificationJpaEntity(Long id, Long memberId, NotificationType notificationType, Long postId, Long commentId,
-                                 LocalDateTime createdAt) {
+                                 LocalDate weatherDate, LocalDateTime createdAt) {
         this.id = id;
         this.memberId = memberId;
         this.notificationType = notificationType;
         this.postId = postId;
         this.commentId = commentId;
+        this.weatherDate = weatherDate;
         this.createdAt = createdAt;
     }
 
@@ -57,6 +61,7 @@ public class NotificationJpaEntity {
                 notification.getType(),
                 notification.getPostId(),
                 notification.getCommentId(),
+                notification.getWeatherDate(),
                 notification.getCreatedAt()
         );
     }
