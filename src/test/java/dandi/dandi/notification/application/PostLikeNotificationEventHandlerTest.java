@@ -23,7 +23,7 @@ class PostLikeNotificationEventHandlerTest {
     @InjectMocks
     private PostLikeNotificationEventHandler postLikeNotificationEventHandler;
 
-    @DisplayName("게시글 알림을 저장할 수 있다.")
+    @DisplayName("게시글 좋아요 알림을 저장할 수 있다.")
     @Test
     void handlePostLikeNotificationEvent() {
         PostLikedEvent postLikedEvent = new PostLikedEvent(MEMBER_ID, POST_ID);
