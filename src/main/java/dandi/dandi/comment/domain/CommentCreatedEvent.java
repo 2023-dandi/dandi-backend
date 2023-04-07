@@ -11,4 +11,16 @@ public class CommentCreatedEvent {
         this.postId = postId;
         this.commentId = commentId;
     }
+
+    public Long getTargetMemberId() {
+        return targetMemberId;
+    }
+
+    public Long getPostId() {
+        return postId;
+    }
+
+    public Long getCommentId() {
+        return commentId;
+    }
 }
