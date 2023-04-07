@@ -26,7 +26,7 @@ public class NotificationEventHandler {
         try {
             notificationPersistencePort.save(notification);
         } catch (Exception e) {
-            logger.info("알림 저장 실패 : " + notification.toString());
+            logger.info("알림 저장 실패 : {}", notification);
         }
     }
 }
