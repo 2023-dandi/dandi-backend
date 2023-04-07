@@ -17,13 +17,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class PostLikeNotificationEventHandlerTest {
+class PostNotificationEventHandlerTest {
 
     @Mock
     private NotificationPersistencePort notificationPersistencePort;
 
     @InjectMocks
-    private PostLikeNotificationEventHandler postLikeNotificationEventHandler;
+    private PostNotificationEventHandler postNotificationEventHandler;
 
     @DisplayName("알려야 할 알림 이벤트는 저장하고 아닌 이벤트는 저장하지 않을 수 있다.")
     @ParameterizedTest
@@ -31,7 +31,7 @@ class PostLikeNotificationEventHandlerTest {
     void handlePostNotificationEvent_SelfPublishingEvent(Long publisherId, int expected) {
         PostNotificationEvent postNotificationEvent = PostNotificationEvent.postLike(MEMBER_ID, publisherId, POST_ID);
 
-        postLikeNotificationEventHandler.handlePostNotificationEvent(postNotificationEvent);
+        postNotificationEventHandler.handlePostNotificationEvent(postNotificationEvent);
 
         verify(notificationPersistencePort, times(expected)).save(any());
     }

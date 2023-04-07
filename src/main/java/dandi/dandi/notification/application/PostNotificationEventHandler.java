@@ -15,13 +15,13 @@ import org.springframework.transaction.event.TransactionalEventListener;
 @Component
 @Async("asyncExecutor")
 @Transactional(propagation = Propagation.REQUIRES_NEW)
-public class PostLikeNotificationEventHandler {
+public class PostNotificationEventHandler {
 
-    private final Logger logger = LoggerFactory.getLogger(PostLikeNotificationEventHandler.class);
+    private final Logger logger = LoggerFactory.getLogger(PostNotificationEventHandler.class);
 
     private final NotificationPersistencePort notificationPersistencePort;
 
-    public PostLikeNotificationEventHandler(NotificationPersistencePort notificationPersistencePort) {
+    public PostNotificationEventHandler(NotificationPersistencePort notificationPersistencePort) {
         this.notificationPersistencePort = notificationPersistencePort;
     }
 
