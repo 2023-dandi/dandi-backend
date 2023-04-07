@@ -61,4 +61,17 @@ public class Notification {
     public Long getCommentContent() {
         return commentContent;
     }
+
+    @Override
+    public String toString() {
+        return "Notification{" +
+                "id=" + id +
+                ", memberId=" + memberId +
+                ", type=" + type +
+                ", createdAt=" + createdAt +
+                ", postId=" + postId +
+                ", commentId=" + commentId +
+                ", commentContent=" + commentContent +
+                '}';
+    }
 }
