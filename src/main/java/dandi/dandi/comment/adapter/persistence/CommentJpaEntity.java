@@ -55,6 +55,10 @@ public class CommentJpaEntity {
         return memberId;
     }
 
+    public String getContent() {
+        return content;
+    }
+
     public Comment toComment(Member member) {
         return new Comment(
                 id,
