@@ -7,7 +7,7 @@ import org.springframework.data.domain.Slice;
 
 public interface CommentPersistencePort {
 
-    void save(Comment comment, Long postId, Long memberId);
+    Long save(Comment comment, Long postId, Long memberId);
 
     Slice<Comment> findByPostId(Long postId, Pageable pageable);
 

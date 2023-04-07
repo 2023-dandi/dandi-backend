@@ -7,7 +7,6 @@ import static dandi.dandi.member.MemberTestFixture.NICKNAME;
 import static dandi.dandi.member.MemberTestFixture.OAUTH_ID;
 import static dandi.dandi.post.PostFixture.POST_ID;
 import static dandi.dandi.utils.PaginationUtils.CREATED_AT_DESC_TEST_SIZE_PAGEABLE;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatCode;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -33,8 +32,10 @@ class CommentPersistenceAdapterTest extends PersistenceAdapterTest {
     @Test
     void save() {
         Comment comment = Comment.initial(COMMENT_CONTENT);
-        assertThatCode(() -> commentPersistenceAdapter.save(comment, POST_ID, MEMBER_ID))
-                .doesNotThrowAnyException();
+
+        Long commentId = commentPersistenceAdapter.save(comment, POST_ID, MEMBER_ID);
+
+        assertThat(commentId).isNotNull();
     }
 
     @DisplayName("게시글에 해당하는 댓글들을 찾을 수 있다.")
@@ -58,8 +59,7 @@ class CommentPersistenceAdapterTest extends PersistenceAdapterTest {
         Long memberId = memberPersistenceAdapter.save(Member.initial(OAUTH_ID, NICKNAME, INITIAL_PROFILE_IMAGE_URL))
                 .getId();
         Comment comment = Comment.initial(COMMENT_CONTENT);
-        commentPersistenceAdapter.save(comment, POST_ID, memberId);
-        Long commentId = 1L;
+        Long commentId = commentPersistenceAdapter.save(comment, POST_ID, memberId);
 
         Optional<Comment> actual = commentPersistenceAdapter.findById(commentId);
 
@@ -72,8 +72,7 @@ class CommentPersistenceAdapterTest extends PersistenceAdapterTest {
         Long memberId = memberPersistenceAdapter.save(Member.initial(OAUTH_ID, NICKNAME, INITIAL_PROFILE_IMAGE_URL))
                 .getId();
         Comment comment = Comment.initial(COMMENT_CONTENT);
-        commentPersistenceAdapter.save(comment, POST_ID, memberId);
-        Long commentId = 1L;
+        Long commentId = commentPersistenceAdapter.save(comment, POST_ID, memberId);
         Optional<Comment> foundBeforeDeletion = commentPersistenceAdapter.findById(commentId);
 
         commentPersistenceAdapter.deleteById(commentId);

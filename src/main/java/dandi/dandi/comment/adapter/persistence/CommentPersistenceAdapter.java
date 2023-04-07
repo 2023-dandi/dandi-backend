@@ -25,9 +25,10 @@ public class CommentPersistenceAdapter implements CommentPersistencePort {
     }
 
     @Override
-    public void save(Comment comment, Long postId, Long memberId) {
+    public Long save(Comment comment, Long postId, Long memberId) {
         CommentJpaEntity commentJpaEntity = CommentJpaEntity.of(comment, postId, memberId);
-        commentRepository.save(commentJpaEntity);
+        return commentRepository.save(commentJpaEntity)
+                .getId();
     }
 
     @Override
