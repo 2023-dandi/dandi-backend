@@ -6,9 +6,9 @@ import dandi.dandi.notification.domain.WeatherNotification;
 import dandi.dandi.pushnotification.domain.WeatherPushNotificationEvent;
 import org.springframework.transaction.event.TransactionalEventListener;
 
-public class WhetherNotificationEventHandler extends NotificationEventHandler {
+public class WeatherNotificationEventHandler extends NotificationEventHandler {
 
-    public WhetherNotificationEventHandler(NotificationPersistencePort notificationPersistencePort) {
+    public WeatherNotificationEventHandler(NotificationPersistencePort notificationPersistencePort) {
         super(notificationPersistencePort);
     }
 
