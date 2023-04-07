@@ -27,14 +27,12 @@ public class PostNotificationEventHandler {
 
     @TransactionalEventListener
     public void handlePostNotificationEvent(PostNotificationEvent postNotificationEvent) {
-        if (postNotificationEvent.isNotifiable()) {
-            PostNotification postNotification = PostNotification.initial(
-                    postNotificationEvent.getTargetMemberId(),
-                    postNotificationEvent.getPostId(),
-                    postNotificationEvent.getNotificationType()
-            );
-            saveNotification(postNotification);
-        }
+        PostNotification postNotification = PostNotification.initial(
+                postNotificationEvent.getTargetMemberId(),
+                postNotificationEvent.getPostId(),
+                postNotificationEvent.getNotificationType()
+        );
+        saveNotification(postNotification);
     }
 
     private void saveNotification(Notification notification) {

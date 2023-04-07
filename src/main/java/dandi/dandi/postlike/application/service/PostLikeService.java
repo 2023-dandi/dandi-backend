@@ -40,7 +40,13 @@ public class PostLikeService implements PostLikeUseCase {
     private void registerNewPostLike(Long memberId, Post post) {
         PostLike initial = PostLike.initial(memberId, post.getId());
         postLikePersistencePort.save(initial);
-        applicationEventPublisher.publishEvent(
-                PostNotificationEvent.postLike(post.getWriterId(), memberId, post.getId()));
+        publishPostLikeEventIfNotifiable(memberId, post);
+    }
+
+    private void publishPostLikeEventIfNotifiable(Long memberId, Post post) {
+        if (!post.isWrittenBy(memberId)) {
+            applicationEventPublisher.publishEvent(
+                    PostNotificationEvent.postLike(post.getWriterId(), post.getId()));
+        }
     }
 }

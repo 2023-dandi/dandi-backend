@@ -6,6 +6,7 @@ import static dandi.dandi.post.PostFixture.TEST_POST;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -38,15 +39,32 @@ class PostLikeServiceTest {
     @InjectMocks
     private PostLikeService postLikeService;
 
-    @DisplayName("좋아요를 누르지 않은 게시글에 좋아요를 등록할 수 있다.")
+    @DisplayName("좋아요를 누르지 않은 자신의 게시글에 좋아요를 등록할 수 있다.")
     @Test
-    void reversePostLike_PostLikeRegister() {
+    void reversePostLike_PostLikeRegister_MyPost() {
         when(postPersistencePort.findById(POST_ID))
                 .thenReturn(Optional.of(TEST_POST));
         when(postLikePersistencePort.findByMemberIdAndPostId(MEMBER_ID, POST_ID))
                 .thenReturn(Optional.empty());
 
         postLikeService.reverseLike(MEMBER_ID, POST_ID);
+
+        assertAll(
+                () -> verify(postLikePersistencePort).save(any(PostLike.class)),
+                () -> verify(applicationEventPublisher, never()).publishEvent(any(PostNotificationEvent.class))
+        );
+    }
+
+    @DisplayName("좋아요를 누르지 않은 다른 사용자의 게시글에 좋아요를 등록할 수 있다.")
+    @Test
+    void reversePostLike_PostLikeRegister_OthersPost() {
+        Long memberId = 2L;
+        when(postPersistencePort.findById(POST_ID))
+                .thenReturn(Optional.of(TEST_POST));
+        when(postLikePersistencePort.findByMemberIdAndPostId(memberId, POST_ID))
+                .thenReturn(Optional.empty());
+
+        postLikeService.reverseLike(memberId, POST_ID);
 
         assertAll(
                 () -> verify(postLikePersistencePort).save(any(PostLike.class)),
