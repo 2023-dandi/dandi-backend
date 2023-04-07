@@ -1,80 +1,36 @@
 package dandi.dandi.notification.domain;
 
-import static dandi.dandi.notification.domain.NotificationType.COMMENT;
-import static dandi.dandi.notification.domain.NotificationType.POST_LIKE;
-
 import java.time.LocalDate;
 
-public class Notification {
+public abstract class Notification {
 
     private final Long id;
     private final Long memberId;
     private final NotificationType type;
-    private final Long postId;
-    private final Long commentId;
-    private final Long commentContent;
-    private final LocalDate weatherDate;
 
-    public Notification(Long id, Long memberId, NotificationType type, Long postId,
-                        Long commentId, Long commentContent, LocalDate weatherDate) {
+    protected Notification(Long id, Long memberId, NotificationType type) {
         this.id = id;
         this.memberId = memberId;
         this.type = type;
-        this.postId = postId;
-        this.commentId = commentId;
-        this.commentContent = commentContent;
-        this.weatherDate = weatherDate;
     }
 
-    public static Notification postLike(Long targetMemberId, Long postId) {
-        return new Notification(null, targetMemberId, POST_LIKE, null, postId, null, null);
-    }
-
-    public static Notification postComment(Long targetMemberId, Long postId, Long commentId) {
-        return new Notification(null, targetMemberId, COMMENT, postId, commentId, null, null);
-    }
-
-    public static Notification whether(Long targetMemberId, LocalDate whetherDate) {
-        return new Notification(null, targetMemberId, null, null, null, null, whetherDate);
-    }
-
-    public Long getId() {
+    public final Long getId() {
         return id;
     }
 
-    public Long getMemberId() {
+    public final Long getMemberId() {
         return memberId;
     }
 
-    public NotificationType getType() {
+    public final NotificationType getType() {
         return type;
     }
 
-    public Long getPostId() {
-        return postId;
-    }
+    public abstract Long getPostId();
 
-    public Long getCommentId() {
-        return commentId;
-    }
+    public abstract Long getCommentId();
 
-    public Long getCommentContent() {
-        return commentContent;
-    }
+    public abstract String getCommentContent();
 
-    public LocalDate getWeatherDate() {
-        return weatherDate;
-    }
-
-    @Override
-    public String toString() {
-        return "Notification{" +
-                "id=" + id +
-                ", memberId=" + memberId +
-                ", type=" + type +
-                ", postId=" + postId +
-                ", commentId=" + commentId +
-                ", commentContent=" + commentContent +
-                '}';
-    }
+    public abstract LocalDate getWeatherDate();
 }
