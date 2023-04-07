@@ -11,10 +11,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import dandi.dandi.common.exception.NotFoundException;
-import dandi.dandi.event.notification.PostNotificationEvent;
 import dandi.dandi.post.application.port.out.PostPersistencePort;
 import dandi.dandi.postlike.application.port.out.PostLikePersistencePort;
 import dandi.dandi.postlike.domain.PostLike;
+import dandi.dandi.postlike.domain.PostLikedEvent;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -51,7 +51,7 @@ class PostLikeServiceTest {
 
         assertAll(
                 () -> verify(postLikePersistencePort).save(any(PostLike.class)),
-                () -> verify(applicationEventPublisher, never()).publishEvent(any(PostNotificationEvent.class))
+                () -> verify(applicationEventPublisher, never()).publishEvent(any(PostLikedEvent.class))
         );
     }
 
@@ -68,7 +68,7 @@ class PostLikeServiceTest {
 
         assertAll(
                 () -> verify(postLikePersistencePort).save(any(PostLike.class)),
-                () -> verify(applicationEventPublisher).publishEvent(any(PostNotificationEvent.class))
+                () -> verify(applicationEventPublisher).publishEvent(any(PostLikedEvent.class))
         );
     }
 
