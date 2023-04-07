@@ -7,9 +7,9 @@ import dandi.dandi.comment.application.port.in.CommentUseCase;
 import dandi.dandi.comment.application.port.in.CommentWriterResponse;
 import dandi.dandi.comment.application.port.out.CommentPersistencePort;
 import dandi.dandi.comment.domain.Comment;
+import dandi.dandi.comment.domain.CommentCreatedEvent;
 import dandi.dandi.common.exception.ForbiddenException;
 import dandi.dandi.common.exception.NotFoundException;
-import dandi.dandi.event.notification.PostNotificationEvent;
 import dandi.dandi.post.application.port.out.PostPersistencePort;
 import dandi.dandi.post.domain.Post;
 import java.util.List;
@@ -50,7 +50,7 @@ public class CommentService implements CommentUseCase {
     private void publishPostNotificationIfNotifiable(Long memberId, Post post, Long commentId) {
         if (!post.isWrittenBy(memberId)) {
             applicationEventPublisher.publishEvent(
-                    PostNotificationEvent.comment(post.getWriterId(), post.getId(), commentId));
+                    new CommentCreatedEvent(post.getWriterId(), post.getId(), commentId));
         }
     }
 

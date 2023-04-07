@@ -21,9 +21,9 @@ import static org.mockito.Mockito.when;
 import dandi.dandi.comment.application.port.in.CommentResponses;
 import dandi.dandi.comment.application.port.out.CommentPersistencePort;
 import dandi.dandi.comment.domain.Comment;
+import dandi.dandi.comment.domain.CommentCreatedEvent;
 import dandi.dandi.common.exception.ForbiddenException;
 import dandi.dandi.common.exception.NotFoundException;
-import dandi.dandi.event.notification.PostNotificationEvent;
 import dandi.dandi.post.application.port.out.PostPersistencePort;
 import java.time.LocalDate;
 import java.util.List;
@@ -58,7 +58,7 @@ class CommentServiceTest {
 
         assertAll(
                 () -> verify(commentPersistencePort).save(any(), any(), any()),
-                () -> verify(applicationEventPublisher, never()).publishEvent(any(PostNotificationEvent.class))
+                () -> verify(applicationEventPublisher, never()).publishEvent(any(CommentCreatedEvent.class))
         );
     }
 
@@ -75,7 +75,7 @@ class CommentServiceTest {
 
         assertAll(
                 () -> verify(commentPersistencePort).save(any(), any(), any()),
-                () -> verify(applicationEventPublisher).publishEvent(any(PostNotificationEvent.class))
+                () -> verify(applicationEventPublisher).publishEvent(any(CommentCreatedEvent.class))
         );
     }
 
