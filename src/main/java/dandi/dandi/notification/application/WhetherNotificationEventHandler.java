@@ -13,7 +13,7 @@ public class WhetherNotificationEventHandler extends NotificationEventHandler {
     }
 
     @TransactionalEventListener
-    public void handleCommentCreatedNotificationEvent(WeatherPushNotificationEvent weatherPushNotificationEvent) {
+    public void handleWhetherNotificationEvent(WeatherPushNotificationEvent weatherPushNotificationEvent) {
         Notification notification = WeatherNotification.initial(
                 weatherPushNotificationEvent.getMemberId(), weatherPushNotificationEvent.getWeatherDate());
         saveNotification(notification);
