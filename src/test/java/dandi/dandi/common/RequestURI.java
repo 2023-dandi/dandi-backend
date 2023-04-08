@@ -26,4 +26,6 @@ public class RequestURI {
     public static final String CLOTHES_REQUEST_URI = "/clothes";
     public static final String CLOTHES_CATEGORIES_URI = CLOTHES_REQUEST_URI + "/categories-seasons";
     public static final String CLOTHES_IMAGE_REGISTER_REQUEST_URI = "/clothes/image";
+
+    public static final String NOTIFICATION_REQUEST_URI = "/notifications";
 }
