@@ -39,6 +39,7 @@ public class CommentService implements CommentUseCase {
     }
 
     @Override
+    @Transactional
     public void registerComment(Long memberId, Long postId, CommentRegisterCommand commentRegisterCommand) {
         Comment comment = commentRegisterCommand.toComment();
         Post post = postPersistencePort.findById(postId)
