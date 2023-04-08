@@ -4,8 +4,10 @@ import dandi.dandi.notification.application.port.out.NotificationPersistencePort
 import dandi.dandi.notification.domain.Notification;
 import dandi.dandi.notification.domain.PostLikeNotification;
 import dandi.dandi.postlike.domain.PostLikedEvent;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionalEventListener;
 
+@Component
 public class PostLikeNotificationEventHandler extends NotificationEventHandler {
 
     public PostLikeNotificationEventHandler(NotificationPersistencePort notificationPersistencePort) {

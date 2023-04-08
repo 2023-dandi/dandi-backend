@@ -9,7 +9,7 @@ public class WeatherNotification extends Notification {
     private final LocalDate weatherDate;
 
     public WeatherNotification(Long id, Long memberId, NotificationType type, LocalDate weatherDate) {
-        super(id, memberId, type);
+        super(id, memberId, type, null);
         this.weatherDate = weatherDate;
     }
 

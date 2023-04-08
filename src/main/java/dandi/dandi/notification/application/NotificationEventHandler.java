@@ -5,11 +5,9 @@ import dandi.dandi.notification.domain.Notification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-@Component
 @Async("asyncExecutor")
 @Transactional(propagation = Propagation.REQUIRES_NEW)
 public class NotificationEventHandler {

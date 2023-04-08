@@ -1,7 +1,15 @@
 package dandi.dandi.notification.adapter.persistence;
 
+import static dandi.dandi.notification.domain.NotificationType.COMMENT;
+import static dandi.dandi.notification.domain.NotificationType.POST_LIKE;
+import static dandi.dandi.notification.domain.NotificationType.WEATHER;
+
+import dandi.dandi.advice.InternalServerException;
 import dandi.dandi.notification.domain.Notification;
 import dandi.dandi.notification.domain.NotificationType;
+import dandi.dandi.notification.domain.PostCommentNotification;
+import dandi.dandi.notification.domain.PostLikeNotification;
+import dandi.dandi.notification.domain.WeatherNotification;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
@@ -64,5 +72,32 @@ public class NotificationJpaEntity {
                 notification.getWeatherDate(),
                 null
         );
+    }
+
+    public Long getCommentId() {
+        return commentId;
+    }
+
+    public PostCommentNotification toPostCommentNotification(String commentContent) {
+        return new PostCommentNotification(
+                id, memberId, COMMENT, createdAt.toLocalDate(), postId, commentId, commentContent);
+    }
+
+    public boolean hasNotificationType(NotificationType notificationType) {
+        return this.notificationType == notificationType;
+    }
+
+    public Notification toNotification() {
+        validateNotPostCommentNotification();
+        if (notificationType == POST_LIKE) {
+            return new PostLikeNotification(id, memberId, POST_LIKE, createdAt.toLocalDate(), postId);
+        }
+        return new WeatherNotification(id, memberId, WEATHER, weatherDate);
+    }
+
+    private void validateNotPostCommentNotification() {
+        if (notificationType == COMMENT) {
+            throw InternalServerException.commentNotificationConvert(id);
+        }
     }
 }
