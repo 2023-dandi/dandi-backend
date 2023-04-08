@@ -10,6 +10,7 @@ public class NotificationResponse {
     private NotificationType type;
     private LocalDate createdAt;
     private Long postId;
+    private Long commentId;
     private String commentContent;
     private LocalDate weatherDate;
 
@@ -21,6 +22,7 @@ public class NotificationResponse {
         this.type = notification.getType();
         this.createdAt = notification.getCreatedAt();
         this.postId = notification.getPostId();
+        this.commentId = notification.getCommentId();
         this.commentContent = notification.getCommentContent();
         this.weatherDate = notification.getWeatherDate();
     }
@@ -35,6 +37,10 @@ public class NotificationResponse {
 
     public LocalDate getCreatedAt() {
         return createdAt;
+    }
+
+    public Long getCommentId() {
+        return commentId;
     }
 
     public Long getPostId() {
