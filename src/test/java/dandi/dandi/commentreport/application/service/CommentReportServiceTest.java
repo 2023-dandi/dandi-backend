@@ -3,6 +3,7 @@ package dandi.dandi.commentreport.application.service;
 import static dandi.dandi.comment.CommentFixture.COMMENT_ID;
 import static dandi.dandi.member.MemberTestFixture.MEMBER_ID;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import dandi.dandi.comment.application.port.out.CommentPersistencePort;
@@ -49,5 +50,18 @@ class CommentReportServiceTest {
         assertThatThrownBy(() -> commentReportService.reportComment(MEMBER_ID, COMMENT_ID))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessage("이미 신고한 댓글입니다.");
+    }
+
+    @DisplayName("댓글을 신고할 수 있다.")
+    @Test
+    void reportComment() {
+        when(commentPersistencePort.existsById(COMMENT_ID))
+                .thenReturn(true);
+        when(commentReportPersistencePort.existsByMemberIdAndCommentId(MEMBER_ID, COMMENT_ID))
+                .thenReturn(false);
+
+        commentReportService.reportComment(MEMBER_ID, COMMENT_ID);
+
+        verify(commentReportPersistencePort).saveReportOf(MEMBER_ID, COMMENT_ID);
     }
 }
