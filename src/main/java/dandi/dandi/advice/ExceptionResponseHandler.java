@@ -25,8 +25,8 @@ public class ExceptionResponseHandler {
                 .body(new ExceptionResponse(exception.getMessage()));
     }
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ExceptionResponse> badRequest(IllegalArgumentException exception) {
+    @ExceptionHandler({IllegalArgumentException.class, IllegalStateException.class})
+    public ResponseEntity<ExceptionResponse> badRequest(RuntimeException exception) {
         return ResponseEntity.badRequest()
                 .body(new ExceptionResponse(exception.getMessage()));
     }
