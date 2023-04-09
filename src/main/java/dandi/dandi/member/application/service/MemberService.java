@@ -8,6 +8,7 @@ import dandi.dandi.member.application.port.in.MemberInfoResponse;
 import dandi.dandi.member.application.port.in.MemberUseCase;
 import dandi.dandi.member.application.port.in.NicknameDuplicationCheckResponse;
 import dandi.dandi.member.application.port.in.NicknameUpdateCommand;
+import dandi.dandi.member.application.port.out.MemberBlockPersistencePort;
 import dandi.dandi.member.application.port.out.MemberPersistencePort;
 import dandi.dandi.member.domain.Member;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,11 +20,14 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberService implements MemberUseCase {
 
     private final MemberPersistencePort memberPersistencePort;
+    private final MemberBlockPersistencePort memberBlockPersistencePort;
     private final String imageAccessUrl;
 
     public MemberService(MemberPersistencePort memberPersistencePort,
+                         MemberBlockPersistencePort memberBlockPersistencePort,
                          @Value("${cloud.aws.cloud-front.uri}") String imageAccessUrl) {
         this.memberPersistencePort = memberPersistencePort;
+        this.memberBlockPersistencePort = memberBlockPersistencePort;
         this.imageAccessUrl = imageAccessUrl;
     }
 
@@ -68,12 +72,20 @@ public class MemberService implements MemberUseCase {
     @Override
     @Transactional
     public void blockMember(Long memberId, MemberBlockCommand memberBlockCommand) {
-        validateMemberExistence(memberBlockCommand.getMemberId());
+        Long blockedMemberId = memberBlockCommand.getMemberId();
+        validateMemberExistence(blockedMemberId);
+        validateAlreadyBlocked(memberId, blockedMemberId);
     }
 
     private void validateMemberExistence(Long blockedMemberId) {
         if (!memberPersistencePort.existsById(blockedMemberId)) {
             throw NotFoundException.member();
+        }
+    }
+
+    private void validateAlreadyBlocked(Long memberId, Long blockedMemberId) {
+        if (memberBlockPersistencePort.existsByBlockingMemberIdAndBlockedMemberId(memberId, blockedMemberId)) {
+            throw new IllegalStateException("이미 차단한 사용자입니다.");
         }
     }
 }

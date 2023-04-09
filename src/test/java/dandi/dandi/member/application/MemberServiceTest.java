@@ -19,6 +19,7 @@ import dandi.dandi.member.application.port.in.LocationUpdateCommand;
 import dandi.dandi.member.application.port.in.MemberBlockCommand;
 import dandi.dandi.member.application.port.in.MemberInfoResponse;
 import dandi.dandi.member.application.port.in.NicknameUpdateCommand;
+import dandi.dandi.member.application.port.out.MemberBlockPersistencePort;
 import dandi.dandi.member.application.port.out.MemberPersistencePort;
 import dandi.dandi.member.application.service.MemberService;
 import dandi.dandi.member.domain.Member;
@@ -34,8 +35,10 @@ import org.springframework.dao.DataIntegrityViolationException;
 class MemberServiceTest {
 
     private final MemberPersistencePort memberPersistencePort = Mockito.mock(MemberPersistencePort.class);
+    private final MemberBlockPersistencePort memberBlockPersistencePort =
+            Mockito.mock(MemberBlockPersistencePort.class);
     private final MemberService memberService =
-            new MemberService(memberPersistencePort, IMAGE_ACCESS_URL);
+            new MemberService(memberPersistencePort, memberBlockPersistencePort, IMAGE_ACCESS_URL);
 
     @DisplayName("기본 프로필 이미지의 회원 정보를 반환할 수 있다.")
     @Test
@@ -119,5 +122,19 @@ class MemberServiceTest {
         assertThatThrownBy(() -> memberService.blockMember(MEMBER_ID, new MemberBlockCommand(blockedMemberId)))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessage(NotFoundException.member().getMessage());
+    }
+
+    @DisplayName("이미 차단한 사용자를 차단하려고 하면 예외를 발생시킨다.")
+    @Test
+    void blockMember_AlreadyBlocked() {
+        Long blockedMemberId = 2L;
+        when(memberPersistencePort.existsById(blockedMemberId))
+                .thenReturn(true);
+        when(memberBlockPersistencePort.existsByBlockingMemberIdAndBlockedMemberId(MEMBER_ID, blockedMemberId))
+                .thenReturn(true);
+
+        assertThatThrownBy(() -> memberService.blockMember(MEMBER_ID, new MemberBlockCommand(blockedMemberId)))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessage("이미 차단한 사용자입니다.");
     }
 }
