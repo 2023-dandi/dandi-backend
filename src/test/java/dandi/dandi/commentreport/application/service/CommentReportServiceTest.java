@@ -6,6 +6,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
 import dandi.dandi.comment.application.port.out.CommentPersistencePort;
+import dandi.dandi.commentreport.application.port.out.CommentReportPersistencePort;
 import dandi.dandi.common.exception.NotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,6 +21,9 @@ class CommentReportServiceTest {
     @Mock
     private CommentPersistencePort commentPersistencePort;
 
+    @Mock
+    private CommentReportPersistencePort commentReportPersistencePort;
+
     @InjectMocks
     private CommentReportService commentReportService;
 
@@ -32,5 +36,18 @@ class CommentReportServiceTest {
         assertThatThrownBy(() -> commentReportService.reportComment(MEMBER_ID, COMMENT_ID))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessage(NotFoundException.comment().getMessage());
+    }
+
+    @DisplayName("이미 신고한 댓글을 신고하려 하면 예외를 발생시킨다.")
+    @Test
+    void reportComment_AlreadyReported() {
+        when(commentPersistencePort.existsById(COMMENT_ID))
+                .thenReturn(true);
+        when(commentReportPersistencePort.existsByMemberIdAndCommentId(MEMBER_ID, COMMENT_ID))
+                .thenReturn(true);
+
+        assertThatThrownBy(() -> commentReportService.reportComment(MEMBER_ID, COMMENT_ID))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessage("이미 신고한 댓글입니다.");
     }
 }
