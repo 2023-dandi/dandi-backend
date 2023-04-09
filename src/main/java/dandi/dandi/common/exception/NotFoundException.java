@@ -19,4 +19,8 @@ public class NotFoundException extends RuntimeException {
     public static NotFoundException comment() {
         return new NotFoundException("댓글");
     }
+
+    public static NotFoundException notification() {
+        return new NotFoundException("알림");
+    }
 }
