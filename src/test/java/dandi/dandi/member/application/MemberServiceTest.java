@@ -137,4 +137,18 @@ class MemberServiceTest {
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessage("이미 차단한 사용자입니다.");
     }
+
+    @DisplayName("다른 사용자를 차단할 수 있다.")
+    @Test
+    void blockMember() {
+        Long blockedMemberId = 2L;
+        when(memberPersistencePort.existsById(blockedMemberId))
+                .thenReturn(true);
+        when(memberBlockPersistencePort.existsByBlockingMemberIdAndBlockedMemberId(MEMBER_ID, blockedMemberId))
+                .thenReturn(false);
+
+        memberService.blockMember(MEMBER_ID, new MemberBlockCommand(blockedMemberId));
+
+        verify(memberBlockPersistencePort).saveMemberBlockOf(MEMBER_ID, blockedMemberId);
+    }
 }

@@ -75,6 +75,7 @@ public class MemberService implements MemberUseCase {
         Long blockedMemberId = memberBlockCommand.getMemberId();
         validateMemberExistence(blockedMemberId);
         validateAlreadyBlocked(memberId, blockedMemberId);
+        memberBlockPersistencePort.saveMemberBlockOf(memberId, blockedMemberId);
     }
 
     private void validateMemberExistence(Long blockedMemberId) {
