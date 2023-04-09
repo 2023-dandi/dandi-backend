@@ -14,6 +14,11 @@ public class PostReportPersistenceAdapter implements PostReportPersistencePort {
     }
 
     @Override
+    public boolean existsByMemberIdAndPostId(Long memberId, Long postId) {
+        return postReportRepository.existsByMemberIdAndPostId(memberId, postId);
+    }
+
+    @Override
     public void savePostReportOf(Long memberId, Long postId) {
         PostReportJpaEntity postReportJpaEntity = new PostReportJpaEntity(memberId, postId);
         postReportRepository.save(postReportJpaEntity);
