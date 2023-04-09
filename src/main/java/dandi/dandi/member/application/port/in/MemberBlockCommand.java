@@ -2,16 +2,16 @@ package dandi.dandi.member.application.port.in;
 
 public class MemberBlockCommand {
 
-    private Long memberId;
+    private Long blockerMemberId;
 
     public MemberBlockCommand() {
     }
 
-    public MemberBlockCommand(Long memberId) {
-        this.memberId = memberId;
+    public MemberBlockCommand(Long blockerMemberId) {
+        this.blockerMemberId = blockerMemberId;
     }
 
-    public Long getMemberId() {
-        return memberId;
+    public Long getBlockerMemberId() {
+        return blockerMemberId;
     }
 }

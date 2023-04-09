@@ -72,7 +72,7 @@ public class MemberService implements MemberUseCase {
     @Override
     @Transactional
     public void blockMember(Long memberId, MemberBlockCommand memberBlockCommand) {
-        Long blockedMemberId = memberBlockCommand.getMemberId();
+        Long blockedMemberId = memberBlockCommand.getBlockerMemberId();
         validateMemberExistence(blockedMemberId);
         validateAlreadyBlocked(memberId, blockedMemberId);
         memberBlockPersistencePort.saveMemberBlockOf(memberId, blockedMemberId);
