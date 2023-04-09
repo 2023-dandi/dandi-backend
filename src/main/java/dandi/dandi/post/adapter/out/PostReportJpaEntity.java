@@ -21,4 +21,9 @@ public class PostReportJpaEntity {
 
     protected PostReportJpaEntity() {
     }
+
+    public PostReportJpaEntity(Long memberId, Long postId) {
+        this.memberId = memberId;
+        this.postId = postId;
+    }
 }
