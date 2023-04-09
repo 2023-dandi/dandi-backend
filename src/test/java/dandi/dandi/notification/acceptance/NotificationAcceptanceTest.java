@@ -20,9 +20,9 @@ import org.springframework.http.HttpStatus;
 
 class NotificationAcceptanceTest extends AcceptanceTest {
 
-    @DisplayName("알림을 조회할 수 있다.")
+    @DisplayName("알림 조회 요청에 성공하면 200과 알림을 응답한다.")
     @Test
-    void getNotifications() {
+    void getNotifications_Ok() {
         String token = getToken();
         Long postId = registerPost(token);
         String anotherToken = getAnotherMemberToken();
