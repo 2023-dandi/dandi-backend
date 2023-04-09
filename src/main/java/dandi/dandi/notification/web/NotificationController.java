@@ -6,6 +6,8 @@ import dandi.dandi.notification.application.port.in.NotificationUseCase;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -20,5 +22,11 @@ public class NotificationController implements NotificationControllerDocs {
     @GetMapping("/notifications")
     public ResponseEntity<NotificationResponses> getNotifications(@Login Long memberId, Pageable pageable) {
         return ResponseEntity.ok(notificationUseCase.getNotifications(memberId, pageable));
+    }
+
+    @PutMapping("/notifications/{notificationId}/check")
+    public ResponseEntity<Void> checkNotification(@Login Long memberId, @PathVariable Long notificationId) {
+        notificationUseCase.checkNotification(memberId, notificationId);
+        return ResponseEntity.noContent().build();
     }
 }

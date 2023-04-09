@@ -8,6 +8,7 @@ import dandi.dandi.comment.adapter.persistence.CommentRepository;
 import dandi.dandi.notification.application.port.out.NotificationPersistencePort;
 import dandi.dandi.notification.domain.Notification;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -30,6 +31,17 @@ public class NotificationPersistenceAdapter implements NotificationPersistencePo
     public void save(Notification notification) {
         NotificationJpaEntity notificationJpaEntity = NotificationJpaEntity.fromNotification(notification);
         notificationRepository.save(notificationJpaEntity);
+    }
+
+    @Override
+    public Optional<Notification> findById(Long id) {
+        return notificationRepository.findById(id)
+                .map(this::mapToNotification);
+    }
+
+    @Override
+    public void updateCheckTrue(Long id) {
+        notificationRepository.updateCheckTrue(id);
     }
 
     @Override

@@ -8,12 +8,18 @@ public abstract class Notification {
     private final Long memberId;
     private final NotificationType type;
     private final LocalDate createdAt;
+    private final boolean checked;
 
-    protected Notification(Long id, Long memberId, NotificationType type, LocalDate createdAt) {
+    protected Notification(Long id, Long memberId, NotificationType type, LocalDate createdAt, boolean checked) {
         this.id = id;
         this.memberId = memberId;
         this.type = type;
         this.createdAt = createdAt;
+        this.checked = checked;
+    }
+
+    public final boolean isOwnedBy(Long memberId) {
+        return this.memberId.equals(memberId);
     }
 
     public final Long getId() {
@@ -38,5 +44,9 @@ public abstract class Notification {
 
     public LocalDate getCreatedAt() {
         return createdAt;
+    }
+
+    public boolean isChecked() {
+        return checked;
     }
 }

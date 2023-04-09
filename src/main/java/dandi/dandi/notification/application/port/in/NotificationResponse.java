@@ -9,6 +9,7 @@ public class NotificationResponse {
     private Long id;
     private NotificationType type;
     private LocalDate createdAt;
+    private boolean checked;
     private Long postId;
     private Long commentId;
     private String commentContent;
@@ -21,6 +22,7 @@ public class NotificationResponse {
         this.id = notification.getId();
         this.type = notification.getType();
         this.createdAt = notification.getCreatedAt();
+        this.checked = notification.isChecked();
         this.postId = notification.getPostId();
         this.commentId = notification.getCommentId();
         this.commentContent = notification.getCommentContent();
@@ -37,6 +39,10 @@ public class NotificationResponse {
 
     public LocalDate getCreatedAt() {
         return createdAt;
+    }
+
+    public boolean isChecked() {
+        return checked;
     }
 
     public Long getCommentId() {

@@ -8,9 +8,13 @@ import static dandi.dandi.notification.domain.NotificationType.POST_LIKE;
 import static dandi.dandi.notification.domain.NotificationType.WEATHER;
 import static dandi.dandi.post.PostFixture.POST_ID;
 import static dandi.dandi.utils.PaginationUtils.CREATED_AT_DESC_TEST_SIZE_PAGEABLE;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import dandi.dandi.common.exception.ForbiddenException;
+import dandi.dandi.common.exception.NotFoundException;
 import dandi.dandi.notification.application.port.in.NotificationResponse;
 import dandi.dandi.notification.application.port.in.NotificationResponses;
 import dandi.dandi.notification.application.port.out.NotificationPersistencePort;
@@ -20,6 +24,7 @@ import dandi.dandi.notification.domain.PostLikeNotification;
 import dandi.dandi.notification.domain.WeatherNotification;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,6 +36,8 @@ import org.springframework.data.domain.SliceImpl;
 @ExtendWith(MockitoExtension.class)
 class NotificationServiceTest {
 
+    private static final Long NOTIFICATION_ID = 1L;
+
     @Mock
     private NotificationPersistencePort notificationPersistencePort;
 
@@ -41,11 +48,11 @@ class NotificationServiceTest {
     @Test
     void getNotifications() {
         List<Notification> notifications = List.of(
-                new WeatherNotification(4L, MEMBER_ID, WEATHER, LocalDate.now()),
-                new PostCommentNotification(3L, MEMBER_ID, COMMENT, LocalDate.now(), POST_ID, COMMENT_ID,
-                        COMMENT_CONTENT),
-                new PostLikeNotification(2L, MEMBER_ID, POST_LIKE, LocalDate.now(), POST_ID),
-                new PostLikeNotification(1L, MEMBER_ID, POST_LIKE, LocalDate.now(), POST_ID));
+                new WeatherNotification(4L, MEMBER_ID, WEATHER, false, LocalDate.now()),
+                new PostCommentNotification(3L, MEMBER_ID, COMMENT, LocalDate.now(), true, POST_ID,
+                        COMMENT_ID, COMMENT_CONTENT),
+                new PostLikeNotification(2L, MEMBER_ID, POST_LIKE, LocalDate.now(), true, POST_ID),
+                new PostLikeNotification(1L, MEMBER_ID, POST_LIKE, LocalDate.now(), true, POST_ID));
         when(notificationPersistencePort.findByMemberId(MEMBER_ID, CREATED_AT_DESC_TEST_SIZE_PAGEABLE))
                 .thenReturn(new SliceImpl<>(notifications, CREATED_AT_DESC_TEST_SIZE_PAGEABLE, false));
 
@@ -54,5 +61,43 @@ class NotificationServiceTest {
 
         List<NotificationResponse> notificationResponses = actual.getNotifications();
         assertThat(notificationResponses).hasSize(4);
+    }
+
+    @DisplayName("존재하지 않는 알림의 id로 확인 여부를 true로 변경하려하면 예외를 발생시킨다.")
+    @Test
+    void checkNotification_NotFound() {
+        when(notificationPersistencePort.findById(NOTIFICATION_ID))
+                .thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> notificationService.checkNotification(MEMBER_ID, NOTIFICATION_ID))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessage(NotFoundException.notification().getMessage());
+    }
+
+    @DisplayName("다른 사용자의 알림 확인 여부를 변경하려하면 예외를 발생시킨다.")
+    @Test
+    void checkNotification_Forbidden() {
+        WeatherNotification notification =
+                new WeatherNotification(NOTIFICATION_ID, MEMBER_ID, WEATHER, false, LocalDate.now());
+        when(notificationPersistencePort.findById(NOTIFICATION_ID))
+                .thenReturn(Optional.of(notification));
+        Long anotherMemberId = 2L;
+
+        assertThatThrownBy(() -> notificationService.checkNotification(anotherMemberId, NOTIFICATION_ID))
+                .isInstanceOf(ForbiddenException.class)
+                .hasMessage(ForbiddenException.notificationCheckModification().getMessage());
+    }
+
+    @DisplayName("자신의 알림 확인 여부를 true로 변경할 수 있다.")
+    @Test
+    void checkNotification() {
+        WeatherNotification notification =
+                new WeatherNotification(NOTIFICATION_ID, MEMBER_ID, WEATHER, false, LocalDate.now());
+        when(notificationPersistencePort.findById(NOTIFICATION_ID))
+                .thenReturn(Optional.of(notification));
+
+        notificationService.checkNotification(MEMBER_ID, NOTIFICATION_ID);
+
+        verify(notificationPersistencePort).updateCheckTrue(NOTIFICATION_ID);
     }
 }
