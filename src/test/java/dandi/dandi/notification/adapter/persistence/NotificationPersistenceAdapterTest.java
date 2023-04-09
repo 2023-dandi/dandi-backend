@@ -15,6 +15,7 @@ import dandi.dandi.notification.domain.PostCommentNotification;
 import dandi.dandi.notification.domain.PostLikeNotification;
 import dandi.dandi.notification.domain.WeatherNotification;
 import java.time.LocalDate;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,17 @@ class NotificationPersistenceAdapterTest extends PersistenceAdapterTest {
 
         assertThatCode(() -> notificationPersistenceAdapter.save(notification))
                 .doesNotThrowAnyException();
+    }
+
+    @DisplayName("id에 해당하는 알림을 찾을 수 있다.")
+    @Test
+    void findById() {
+        Notification notification = PostLikeNotification.initial(MEMBER_ID, POST_ID);
+        notificationPersistenceAdapter.save(notification);
+
+        Optional<Notification> actual = notificationPersistenceAdapter.findById(1L);
+
+        assertThat(actual).isPresent();
     }
 
     @DisplayName("사용자의 알림을 찾을 수 있다.")
