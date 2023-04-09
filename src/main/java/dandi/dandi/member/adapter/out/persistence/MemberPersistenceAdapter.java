@@ -56,4 +56,9 @@ public class MemberPersistenceAdapter implements MemberPersistencePort {
     public void updateLocation(Long memberId, Double latitude, Double longitude) {
         memberRepository.updateLocation(memberId, latitude, longitude);
     }
+
+    @Override
+    public boolean existsById(Long id) {
+        return memberRepository.existsById(id);
+    }
 }

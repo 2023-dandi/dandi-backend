@@ -23,4 +23,8 @@ public class NotFoundException extends RuntimeException {
     public static NotFoundException notification() {
         return new NotFoundException("알림");
     }
+
+    public static NotFoundException member() {
+        return new NotFoundException("사용자");
+    }
 }

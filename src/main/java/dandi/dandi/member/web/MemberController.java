@@ -1,6 +1,7 @@
 package dandi.dandi.member.web;
 
 import dandi.dandi.auth.web.support.Login;
+import dandi.dandi.member.application.port.in.MemberBlockCommand;
 import dandi.dandi.member.application.port.in.MemberInfoResponse;
 import dandi.dandi.member.application.port.in.MemberUseCase;
 import dandi.dandi.member.application.port.in.NicknameDuplicationCheckResponse;
@@ -8,10 +9,12 @@ import dandi.dandi.member.application.port.in.ProfileImageUpdateResponse;
 import dandi.dandi.member.application.port.in.ProfileImageUseCase;
 import dandi.dandi.member.web.dto.in.LocationUpdateRequest;
 import dandi.dandi.member.web.dto.in.NicknameUpdateRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -62,5 +65,11 @@ public class MemberController implements MemberControllerDocs {
                                                                                @RequestPart(value = "profileImage")
                                                                                MultipartFile profileImage) {
         return ResponseEntity.ok(profileImageUseCase.updateProfileImage(memberId, profileImage));
+    }
+
+    @PostMapping("/blocks")
+    public ResponseEntity<Void> blockMember(@Login Long memberId, @RequestBody MemberBlockCommand memberBlockCommand) {
+        memberUseCase.blockMember(memberId, memberBlockCommand);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }

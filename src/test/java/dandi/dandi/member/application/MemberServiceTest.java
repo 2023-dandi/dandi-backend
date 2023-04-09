@@ -2,6 +2,7 @@ package dandi.dandi.member.application;
 
 import static dandi.dandi.member.MemberTestFixture.INITIAL_PROFILE_IMAGE_URL;
 import static dandi.dandi.member.MemberTestFixture.MEMBER;
+import static dandi.dandi.member.MemberTestFixture.MEMBER_ID;
 import static dandi.dandi.member.MemberTestFixture.NICKNAME;
 import static dandi.dandi.member.MemberTestFixture.OAUTH_ID;
 import static dandi.dandi.utils.TestImageUtils.IMAGE_ACCESS_URL;
@@ -13,9 +14,12 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import dandi.dandi.auth.exception.UnauthorizedException;
+import dandi.dandi.common.exception.NotFoundException;
 import dandi.dandi.member.application.port.in.LocationUpdateCommand;
+import dandi.dandi.member.application.port.in.MemberBlockCommand;
 import dandi.dandi.member.application.port.in.MemberInfoResponse;
 import dandi.dandi.member.application.port.in.NicknameUpdateCommand;
+import dandi.dandi.member.application.port.out.MemberBlockPersistencePort;
 import dandi.dandi.member.application.port.out.MemberPersistencePort;
 import dandi.dandi.member.application.service.MemberService;
 import dandi.dandi.member.domain.Member;
@@ -31,8 +35,10 @@ import org.springframework.dao.DataIntegrityViolationException;
 class MemberServiceTest {
 
     private final MemberPersistencePort memberPersistencePort = Mockito.mock(MemberPersistencePort.class);
+    private final MemberBlockPersistencePort memberBlockPersistencePort =
+            Mockito.mock(MemberBlockPersistencePort.class);
     private final MemberService memberService =
-            new MemberService(memberPersistencePort, IMAGE_ACCESS_URL);
+            new MemberService(memberPersistencePort, memberBlockPersistencePort, IMAGE_ACCESS_URL);
 
     @DisplayName("기본 프로필 이미지의 회원 정보를 반환할 수 있다.")
     @Test
@@ -104,5 +110,45 @@ class MemberServiceTest {
         memberService.updateLocation(MEMBER.getId(), locationUpdateCommand);
 
         verify(memberPersistencePort).updateLocation(MEMBER.getId(), latitude, latitude);
+    }
+
+    @DisplayName("존재하지 않는 id의 사용자를 차단하려고 하면 예외를 발생시킨다.")
+    @Test
+    void blockMember_NotFound() {
+        Long blockedMemberId = 2L;
+        when(memberPersistencePort.existsById(blockedMemberId))
+                .thenReturn(false);
+
+        assertThatThrownBy(() -> memberService.blockMember(MEMBER_ID, new MemberBlockCommand(blockedMemberId)))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessage(NotFoundException.member().getMessage());
+    }
+
+    @DisplayName("이미 차단한 사용자를 차단하려고 하면 예외를 발생시킨다.")
+    @Test
+    void blockMember_AlreadyBlocked() {
+        Long blockedMemberId = 2L;
+        when(memberPersistencePort.existsById(blockedMemberId))
+                .thenReturn(true);
+        when(memberBlockPersistencePort.existsByBlockingMemberIdAndBlockedMemberId(MEMBER_ID, blockedMemberId))
+                .thenReturn(true);
+
+        assertThatThrownBy(() -> memberService.blockMember(MEMBER_ID, new MemberBlockCommand(blockedMemberId)))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessage("이미 차단한 사용자입니다.");
+    }
+
+    @DisplayName("다른 사용자를 차단할 수 있다.")
+    @Test
+    void blockMember() {
+        Long blockedMemberId = 2L;
+        when(memberPersistencePort.existsById(blockedMemberId))
+                .thenReturn(true);
+        when(memberBlockPersistencePort.existsByBlockingMemberIdAndBlockedMemberId(MEMBER_ID, blockedMemberId))
+                .thenReturn(false);
+
+        memberService.blockMember(MEMBER_ID, new MemberBlockCommand(blockedMemberId));
+
+        verify(memberBlockPersistencePort).saveMemberBlockOf(MEMBER_ID, blockedMemberId);
     }
 }

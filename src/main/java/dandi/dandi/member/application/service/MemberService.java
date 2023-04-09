@@ -1,11 +1,14 @@
 package dandi.dandi.member.application.service;
 
 import dandi.dandi.auth.exception.UnauthorizedException;
+import dandi.dandi.common.exception.NotFoundException;
 import dandi.dandi.member.application.port.in.LocationUpdateCommand;
+import dandi.dandi.member.application.port.in.MemberBlockCommand;
 import dandi.dandi.member.application.port.in.MemberInfoResponse;
 import dandi.dandi.member.application.port.in.MemberUseCase;
 import dandi.dandi.member.application.port.in.NicknameDuplicationCheckResponse;
 import dandi.dandi.member.application.port.in.NicknameUpdateCommand;
+import dandi.dandi.member.application.port.out.MemberBlockPersistencePort;
 import dandi.dandi.member.application.port.out.MemberPersistencePort;
 import dandi.dandi.member.domain.Member;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,11 +20,14 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberService implements MemberUseCase {
 
     private final MemberPersistencePort memberPersistencePort;
+    private final MemberBlockPersistencePort memberBlockPersistencePort;
     private final String imageAccessUrl;
 
     public MemberService(MemberPersistencePort memberPersistencePort,
+                         MemberBlockPersistencePort memberBlockPersistencePort,
                          @Value("${cloud.aws.cloud-front.uri}") String imageAccessUrl) {
         this.memberPersistencePort = memberPersistencePort;
+        this.memberBlockPersistencePort = memberBlockPersistencePort;
         this.imageAccessUrl = imageAccessUrl;
     }
 
@@ -61,5 +67,26 @@ public class MemberService implements MemberUseCase {
     public NicknameDuplicationCheckResponse checkDuplication(Long memberId, String nickname) {
         boolean duplicated = memberPersistencePort.existsMemberByNicknameExceptMine(memberId, nickname);
         return new NicknameDuplicationCheckResponse(duplicated);
+    }
+
+    @Override
+    @Transactional
+    public void blockMember(Long memberId, MemberBlockCommand memberBlockCommand) {
+        Long blockedMemberId = memberBlockCommand.getBlockerMemberId();
+        validateMemberExistence(blockedMemberId);
+        validateAlreadyBlocked(memberId, blockedMemberId);
+        memberBlockPersistencePort.saveMemberBlockOf(memberId, blockedMemberId);
+    }
+
+    private void validateMemberExistence(Long blockedMemberId) {
+        if (!memberPersistencePort.existsById(blockedMemberId)) {
+            throw NotFoundException.member();
+        }
+    }
+
+    private void validateAlreadyBlocked(Long memberId, Long blockedMemberId) {
+        if (memberBlockPersistencePort.existsByBlockingMemberIdAndBlockedMemberId(memberId, blockedMemberId)) {
+            throw new IllegalStateException("이미 차단한 사용자입니다.");
+        }
     }
 }

@@ -3,9 +3,11 @@ package dandi.dandi.member.acceptance;
 import static dandi.dandi.common.HttpMethodFixture.httpGetWithAuthorization;
 import static dandi.dandi.common.HttpMethodFixture.httpPatchWithAuthorization;
 import static dandi.dandi.common.HttpMethodFixture.httpPost;
+import static dandi.dandi.common.HttpMethodFixture.httpPostWithAuthorization;
 import static dandi.dandi.common.HttpMethodFixture.httpPutWithAuthorizationAndImgFile;
 import static dandi.dandi.common.HttpResponseExtractor.extractExceptionMessage;
 import static dandi.dandi.common.RequestURI.LOGIN_REQUEST_URI;
+import static dandi.dandi.common.RequestURI.MEMBER_BLOCK_REQUEST_URI;
 import static dandi.dandi.common.RequestURI.MEMBER_INFO_URI;
 import static dandi.dandi.common.RequestURI.MEMBER_NICKNAME_DUPLICATION_CHECK_URI;
 import static dandi.dandi.common.RequestURI.MEMBER_NICKNAME_LOCATION;
@@ -21,6 +23,7 @@ import static org.mockito.Mockito.when;
 import dandi.dandi.auth.application.port.in.TokenResponse;
 import dandi.dandi.auth.web.in.LoginRequest;
 import dandi.dandi.common.AcceptanceTest;
+import dandi.dandi.member.application.port.in.MemberBlockCommand;
 import dandi.dandi.member.application.port.in.MemberInfoResponse;
 import dandi.dandi.member.application.port.in.NicknameDuplicationCheckResponse;
 import dandi.dandi.member.application.port.in.ProfileImageUpdateResponse;
@@ -215,6 +218,49 @@ class MemberAcceptanceTest extends AcceptanceTest {
                 httpPutWithAuthorizationAndImgFile(MEMBER_PROFILE_IMAGE_URI, token, testImgFile);
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
+    }
+
+    @DisplayName("다른 사용자 차단 요청에 성공하면 201을 응답한다.")
+    @Test
+    void blockMember_Created() {
+        String token = getToken();
+        signUpAnotherMember();
+        Long anotherMemberId = 2L;
+
+        ExtractableResponse<Response> response =
+                httpPostWithAuthorization(MEMBER_BLOCK_REQUEST_URI, new MemberBlockCommand(anotherMemberId), token);
+
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
+    }
+
+    @DisplayName("존재하지 않는 사용자 차단 요청에 대해 404를 응답한다.")
+    @Test
+    void blockMember_NotFound() {
+        String token = getToken();
+        Long notFoundMemberId = 2L;
+
+        ExtractableResponse<Response> response =
+                httpPostWithAuthorization(MEMBER_BLOCK_REQUEST_URI, new MemberBlockCommand(notFoundMemberId), token);
+
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.NOT_FOUND.value());
+    }
+
+    @DisplayName("이미 차단한 사용자 차단 요청에 대해 400을 응답한다.")
+    @Test
+    void blockMember_BadRequest() {
+        String token = getToken();
+        signUpAnotherMember();
+        Long anotherMemberId = 2L;
+        httpPostWithAuthorization(MEMBER_BLOCK_REQUEST_URI, new MemberBlockCommand(anotherMemberId), token);
+
+        ExtractableResponse<Response> response =
+                httpPostWithAuthorization(MEMBER_BLOCK_REQUEST_URI, new MemberBlockCommand(anotherMemberId), token);
+
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+    }
+
+    private void signUpAnotherMember() {
+        getAnotherMemberToken();
     }
 
     private String getNickname(String token) {
