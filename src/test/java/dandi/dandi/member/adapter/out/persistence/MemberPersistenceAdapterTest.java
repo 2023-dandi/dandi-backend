@@ -123,4 +123,16 @@ class MemberPersistenceAdapterTest extends PersistenceAdapterTest {
                 () -> assertThat(locationUpdatedMember.getLongitude()).isEqualTo(newLongitude)
         );
     }
+
+    @DisplayName("id에 해당하는 사용자가 존재하는지 찾을 수 있다.")
+    @ParameterizedTest
+    @CsvSource({"1, true", "2, false"})
+    void existsById(Long id, boolean expected) {
+        Member member = Member.initial(OAUTH_ID, "nickname", INITIAL_PROFILE_IMAGE_URL);
+        memberPersistenceAdapter.save(member);
+
+        boolean actual = memberPersistenceAdapter.existsById(id);
+
+        assertThat(actual).isEqualTo(expected);
+    }
 }
