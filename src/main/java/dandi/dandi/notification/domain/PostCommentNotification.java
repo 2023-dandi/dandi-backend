@@ -9,15 +9,15 @@ public class PostCommentNotification extends PostNotification {
     private final Long commentId;
     private final String commentContent;
 
-    public PostCommentNotification(Long id, Long memberId, NotificationType type, LocalDate createdAt, Long postId,
-                                   Long commentId, String commentContent) {
-        super(id, memberId, type, createdAt, postId);
+    public PostCommentNotification(Long id, Long memberId, NotificationType type, LocalDate createdAt, boolean checked,
+                                   Long postId, Long commentId, String commentContent) {
+        super(id, memberId, type, createdAt, checked, postId);
         this.commentId = commentId;
         this.commentContent = commentContent;
     }
 
     public static PostCommentNotification initial(Long memberId, Long postId, Long commentId) {
-        return new PostCommentNotification(null, memberId, COMMENT, null, postId, commentId, null);
+        return new PostCommentNotification(null, memberId, COMMENT, null, false, postId, commentId, null);
     }
 
     @Override

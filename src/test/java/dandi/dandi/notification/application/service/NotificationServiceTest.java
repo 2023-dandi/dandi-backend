@@ -41,11 +41,11 @@ class NotificationServiceTest {
     @Test
     void getNotifications() {
         List<Notification> notifications = List.of(
-                new WeatherNotification(4L, MEMBER_ID, WEATHER, LocalDate.now()),
-                new PostCommentNotification(3L, MEMBER_ID, COMMENT, LocalDate.now(), POST_ID, COMMENT_ID,
-                        COMMENT_CONTENT),
-                new PostLikeNotification(2L, MEMBER_ID, POST_LIKE, LocalDate.now(), POST_ID),
-                new PostLikeNotification(1L, MEMBER_ID, POST_LIKE, LocalDate.now(), POST_ID));
+                new WeatherNotification(4L, MEMBER_ID, WEATHER, false, LocalDate.now()),
+                new PostCommentNotification(3L, MEMBER_ID, COMMENT, LocalDate.now(), true, POST_ID,
+                        COMMENT_ID, COMMENT_CONTENT),
+                new PostLikeNotification(2L, MEMBER_ID, POST_LIKE, LocalDate.now(), true, POST_ID),
+                new PostLikeNotification(1L, MEMBER_ID, POST_LIKE, LocalDate.now(), true, POST_ID));
         when(notificationPersistencePort.findByMemberId(MEMBER_ID, CREATED_AT_DESC_TEST_SIZE_PAGEABLE))
                 .thenReturn(new SliceImpl<>(notifications, CREATED_AT_DESC_TEST_SIZE_PAGEABLE, false));
 

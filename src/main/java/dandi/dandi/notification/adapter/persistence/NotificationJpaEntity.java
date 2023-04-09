@@ -39,6 +39,8 @@ public class NotificationJpaEntity {
     @Enumerated(value = EnumType.STRING)
     private NotificationType notificationType;
 
+    private boolean checked;
+
     private Long postId;
 
     private Long commentId;
@@ -51,11 +53,13 @@ public class NotificationJpaEntity {
     protected NotificationJpaEntity() {
     }
 
-    public NotificationJpaEntity(Long id, Long memberId, NotificationType notificationType, Long postId, Long commentId,
-                                 LocalDate weatherDate, LocalDateTime createdAt) {
+    public NotificationJpaEntity(Long id, Long memberId, NotificationType notificationType, boolean checked,
+                                 Long postId,
+                                 Long commentId, LocalDate weatherDate, LocalDateTime createdAt) {
         this.id = id;
         this.memberId = memberId;
         this.notificationType = notificationType;
+        this.checked = checked;
         this.postId = postId;
         this.commentId = commentId;
         this.weatherDate = weatherDate;
@@ -67,6 +71,7 @@ public class NotificationJpaEntity {
                 notification.getId(),
                 notification.getMemberId(),
                 notification.getType(),
+                notification.isChecked(),
                 notification.getPostId(),
                 notification.getCommentId(),
                 notification.getWeatherDate(),
@@ -80,7 +85,7 @@ public class NotificationJpaEntity {
 
     public PostCommentNotification toPostCommentNotification(String commentContent) {
         return new PostCommentNotification(
-                id, memberId, COMMENT, createdAt.toLocalDate(), postId, commentId, commentContent);
+                id, memberId, COMMENT, createdAt.toLocalDate(), checked, postId, commentId, commentContent);
     }
 
     public boolean hasNotificationType(NotificationType notificationType) {
@@ -90,9 +95,9 @@ public class NotificationJpaEntity {
     public Notification toNotification() {
         validateNotPostCommentNotification();
         if (notificationType == POST_LIKE) {
-            return new PostLikeNotification(id, memberId, POST_LIKE, createdAt.toLocalDate(), postId);
+            return new PostLikeNotification(id, memberId, POST_LIKE, createdAt.toLocalDate(), checked, postId);
         }
-        return new WeatherNotification(id, memberId, WEATHER, weatherDate);
+        return new WeatherNotification(id, memberId, WEATHER, checked, weatherDate);
     }
 
     private void validateNotPostCommentNotification() {
