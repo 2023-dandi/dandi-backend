@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class PostReportController {
+public class PostReportController implements PostReportControllerDocs {
 
     private final PostReportUseCase postReportUseCase;
 
