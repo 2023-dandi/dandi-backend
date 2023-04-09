@@ -2,6 +2,7 @@ package dandi.dandi.member.application;
 
 import static dandi.dandi.member.MemberTestFixture.INITIAL_PROFILE_IMAGE_URL;
 import static dandi.dandi.member.MemberTestFixture.MEMBER;
+import static dandi.dandi.member.MemberTestFixture.MEMBER_ID;
 import static dandi.dandi.member.MemberTestFixture.NICKNAME;
 import static dandi.dandi.member.MemberTestFixture.OAUTH_ID;
 import static dandi.dandi.utils.TestImageUtils.IMAGE_ACCESS_URL;
@@ -13,7 +14,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import dandi.dandi.auth.exception.UnauthorizedException;
+import dandi.dandi.common.exception.NotFoundException;
 import dandi.dandi.member.application.port.in.LocationUpdateCommand;
+import dandi.dandi.member.application.port.in.MemberBlockCommand;
 import dandi.dandi.member.application.port.in.MemberInfoResponse;
 import dandi.dandi.member.application.port.in.NicknameUpdateCommand;
 import dandi.dandi.member.application.port.out.MemberPersistencePort;
@@ -104,5 +107,17 @@ class MemberServiceTest {
         memberService.updateLocation(MEMBER.getId(), locationUpdateCommand);
 
         verify(memberPersistencePort).updateLocation(MEMBER.getId(), latitude, latitude);
+    }
+
+    @DisplayName("존재하지 않는 id의 사용자를 차단하려고 하면 예외를 발생시킨다.")
+    @Test
+    void blockMember_NotFound() {
+        Long blockedMemberId = 2L;
+        when(memberPersistencePort.existsById(blockedMemberId))
+                .thenReturn(false);
+
+        assertThatThrownBy(() -> memberService.blockMember(MEMBER_ID, new MemberBlockCommand(blockedMemberId)))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessage(NotFoundException.member().getMessage());
     }
 }

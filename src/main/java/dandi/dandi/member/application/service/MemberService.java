@@ -1,7 +1,9 @@
 package dandi.dandi.member.application.service;
 
 import dandi.dandi.auth.exception.UnauthorizedException;
+import dandi.dandi.common.exception.NotFoundException;
 import dandi.dandi.member.application.port.in.LocationUpdateCommand;
+import dandi.dandi.member.application.port.in.MemberBlockCommand;
 import dandi.dandi.member.application.port.in.MemberInfoResponse;
 import dandi.dandi.member.application.port.in.MemberUseCase;
 import dandi.dandi.member.application.port.in.NicknameDuplicationCheckResponse;
@@ -61,5 +63,17 @@ public class MemberService implements MemberUseCase {
     public NicknameDuplicationCheckResponse checkDuplication(Long memberId, String nickname) {
         boolean duplicated = memberPersistencePort.existsMemberByNicknameExceptMine(memberId, nickname);
         return new NicknameDuplicationCheckResponse(duplicated);
+    }
+
+    @Override
+    @Transactional
+    public void blockMember(Long memberId, MemberBlockCommand memberBlockCommand) {
+        validateMemberExistence(memberBlockCommand.getMemberId());
+    }
+
+    private void validateMemberExistence(Long blockedMemberId) {
+        if (!memberPersistencePort.existsById(blockedMemberId)) {
+            throw NotFoundException.member();
+        }
     }
 }
