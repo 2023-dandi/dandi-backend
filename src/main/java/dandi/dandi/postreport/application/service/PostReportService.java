@@ -24,6 +24,7 @@ public class PostReportService implements PostReportUseCase {
     public void reportPost(Long memberId, Long postId) {
         validatePostExistence(postId);
         validateAlreadyReported(memberId, postId);
+        postReportPersistencePort.savePostReportOf(memberId, postId);
     }
 
     private void validatePostExistence(Long postId) {

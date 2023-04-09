@@ -3,6 +3,7 @@ package dandi.dandi.postreport.application.service;
 import static dandi.dandi.member.MemberTestFixture.MEMBER_ID;
 import static dandi.dandi.post.PostFixture.POST_ID;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import dandi.dandi.common.exception.NotFoundException;
@@ -49,5 +50,18 @@ class PostReportServiceTest {
         assertThatThrownBy(() -> postReportService.reportPost(MEMBER_ID, POST_ID))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessage("이미 신고한 게시글입니다.");
+    }
+
+    @DisplayName("게시글을 신고할 수 있다.")
+    @Test
+    void reportPost() {
+        when(postPersistencePort.existsById(POST_ID))
+                .thenReturn(true);
+        when(postReportPersistencePort.existsByMemberIdAndPostId(MEMBER_ID, POST_ID))
+                .thenReturn(false);
+
+        postReportService.reportPost(MEMBER_ID, POST_ID);
+
+        verify(postReportPersistencePort).savePostReportOf(MEMBER_ID, POST_ID);
     }
 }
