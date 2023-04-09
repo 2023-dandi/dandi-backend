@@ -17,6 +17,8 @@ import dandi.dandi.member.domain.Member;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Slice;
 
@@ -82,5 +84,19 @@ class CommentPersistenceAdapterTest extends PersistenceAdapterTest {
                 () -> assertThat(foundBeforeDeletion).isPresent(),
                 () -> assertThat(foundAfterDeletion).isEmpty()
         );
+    }
+
+    @DisplayName("id에 해당하는 댓글이 존재하는지 찾을 수 있다.")
+    @ParameterizedTest
+    @CsvSource({"1, true", "2, false"})
+    void existsById(Long id, boolean expected) {
+        Long memberId = memberPersistenceAdapter.save(Member.initial(OAUTH_ID, NICKNAME, INITIAL_PROFILE_IMAGE_URL))
+                .getId();
+        Comment comment = Comment.initial(COMMENT_CONTENT);
+        commentPersistenceAdapter.save(comment, POST_ID, memberId);
+
+        boolean actual = commentPersistenceAdapter.existsById(id);
+
+        assertThat(actual).isEqualTo(expected);
     }
 }

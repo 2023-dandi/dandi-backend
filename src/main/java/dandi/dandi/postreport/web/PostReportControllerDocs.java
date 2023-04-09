@@ -8,7 +8,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@Tag(name = "게시글 신고")
+@Tag(name = "신고/차단")
 public interface PostReportControllerDocs {
 
     @Operation(summary = "게시글 신고")

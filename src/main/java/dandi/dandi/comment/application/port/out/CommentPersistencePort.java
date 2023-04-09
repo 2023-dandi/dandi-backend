@@ -14,4 +14,6 @@ public interface CommentPersistencePort {
     Optional<Comment> findById(Long id);
 
     void deleteById(Long id);
+
+    boolean existsById(Long id);
 }
