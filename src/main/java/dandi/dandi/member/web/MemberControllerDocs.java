@@ -5,6 +5,7 @@ import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
 
 import dandi.dandi.advice.ExceptionResponse;
+import dandi.dandi.member.application.port.in.MemberBlockCommand;
 import dandi.dandi.member.application.port.in.MemberInfoResponse;
 import dandi.dandi.member.application.port.in.NicknameDuplicationCheckResponse;
 import dandi.dandi.member.application.port.in.ProfileImageUpdateResponse;
@@ -76,4 +77,12 @@ public interface MemberControllerDocs {
     })
     ResponseEntity<ProfileImageUpdateResponse> updateMemberProfileImage(@Parameter(hidden = true) Long memberId,
                                                                         @Parameter(hidden = true) MultipartFile profileImage);
+
+    @Operation(summary = "사용자 차단")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "사용자 차단 성공"),
+            @ApiResponse(responseCode = "400", description = "이미 차단한 사용자"),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 사용자 사용자"),
+    })
+    ResponseEntity<Void> blockMember(@Parameter(hidden = true) Long memberId, MemberBlockCommand memberBlockCommand);
 }
