@@ -6,6 +6,7 @@ import static dandi.dandi.post.PostFixture.POST_ID;
 import static dandi.dandi.utils.PaginationUtils.CREATED_AT_DESC_TEST_SIZE_PAGEABLE;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatCode;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import dandi.dandi.comment.adapter.persistence.CommentPersistenceAdapter;
 import dandi.dandi.comment.domain.Comment;
@@ -47,6 +48,25 @@ class NotificationPersistenceAdapterTest extends PersistenceAdapterTest {
         Optional<Notification> actual = notificationPersistenceAdapter.findById(1L);
 
         assertThat(actual).isPresent();
+    }
+
+    @DisplayName("id에 해당하는 알림의 확인 여부를 true로 변경할 수 있다.")
+    @Test
+    void updateCheckTrue() {
+        Notification notification = PostLikeNotification.initial(MEMBER_ID, POST_ID);
+        notificationPersistenceAdapter.save(notification);
+        boolean checkBeforeUpdate = notification.isChecked();
+
+        notificationPersistenceAdapter.updateCheckTrue(1L);
+
+        entityManager.clear();
+        boolean checkAfterUpdate = notificationPersistenceAdapter.findById(1L)
+                .get()
+                .isChecked();
+        assertAll(
+                () -> assertThat(checkBeforeUpdate).isFalse(),
+                () -> assertThat(checkAfterUpdate).isTrue()
+        );
     }
 
     @DisplayName("사용자의 알림을 찾을 수 있다.")

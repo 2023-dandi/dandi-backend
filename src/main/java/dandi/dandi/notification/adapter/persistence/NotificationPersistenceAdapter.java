@@ -40,6 +40,11 @@ public class NotificationPersistenceAdapter implements NotificationPersistencePo
     }
 
     @Override
+    public void updateCheckTrue(Long id) {
+        notificationRepository.updateCheckTrue(id);
+    }
+
+    @Override
     public Slice<Notification> findByMemberId(Long memberId, Pageable pageable) {
         Slice<NotificationJpaEntity> notificationJpaEntities =
                 notificationRepository.findByMemberId(memberId, pageable);

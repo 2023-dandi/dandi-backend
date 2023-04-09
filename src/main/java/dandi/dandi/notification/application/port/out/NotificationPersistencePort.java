@@ -12,4 +12,6 @@ public interface NotificationPersistencePort {
     Optional<Notification> findById(Long id);
 
     Slice<Notification> findByMemberId(Long memberId, Pageable pageable);
+
+    void updateCheckTrue(Long id);
 }
