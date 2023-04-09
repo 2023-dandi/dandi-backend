@@ -18,6 +18,10 @@ public abstract class Notification {
         this.checked = checked;
     }
 
+    public final boolean isOwnedBy(Long memberId) {
+        return this.memberId.equals(memberId);
+    }
+
     public final Long getId() {
         return id;
     }
