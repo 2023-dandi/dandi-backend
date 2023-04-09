@@ -2,7 +2,7 @@ package dandi.dandi.common;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,8 +19,9 @@ public class PersistenceAdapterTest {
     @Autowired
     private DatabaseCleaner databaseCleaner;
 
-    @BeforeEach
+    @AfterEach
     void cleanUp() {
+        databaseCleaner.truncate();
         databaseCleaner.initializeAutoIncrement();
     }
 }
