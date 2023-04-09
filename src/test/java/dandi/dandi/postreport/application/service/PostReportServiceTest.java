@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 
 import dandi.dandi.common.exception.NotFoundException;
 import dandi.dandi.post.application.port.out.PostPersistencePort;
+import dandi.dandi.postreport.application.port.out.PostReportPersistencePort;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,6 +21,9 @@ class PostReportServiceTest {
     @Mock
     private PostPersistencePort postPersistencePort;
 
+    @Mock
+    private PostReportPersistencePort postReportPersistencePort;
+
     @InjectMocks
     private PostReportService postReportService;
 
@@ -32,5 +36,18 @@ class PostReportServiceTest {
         assertThatThrownBy(() -> postReportService.reportPost(MEMBER_ID, POST_ID))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessage(NotFoundException.post().getMessage());
+    }
+
+    @DisplayName("이미 신고한 글을 신고하려고 하면 예외를 발생시킨다.")
+    @Test
+    void reportPost_AlreadyReported() {
+        when(postPersistencePort.existsById(POST_ID))
+                .thenReturn(true);
+        when(postReportPersistencePort.existsByMemberIdAndPostId(MEMBER_ID, POST_ID))
+                .thenReturn(true);
+
+        assertThatThrownBy(() -> postReportService.reportPost(MEMBER_ID, POST_ID))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessage("이미 신고한 게시글입니다.");
     }
 }
