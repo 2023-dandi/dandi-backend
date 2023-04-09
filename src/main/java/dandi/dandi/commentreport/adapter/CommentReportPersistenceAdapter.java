@@ -17,4 +17,9 @@ public class CommentReportPersistenceAdapter implements CommentReportPersistence
         CommentReportJpaEntity commentReportJpaEntity = new CommentReportJpaEntity(memberId, commentId);
         commentReportRepository.save(commentReportJpaEntity);
     }
+
+    @Override
+    public boolean existsByMemberIdAndCommentId(Long memberId, Long commentId) {
+        return commentReportRepository.existsByMemberIdAndCommentId(memberId, commentId);
+    }
 }
