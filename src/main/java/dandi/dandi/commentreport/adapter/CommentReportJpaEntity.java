@@ -21,4 +21,9 @@ public class CommentReportJpaEntity {
 
     protected CommentReportJpaEntity() {
     }
+
+    public CommentReportJpaEntity(Long memberId, Long commentId) {
+        this.memberId = memberId;
+        this.commentId = commentId;
+    }
 }
