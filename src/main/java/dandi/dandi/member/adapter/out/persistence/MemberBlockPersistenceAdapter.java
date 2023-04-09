@@ -17,4 +17,9 @@ public class MemberBlockPersistenceAdapter implements MemberBlockPersistencePort
         MemberBlockJpaEntity memberBlockJpaEntity = new MemberBlockJpaEntity(blockingMemberId, blockedMemberId);
         memberBlockRepository.save(memberBlockJpaEntity);
     }
+
+    @Override
+    public boolean existsByBlockingMemberIdAndBlockedMemberId(Long blockingMemberId, Long blockedMemberId) {
+        return memberBlockRepository.existsByBlockingMemberIdAndBlockedMemberId(blockingMemberId, blockedMemberId);
+    }
 }
