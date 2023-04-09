@@ -56,4 +56,9 @@ public class CommentPersistenceAdapter implements CommentPersistencePort {
     public void deleteById(Long id) {
         commentRepository.deleteById(id);
     }
+
+    @Override
+    public boolean existsById(Long id) {
+        return commentRepository.existsById(id);
+    }
 }
