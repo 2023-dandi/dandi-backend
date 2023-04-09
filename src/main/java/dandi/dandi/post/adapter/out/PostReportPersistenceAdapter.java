@@ -1,7 +1,6 @@
-package dandi.dandi.postreport.adapter.persistence;
+package dandi.dandi.post.adapter.out;
 
-import dandi.dandi.post.adapter.out.PostReportJpaEntity;
-import dandi.dandi.postreport.application.port.out.PostReportPersistencePort;
+import dandi.dandi.post.application.port.out.PostReportPersistencePort;
 import org.springframework.stereotype.Component;
 
 @Component

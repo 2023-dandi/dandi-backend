@@ -6,6 +6,7 @@ import static dandi.dandi.post.PostFixture.ADDITIONAL_OUTFIT_FEELING_INDICES;
 import static dandi.dandi.post.PostFixture.MAX_TEMPERATURE;
 import static dandi.dandi.post.PostFixture.MIN_TEMPERATURE;
 import static dandi.dandi.post.PostFixture.OUTFIT_FEELING_INDEX;
+import static dandi.dandi.post.PostFixture.POST_ID;
 import static dandi.dandi.post.PostFixture.POST_IMAGE_FULL_URL;
 import static dandi.dandi.post.PostFixture.TEST_POST;
 import static dandi.dandi.utils.TestImageUtils.IMAGE_ACCESS_URL;
@@ -22,6 +23,7 @@ import dandi.dandi.post.application.port.in.PostDetailResponse;
 import dandi.dandi.post.application.port.in.PostRegisterCommand;
 import dandi.dandi.post.application.port.in.PostWriterResponse;
 import dandi.dandi.post.application.port.out.PostPersistencePort;
+import dandi.dandi.post.application.port.out.PostReportPersistencePort;
 import dandi.dandi.post.domain.Post;
 import dandi.dandi.postlike.application.port.out.PostLikePersistencePort;
 import java.util.Optional;
@@ -38,8 +40,9 @@ class PostServiceTest {
 
     private final PostPersistencePort postPersistencePort = Mockito.mock(PostPersistencePort.class);
     private final PostLikePersistencePort postLikePersistencePort = Mockito.mock(PostLikePersistencePort.class);
-    private final PostService postService =
-            new PostService(postPersistencePort, postLikePersistencePort, IMAGE_ACCESS_URL);
+    private final PostReportPersistencePort postReportPersistencePort = Mockito.mock(PostReportPersistencePort.class);
+    private final PostService postService = new PostService(
+            postPersistencePort, postLikePersistencePort, postReportPersistencePort, IMAGE_ACCESS_URL);
 
     @DisplayName("게시글을 작성할 수 있다.")
     @Test
@@ -126,5 +129,42 @@ class PostServiceTest {
         assertThatThrownBy(() -> postService.deletePost(postDeletionForbiddenMemberId, postId))
                 .isInstanceOf(ForbiddenException.class)
                 .hasMessage(ForbiddenException.postDeletion().getMessage());
+    }
+
+    @DisplayName("존재하지 않는 글을 신고하려고 하면 예외를 발생시킨다.")
+    @Test
+    void reportPost_NotFound() {
+        when(postPersistencePort.existsById(POST_ID))
+                .thenReturn(false);
+
+        assertThatThrownBy(() -> postService.reportPost(MEMBER_ID, POST_ID))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessage(NotFoundException.post().getMessage());
+    }
+
+    @DisplayName("이미 신고한 글을 신고하려고 하면 예외를 발생시킨다.")
+    @Test
+    void reportPost_AlreadyReported() {
+        when(postPersistencePort.existsById(POST_ID))
+                .thenReturn(true);
+        when(postReportPersistencePort.existsByMemberIdAndPostId(MEMBER_ID, POST_ID))
+                .thenReturn(true);
+
+        assertThatThrownBy(() -> postService.reportPost(MEMBER_ID, POST_ID))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessage("이미 신고한 게시글입니다.");
+    }
+
+    @DisplayName("게시글을 신고할 수 있다.")
+    @Test
+    void reportPost() {
+        when(postPersistencePort.existsById(POST_ID))
+                .thenReturn(true);
+        when(postReportPersistencePort.existsByMemberIdAndPostId(MEMBER_ID, POST_ID))
+                .thenReturn(false);
+
+        postService.reportPost(MEMBER_ID, POST_ID);
+
+        verify(postReportPersistencePort).savePostReportOf(MEMBER_ID, POST_ID);
     }
 }
