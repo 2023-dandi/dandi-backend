@@ -21,4 +21,8 @@ public class ForbiddenException extends RuntimeException {
     public static ForbiddenException commentDeletion() {
         return new ForbiddenException("댓글을 삭제할 수 있는 권한이 없습니다.");
     }
+
+    public static ForbiddenException notificationCheckModification() {
+        return new ForbiddenException("알림의 확인 여부를 수정할 수 있는 권한이 없습니다.");
+    }
 }
