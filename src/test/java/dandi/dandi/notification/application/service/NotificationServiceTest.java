@@ -10,6 +10,7 @@ import static dandi.dandi.post.PostFixture.POST_ID;
 import static dandi.dandi.utils.PaginationUtils.CREATED_AT_DESC_TEST_SIZE_PAGEABLE;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import dandi.dandi.common.exception.ForbiddenException;
@@ -85,5 +86,18 @@ class NotificationServiceTest {
         assertThatThrownBy(() -> notificationService.checkNotification(anotherMemberId, NOTIFICATION_ID))
                 .isInstanceOf(ForbiddenException.class)
                 .hasMessage(ForbiddenException.notificationCheckModification().getMessage());
+    }
+
+    @DisplayName("자신의 알림 확인 여부를 true로 변경할 수 있다.")
+    @Test
+    void checkNotification() {
+        WeatherNotification notification =
+                new WeatherNotification(NOTIFICATION_ID, MEMBER_ID, WEATHER, false, LocalDate.now());
+        when(notificationPersistencePort.findById(NOTIFICATION_ID))
+                .thenReturn(Optional.of(notification));
+
+        notificationService.checkNotification(MEMBER_ID, NOTIFICATION_ID);
+
+        verify(notificationPersistencePort).updateCheckTrue(NOTIFICATION_ID);
     }
 }

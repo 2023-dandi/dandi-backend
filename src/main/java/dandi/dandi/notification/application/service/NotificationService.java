@@ -39,6 +39,7 @@ public class NotificationService implements NotificationUseCase {
         Notification notification = notificationPersistencePort.findById(notificationId)
                 .orElseThrow(NotFoundException::notification);
         validateModification(notification, memberId);
+        notificationPersistencePort.updateCheckTrue(notificationId);
     }
 
     private void validateModification(Notification notification, Long memberId) {
