@@ -12,6 +12,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.mockito.Mockito.when;
 
+import dandi.dandi.common.exception.ForbiddenException;
 import dandi.dandi.common.exception.NotFoundException;
 import dandi.dandi.notification.application.port.in.NotificationResponse;
 import dandi.dandi.notification.application.port.in.NotificationResponses;
@@ -70,5 +71,19 @@ class NotificationServiceTest {
         assertThatThrownBy(() -> notificationService.checkNotification(MEMBER_ID, NOTIFICATION_ID))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessage(NotFoundException.notification().getMessage());
+    }
+
+    @DisplayName("다른 사용자의 알림 확인 여부를 변경하려하면 예외를 발생시킨다.")
+    @Test
+    void checkNotification_Forbidden() {
+        WeatherNotification notification =
+                new WeatherNotification(NOTIFICATION_ID, MEMBER_ID, WEATHER, false, LocalDate.now());
+        when(notificationPersistencePort.findById(NOTIFICATION_ID))
+                .thenReturn(Optional.of(notification));
+        Long anotherMemberId = 2L;
+
+        assertThatThrownBy(() -> notificationService.checkNotification(anotherMemberId, NOTIFICATION_ID))
+                .isInstanceOf(ForbiddenException.class)
+                .hasMessage(ForbiddenException.notificationCheckModification().getMessage());
     }
 }

@@ -1,5 +1,6 @@
 package dandi.dandi.notification.application.service;
 
+import dandi.dandi.common.exception.ForbiddenException;
 import dandi.dandi.common.exception.NotFoundException;
 import dandi.dandi.notification.application.port.in.NotificationResponse;
 import dandi.dandi.notification.application.port.in.NotificationResponses;
@@ -37,5 +38,12 @@ public class NotificationService implements NotificationUseCase {
     public void checkNotification(Long memberId, Long notificationId) {
         Notification notification = notificationPersistencePort.findById(notificationId)
                 .orElseThrow(NotFoundException::notification);
+        validateModification(notification, memberId);
+    }
+
+    private void validateModification(Notification notification, Long memberId) {
+        if (!notification.isOwnedBy(memberId)) {
+            throw ForbiddenException.notificationCheckModification();
+        }
     }
 }
