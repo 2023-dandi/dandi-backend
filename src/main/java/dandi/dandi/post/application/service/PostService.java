@@ -14,6 +14,7 @@ import dandi.dandi.post.application.port.in.PostResponse;
 import dandi.dandi.post.application.port.in.PostUseCase;
 import dandi.dandi.post.application.port.in.PostWriterResponse;
 import dandi.dandi.post.application.port.out.PostPersistencePort;
+import dandi.dandi.post.application.port.out.PostReportPersistencePort;
 import dandi.dandi.post.domain.Post;
 import dandi.dandi.post.domain.TemperatureSearchCondition;
 import dandi.dandi.post.domain.Temperatures;
@@ -35,12 +36,15 @@ public class PostService implements PostUseCase {
 
     private final PostPersistencePort postPersistencePort;
     private final PostLikePersistencePort postLikePersistencePort;
+    private final PostReportPersistencePort postReportPersistencePort;
     private final String imageAccessUrl;
 
     public PostService(PostPersistencePort postPersistencePort, PostLikePersistencePort postLikePersistencePort,
+                       PostReportPersistencePort postReportPersistencePort,
                        @Value("${cloud.aws.cloud-front.uri}") String imageAccessUrl) {
         this.postPersistencePort = postPersistencePort;
         this.postLikePersistencePort = postLikePersistencePort;
+        this.postReportPersistencePort = postReportPersistencePort;
         this.imageAccessUrl = imageAccessUrl;
     }
 
@@ -136,5 +140,25 @@ public class PostService implements PostUseCase {
         PostWriterResponse postWriterResponse = new PostWriterResponse(post, imageAccessUrl);
         return new MyPostsByTemperatureResponses(
                 myPostByTemperatureResponses, postWriterResponse, myPostsByTemperature.isLast());
+    }
+
+    @Override
+    @Transactional
+    public void reportPost(Long memberId, Long postId) {
+        validatePostExistence(postId);
+        validateAlreadyReported(memberId, postId);
+        postReportPersistencePort.savePostReportOf(memberId, postId);
+    }
+
+    private void validatePostExistence(Long postId) {
+        if (!postPersistencePort.existsById(postId)) {
+            throw NotFoundException.post();
+        }
+    }
+
+    private void validateAlreadyReported(Long memberId, Long postId) {
+        if (postReportPersistencePort.existsByMemberIdAndPostId(memberId, postId)) {
+            throw new IllegalStateException("이미 신고한 게시글입니다.");
+        }
     }
 }

@@ -1,4 +1,4 @@
-package dandi.dandi.commentreport.application.port.out;
+package dandi.dandi.comment.application.port.out;
 
 public interface CommentReportPersistencePort {
 

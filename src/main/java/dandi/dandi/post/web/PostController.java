@@ -89,4 +89,10 @@ public class PostController implements PostControllerDocs {
         return ResponseEntity.ok(
                 postUseCase.getMyPostsByTemperature(memberId, minTemperature, maxTemperature, pageable));
     }
+
+    @PostMapping("/{postId}/reports")
+    public ResponseEntity<Void> reportPost(@Login Long memberId, @PathVariable Long postId) {
+        postUseCase.reportPost(memberId, postId);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
 }

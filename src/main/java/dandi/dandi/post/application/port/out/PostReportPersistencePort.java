@@ -1,4 +1,4 @@
-package dandi.dandi.postreport.application.port.out;
+package dandi.dandi.post.application.port.out;
 
 public interface PostReportPersistencePort {
 

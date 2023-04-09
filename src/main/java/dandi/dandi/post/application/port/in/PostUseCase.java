@@ -16,4 +16,6 @@ public interface PostUseCase {
                                                           Double maxTemperature, Pageable pageable);
 
     FeedResponse getPostsByTemperature(Long memberId, Double minTemperature, Double maxTemperature, Pageable pageable);
+
+    void reportPost(Long memberId, Long postId);
 }

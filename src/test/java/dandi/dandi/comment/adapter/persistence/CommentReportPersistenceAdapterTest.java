@@ -1,4 +1,4 @@
-package dandi.dandi.commentreport.adapter;
+package dandi.dandi.comment.adapter.persistence;
 
 import static dandi.dandi.comment.CommentFixture.COMMENT_ID;
 import static dandi.dandi.member.MemberTestFixture.MEMBER_ID;

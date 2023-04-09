@@ -1,4 +1,4 @@
-package dandi.dandi.postreport.adapter.persistence;
+package dandi.dandi.post.adapter.out;
 
 import static dandi.dandi.member.MemberTestFixture.MEMBER_ID;
 import static dandi.dandi.post.PostFixture.POST_ID;

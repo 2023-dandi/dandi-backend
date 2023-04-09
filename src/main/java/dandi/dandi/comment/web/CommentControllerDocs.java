@@ -49,4 +49,13 @@ public interface CommentControllerDocs {
 
     )
     ResponseEntity<Void> deleteComment(@Parameter(hidden = true) Long memberId, @PathVariable Long commentId);
+
+
+    @Operation(summary = "댓글 신고")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "댓글 신고 성공"),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 댓글"),
+            @ApiResponse(responseCode = "400", description = "이미 신고한 댓글"),
+    })
+    ResponseEntity<Void> reportComment(@Parameter(hidden = true) Long memberId, @PathVariable Long commentId);
 }

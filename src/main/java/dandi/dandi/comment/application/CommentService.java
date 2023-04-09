@@ -6,6 +6,7 @@ import dandi.dandi.comment.application.port.in.CommentResponses;
 import dandi.dandi.comment.application.port.in.CommentUseCase;
 import dandi.dandi.comment.application.port.in.CommentWriterResponse;
 import dandi.dandi.comment.application.port.out.CommentPersistencePort;
+import dandi.dandi.comment.application.port.out.CommentReportPersistencePort;
 import dandi.dandi.comment.domain.Comment;
 import dandi.dandi.comment.domain.CommentCreatedEvent;
 import dandi.dandi.common.exception.ForbiddenException;
@@ -26,14 +27,17 @@ public class CommentService implements CommentUseCase {
 
     private final CommentPersistencePort commentPersistencePort;
     private final PostPersistencePort postPersistencePort;
+    private final CommentReportPersistencePort commentReportPersistencePort;
     private final ApplicationEventPublisher applicationEventPublisher;
     private final String imageAccessUrl;
 
     public CommentService(CommentPersistencePort commentPersistencePort, PostPersistencePort postPersistencePort,
                           ApplicationEventPublisher applicationEventPublisher,
+                          CommentReportPersistencePort commentReportPersistencePort,
                           @Value("${cloud.aws.cloud-front.uri}") String imageAccessUrl) {
         this.commentPersistencePort = commentPersistencePort;
         this.postPersistencePort = postPersistencePort;
+        this.commentReportPersistencePort = commentReportPersistencePort;
         this.applicationEventPublisher = applicationEventPublisher;
         this.imageAccessUrl = imageAccessUrl;
     }
@@ -90,6 +94,26 @@ public class CommentService implements CommentUseCase {
     private void validateOwner(Long memberId, Comment comment) {
         if (!comment.isWittenBy(memberId)) {
             throw ForbiddenException.commentDeletion();
+        }
+    }
+
+    @Override
+    @Transactional
+    public void reportComment(Long memberId, Long commentId) {
+        validateCommentExistence(commentId);
+        validateAlreadyReported(memberId, commentId);
+        commentReportPersistencePort.saveReportOf(memberId, commentId);
+    }
+
+    private void validateCommentExistence(Long commentId) {
+        if (!commentPersistencePort.existsById(commentId)) {
+            throw NotFoundException.comment();
+        }
+    }
+
+    private void validateAlreadyReported(Long memberId, Long commentId) {
+        if (commentReportPersistencePort.existsByMemberIdAndCommentId(memberId, commentId)) {
+            throw new IllegalStateException("이미 신고한 댓글입니다.");
         }
     }
 }

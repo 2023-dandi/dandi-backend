@@ -20,6 +20,7 @@ import static org.mockito.Mockito.when;
 
 import dandi.dandi.comment.application.port.in.CommentResponses;
 import dandi.dandi.comment.application.port.out.CommentPersistencePort;
+import dandi.dandi.comment.application.port.out.CommentReportPersistencePort;
 import dandi.dandi.comment.domain.Comment;
 import dandi.dandi.comment.domain.CommentCreatedEvent;
 import dandi.dandi.common.exception.ForbiddenException;
@@ -42,9 +43,10 @@ class CommentServiceTest {
     private final CommentPersistencePort commentPersistencePort = Mockito.mock(CommentPersistencePort.class);
     private final PostPersistencePort postPersistencePort = Mockito.mock(PostPersistencePort.class);
     private final ApplicationEventPublisher applicationEventPublisher = Mockito.mock(ApplicationEventPublisher.class);
-    private final CommentService commentService =
-            new CommentService(commentPersistencePort, postPersistencePort, applicationEventPublisher,
-                    IMAGE_ACCESS_URL);
+    private final CommentReportPersistencePort commentReportPersistencePort =
+            Mockito.mock(CommentReportPersistencePort.class);
+    private final CommentService commentService = new CommentService(commentPersistencePort, postPersistencePort,
+            applicationEventPublisher, commentReportPersistencePort, IMAGE_ACCESS_URL);
 
     @DisplayName("자신의 게시글에 댓글을 등록할 수 있다.")
     @Test
@@ -155,5 +157,42 @@ class CommentServiceTest {
         assertThatThrownBy(() -> commentService.deleteComment(anotherMemberId, COMMENT_ID))
                 .isInstanceOf(ForbiddenException.class)
                 .hasMessage(ForbiddenException.commentDeletion().getMessage());
+    }
+
+    @DisplayName("존재하지 않는 댓글을 신고하려고 하면 예외를 발생시킨다.")
+    @Test
+    void reportComment_NotFound() {
+        when(commentPersistencePort.existsById(COMMENT_ID))
+                .thenReturn(false);
+
+        assertThatThrownBy(() -> commentService.reportComment(MEMBER_ID, COMMENT_ID))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessage(NotFoundException.comment().getMessage());
+    }
+
+    @DisplayName("이미 신고한 댓글을 신고하려 하면 예외를 발생시킨다.")
+    @Test
+    void reportComment_AlreadyReported() {
+        when(commentPersistencePort.existsById(COMMENT_ID))
+                .thenReturn(true);
+        when(commentReportPersistencePort.existsByMemberIdAndCommentId(MEMBER_ID, COMMENT_ID))
+                .thenReturn(true);
+
+        assertThatThrownBy(() -> commentService.reportComment(MEMBER_ID, COMMENT_ID))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessage("이미 신고한 댓글입니다.");
+    }
+
+    @DisplayName("댓글을 신고할 수 있다.")
+    @Test
+    void reportComment() {
+        when(commentPersistencePort.existsById(COMMENT_ID))
+                .thenReturn(true);
+        when(commentReportPersistencePort.existsByMemberIdAndCommentId(MEMBER_ID, COMMENT_ID))
+                .thenReturn(false);
+
+        commentService.reportComment(MEMBER_ID, COMMENT_ID);
+
+        verify(commentReportPersistencePort).saveReportOf(MEMBER_ID, COMMENT_ID);
     }
 }

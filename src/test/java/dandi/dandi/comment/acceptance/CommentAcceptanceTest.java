@@ -117,4 +117,41 @@ class CommentAcceptanceTest extends AcceptanceTest {
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
     }
+
+    @DisplayName("댓글 신고 요청에 성공하면 201을 응답한다.")
+    @Test
+    void reportComment_Created() {
+        String token = getToken();
+        Long postId = registerPost(token);
+        String anotherToken = getAnotherMemberToken();
+        httpPostWithAuthorization("/posts/" + postId + "/comments", COMMENT_REGISTER_COMMAND, anotherToken);
+
+        ExtractableResponse<Response> response = httpPostWithAuthorization("/comments/1/reports", token);
+
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
+    }
+
+    @DisplayName("이미 신고한 댓글 신고 요청에 대해 400을 응답한다.")
+    @Test
+    void reportComment_BadRequest() {
+        String token = getToken();
+        Long postId = registerPost(token);
+        String anotherToken = getAnotherMemberToken();
+        httpPostWithAuthorization("/posts/" + postId + "/comments", COMMENT_REGISTER_COMMAND, anotherToken);
+        httpPostWithAuthorization("/comments/1/reports", token);
+
+        ExtractableResponse<Response> response = httpPostWithAuthorization("/comments/1/reports", token);
+
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+    }
+
+    @DisplayName("존재하지 않는 댓글 신고 요청에 대해 404를 응답한다.")
+    @Test
+    void reportComment_NotFound() {
+        String token = getToken();
+
+        ExtractableResponse<Response> response = httpPostWithAuthorization("/comments/1/reports", token);
+
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.NOT_FOUND.value());
+    }
 }
