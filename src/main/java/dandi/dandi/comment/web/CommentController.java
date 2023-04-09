@@ -35,10 +35,16 @@ public class CommentController implements CommentControllerDocs {
                                                         Pageable pageable) {
         return ResponseEntity.ok(commentUseCase.getComments(memberId, postId, pageable));
     }
-    
+
     @DeleteMapping("/comments/{commentId}")
     public ResponseEntity<Void> deleteComment(@Login Long memberId, @PathVariable Long commentId) {
         commentUseCase.deleteComment(memberId, commentId);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/comments/{commentId}/reports")
+    public ResponseEntity<Void> reportComment(@Login Long memberId, @PathVariable Long commentId) {
+        commentUseCase.reportComment(memberId, commentId);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }

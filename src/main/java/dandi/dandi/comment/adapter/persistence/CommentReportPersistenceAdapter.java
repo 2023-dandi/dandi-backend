@@ -1,6 +1,6 @@
-package dandi.dandi.commentreport.adapter;
+package dandi.dandi.comment.adapter.persistence;
 
-import dandi.dandi.commentreport.application.port.out.CommentReportPersistencePort;
+import dandi.dandi.comment.application.port.out.CommentReportPersistencePort;
 import org.springframework.stereotype.Component;
 
 @Component

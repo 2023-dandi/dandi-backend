@@ -9,4 +9,6 @@ public interface CommentUseCase {
     CommentResponses getComments(Long memberId, Long postId, Pageable pageable);
 
     void deleteComment(Long memberId, Long commentId);
+
+    void reportComment(Long memberId, Long commentId);
 }
