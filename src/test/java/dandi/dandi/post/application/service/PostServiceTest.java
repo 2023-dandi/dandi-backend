@@ -6,9 +6,9 @@ import static dandi.dandi.post.PostFixture.ADDITIONAL_OUTFIT_FEELING_INDICES;
 import static dandi.dandi.post.PostFixture.MAX_TEMPERATURE;
 import static dandi.dandi.post.PostFixture.MIN_TEMPERATURE;
 import static dandi.dandi.post.PostFixture.OUTFIT_FEELING_INDEX;
+import static dandi.dandi.post.PostFixture.POST;
 import static dandi.dandi.post.PostFixture.POST_ID;
 import static dandi.dandi.post.PostFixture.POST_IMAGE_FULL_URL;
-import static dandi.dandi.post.PostFixture.TEST_POST;
 import static dandi.dandi.utils.TestImageUtils.IMAGE_ACCESS_URL;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -65,7 +65,7 @@ class PostServiceTest {
     void getPostDetails(Long memberId, boolean expectedMine) {
         Long postId = 1L;
         when(postPersistencePort.findById(postId))
-                .thenReturn(Optional.of(TEST_POST));
+                .thenReturn(Optional.of(POST));
         when(postLikePersistencePort.existsByPostIdAndMemberId(memberId, postId))
                 .thenReturn(true);
 
@@ -76,21 +76,21 @@ class PostServiceTest {
                 () -> assertThat(postWriterResponse.getProfileImageUrl())
                         .startsWith(IMAGE_ACCESS_URL + MEMBER.getProfileImgUrl()),
                 () -> assertThat(postWriterResponse.getId())
-                        .isEqualTo(TEST_POST.getWriterId()),
+                        .isEqualTo(POST.getWriterId()),
                 () -> assertThat(postWriterResponse.getNickname())
-                        .isEqualTo(TEST_POST.getWriterNickname()),
+                        .isEqualTo(POST.getWriterNickname()),
                 () -> assertThat(postDetailsResponse.isMine()).isEqualTo(expectedMine),
                 () -> assertThat(postDetailsResponse.isLiked()).isTrue(),
                 () -> assertThat(postDetailsResponse.getPostImageUrl())
-                        .startsWith(IMAGE_ACCESS_URL + TEST_POST.getPostImageUrl()),
+                        .startsWith(IMAGE_ACCESS_URL + POST.getPostImageUrl()),
                 () -> assertThat(postDetailsResponse.getTemperatures().getMin())
-                        .isEqualTo(TEST_POST.getMinTemperature()),
+                        .isEqualTo(POST.getMinTemperature()),
                 () -> assertThat(postDetailsResponse.getTemperatures().getMax())
-                        .isEqualTo(TEST_POST.getMaxTemperature()),
+                        .isEqualTo(POST.getMaxTemperature()),
                 () -> assertThat(postDetailsResponse.getOutfitFeelings().getFeelingIndex())
-                        .isEqualTo(TEST_POST.getWeatherFeelingIndex()),
+                        .isEqualTo(POST.getWeatherFeelingIndex()),
                 () -> assertThat(postDetailsResponse.getOutfitFeelings().getAdditionalFeelingIndices())
-                        .isEqualTo(TEST_POST.getAdditionalWeatherFeelingIndices())
+                        .isEqualTo(POST.getAdditionalWeatherFeelingIndices())
         );
     }
 
@@ -111,7 +111,7 @@ class PostServiceTest {
     void deletePost() {
         Long postId = 1L;
         when(postPersistencePort.findById(postId))
-                .thenReturn(Optional.of(TEST_POST));
+                .thenReturn(Optional.of(POST));
 
         postService.deletePost(MEMBER_ID, postId);
 
@@ -124,7 +124,7 @@ class PostServiceTest {
         Long postId = 1L;
         Long postDeletionForbiddenMemberId = 2L;
         when(postPersistencePort.findById(postId))
-                .thenReturn(Optional.of(TEST_POST));
+                .thenReturn(Optional.of(POST));
 
         assertThatThrownBy(() -> postService.deletePost(postDeletionForbiddenMemberId, postId))
                 .isInstanceOf(ForbiddenException.class)

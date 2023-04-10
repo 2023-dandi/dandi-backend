@@ -1,8 +1,8 @@
 package dandi.dandi.postlike.application.service;
 
 import static dandi.dandi.member.MemberTestFixture.MEMBER_ID;
+import static dandi.dandi.post.PostFixture.POST;
 import static dandi.dandi.post.PostFixture.POST_ID;
-import static dandi.dandi.post.PostFixture.TEST_POST;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
@@ -43,7 +43,7 @@ class PostLikeServiceTest {
     @Test
     void reversePostLike_PostLikeRegister_MyPost() {
         when(postPersistencePort.findById(POST_ID))
-                .thenReturn(Optional.of(TEST_POST));
+                .thenReturn(Optional.of(POST));
         when(postLikePersistencePort.findByMemberIdAndPostId(MEMBER_ID, POST_ID))
                 .thenReturn(Optional.empty());
 
@@ -60,7 +60,7 @@ class PostLikeServiceTest {
     void reversePostLike_PostLikeRegister_OthersPost() {
         Long memberId = 2L;
         when(postPersistencePort.findById(POST_ID))
-                .thenReturn(Optional.of(TEST_POST));
+                .thenReturn(Optional.of(POST));
         when(postLikePersistencePort.findByMemberIdAndPostId(memberId, POST_ID))
                 .thenReturn(Optional.empty());
 
@@ -76,7 +76,7 @@ class PostLikeServiceTest {
     @Test
     void reversePostLike_PostLikeDeletion() {
         when(postPersistencePort.findById(POST_ID))
-                .thenReturn(Optional.of(TEST_POST));
+                .thenReturn(Optional.of(POST));
         PostLike postLike = new PostLike(1L, MEMBER_ID, POST_ID);
         when(postLikePersistencePort.findByMemberIdAndPostId(MEMBER_ID, POST_ID))
                 .thenReturn(Optional.of(postLike));
