@@ -18,6 +18,8 @@ import dandi.dandi.member.domain.Member;
 import dandi.dandi.post.domain.Post;
 import dandi.dandi.post.domain.TemperatureSearchCondition;
 import dandi.dandi.post.domain.Temperatures;
+import dandi.dandi.postlike.adapter.PostLikePersistenceAdapter;
+import dandi.dandi.postlike.domain.PostLike;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
@@ -34,6 +36,9 @@ class PostPersistenceAdapterTest extends PersistenceAdapterTest {
 
     @Autowired
     private MemberPersistencePort memberPersistencePort;
+
+    @Autowired
+    private PostLikePersistenceAdapter postLikePersistenceAdapter;
 
     @DisplayName("게시글을 저장할 수 있다.")
     @Test
@@ -178,6 +183,28 @@ class PostPersistenceAdapterTest extends PersistenceAdapterTest {
         assertAll(
                 () -> assertThat(actual).hasSize(expectedPostSize),
                 () -> assertThat(isDescendingDirectionByCreatedAt(actual.getContent())).isTrue()
+        );
+    }
+
+    @DisplayName("사용자가 좋아요 누른 게시글을 찾을 수 있다.")
+    @Test
+    void findLikedPosts() {
+        Long memberId = saveMember(NICKNAME);
+        Post firstPost = Post.initial(new Temperatures(10.0, 20.0), POST_IMAGE_URL, WEATHER_FEELING);
+        Post secondPost = Post.initial(new Temperatures(11.0, 20.0), POST_IMAGE_URL, WEATHER_FEELING);
+        Post thirdPost = Post.initial(new Temperatures(13.0, 22.0), POST_IMAGE_URL, WEATHER_FEELING);
+        Long savedFirstPostId = postPersistenceAdapter.save(firstPost, memberId);
+        Long savedSecondPostId = postPersistenceAdapter.save(secondPost, memberId);
+        postPersistenceAdapter.save(thirdPost, memberId);
+        postLikePersistenceAdapter.save(PostLike.initial(memberId, savedFirstPostId));
+        postLikePersistenceAdapter.save(PostLike.initial(memberId, savedSecondPostId));
+
+        Slice<Post> likedPosts = postPersistenceAdapter.findLikedPosts(memberId, CREATED_AT_DESC_TEST_SIZE_PAGEABLE);
+
+        assertAll(
+                () -> assertThat(likedPosts).hasSize(2),
+                () -> assertThat(likedPosts.getContent().get(0).getId()).isEqualTo(2L),
+                () -> assertThat(likedPosts.getContent().get(1).getId()).isEqualTo(1L)
         );
     }
 
