@@ -2,6 +2,7 @@ package dandi.dandi.post.web;
 
 import dandi.dandi.auth.web.support.Login;
 import dandi.dandi.post.application.port.in.FeedResponse;
+import dandi.dandi.post.application.port.in.LikedPostResponses;
 import dandi.dandi.post.application.port.in.MyPostResponses;
 import dandi.dandi.post.application.port.in.MyPostsByTemperatureResponses;
 import dandi.dandi.post.application.port.in.PostDetailResponse;
@@ -94,5 +95,10 @@ public class PostController implements PostControllerDocs {
     public ResponseEntity<Void> reportPost(@Login Long memberId, @PathVariable Long postId) {
         postUseCase.reportPost(memberId, postId);
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @GetMapping("/liked")
+    public ResponseEntity<LikedPostResponses> getLikedPost(@Login Long memberId, Pageable pageable) {
+        return ResponseEntity.ok(postUseCase.getLikedPost(memberId, pageable));
     }
 }
