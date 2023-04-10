@@ -5,6 +5,7 @@ import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
 
 import dandi.dandi.advice.ExceptionResponse;
 import dandi.dandi.post.application.port.in.FeedResponse;
+import dandi.dandi.post.application.port.in.LikedPostResponses;
 import dandi.dandi.post.application.port.in.MyPostResponses;
 import dandi.dandi.post.application.port.in.MyPostsByTemperatureResponses;
 import dandi.dandi.post.application.port.in.PostDetailResponse;
@@ -107,4 +108,11 @@ public interface PostControllerDocs {
             @ApiResponse(responseCode = "400", description = "이미 신고한 게시글"),
     })
     ResponseEntity<Void> reportPost(@Parameter(hidden = true) Long memberId, @PathVariable Long postId);
+
+    @Operation(summary = "좋아요 누른 게시글 조회", parameters = {
+            @Parameter(name = "size"), @Parameter(name = "page"),
+            @Parameter(name = "sort"), @Parameter(example = "DESC")})
+    @ApiResponse(responseCode = "200", description = "좋아요 누른 게시글 정상 응답")
+    ResponseEntity<LikedPostResponses> getLikedPost(@Parameter(hidden = true) Long memberId,
+                                                    @Parameter(hidden = true) Pageable pageable);
 }

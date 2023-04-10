@@ -36,4 +36,9 @@ public interface PostRepository extends JpaRepository<PostJpaEntity, Long> {
                                                       Double maxTemperatureMinSearchCondition,
                                                       Double maxTemperatureMaxSearchCondition,
                                                       Pageable pageable);
+
+    @Query("SELECT  p from PostJpaEntity p "
+            + "inner join PostLikeJpaEntity pl on p.id = pl.postId "
+            + "where pl.memberId = :memberId")
+    Slice<PostJpaEntity> findLikedPostsByMemberId(Long memberId, Pageable pageable);
 }

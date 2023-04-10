@@ -22,4 +22,6 @@ public interface PostPersistencePort {
 
     Slice<Post> findByMemberIdAndTemperature(Long memberId, TemperatureSearchCondition temperatureSearchCondition,
                                              Pageable pageable);
+
+    Slice<Post> findLikedPosts(Long memberId, Pageable pageable);
 }

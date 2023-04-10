@@ -3,6 +3,8 @@ package dandi.dandi.post.application.service;
 import dandi.dandi.common.exception.ForbiddenException;
 import dandi.dandi.common.exception.NotFoundException;
 import dandi.dandi.post.application.port.in.FeedResponse;
+import dandi.dandi.post.application.port.in.LikedPostResponse;
+import dandi.dandi.post.application.port.in.LikedPostResponses;
 import dandi.dandi.post.application.port.in.MyPostByTemperatureResponse;
 import dandi.dandi.post.application.port.in.MyPostResponse;
 import dandi.dandi.post.application.port.in.MyPostResponses;
@@ -160,5 +162,15 @@ public class PostService implements PostUseCase {
         if (postReportPersistencePort.existsByMemberIdAndPostId(memberId, postId)) {
             throw new IllegalStateException("이미 신고한 게시글입니다.");
         }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public LikedPostResponses getLikedPost(Long memberId, Pageable pageable) {
+        Slice<Post> posts = postPersistencePort.findLikedPosts(memberId, pageable);
+        List<LikedPostResponse> likedPostResponses = posts.stream()
+                .map(post -> new LikedPostResponse(post, imageAccessUrl))
+                .collect(Collectors.toUnmodifiableList());
+        return new LikedPostResponses(likedPostResponses, posts.isLast());
     }
 }

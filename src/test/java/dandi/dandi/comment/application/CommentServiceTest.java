@@ -6,8 +6,8 @@ import static dandi.dandi.comment.CommentFixture.COMMENT_REGISTER_COMMAND;
 import static dandi.dandi.member.MemberTestFixture.MEMBER;
 import static dandi.dandi.member.MemberTestFixture.MEMBER2;
 import static dandi.dandi.member.MemberTestFixture.MEMBER_ID;
+import static dandi.dandi.post.PostFixture.POST;
 import static dandi.dandi.post.PostFixture.POST_ID;
-import static dandi.dandi.post.PostFixture.TEST_POST;
 import static dandi.dandi.utils.PaginationUtils.CREATED_AT_DESC_TEST_SIZE_PAGEABLE;
 import static dandi.dandi.utils.TestImageUtils.IMAGE_ACCESS_URL;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -52,7 +52,7 @@ class CommentServiceTest {
     @Test
     void registerComment_MyPost() {
         when(postPersistencePort.findById(POST_ID))
-                .thenReturn(Optional.of(TEST_POST));
+                .thenReturn(Optional.of(POST));
         when(commentPersistencePort.save(any(), any(), any()))
                 .thenReturn(1L);
 
@@ -69,7 +69,7 @@ class CommentServiceTest {
     void registerComment_OthersPost() {
         Long memberId = 2L;
         when(postPersistencePort.findById(POST_ID))
-                .thenReturn(Optional.of(TEST_POST));
+                .thenReturn(Optional.of(POST));
         when(commentPersistencePort.save(any(), any(), any()))
                 .thenReturn(1L);
 
@@ -96,7 +96,7 @@ class CommentServiceTest {
     @Test
     void getComments() {
         when(postPersistencePort.findById(POST_ID))
-                .thenReturn(Optional.of(TEST_POST));
+                .thenReturn(Optional.of(POST));
         List<Comment> comments = List.of(
                 new Comment(2L, "댓글 내용2", MEMBER, LocalDate.now()),
                 new Comment(1L, "댓글 내용1", MEMBER2, LocalDate.now()));

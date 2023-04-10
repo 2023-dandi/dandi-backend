@@ -22,9 +22,9 @@ public class PostFixture {
     public static final List<Long> ADDITIONAL_OUTFIT_FEELING_INDICES = List.of(1L, 2L);
     public static final WeatherFeeling WEATHER_FEELING =
             new WeatherFeeling(OUTFIT_FEELING_INDEX, ADDITIONAL_OUTFIT_FEELING_INDICES);
-    private static final List<Long> POST_LIKING_MEMBER_IDS = List.of(1L, 2L);
+    public static final List<Long> POST_LIKING_MEMBER_IDS = List.of(1L, 2L);
 
-    public static final Post TEST_POST = new Post(
+    public static final Post POST = new Post(
             POST_ID, MEMBER, TEMPERATURES, POST_IMAGE_URL, WEATHER_FEELING, LocalDate.now(),
             POST_LIKING_MEMBER_IDS);
 }

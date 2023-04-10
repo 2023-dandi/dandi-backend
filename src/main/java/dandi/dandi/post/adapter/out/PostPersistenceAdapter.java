@@ -115,4 +115,13 @@ public class PostPersistenceAdapter implements PostPersistencePort {
                 .map(PostLikeJpaEntity::getMemberId)
                 .collect(Collectors.toUnmodifiableList());
     }
+
+    @Override
+    public Slice<Post> findLikedPosts(Long memberId, Pageable pageable) {
+        Slice<PostJpaEntity> likedPostJpaEntities = postRepository.findLikedPostsByMemberId(memberId, pageable);
+        List<Post> posts = likedPostJpaEntities.stream()
+                .map(this::toPost)
+                .collect(Collectors.toUnmodifiableList());
+        return new SliceImpl<>(posts, pageable, likedPostJpaEntities.hasNext());
+    }
 }

@@ -3,10 +3,12 @@ package dandi.dandi.post.acceptance;
 import static dandi.dandi.common.HttpMethodFixture.httpDeleteWithAuthorization;
 import static dandi.dandi.common.HttpMethodFixture.httpGetWithAuthorization;
 import static dandi.dandi.common.HttpMethodFixture.httpGetWithAuthorizationAndPagination;
+import static dandi.dandi.common.HttpMethodFixture.httpPatchWithAuthorization;
 import static dandi.dandi.common.HttpMethodFixture.httpPostWithAuthorization;
 import static dandi.dandi.common.HttpMethodFixture.httpPostWithAuthorizationAndImgFile;
 import static dandi.dandi.common.HttpResponseExtractor.extractExceptionMessage;
 import static dandi.dandi.common.RequestURI.FEED_REQUEST_URI;
+import static dandi.dandi.common.RequestURI.LIKED_POST_REQUEST_URI;
 import static dandi.dandi.common.RequestURI.MY_POST_BY_TEMPERATURE_REQUEST_URI;
 import static dandi.dandi.common.RequestURI.MY_POST_REQUEST_URI;
 import static dandi.dandi.common.RequestURI.POST_DETAILS_REQUEST_URI;
@@ -24,6 +26,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import dandi.dandi.common.AcceptanceTest;
 import dandi.dandi.post.application.port.in.FeedResponse;
+import dandi.dandi.post.application.port.in.LikedPostResponse;
+import dandi.dandi.post.application.port.in.LikedPostResponses;
 import dandi.dandi.post.application.port.in.MyPostResponse;
 import dandi.dandi.post.application.port.in.MyPostResponses;
 import dandi.dandi.post.application.port.in.MyPostsByTemperatureResponses;
@@ -307,6 +311,30 @@ class PostAcceptanceTest extends AcceptanceTest {
                 httpPostWithAuthorization("/posts/" + postId + "/reports", anotherToken);
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+    }
+
+    @DisplayName("좋아요 누른 게시글 요청에 대해 200과 게시글들을 응답한다.")
+    @Test
+    void getLikedPosts() {
+        String token = getToken();
+        Long firstPostId = registerPost(token);
+        Long secondPostId = registerPost(token);
+        registerPost(token);
+        String anotherToken = getAnotherMemberToken();
+        httpPatchWithAuthorization("/posts/" + secondPostId + "/likes", anotherToken);
+        httpPatchWithAuthorization("/posts/" + firstPostId + "/likes", anotherToken);
+
+        ExtractableResponse<Response> response = httpGetWithAuthorization(LIKED_POST_REQUEST_URI, anotherToken);
+
+        List<LikedPostResponse> posts = response.jsonPath()
+                .getObject(".", LikedPostResponses.class)
+                .getPosts();
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(posts).hasSize(2),
+                () -> assertThat(posts.get(0).getId()).isEqualTo(2L),
+                () -> assertThat(posts.get(1).getId()).isEqualTo(1L)
+        );
     }
 
     private void registerPostWithTemperature(String token, Double minTemperature, Double maxTemperature) {

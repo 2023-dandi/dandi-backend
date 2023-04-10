@@ -2,6 +2,7 @@ package dandi.dandi.post.web;
 
 import dandi.dandi.auth.web.support.Login;
 import dandi.dandi.post.application.port.in.FeedResponse;
+import dandi.dandi.post.application.port.in.LikedPostResponses;
 import dandi.dandi.post.application.port.in.MyPostResponses;
 import dandi.dandi.post.application.port.in.MyPostsByTemperatureResponses;
 import dandi.dandi.post.application.port.in.PostDetailResponse;
@@ -20,14 +21,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("/posts")
 public class PostController implements PostControllerDocs {
 
     private final PostUseCase postUseCase;
@@ -38,7 +37,7 @@ public class PostController implements PostControllerDocs {
         this.postImageUseCase = postImageUseCase;
     }
 
-    @PostMapping("/images")
+    @PostMapping("/posts/images")
     public ResponseEntity<PostImageRegisterResponse> registerPostImage(@Login Long memberId,
                                                                        @RequestPart(value = "postImage")
                                                                        MultipartFile profileImage) {
@@ -46,25 +45,25 @@ public class PostController implements PostControllerDocs {
         return ResponseEntity.status(HttpStatus.CREATED).body(postImageRegisterResponse);
     }
 
-    @PostMapping
+    @PostMapping("/posts")
     public ResponseEntity<PostRegisterResponse> registerPost(@Login Long memberId,
                                                              @RequestBody PostRegisterRequest postRegisterRequest) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(postUseCase.registerPost(memberId, postRegisterRequest.toCommand()));
     }
 
-    @GetMapping("/{postId}")
+    @GetMapping("/posts/{postId}")
     public ResponseEntity<PostDetailResponse> getPostDetails(@Login Long memberId, @PathVariable Long postId) {
         return ResponseEntity.ok(postUseCase.getPostDetails(memberId, postId));
     }
 
-    @DeleteMapping("/{postId}")
+    @DeleteMapping("/posts/{postId}")
     public ResponseEntity<Void> deletePost(@Login Long memberId, @PathVariable Long postId) {
         postUseCase.deletePost(memberId, postId);
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping(path = "my")
+    @GetMapping(path = "/posts/my")
     public ResponseEntity<MyPostResponses> getMyPostIdsAndPostImageUrls(@Login Long memberId,
                                                                         @PageableDefault(size = 500, sort = "createdAt",
                                                                                 direction = Direction.DESC)
@@ -72,14 +71,14 @@ public class PostController implements PostControllerDocs {
         return ResponseEntity.ok(postUseCase.getMyPostIdsAndPostImageUrls(memberId, pageable));
     }
 
-    @GetMapping("/feed/temperature")
+    @GetMapping("/posts/feed/temperature")
     public ResponseEntity<FeedResponse> getFeedsByTemperature(@Login Long memberId, Pageable pageable,
                                                               @RequestParam(value = "min") Double minTemperature,
                                                               @RequestParam(value = "max") Double maxTemperature) {
         return ResponseEntity.ok(postUseCase.getPostsByTemperature(memberId, minTemperature, maxTemperature, pageable));
     }
 
-    @GetMapping("/my/temperature")
+    @GetMapping("/posts/my/temperature")
     public ResponseEntity<MyPostsByTemperatureResponses> getMyPostsByTemperature(@Login Long memberId,
                                                                                  Pageable pageable,
                                                                                  @RequestParam(value = "min")
@@ -90,9 +89,14 @@ public class PostController implements PostControllerDocs {
                 postUseCase.getMyPostsByTemperature(memberId, minTemperature, maxTemperature, pageable));
     }
 
-    @PostMapping("/{postId}/reports")
+    @PostMapping("/posts/{postId}/reports")
     public ResponseEntity<Void> reportPost(@Login Long memberId, @PathVariable Long postId) {
         postUseCase.reportPost(memberId, postId);
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @GetMapping("/liking-posts")
+    public ResponseEntity<LikedPostResponses> getLikedPost(@Login Long memberId, Pageable pageable) {
+        return ResponseEntity.ok(postUseCase.getLikedPost(memberId, pageable));
     }
 }
