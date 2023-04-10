@@ -189,17 +189,19 @@ class PostPersistenceAdapterTest extends PersistenceAdapterTest {
     @DisplayName("사용자가 좋아요 누른 게시글을 찾을 수 있다.")
     @Test
     void findLikedPosts() {
-        Long memberId = saveMember(NICKNAME);
+        Long firstMemberId = saveMember(NICKNAME);
+        Long secondMemberId = saveMember("nickname2");
         Post firstPost = Post.initial(new Temperatures(10.0, 20.0), POST_IMAGE_URL, WEATHER_FEELING);
         Post secondPost = Post.initial(new Temperatures(11.0, 20.0), POST_IMAGE_URL, WEATHER_FEELING);
         Post thirdPost = Post.initial(new Temperatures(13.0, 22.0), POST_IMAGE_URL, WEATHER_FEELING);
-        Long savedFirstPostId = postPersistenceAdapter.save(firstPost, memberId);
-        Long savedSecondPostId = postPersistenceAdapter.save(secondPost, memberId);
-        postPersistenceAdapter.save(thirdPost, memberId);
-        postLikePersistenceAdapter.save(PostLike.initial(memberId, savedFirstPostId));
-        postLikePersistenceAdapter.save(PostLike.initial(memberId, savedSecondPostId));
+        Long savedFirstPostId = postPersistenceAdapter.save(firstPost, firstMemberId);
+        Long savedSecondPostId = postPersistenceAdapter.save(secondPost, firstMemberId);
+        postPersistenceAdapter.save(thirdPost, firstMemberId);
+        postLikePersistenceAdapter.save(PostLike.initial(secondMemberId, savedFirstPostId));
+        postLikePersistenceAdapter.save(PostLike.initial(secondMemberId, savedSecondPostId));
 
-        Slice<Post> likedPosts = postPersistenceAdapter.findLikedPosts(memberId, CREATED_AT_DESC_TEST_SIZE_PAGEABLE);
+        Slice<Post> likedPosts = postPersistenceAdapter.findLikedPosts(secondMemberId,
+                CREATED_AT_DESC_TEST_SIZE_PAGEABLE);
 
         assertAll(
                 () -> assertThat(likedPosts).hasSize(2),
