@@ -85,4 +85,10 @@ public interface ClothesControllerDocs {
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
     })
     ResponseEntity<Void> deleteClothes(@Parameter(hidden = true) Long memberId, @PathVariable Long clothesId);
+
+    @Operation(summary = "계절에 따른 옷 조회", parameters = {@Parameter(name = "size"), @Parameter(name = "page"),
+            @Parameter(name = "sort"), @Parameter(example = "DESC")})
+    @ApiResponse(responseCode = "200", description = "계절에 따른 옷 조회 성공")
+    ResponseEntity<ClothesResponses> getTodayClothes(@Parameter(hidden = true) Long memberId,
+                                                     @Parameter(hidden = true) Pageable pageable);
 }
