@@ -11,9 +11,11 @@ import dandi.dandi.clothes.application.port.out.persistence.CategorySeasonProjec
 import dandi.dandi.clothes.application.port.out.persistence.ClothesPersistencePort;
 import dandi.dandi.clothes.domain.Category;
 import dandi.dandi.clothes.domain.Clothes;
+import dandi.dandi.clothes.domain.Month;
 import dandi.dandi.clothes.domain.Season;
 import dandi.dandi.common.exception.ForbiddenException;
 import dandi.dandi.common.exception.NotFoundException;
+import java.time.LocalDate;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -32,6 +34,7 @@ public class ClothesService implements ClothesUseCase {
 
     private static final int CLOTHES_IMAGE_URL_INDEX = 1;
     private static final String ALL = "ALL";
+    private static final int TODAY_CLOTHES_COUNT_LIMIT = 5;
 
     private final ClothesPersistencePort clothesPersistencePort;
     private final ClothesImageService clothesImageService;
@@ -141,5 +144,16 @@ public class ClothesService implements ClothesUseCase {
         if (!clothes.isOwnedBy(memberId)) {
             throw ForbiddenException.clothesDeletion();
         }
+    }
+
+    @Override
+    public ClothesResponses getTodayClothes(Long memberId, LocalDate today, Pageable pageable) {
+        Month month = Month.fromDate(today);
+        Slice<Clothes> clothesSearchResult = clothesPersistencePort
+                .findByMemberIdAndSeasons(memberId, month.getSeasons(), pageable);
+        List<ClothesResponse> clothesResponses = clothesSearchResult.stream()
+                .map(clothes -> new ClothesResponse(clothes.getId(), imageAccessUrl + clothes.getClothesImageUrl()))
+                .collect(Collectors.toUnmodifiableList());
+        return new ClothesResponses(clothesResponses, clothesSearchResult.isLast());
     }
 }
