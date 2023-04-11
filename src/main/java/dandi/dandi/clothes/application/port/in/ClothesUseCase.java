@@ -1,6 +1,7 @@
 package dandi.dandi.clothes.application.port.in;
 
 
+import java.time.LocalDate;
 import java.util.Set;
 import org.springframework.data.domain.Pageable;
 
@@ -15,4 +16,6 @@ public interface ClothesUseCase {
     CategorySeasonsResponses getCategoriesAndSeasons(Long memberId);
 
     void deleteClothes(Long memberId, Long clothesId);
+
+    ClothesResponses getTodayClothes(Long memberId, LocalDate today, Pageable pageable);
 }

@@ -30,4 +30,8 @@ public class InternalServerException extends RuntimeException {
         String exceptionMessage = String.format("댓글 알림(notificationId : %d)은 도메인 매핑 실패", notificationId);
         return new InternalServerException(exceptionMessage);
     }
+
+    public static InternalServerException weatherNotFound() {
+        return new InternalServerException("날짜에 해당하는 Month가 존재하지 않습니다.");
+    }
 }

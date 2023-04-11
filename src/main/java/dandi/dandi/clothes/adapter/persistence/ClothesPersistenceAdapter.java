@@ -55,4 +55,15 @@ public class ClothesPersistenceAdapter implements ClothesPersistencePort {
     public void deleteById(Long clothesId) {
         clothesRepository.deleteById(clothesId);
     }
+
+    @Override
+    public Slice<Clothes> findByMemberIdAndSeasons(Long memberId, Set<Season> seasons, Pageable pageable) {
+        Slice<ClothesJpaEntity> clothesJpaEntities =
+                clothesRepository.findByMemberIdAndSeasons(memberId, seasons, pageable);
+        List<Clothes> clothes = clothesJpaEntities
+                .stream()
+                .map(ClothesJpaEntity::toClothes)
+                .collect(Collectors.toUnmodifiableList());
+        return new SliceImpl<>(clothes, pageable, clothesJpaEntities.hasNext());
+    }
 }
