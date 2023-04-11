@@ -8,6 +8,7 @@ import dandi.dandi.clothes.application.port.in.ClothesImageUseCase;
 import dandi.dandi.clothes.application.port.in.ClothesRegisterCommand;
 import dandi.dandi.clothes.application.port.in.ClothesResponses;
 import dandi.dandi.clothes.application.port.in.ClothesUseCase;
+import java.time.LocalDate;
 import java.util.Set;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -73,5 +74,11 @@ public class ClothesController implements ClothesControllerDocs {
     public ResponseEntity<Void> deleteClothes(@Login Long memberId, @PathVariable Long clothesId) {
         clothesUseCase.deleteClothes(memberId, clothesId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/today")
+    public ResponseEntity<ClothesResponses> getTodayClothes(@Login Long memberId, Pageable pageable) {
+        LocalDate today = LocalDate.now();
+        return ResponseEntity.ok(clothesUseCase.getTodayClothes(memberId, today, pageable));
     }
 }
