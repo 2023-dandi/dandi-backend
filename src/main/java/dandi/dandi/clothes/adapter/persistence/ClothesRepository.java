@@ -22,10 +22,6 @@ public interface ClothesRepository extends JpaRepository<ClothesJpaEntity, Long>
     Slice<ClothesJpaEntity> findByMemberIdAndCategoryAndSeasons(Long memberId, Set<Category> categories,
                                                                 Set<Season> seasons, Pageable pageable);
 
-    //@Query("SELECT c FROM ClothesJpaEntity c INNER JOIN ClothesSeasonJpaEntity cs ON cs.clothesJpaEntity.id = c.id "
-    //        + "WHERE c.memberId = :memberId GROUP BY c.category, cs.season")
-    //@Query("SELECT c FROM ClothesJpaEntity c JOIN FETCH ClothesSeasonJpaEntity cs "
-    //        + "WHERE c.memberId = :memberId GROUP BY c.category, cs.season")
     @Query("SELECT DISTINCT c.category as category, cs.season as season FROM ClothesJpaEntity c "
             + "INNER JOIN ClothesSeasonJpaEntity cs ON cs.clothesJpaEntity.id = c.id "
             + "WHERE c.memberId = :memberId")
