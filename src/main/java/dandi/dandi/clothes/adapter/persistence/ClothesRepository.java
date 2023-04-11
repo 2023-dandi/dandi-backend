@@ -26,4 +26,13 @@ public interface ClothesRepository extends JpaRepository<ClothesJpaEntity, Long>
             + "INNER JOIN ClothesSeasonJpaEntity cs ON cs.clothesJpaEntity.id = c.id "
             + "WHERE c.memberId = :memberId")
     List<CategorySeasonProjection> findAllByCategoryDistinct(Long memberId);
+
+    @Query("SELECT c FROM ClothesJpaEntity c INNER JOIN c.seasons s ON c.id = s.clothesJpaEntity.id "
+            + "WHERE s.season IN :seasons AND c.memberId = :memberId")
+        //@Query("SELECT c FROM ClothesJpaEntity c WHERE c.id IN "
+        //        + "(SELECT DISTINCT s.clothesJpaEntity.id FROM ClothesSeasonJpaEntity s WHERE s.season IN :seasons) AND c.memberId = :memberId "
+        //        + "GROUP BY c.id, c.category HAVING COUNT(DISTINCT c.category) > 1")
+    Slice<ClothesJpaEntity> findByMemberIdAndSeasons(Long memberId, Set<Season> seasons,
+                                                     Pageable pageable);
+
 }

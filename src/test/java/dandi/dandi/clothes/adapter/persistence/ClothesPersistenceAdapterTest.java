@@ -12,6 +12,7 @@ import static dandi.dandi.utils.PaginationUtils.CREATED_AT_DESC_TEST_SIZE_PAGEAB
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatCode;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.springframework.data.domain.Sort.Direction.DESC;
 
 import dandi.dandi.clothes.application.port.out.persistence.CategorySeasonProjection;
 import dandi.dandi.clothes.domain.Clothes;
@@ -22,6 +23,8 @@ import java.util.Set;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
 class ClothesPersistenceAdapterTest extends PersistenceAdapterTest {
@@ -103,6 +106,22 @@ class ClothesPersistenceAdapterTest extends PersistenceAdapterTest {
                 MEMBER_ID, Set.of(TOP, BOTTOM), Set.of(SPRING, SUMMER), CREATED_AT_DESC_TEST_SIZE_PAGEABLE);
 
         assertThat(actual).hasSize(3);
+    }
+
+    @DisplayName("계절에 해당하는 옷들을 찾을 수 있다.")
+    @Test
+    void findByMemberIdWithCategoryDistinctCountNotOne() {
+        saveClothes(List.of(
+                Clothes.initial(MEMBER_ID, "TOP", List.of("SPRING", "SUMMER"), CLOTHES_IMAGE_URL),
+                Clothes.initial(MEMBER_ID, "TOP", List.of("FALL", "SUMMER"), CLOTHES_IMAGE_URL),
+                Clothes.initial(MEMBER_ID, "TOP", List.of("FALL", "WINTER"), CLOTHES_IMAGE_URL)
+        ));
+        Pageable pageable = PageRequest.of(0, 5, DESC, "createdAt");
+
+        Slice<Clothes> clothes = clothesPersistenceAdapter
+                .findByMemberIdAndSeasons(MEMBER_ID, Set.of(SUMMER), pageable);
+
+        assertThat(clothes).hasSize(2);
     }
 
     private void saveClothes(List<Clothes> clothes) {

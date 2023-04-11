@@ -21,4 +21,6 @@ public interface ClothesPersistencePort {
     List<CategorySeasonProjection> findDistinctCategoryAndSeason(Long memberId);
 
     void deleteById(Long clothesId);
+
+    Slice<Clothes> findByMemberIdAndSeasons(Long memberId, Set<Season> seasons, Pageable pageable);
 }
