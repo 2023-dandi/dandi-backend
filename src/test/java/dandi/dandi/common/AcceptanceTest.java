@@ -24,6 +24,7 @@ import dandi.dandi.post.web.in.OutfitFeelingRequest;
 import dandi.dandi.post.web.in.PostRegisterRequest;
 import dandi.dandi.post.web.in.TemperatureRequest;
 import io.restassured.RestAssured;
+import java.time.Clock;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
@@ -61,6 +62,9 @@ public class AcceptanceTest {
 
     @SpyBean
     protected AmazonS3 amazonS3;
+
+    @SpyBean
+    protected Clock clock;
 
     @BeforeEach
     public void setUp() {
