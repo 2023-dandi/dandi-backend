@@ -15,6 +15,7 @@ import static dandi.dandi.common.RequestURI.CLOTHES_REQUEST_URI;
 import static dandi.dandi.utils.TestImageUtils.generateTestImgFile;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.Mockito.when;
 
 import dandi.dandi.clothes.application.port.in.CategorySeasonsResponse;
 import dandi.dandi.clothes.application.port.in.CategorySeasonsResponses;
@@ -27,6 +28,7 @@ import dandi.dandi.common.AcceptanceTest;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.io.File;
+import java.time.Instant;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -218,6 +220,33 @@ class ClothesAcceptanceTest extends AcceptanceTest {
                 httpDeleteWithAuthorization(CLOTHES_REQUEST_URI + "/1", anotherMemberToken);
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.FORBIDDEN.value());
+    }
+
+    @DisplayName("오늘의 옷 조회 요청에 대해 200과 오늘의 옷을 응답한다.")
+    @Test
+    void getTodayClothes() {
+        String token = getToken();
+        registerClothes(token, List.of("SUMMER", "FALL"));
+        registerClothes(token, List.of("FALL", "WINTER"));
+        registerClothes(token, List.of("SPRING", "SUMMER"));
+        when(clock.instant())
+                .thenReturn(Instant.parse("2023-11-22T10:00:00Z"));
+
+        ExtractableResponse<Response> response = httpGetWithAuthorization("/clothes/today", token);
+
+        List<ClothesResponse> clothes = response.jsonPath()
+                .getObject(".", ClothesResponses.class)
+                .getClothes();
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(clothes).hasSize(2)
+        );
+    }
+
+    private void registerClothes(String token, List<String> seasons) {
+        ClothesRegisterCommand clothesRegisterCommand =
+                new ClothesRegisterCommand(CLOTHES_CATEGORY, seasons, CLOTHES_IMAGE_FULL_URL);
+        httpPostWithAuthorization(CLOTHES_REQUEST_URI, clothesRegisterCommand, token);
     }
 
     private void registerClothes(String token) {

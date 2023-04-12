@@ -8,6 +8,7 @@ import dandi.dandi.clothes.application.port.in.ClothesImageUseCase;
 import dandi.dandi.clothes.application.port.in.ClothesRegisterCommand;
 import dandi.dandi.clothes.application.port.in.ClothesResponses;
 import dandi.dandi.clothes.application.port.in.ClothesUseCase;
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Set;
 import org.springframework.data.domain.Pageable;
@@ -30,10 +31,12 @@ public class ClothesController implements ClothesControllerDocs {
 
     private final ClothesImageUseCase clothesImageUseCase;
     private final ClothesUseCase clothesUseCase;
+    private final Clock clock;
 
-    public ClothesController(ClothesImageUseCase clothesImageUseCase, ClothesUseCase clothesUseCase) {
+    public ClothesController(ClothesImageUseCase clothesImageUseCase, ClothesUseCase clothesUseCase, Clock clock) {
         this.clothesImageUseCase = clothesImageUseCase;
         this.clothesUseCase = clothesUseCase;
+        this.clock = clock;
     }
 
     @PostMapping("/image")
@@ -78,7 +81,7 @@ public class ClothesController implements ClothesControllerDocs {
 
     @GetMapping("/today")
     public ResponseEntity<ClothesResponses> getTodayClothes(@Login Long memberId, Pageable pageable) {
-        LocalDate today = LocalDate.now();
+        LocalDate today = LocalDate.now(clock);
         return ResponseEntity.ok(clothesUseCase.getTodayClothes(memberId, today, pageable));
     }
 }
