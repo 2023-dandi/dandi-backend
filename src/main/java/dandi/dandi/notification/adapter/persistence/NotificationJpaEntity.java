@@ -97,7 +97,7 @@ public class NotificationJpaEntity {
         if (notificationType == POST_LIKE) {
             return new PostLikeNotification(id, memberId, POST_LIKE, createdAt.toLocalDate(), checked, postId);
         }
-        return new WeatherNotification(id, memberId, WEATHER, checked, weatherDate);
+        return new WeatherNotification(id, memberId, WEATHER, createdAt.toLocalDate(), checked, weatherDate);
     }
 
     private void validateNotPostCommentNotification() {

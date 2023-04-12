@@ -8,13 +8,14 @@ public class WeatherNotification extends Notification {
 
     private final LocalDate weatherDate;
 
-    public WeatherNotification(Long id, Long memberId, NotificationType type, boolean checked, LocalDate weatherDate) {
-        super(id, memberId, type, null, checked);
+    public WeatherNotification(Long id, Long memberId, NotificationType type, LocalDate createdAt,
+                               boolean checked, LocalDate weatherDate) {
+        super(id, memberId, type, createdAt, checked);
         this.weatherDate = weatherDate;
     }
 
     public static WeatherNotification initial(Long memberId, LocalDate weatherDate) {
-        return new WeatherNotification(null, memberId, WEATHER, false, weatherDate);
+        return new WeatherNotification(null, memberId, WEATHER, null, false, weatherDate);
     }
 
     @Override
