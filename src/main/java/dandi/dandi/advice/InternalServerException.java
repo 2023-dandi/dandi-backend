@@ -1,5 +1,7 @@
 package dandi.dandi.advice;
 
+import dandi.dandi.notification.domain.NotificationType;
+
 public class InternalServerException extends RuntimeException {
 
     public InternalServerException(String message) {
@@ -33,5 +35,10 @@ public class InternalServerException extends RuntimeException {
 
     public static InternalServerException weatherNotFound() {
         return new InternalServerException("날짜에 해당하는 Month가 존재하지 않습니다.");
+    }
+
+    public static InternalServerException notificationConvert(NotificationType type) {
+        String exceptionMessage = String.format("%s 타입의 Notification으로 변경할 수 없습니다.", type.name());
+        return new InternalServerException(exceptionMessage);
     }
 }
