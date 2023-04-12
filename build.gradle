@@ -38,6 +38,7 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'io.rest-assured:rest-assured:4.4.0'
 	testImplementation group: 'org.apache.commons', name: 'commons-io', version: '1.3.2'
+	testImplementation 'org.mockito:mockito-inline'
 
 	implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.6.14'
 }
