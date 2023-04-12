@@ -79,6 +79,34 @@ public class NotificationJpaEntity {
         );
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public Long getMemberId() {
+        return memberId;
+    }
+
+    public NotificationType getNotificationType() {
+        return notificationType;
+    }
+
+    public boolean isChecked() {
+        return checked;
+    }
+
+    public Long getPostId() {
+        return postId;
+    }
+
+    public LocalDate getWeatherDate() {
+        return weatherDate;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
     public Long getCommentId() {
         return commentId;
     }
