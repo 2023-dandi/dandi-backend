@@ -48,7 +48,7 @@ class NotificationServiceTest {
     @Test
     void getNotifications() {
         List<Notification> notifications = List.of(
-                new WeatherNotification(4L, MEMBER_ID, WEATHER, false, LocalDate.now()),
+                new WeatherNotification(4L, MEMBER_ID, WEATHER, LocalDate.now(), false, LocalDate.now()),
                 new PostCommentNotification(3L, MEMBER_ID, COMMENT, LocalDate.now(), true, POST_ID,
                         COMMENT_ID, COMMENT_CONTENT),
                 new PostLikeNotification(2L, MEMBER_ID, POST_LIKE, LocalDate.now(), true, POST_ID),
@@ -78,7 +78,7 @@ class NotificationServiceTest {
     @Test
     void checkNotification_Forbidden() {
         WeatherNotification notification =
-                new WeatherNotification(NOTIFICATION_ID, MEMBER_ID, WEATHER, false, LocalDate.now());
+                new WeatherNotification(NOTIFICATION_ID, MEMBER_ID, WEATHER, LocalDate.now(), false, LocalDate.now());
         when(notificationPersistencePort.findById(NOTIFICATION_ID))
                 .thenReturn(Optional.of(notification));
         Long anotherMemberId = 2L;
@@ -92,7 +92,7 @@ class NotificationServiceTest {
     @Test
     void checkNotification() {
         WeatherNotification notification =
-                new WeatherNotification(NOTIFICATION_ID, MEMBER_ID, WEATHER, false, LocalDate.now());
+                new WeatherNotification(NOTIFICATION_ID, MEMBER_ID, WEATHER, LocalDate.now(), false, LocalDate.now());
         when(notificationPersistencePort.findById(NOTIFICATION_ID))
                 .thenReturn(Optional.of(notification));
 

@@ -1,10 +1,6 @@
 package dandi.dandi.notification.adapter.persistence;
 
-import static dandi.dandi.notification.domain.NotificationType.COMMENT;
-
-import dandi.dandi.advice.InternalServerException;
-import dandi.dandi.comment.adapter.persistence.CommentJpaEntity;
-import dandi.dandi.comment.adapter.persistence.CommentRepository;
+import dandi.dandi.notification.adapter.persistence.convertor.NotificationConvertors;
 import dandi.dandi.notification.application.port.out.NotificationPersistencePort;
 import dandi.dandi.notification.domain.Notification;
 import java.util.List;
@@ -19,12 +15,12 @@ import org.springframework.stereotype.Component;
 public class NotificationPersistenceAdapter implements NotificationPersistencePort {
 
     private final NotificationRepository notificationRepository;
-    private final CommentRepository commentRepository;
+    private final NotificationConvertors notificationConvertors;
 
     public NotificationPersistenceAdapter(NotificationRepository notificationRepository,
-                                          CommentRepository commentRepository) {
+                                          NotificationConvertors notificationConvertors) {
         this.notificationRepository = notificationRepository;
-        this.commentRepository = commentRepository;
+        this.notificationConvertors = notificationConvertors;
     }
 
     @Override
@@ -36,7 +32,7 @@ public class NotificationPersistenceAdapter implements NotificationPersistencePo
     @Override
     public Optional<Notification> findById(Long id) {
         return notificationRepository.findById(id)
-                .map(this::mapToNotification);
+                .map(notificationConvertors::convert);
     }
 
     @Override
@@ -49,18 +45,8 @@ public class NotificationPersistenceAdapter implements NotificationPersistencePo
         Slice<NotificationJpaEntity> notificationJpaEntities =
                 notificationRepository.findByMemberId(memberId, pageable);
         List<Notification> notifications = notificationJpaEntities.stream()
-                .map(this::mapToNotification)
+                .map(notificationConvertors::convert)
                 .collect(Collectors.toUnmodifiableList());
         return new SliceImpl<>(notifications, pageable, notificationJpaEntities.hasNext());
-    }
-
-    private Notification mapToNotification(NotificationJpaEntity notificationJpaEntity) {
-        if (notificationJpaEntity.hasNotificationType(COMMENT)) {
-            Long commentId = notificationJpaEntity.getCommentId();
-            CommentJpaEntity commentJpaEntity = commentRepository.findById(commentId)
-                    .orElseThrow(() -> InternalServerException.notificationCommentNotFound(commentId));
-            return notificationJpaEntity.toPostCommentNotification(commentJpaEntity.getContent());
-        }
-        return notificationJpaEntity.toNotification();
     }
 }
