@@ -46,6 +46,8 @@ class MemberAcceptanceTest extends AcceptanceTest {
         String token = getToken();
         double initialLatitude = 0.0;
         double initialLongitude = 0.0;
+        registerPost(token);
+        registerPost(token);
 
         ExtractableResponse<Response> response = httpGetWithAuthorization(MEMBER_INFO_URI, token);
 
@@ -54,6 +56,7 @@ class MemberAcceptanceTest extends AcceptanceTest {
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
                 () -> assertThat(memberInfoResponse.getNickname()).isEqualTo(memberInfoResponse.getNickname()),
+                () -> assertThat(memberInfoResponse.getPostCount()).isEqualTo(2),
                 () -> assertThat(memberInfoResponse.getLatitude()).isEqualTo(initialLatitude),
                 () -> assertThat(memberInfoResponse.getLongitude()).isEqualTo(initialLongitude),
                 () -> assertThat(memberInfoResponse.getProfileImageUrl()).isNotNull()
