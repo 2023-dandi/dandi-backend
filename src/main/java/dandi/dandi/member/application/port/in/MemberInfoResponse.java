@@ -8,15 +8,17 @@ public class MemberInfoResponse {
     private double latitude;
     private double longitude;
     private String profileImageUrl;
+    private int postCount;
 
     public MemberInfoResponse() {
     }
 
-    public MemberInfoResponse(Member member, String imageAccessUrl) {
+    public MemberInfoResponse(Member member, int postCount, String imageAccessUrl) {
         this.nickname = member.getNickname();
         this.latitude = member.getLatitude();
         this.longitude = member.getLongitude();
         this.profileImageUrl = imageAccessUrl + member.getProfileImgUrl();
+        this.postCount = postCount;
     }
 
     public String getNickname() {
@@ -33,5 +35,9 @@ public class MemberInfoResponse {
 
     public String getProfileImageUrl() {
         return profileImageUrl;
+    }
+
+    public int getPostCount() {
+        return postCount;
     }
 }
