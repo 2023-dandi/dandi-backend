@@ -23,6 +23,7 @@ import dandi.dandi.member.application.port.out.MemberBlockPersistencePort;
 import dandi.dandi.member.application.port.out.MemberPersistencePort;
 import dandi.dandi.member.application.service.MemberService;
 import dandi.dandi.member.domain.Member;
+import dandi.dandi.post.application.port.out.MemberPostPersistencePort;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,8 +38,9 @@ class MemberServiceTest {
     private final MemberPersistencePort memberPersistencePort = Mockito.mock(MemberPersistencePort.class);
     private final MemberBlockPersistencePort memberBlockPersistencePort =
             Mockito.mock(MemberBlockPersistencePort.class);
+    private final MemberPostPersistencePort memberPostPersistencePort = Mockito.mock(MemberPostPersistencePort.class);
     private final MemberService memberService =
-            new MemberService(memberPersistencePort, memberBlockPersistencePort, IMAGE_ACCESS_URL);
+            new MemberService(memberPersistencePort, memberBlockPersistencePort, memberPostPersistencePort, IMAGE_ACCESS_URL);
 
     @DisplayName("기본 프로필 이미지의 회원 정보를 반환할 수 있다.")
     @Test
@@ -46,11 +48,14 @@ class MemberServiceTest {
         Long memberId = 1L;
         when(memberPersistencePort.findById(memberId))
                 .thenReturn(Optional.of(Member.initial(OAUTH_ID, NICKNAME, INITIAL_PROFILE_IMAGE_URL)));
+        when(memberPostPersistencePort.countPostByMemberId(memberId))
+                .thenReturn(5);
 
         MemberInfoResponse memberInfoResponse = memberService.findMemberInfo(memberId);
 
         assertAll(
                 () -> assertThat(memberInfoResponse.getNickname()).isEqualTo(NICKNAME),
+                () -> assertThat(memberInfoResponse.getPostCount()).isEqualTo(5),
                 () -> assertThat(memberInfoResponse.getLatitude()).isEqualTo(0.0),
                 () -> assertThat(memberInfoResponse.getLongitude()).isEqualTo(0.0),
                 () -> assertThat(memberInfoResponse.getProfileImageUrl())

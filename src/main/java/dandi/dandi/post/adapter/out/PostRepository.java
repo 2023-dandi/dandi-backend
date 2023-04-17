@@ -41,4 +41,6 @@ public interface PostRepository extends JpaRepository<PostJpaEntity, Long> {
             + "inner join PostLikeJpaEntity pl on p.id = pl.postId "
             + "where pl.memberId = :memberId")
     Slice<PostJpaEntity> findLikedPostsByMemberId(Long memberId, Pageable pageable);
+
+    int countByMemberId(Long memberId);
 }

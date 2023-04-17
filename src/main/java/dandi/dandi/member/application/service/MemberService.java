@@ -11,6 +11,7 @@ import dandi.dandi.member.application.port.in.NicknameUpdateCommand;
 import dandi.dandi.member.application.port.out.MemberBlockPersistencePort;
 import dandi.dandi.member.application.port.out.MemberPersistencePort;
 import dandi.dandi.member.domain.Member;
+import dandi.dandi.post.application.port.out.MemberPostPersistencePort;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -21,13 +22,16 @@ public class MemberService implements MemberUseCase {
 
     private final MemberPersistencePort memberPersistencePort;
     private final MemberBlockPersistencePort memberBlockPersistencePort;
+    private final MemberPostPersistencePort memberPostPersistencePort;
     private final String imageAccessUrl;
 
     public MemberService(MemberPersistencePort memberPersistencePort,
                          MemberBlockPersistencePort memberBlockPersistencePort,
+                         MemberPostPersistencePort memberPostPersistencePort,
                          @Value("${cloud.aws.cloud-front.uri}") String imageAccessUrl) {
         this.memberPersistencePort = memberPersistencePort;
         this.memberBlockPersistencePort = memberBlockPersistencePort;
+        this.memberPostPersistencePort = memberPostPersistencePort;
         this.imageAccessUrl = imageAccessUrl;
     }
 
@@ -35,7 +39,8 @@ public class MemberService implements MemberUseCase {
     @Transactional(readOnly = true)
     public MemberInfoResponse findMemberInfo(Long memberId) {
         Member member = findMember(memberId);
-        return new MemberInfoResponse(member, imageAccessUrl);
+        int postCount = memberPostPersistencePort.countPostByMemberId(memberId);
+        return new MemberInfoResponse(member, postCount, imageAccessUrl);
     }
 
     @Override
