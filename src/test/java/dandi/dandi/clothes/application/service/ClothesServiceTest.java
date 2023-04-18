@@ -6,21 +6,24 @@ import static dandi.dandi.clothes.ClothesFixture.CLOTHES_ID;
 import static dandi.dandi.clothes.ClothesFixture.CLOTHES_IMAGE_FULL_URL;
 import static dandi.dandi.clothes.ClothesFixture.CLOTHES_IMAGE_URL;
 import static dandi.dandi.clothes.ClothesFixture.CLOTHES_SEASONS;
+import static dandi.dandi.clothes.domain.Category.BAG;
 import static dandi.dandi.clothes.domain.Category.BOTTOM;
 import static dandi.dandi.clothes.domain.Category.TOP;
 import static dandi.dandi.clothes.domain.Category.getAllCategories;
+import static dandi.dandi.clothes.domain.Month.MAY;
 import static dandi.dandi.clothes.domain.Season.FALL;
 import static dandi.dandi.clothes.domain.Season.SPRING;
 import static dandi.dandi.clothes.domain.Season.SUMMER;
 import static dandi.dandi.member.MemberTestFixture.MEMBER_ID;
 import static dandi.dandi.utils.PaginationUtils.CREATED_AT_DESC_TEST_SIZE_PAGEABLE;
 import static dandi.dandi.utils.TestImageUtils.IMAGE_ACCESS_URL;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.data.domain.Sort.Direction.DESC;
 
 import dandi.dandi.clothes.application.port.in.CategorySeasonsResponse;
 import dandi.dandi.clothes.application.port.in.CategorySeasonsResponses;
@@ -31,8 +34,10 @@ import dandi.dandi.clothes.application.port.in.ClothesResponses;
 import dandi.dandi.clothes.application.port.out.persistence.CategorySeasonProjection;
 import dandi.dandi.clothes.application.port.out.persistence.ClothesPersistencePort;
 import dandi.dandi.clothes.domain.Clothes;
+import dandi.dandi.clothes.domain.Season;
 import dandi.dandi.common.exception.ForbiddenException;
 import dandi.dandi.common.exception.NotFoundException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -41,6 +46,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 
 @ExtendWith(MockitoExtension.class)
@@ -190,6 +198,29 @@ class ClothesServiceTest {
         verify(clothesPersistencePort)
                 .findByMemberIdAndCategoryAndSeasons(MEMBER_ID, getAllCategories(), Set.of(SPRING, SUMMER),
                         CREATED_AT_DESC_TEST_SIZE_PAGEABLE);
+    }
+
+    @DisplayName("날짜에 따른 사용자의 오늘의 옷을 최대 카테고리 조합으로 반환할 수 있다.")
+    @Test
+    void getTodayClothes() {
+        Set<Season> seasons = MAY.getSeasons();
+        Pageable pageable = PageRequest.of(0, 5, DESC, "createdAt");
+        when(clothesPersistencePort.countDistinctCategoryByMemberIdAndSeasons(MEMBER_ID, seasons))
+                .thenReturn(3);
+        Clothes clothes1 = new Clothes(1L, MEMBER_ID, TOP, List.of(SUMMER, FALL), CLOTHES_IMAGE_URL);
+        Clothes clothes2 = new Clothes(2L, MEMBER_ID, BOTTOM, List.of(SPRING, FALL), CLOTHES_IMAGE_URL);
+        Clothes clothes3 = new Clothes(3L, MEMBER_ID, BAG, List.of(SPRING, FALL), CLOTHES_IMAGE_URL);
+        Slice<Clothes> clothes = new SliceImpl<>(List.of(clothes1, clothes2, clothes3), pageable, false);
+        when(clothesPersistencePort.findByMemberIdAndSeasonsWithCategoriesCount(MEMBER_ID, seasons, 3, pageable))
+                .thenReturn(clothes);
+
+        ClothesResponses clothesResponses =
+                clothesService.getTodayClothes(MEMBER_ID, LocalDate.of(2023, 5, 11), pageable);
+
+        assertAll(
+                () -> assertThat(clothesResponses.getClothes()).hasSize(3),
+                () -> assertThat(clothesResponses.isLastPage()).isTrue()
+        );
     }
 
     static class CategorySeasonProjectionTestImpl implements CategorySeasonProjection {

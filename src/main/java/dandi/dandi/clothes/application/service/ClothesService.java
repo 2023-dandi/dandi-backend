@@ -34,7 +34,6 @@ public class ClothesService implements ClothesUseCase {
 
     private static final int CLOTHES_IMAGE_URL_INDEX = 1;
     private static final String ALL = "ALL";
-    private static final int TODAY_CLOTHES_COUNT_LIMIT = 5;
 
     private final ClothesPersistencePort clothesPersistencePort;
     private final ClothesImageService clothesImageService;
@@ -147,10 +146,14 @@ public class ClothesService implements ClothesUseCase {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ClothesResponses getTodayClothes(Long memberId, LocalDate today, Pageable pageable) {
         Month month = Month.fromDate(today);
+        Set<Season> seasons = month.getSeasons();
+        int categoriesCount = clothesPersistencePort.countDistinctCategoryByMemberIdAndSeasons(memberId, seasons);
+        int searchCategoryCount = Math.min(categoriesCount, pageable.getPageSize());
         Slice<Clothes> clothesSearchResult = clothesPersistencePort
-                .findByMemberIdAndSeasons(memberId, month.getSeasons(), pageable);
+                .findByMemberIdAndSeasonsWithCategoriesCount(memberId, seasons, searchCategoryCount, pageable);
         List<ClothesResponse> clothesResponses = clothesSearchResult.stream()
                 .map(clothes -> new ClothesResponse(clothes.getId(), imageAccessUrl + clothes.getClothesImageUrl()))
                 .collect(Collectors.toUnmodifiableList());
