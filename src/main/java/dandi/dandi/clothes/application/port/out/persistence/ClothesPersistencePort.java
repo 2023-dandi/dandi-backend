@@ -24,5 +24,6 @@ public interface ClothesPersistencePort {
 
     int countDistinctCategoryByMemberIdAndSeasons(Long memberId, Set<Season> seasons);
 
-    Slice<Clothes> findByMemberIdAndSeasons(Long memberId, Set<Season> seasons, Pageable pageable);
+    Slice<Clothes> findByMemberIdAndSeasonsWithCategoriesCount(Long memberId, Set<Season> seasons,
+                                                               int categoriesCount, Pageable pageable);
 }
