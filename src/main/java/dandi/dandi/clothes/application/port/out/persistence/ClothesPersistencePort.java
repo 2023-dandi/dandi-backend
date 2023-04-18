@@ -22,5 +22,7 @@ public interface ClothesPersistencePort {
 
     void deleteById(Long clothesId);
 
+    int countDistinctCategoryByMemberIdAndSeasons(Long memberId, Set<Season> seasons);
+
     Slice<Clothes> findByMemberIdAndSeasons(Long memberId, Set<Season> seasons, Pageable pageable);
 }

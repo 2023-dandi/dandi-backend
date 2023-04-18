@@ -115,6 +115,22 @@ class ClothesPersistenceAdapterTest extends PersistenceAdapterTest {
         assertThat(actual).hasSize(3);
     }
 
+    @DisplayName("계절에 해당하는 옷의 category 개수를 알 수 있다.")
+    @Test
+    void countDistinctCategoryByMemberIdAndSeasons() {
+        saveClothes(List.of(
+                Clothes.initial(MEMBER_ID, "TOP", List.of("SPRING", "SUMMER"), CLOTHES_IMAGE_URL),
+                Clothes.initial(MEMBER_ID, "TOP", List.of("FALL", "WINTER"), CLOTHES_IMAGE_URL),
+                Clothes.initial(MEMBER_ID, "BOTTOM", List.of("FALL", "SUMMER"), CLOTHES_IMAGE_URL),
+                Clothes.initial(MEMBER_ID, "BAG", List.of("SPRING", "SUMMER"), CLOTHES_IMAGE_URL)
+        ));
+
+        int actual = clothesPersistenceAdapter
+                .countDistinctCategoryByMemberIdAndSeasons(MEMBER_ID, Set.of(SUMMER, FALL));
+
+        assertThat(actual).isEqualTo(3);
+    }
+
     @DisplayName("계절에 해당하는 옷들을 찾을 수 있다.")
     @ParameterizedTest
     @MethodSource("provideSeasonsAndExpectedSize")

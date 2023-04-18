@@ -57,6 +57,11 @@ public class ClothesPersistenceAdapter implements ClothesPersistencePort {
     }
 
     @Override
+    public int countDistinctCategoryByMemberIdAndSeasons(Long memberId, Set<Season> seasons) {
+        return clothesRepository.countDistinctCategoryByMemberIdAndSeasons(memberId, seasons);
+    }
+
+    @Override
     public Slice<Clothes> findByMemberIdAndSeasons(Long memberId, Set<Season> seasons, Pageable pageable) {
         Slice<ClothesJpaEntity> clothesJpaEntities =
                 clothesRepository.findByMemberIdAndSeasons(memberId, seasons, pageable);
