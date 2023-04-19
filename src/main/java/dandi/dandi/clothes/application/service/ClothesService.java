@@ -78,9 +78,16 @@ public class ClothesService implements ClothesUseCase {
                 .stream()
                 .flatMap(Set::stream)
                 .collect(Collectors.toUnmodifiableSet());
-        sortedCategoriesAndSeasons.put(ALL, allCategorySeasons);
+        addAllCategoryIfNotEmpty(sortedCategoriesAndSeasons, allCategorySeasons);
         categoriesAndSeasons.forEach((key, value) -> sortedCategoriesAndSeasons.put(key.name(), value));
         return sortedCategoriesAndSeasons;
+    }
+
+    private void addAllCategoryIfNotEmpty(Map<String, Set<Season>> sortedCategoriesAndSeasons,
+                                          Set<Season> allCategorySeasons) {
+        if (!allCategorySeasons.isEmpty()) {
+            sortedCategoriesAndSeasons.put(ALL, allCategorySeasons);
+        }
     }
 
     private CategorySeasonsResponses mapToCategoryResponses(Map<String, Set<Season>> categories) {
