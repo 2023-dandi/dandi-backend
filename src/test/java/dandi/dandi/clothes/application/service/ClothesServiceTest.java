@@ -137,6 +137,17 @@ class ClothesServiceTest {
                 .hasMessage(ForbiddenException.clothesLookUp().getMessage());
     }
 
+    @DisplayName("카테고리와 카테고리에 따른 계절들을 조회할 수 있다.(빈 값)")
+    @Test
+    void getCategoriesAndSeasons_EmptyResult() {
+        when(clothesPersistencePort.findDistinctCategoryAndSeason(MEMBER_ID))
+                .thenReturn(List.of());
+
+        CategorySeasonsResponses actual = clothesService.getCategoriesAndSeasons(MEMBER_ID);
+
+        assertThat(actual.getCategories()).isEmpty();
+    }
+
     @DisplayName("카테고리와 카테코리에 따른 계절들을 조회할 수 있다.")
     @Test
     void getCategoriesAndSeasons() {
