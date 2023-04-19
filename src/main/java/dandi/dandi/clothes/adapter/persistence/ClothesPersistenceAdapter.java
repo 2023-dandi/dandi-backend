@@ -57,9 +57,15 @@ public class ClothesPersistenceAdapter implements ClothesPersistencePort {
     }
 
     @Override
-    public Slice<Clothes> findByMemberIdAndSeasons(Long memberId, Set<Season> seasons, Pageable pageable) {
+    public int countDistinctCategoryByMemberIdAndSeasons(Long memberId, Set<Season> seasons) {
+        return clothesRepository.countDistinctCategoryByMemberIdAndSeasons(memberId, seasons);
+    }
+
+    @Override
+    public Slice<Clothes> findByMemberIdAndSeasonsWithCategoriesCount(Long memberId, Set<Season> seasons,
+                                                                      int categoriesCount, Pageable pageable) {
         Slice<ClothesJpaEntity> clothesJpaEntities =
-                clothesRepository.findByMemberIdAndSeasons(memberId, seasons, pageable);
+                clothesRepository.findByMemberIdAndSeasons(memberId, categoriesCount, seasons, pageable);
         List<Clothes> clothes = clothesJpaEntities
                 .stream()
                 .map(ClothesJpaEntity::toClothes)
@@ -67,3 +73,4 @@ public class ClothesPersistenceAdapter implements ClothesPersistencePort {
         return new SliceImpl<>(clothes, pageable, clothesJpaEntities.hasNext());
     }
 }
+

@@ -27,12 +27,25 @@ public interface ClothesRepository extends JpaRepository<ClothesJpaEntity, Long>
             + "WHERE c.memberId = :memberId")
     List<CategorySeasonProjection> findAllByCategoryDistinct(Long memberId);
 
-    @Query("SELECT DISTINCT c FROM ClothesJpaEntity c INNER JOIN c.seasons s ON c.id = s.clothesJpaEntity.id "
-            + "WHERE s.season IN :seasons AND c.memberId = :memberId")
-        //@Query("SELECT c FROM ClothesJpaEntity c WHERE c.id IN "
-        //        + "(SELECT DISTINCT s.clothesJpaEntity.id FROM ClothesSeasonJpaEntity s WHERE s.season IN :seasons) AND c.memberId = :memberId "
-        //        + "GROUP BY c.id, c.category HAVING COUNT(DISTINCT c.category) > 1")
-    Slice<ClothesJpaEntity> findByMemberIdAndSeasons(Long memberId, Set<Season> seasons,
-                                                     Pageable pageable);
+    @Query("SELECT COUNT(DISTINCT c.category) FROM ClothesJpaEntity c "
+            + "INNER JOIN c.seasons cs ON c.id = cs.clothesJpaEntity.id "
+            + "WHERE cs.season IN :seasons AND c.memberId = :memberId")
+    int countDistinctCategoryByMemberIdAndSeasons(Long memberId, Set<Season> seasons);
 
+    @Query("SELECT DISTINCT c "
+            + "FROM ClothesJpaEntity c "
+            + "         JOIN FETCH ClothesSeasonJpaEntity cs ON c.id = cs.clothesJpaEntity.id "
+            + "WHERE c.memberId IN (SELECT DISTINCT c.memberId "
+            + "                      FROM ClothesJpaEntity c "
+            + "                               INNER JOIN ClothesSeasonJpaEntity cs "
+            + "                                          ON c.id = cs.clothesJpaEntity.id AND cs.season IN :seasons "
+            + "                      WHERE c.memberId = :memberId"
+            + "                      GROUP BY c.memberId"
+            + "                      HAVING COUNT(DISTINCT c.category) >= :categoriesCount) "
+            + "  AND c.id IN (SELECT c.id FROM ClothesJpaEntity c "
+            + "                                INNER JOIN ClothesSeasonJpaEntity cs ON c.id = cs.clothesJpaEntity.id "
+            + "                       WHERE c.memberId = :memberId "
+            + "                         AND cs.season IN :seasons)")
+    Slice<ClothesJpaEntity> findByMemberIdAndSeasons(Long memberId, long categoriesCount,
+                                                     Set<Season> seasons, Pageable pageable);
 }
