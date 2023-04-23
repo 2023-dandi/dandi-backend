@@ -25,7 +25,9 @@ class PushNotificationEventHandlerTest {
     @DisplayName("새 회원 가입 이벤트를 받아, 새 회원에 대한 푸시 알림을 생성한다.")
     @Test
     void savePushNotificationByMember() {
-        pushNotificationEventHandler.savePushNotificationByMember(new NewMemberCreatedEvent(1L));
+        NewMemberCreatedEvent newMemberCreatedEvent = new NewMemberCreatedEvent(1L, PUSH_NOTIFICATION_TOKEN);
+
+        pushNotificationEventHandler.savePushNotificationByMember(newMemberCreatedEvent);
 
         verify(notificationPersistencePort).save(PushNotification.initial(1L, PUSH_NOTIFICATION_TOKEN));
     }

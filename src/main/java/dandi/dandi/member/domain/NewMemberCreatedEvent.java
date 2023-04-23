@@ -5,13 +5,19 @@ import java.util.Objects;
 public class NewMemberCreatedEvent {
 
     private final Long memberId;
+    private final String pushNotificationToken;
 
-    public NewMemberCreatedEvent(Long memberId) {
+    public NewMemberCreatedEvent(Long memberId, String pushNotificationToken) {
         this.memberId = memberId;
+        this.pushNotificationToken = pushNotificationToken;
     }
 
     public Long getMemberId() {
         return memberId;
+    }
+
+    public String getPushNotificationToken() {
+        return pushNotificationToken;
     }
 
     @Override

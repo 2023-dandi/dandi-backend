@@ -25,14 +25,14 @@ public class MemberSignupManager {
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
-    public Long signup(String oAuthMemberId) {
+    public Long signup(String oAuthMemberId, String pushNotificationToken) {
         String randomNickname = nicknameGenerator.generate();
         while (memberPersistencePort.existsMemberByNickname(randomNickname)) {
             randomNickname = nicknameGenerator.generate();
         }
         Member newMember = memberPersistencePort.save(
                 Member.initial(oAuthMemberId, randomNickname, initialProfileImageUrl));
-        applicationEventPublisher.publishEvent(new NewMemberCreatedEvent(newMember.getId()));
+        applicationEventPublisher.publishEvent(new NewMemberCreatedEvent(newMember.getId(), pushNotificationToken));
         return newMember.getId();
     }
 }
