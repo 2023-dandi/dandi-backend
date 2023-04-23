@@ -36,4 +36,9 @@ public class PushNotificationPersistenceAdapter implements PushNotificationPersi
     public void updatePushNotificationAllowance(Long id, boolean allowance) {
         pushNotificationRepository.updatePushNotificationAllowance(id, allowance);
     }
+
+    @Override
+    public void updatePushNotificationToken(Long id, String pushNotificationToken) {
+        pushNotificationRepository.updatePushNotificationToken(id, pushNotificationToken);
+    }
 }
