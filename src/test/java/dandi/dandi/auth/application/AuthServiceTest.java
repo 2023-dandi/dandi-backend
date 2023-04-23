@@ -2,11 +2,14 @@ package dandi.dandi.auth.application;
 
 import static dandi.dandi.member.MemberTestFixture.MEMBER;
 import static dandi.dandi.member.MemberTestFixture.OAUTH_ID;
+import static dandi.dandi.pushnotification.PushNotificationFixture.PUSH_NOTIFICATION;
+import static dandi.dandi.pushnotification.PushNotificationFixture.PUSH_NOTIFICATION_TOKEN;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -22,6 +25,7 @@ import dandi.dandi.auth.domain.RefreshToken;
 import dandi.dandi.auth.exception.UnauthorizedException;
 import dandi.dandi.member.application.port.out.MemberPersistencePort;
 import dandi.dandi.member.application.service.MemberSignupManager;
+import dandi.dandi.pushnotification.application.port.out.persistence.PushNotificationPersistencePort;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
@@ -54,6 +58,8 @@ class AuthServiceTest {
     private RefreshTokenPersistencePort refreshTokenPersistencePort;
     @Mock
     private RefreshTokenManagerPort refreshTokenManagerPort;
+    @Mock
+    private PushNotificationPersistencePort pushNotificationPersistencePort;
     @InjectMocks
     private AuthService authService;
 
@@ -64,14 +70,14 @@ class AuthServiceTest {
                 .thenReturn(OAUTH_ID);
         when(memberPersistencePort.findByOAuthId(OAUTH_ID))
                 .thenReturn(Optional.empty());
-        when(memberSignupManager.signup(OAUTH_ID))
+        when(memberSignupManager.signup(OAUTH_ID, PUSH_NOTIFICATION_TOKEN))
                 .thenReturn(NEW_MEMBER_ID);
         when(accessTokenManagerPort.generateToken(String.valueOf(NEW_MEMBER_ID)))
                 .thenReturn(TOKEN);
         when(refreshTokenManagerPort.generateToken(NEW_MEMBER_ID))
                 .thenReturn(RefreshToken.generateNewWithExpiration(NEW_MEMBER_ID, LocalDateTime.MAX));
 
-        LoginResponse loginResponse = authService.getToken(new LoginCommand(ID_TOKEN));
+        LoginResponse loginResponse = authService.getToken(new LoginCommand(ID_TOKEN, PUSH_NOTIFICATION_TOKEN));
 
         assertAll(
                 () -> assertThat(loginResponse.getAccessToken()).isEqualTo(TOKEN),
@@ -91,13 +97,42 @@ class AuthServiceTest {
                 .thenReturn(TOKEN);
         when(refreshTokenManagerPort.generateToken(any()))
                 .thenReturn(RefreshToken.generateNewWithExpiration(EXISTING_MEMBER_ID, LocalDateTime.MAX));
+        when(pushNotificationPersistencePort.findPushNotificationByMemberId(EXISTING_MEMBER_ID))
+                .thenReturn(Optional.of(PUSH_NOTIFICATION));
 
-        LoginResponse loginResponse = authService.getToken(new LoginCommand(ID_TOKEN));
+        LoginResponse loginResponse = authService.getToken(new LoginCommand(ID_TOKEN, PUSH_NOTIFICATION.getToken()));
 
         assertAll(
                 () -> assertThat(loginResponse.getAccessToken()).isEqualTo(TOKEN),
                 () -> assertThat(loginResponse.getRefreshToken()).isNotNull(),
-                () -> assertThat(loginResponse.isNewUser()).isFalse()
+                () -> assertThat(loginResponse.isNewUser()).isFalse(),
+                () -> verify(pushNotificationPersistencePort, never()).updatePushNotificationToken(any(), anyString())
+        );
+    }
+
+    @DisplayName("")
+    @Test
+    void getAccessToken_ExistingMember_ChangedPushNotificationToken() {
+        when(oAuthClientPort.getOAuthMemberId(anyString()))
+                .thenReturn(OAUTH_ID);
+        when(memberPersistencePort.findByOAuthId(OAUTH_ID))
+                .thenReturn(Optional.of(MEMBER));
+        when(accessTokenManagerPort.generateToken(anyString()))
+                .thenReturn(TOKEN);
+        when(refreshTokenManagerPort.generateToken(any()))
+                .thenReturn(RefreshToken.generateNewWithExpiration(EXISTING_MEMBER_ID, LocalDateTime.MAX));
+        when(pushNotificationPersistencePort.findPushNotificationByMemberId(EXISTING_MEMBER_ID))
+                .thenReturn(Optional.of(PUSH_NOTIFICATION));
+        String changedPushNotificationToken = "changedPushNotificationToken";
+
+        LoginResponse loginResponse = authService.getToken(new LoginCommand(ID_TOKEN, changedPushNotificationToken));
+
+        assertAll(
+                () -> assertThat(loginResponse.getAccessToken()).isEqualTo(TOKEN),
+                () -> assertThat(loginResponse.getRefreshToken()).isNotNull(),
+                () -> assertThat(loginResponse.isNewUser()).isFalse(),
+                () -> verify(pushNotificationPersistencePort)
+                        .updatePushNotificationToken(EXISTING_MEMBER_ID, changedPushNotificationToken)
         );
     }
 
