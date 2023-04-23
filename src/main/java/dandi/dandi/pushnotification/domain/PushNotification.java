@@ -44,6 +44,10 @@ public class PushNotification {
         return allowance;
     }
 
+    public boolean hasToken(String pushNotificationToken) {
+        return token.equals(pushNotificationToken);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
