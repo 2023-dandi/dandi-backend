@@ -1,5 +1,6 @@
 package dandi.dandi.pushnotification.application.service;
 
+import static dandi.dandi.pushnotification.PushNotificationFixture.PUSH_NOTIFICATION;
 import static dandi.dandi.pushnotification.PushNotificationFixture.PUSH_NOTIFICATION_TOKEN;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -14,7 +15,6 @@ import dandi.dandi.pushnotification.application.port.in.PushNotificationTimeUpda
 import dandi.dandi.pushnotification.application.port.out.persistence.PushNotificationPersistencePort;
 import dandi.dandi.pushnotification.application.sevice.PushNotificationService;
 import dandi.dandi.pushnotification.domain.PushNotification;
-import dandi.dandi.pushnotification.domain.PushNotificationTime;
 import java.time.LocalTime;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
@@ -26,9 +26,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class PushNotificationServiceTest {
-
-    private static final PushNotification PUSH_NOTIFICATION =
-            new PushNotification(1L, 1L, PUSH_NOTIFICATION_TOKEN, PushNotificationTime.from(LocalTime.MIDNIGHT), true);
 
     @Mock
     private PushNotificationPersistencePort pushNotificationPersistencePort;
