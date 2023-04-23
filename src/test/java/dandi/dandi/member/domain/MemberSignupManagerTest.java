@@ -43,10 +43,12 @@ class MemberSignupManagerTest {
                 .thenReturn(false);
         when(memberPersistencePort.save(any(Member.class)))
                 .thenReturn(MEMBER);
+        String pushNotitificationToken = "asdasad";
 
-        Long newMemberId = memberSignupManager.signup(OAUTH_ID);
+        Long newMemberId = memberSignupManager.signup(OAUTH_ID, pushNotitificationToken);
 
         assertThat(newMemberId).isEqualTo(MEMBER.getId());
-        verify(applicationEventPublisher).publishEvent(new NewMemberCreatedEvent(MEMBER.getId()));
+        verify(applicationEventPublisher).publishEvent(
+                new NewMemberCreatedEvent(MEMBER.getId(), pushNotitificationToken));
     }
 }
