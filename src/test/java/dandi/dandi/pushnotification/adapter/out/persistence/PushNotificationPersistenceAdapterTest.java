@@ -1,6 +1,7 @@
 package dandi.dandi.pushnotification.adapter.out.persistence;
 
 import static dandi.dandi.member.MemberTestFixture.MEMBER_ID;
+import static dandi.dandi.pushnotification.PushNotificationFixture.PUSH_NOTIFICATION_TOKEN;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatCode;
 
@@ -22,7 +23,7 @@ class PushNotificationPersistenceAdapterTest extends PersistenceAdapterTest {
     @DisplayName("푸시 알림을 저장할 수 있다.")
     @Test
     void save() {
-        PushNotification pushNotification = PushNotification.initial(MEMBER_ID);
+        PushNotification pushNotification = PushNotification.initial(MEMBER_ID, PUSH_NOTIFICATION_TOKEN);
 
         assertThatCode(() -> pushNotificationPersistenceAdapter.save(pushNotification))
                 .doesNotThrowAnyException();
@@ -32,7 +33,7 @@ class PushNotificationPersistenceAdapterTest extends PersistenceAdapterTest {
     @ParameterizedTest
     @CsvSource({"1, true", "2, false"})
     void findPushNotificationByMemberId(Long memberId, boolean expectedPresentation) {
-        PushNotification pushNotification = PushNotification.initial(MEMBER_ID);
+        PushNotification pushNotification = PushNotification.initial(MEMBER_ID, PUSH_NOTIFICATION_TOKEN);
         pushNotificationPersistenceAdapter.save(pushNotification);
 
         Optional<PushNotification> found = pushNotificationPersistenceAdapter.findPushNotificationByMemberId(memberId);
@@ -43,7 +44,7 @@ class PushNotificationPersistenceAdapterTest extends PersistenceAdapterTest {
     @DisplayName("푸시 알림 시간을 변경할 수 있다.")
     @Test
     void updatePushNotificationTime() {
-        PushNotification pushNotification = PushNotification.initial(MEMBER_ID);
+        PushNotification pushNotification = PushNotification.initial(MEMBER_ID, PUSH_NOTIFICATION_TOKEN);
         PushNotification saved = pushNotificationPersistenceAdapter.save(pushNotification);
         LocalTime newPushNotificationTime = LocalTime.of(10, 10);
 
@@ -59,7 +60,7 @@ class PushNotificationPersistenceAdapterTest extends PersistenceAdapterTest {
     @DisplayName("푸시 알림 허용 여부를 변경할 수 있다.")
     @Test
     void updatePushNotificationAllowance() {
-        PushNotification pushNotification = PushNotification.initial(MEMBER_ID);
+        PushNotification pushNotification = PushNotification.initial(MEMBER_ID, PUSH_NOTIFICATION_TOKEN);
         PushNotification saved = pushNotificationPersistenceAdapter.save(pushNotification);
         boolean allowance = false;
 
