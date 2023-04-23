@@ -25,6 +25,9 @@ dependencies {
 	implementation 'com.amazonaws:aws-java-sdk-s3:1.12.13'
 	implementation "org.testcontainers:localstack:1.16.3"
 
+	implementation 'com.google.firebase:firebase-admin:6.8.1'
+
+
 	runtimeOnly 'com.mysql:mysql-connector-j'
 
 	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
