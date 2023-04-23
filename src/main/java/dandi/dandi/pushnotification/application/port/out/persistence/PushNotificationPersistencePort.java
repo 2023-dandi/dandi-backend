@@ -13,4 +13,6 @@ public interface PushNotificationPersistencePort {
     void updatePushNotificationTime(Long id, LocalTime pushNotificationTime);
 
     void updatePushNotificationAllowance(Long id, boolean allowance);
+
+    void updatePushNotificationToken(Long id, String pushNotificationToken);
 }

@@ -72,4 +72,20 @@ class PushNotificationPersistenceAdapterTest extends PersistenceAdapterTest {
                         .get();
         assertThat(foundAfterPushNotificationAllowanceUpdate.isAllowed()).isEqualTo(allowance);
     }
+
+    @DisplayName("푸시 알림 토큰 값을 변경할 수 있다.")
+    @Test
+    void updatePushNotificationToken() {
+        PushNotification pushNotification = PushNotification.initial(MEMBER_ID, PUSH_NOTIFICATION_TOKEN);
+        PushNotification saved = pushNotificationPersistenceAdapter.save(pushNotification);
+        String newPushNotificationToken = "newPushNotificationToken";
+
+        pushNotificationPersistenceAdapter.updatePushNotificationToken(saved.getId(), newPushNotificationToken);
+
+        entityManager.clear();
+        PushNotification foundAfterPushNotificationAllowanceUpdate =
+                pushNotificationPersistenceAdapter.findPushNotificationByMemberId(MEMBER_ID)
+                        .get();
+        assertThat(foundAfterPushNotificationAllowanceUpdate.getToken()).isEqualTo(newPushNotificationToken);
+    }
 }

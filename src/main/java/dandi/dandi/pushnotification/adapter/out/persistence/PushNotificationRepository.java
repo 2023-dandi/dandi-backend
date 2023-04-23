@@ -17,4 +17,8 @@ public interface PushNotificationRepository extends JpaRepository<PushNotificati
     @Modifying
     @Query("UPDATE PushNotificationJpaEntity pn SET pn.allowance = :allowance WHERE pn.id = :id")
     void updatePushNotificationAllowance(Long id, boolean allowance);
+
+    @Modifying
+    @Query("UPDATE PushNotificationJpaEntity pn SET pn.token = :pushNotificationToken WHERE pn.id = :id")
+    void updatePushNotificationToken(Long id, String pushNotificationToken);
 }
