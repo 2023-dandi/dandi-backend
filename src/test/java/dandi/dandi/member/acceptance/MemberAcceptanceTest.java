@@ -87,7 +87,8 @@ class MemberAcceptanceTest extends AcceptanceTest {
         String anotherMemberAuthId = "anotherMemberAuthId";
         when(oAuthClientPort.getOAuthMemberId(anotherMemberAppleIdToken))
                 .thenReturn(OAUTH_ID);
-        String anotherMemberAccessToken = httpPost(new LoginRequest(anotherMemberAuthId), LOGIN_REQUEST_URI)
+        String anotherMemberAccessToken = httpPost(new LoginRequest(anotherMemberAuthId, PUSH_NOTIFICATION_TOKEN),
+                LOGIN_REQUEST_URI)
                 .jsonPath()
                 .getObject(".", TokenResponse.class)
                 .getAccessToken();

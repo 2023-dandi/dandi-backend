@@ -29,6 +29,7 @@ import org.springframework.http.HttpStatus;
 class AuthAcceptanceTest extends AcceptanceTest {
 
     private static final String VALID_OAUTH_ID_TOKEN = "oAuthIdToken";
+    private static final String PUSH_NOTIFICATION_TOKEN = "dasdaddsad";
     private static final String REFRESH_TOKEN = "Refresh-Token";
 
     @DisplayName("처음으로 로그인하는 사용자가 oauth 로그인을 하면 회원 가입을 진행하고 201과 access, refresh token을 반환한다.")
@@ -37,7 +38,7 @@ class AuthAcceptanceTest extends AcceptanceTest {
         mockAppleIdToken(VALID_OAUTH_ID_TOKEN);
 
         ExtractableResponse<Response> response =
-                httpPost(new LoginRequest(VALID_OAUTH_ID_TOKEN), LOGIN_REQUEST_URI);
+                httpPost(new LoginRequest(VALID_OAUTH_ID_TOKEN, PUSH_NOTIFICATION_TOKEN), LOGIN_REQUEST_URI);
 
         TokenResponse tokenResponse = response.jsonPath()
                 .getObject(".", TokenResponse.class);
@@ -52,10 +53,10 @@ class AuthAcceptanceTest extends AcceptanceTest {
     @Test
     void login_ExistingMember() {
         mockAppleIdToken(VALID_OAUTH_ID_TOKEN);
-        httpPost(new LoginRequest(VALID_OAUTH_ID_TOKEN), LOGIN_REQUEST_URI);
+        httpPost(new LoginRequest(VALID_OAUTH_ID_TOKEN, PUSH_NOTIFICATION_TOKEN), LOGIN_REQUEST_URI);
 
         ExtractableResponse<Response> response =
-                httpPost(new LoginRequest(VALID_OAUTH_ID_TOKEN), LOGIN_REQUEST_URI);
+                httpPost(new LoginRequest(VALID_OAUTH_ID_TOKEN, PUSH_NOTIFICATION_TOKEN), LOGIN_REQUEST_URI);
 
         TokenResponse tokenResponse = response.jsonPath()
                 .getObject(".", TokenResponse.class);
@@ -73,7 +74,7 @@ class AuthAcceptanceTest extends AcceptanceTest {
         mockExpiredToken(expiredToken);
         UnauthorizedException unauthorizedException = UnauthorizedException.expired();
 
-        ExtractableResponse<Response> response = httpPost(new LoginRequest(expiredToken),
+        ExtractableResponse<Response> response = httpPost(new LoginRequest(expiredToken, PUSH_NOTIFICATION_TOKEN),
                 LOGIN_REQUEST_URI);
 
         assertAll(
@@ -89,7 +90,7 @@ class AuthAcceptanceTest extends AcceptanceTest {
         mockInvalidToken(invalidToken);
         UnauthorizedException unauthorizedException = UnauthorizedException.rigged();
 
-        ExtractableResponse<Response> response = httpPost(new LoginRequest(invalidToken),
+        ExtractableResponse<Response> response = httpPost(new LoginRequest(invalidToken, PUSH_NOTIFICATION_TOKEN),
                 LOGIN_REQUEST_URI);
 
         assertAll(
@@ -102,9 +103,10 @@ class AuthAcceptanceTest extends AcceptanceTest {
     @Test
     void refresh() {
         mockAppleIdToken(VALID_OAUTH_ID_TOKEN);
-        TokenResponse tokenResponse = httpPost(new LoginRequest(VALID_OAUTH_ID_TOKEN), LOGIN_REQUEST_URI)
-                .jsonPath()
-                .getObject(".", TokenResponse.class);
+        TokenResponse tokenResponse =
+                httpPost(new LoginRequest(VALID_OAUTH_ID_TOKEN, PUSH_NOTIFICATION_TOKEN), LOGIN_REQUEST_URI)
+                        .jsonPath()
+                        .getObject(".", TokenResponse.class);
         String refreshTokenBeforeRefresh = tokenResponse.getRefreshToken();
 
         ExtractableResponse<Response> response = HttpMethodFixture.httpPostWithCookie(
@@ -139,9 +141,10 @@ class AuthAcceptanceTest extends AcceptanceTest {
     void refresh_ExpiredRefreshToken() {
         mockAppleIdToken(VALID_OAUTH_ID_TOKEN);
         mockExpiredRefreshToken();
-        TokenResponse tokenResponse = httpPost(new LoginRequest(VALID_OAUTH_ID_TOKEN), LOGIN_REQUEST_URI)
-                .jsonPath()
-                .getObject(".", TokenResponse.class);
+        TokenResponse tokenResponse =
+                httpPost(new LoginRequest(VALID_OAUTH_ID_TOKEN, PUSH_NOTIFICATION_TOKEN), LOGIN_REQUEST_URI)
+                        .jsonPath()
+                        .getObject(".", TokenResponse.class);
         String refreshTokenBeforeRefresh = tokenResponse.getRefreshToken();
 
         ExtractableResponse<Response> response = HttpMethodFixture.httpPostWithCookie(
