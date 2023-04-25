@@ -138,10 +138,17 @@ public class PostService implements PostUseCase {
         List<MyPostByTemperatureResponse> myPostByTemperatureResponses = myPostsByTemperature.stream()
                 .map(post -> new MyPostByTemperatureResponse(post, post.isLikedBy(memberId), imageAccessUrl))
                 .collect(Collectors.toUnmodifiableList());
-        Post post = myPostsByTemperature.getContent().get(0);
-        PostWriterResponse postWriterResponse = new PostWriterResponse(post, imageAccessUrl);
+        PostWriterResponse postWriterResponse = generatePostWriterResponse(myPostsByTemperature.getContent());
         return new MyPostsByTemperatureResponses(
                 myPostByTemperatureResponses, postWriterResponse, myPostsByTemperature.isLast());
+    }
+
+    private PostWriterResponse generatePostWriterResponse(List<Post> myPostsByTemperature) {
+        if (myPostsByTemperature.isEmpty()) {
+            return null;
+        }
+        Post post = myPostsByTemperature.get(0);
+        return new PostWriterResponse(post, imageAccessUrl);
     }
 
     @Override
