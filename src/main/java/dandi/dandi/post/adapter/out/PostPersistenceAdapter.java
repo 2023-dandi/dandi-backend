@@ -90,11 +90,18 @@ public class PostPersistenceAdapter implements PostPersistencePort {
                 temperatureSearchCondition.getMaxTemperatureMaxSearchCondition(),
                 pageable);
 
-        Member member = findMember(myPostsByTemperature.getContent().get(0));
+        Member member = findMemberFromOnlyMemberWritingPosts(myPostsByTemperature.getContent());
         List<Post> posts = myPostsByTemperature.stream()
                 .map(postJpaEntity -> postJpaEntity.toPost(member, findPostLikingMemberIds(postJpaEntity)))
                 .collect(Collectors.toUnmodifiableList());
         return new SliceImpl<>(posts, pageable, myPostsByTemperature.hasNext());
+    }
+
+    private Member findMemberFromOnlyMemberWritingPosts(List<PostJpaEntity> posts) {
+        if (posts.isEmpty()) {
+            return null;
+        }
+        return findMember(posts.get(0));
     }
 
     private Member findMember(PostJpaEntity postJpaEntity) {
