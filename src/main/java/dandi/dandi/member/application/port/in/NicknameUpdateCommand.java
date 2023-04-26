@@ -8,11 +8,11 @@ import org.hibernate.validator.constraints.Length;
 
 public class NicknameUpdateCommand extends SelfValidating<NicknameUpdateCommand> {
 
-    private static final String INVALID_NICKNAME_MESSAGE = "닉네임은 공백없이 (.), (-), 영어와 숫자로 이루어진 2 ~ 23자여야 합니다.";
+    private static final String INVALID_NICKNAME_MESSAGE = "닉네임은 공백없이 (.), (_), 영어와 숫자로 이루어진 2 ~ 23자여야 합니다.";
 
     @NotNull
     @NotBlank
-    @Pattern(regexp = "[a-zA-Z0-9-.]*")
+    @Pattern(regexp = "[a-zA-Z0-9_.]*")
     @Length(min = 2, max = 23)
     private final String nickname;
 
