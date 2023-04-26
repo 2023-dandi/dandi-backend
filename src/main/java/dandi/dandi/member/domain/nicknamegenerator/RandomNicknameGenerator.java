@@ -15,7 +15,7 @@ public class RandomNicknameGenerator implements NicknameGenerator {
     private static final List<String> ANIMALS = List.of("raccoon", "rabbit", "lion", "tiger", "cow",
             "cat", "dog", "giraffe", "zebra", "buffalo", "horse", "monkey");
 
-    private static final String NICKNAME_WORD_DELIMITER = "-";
+    private static final String NICKNAME_WORD_DELIMITER = "_";
 
     private final Random random = new Random();
 
