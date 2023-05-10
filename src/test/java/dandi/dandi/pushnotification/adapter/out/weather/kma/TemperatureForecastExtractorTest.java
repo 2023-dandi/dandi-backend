@@ -8,9 +8,9 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class TemperatureExtractorTest {
+class TemperatureForecastExtractorTest {
 
-    private final TemperatureExtractor temperatureExtractor = new TemperatureExtractor();
+    private final TemperatureForecastExtractor temperatureForecastExtractor = new TemperatureForecastExtractor();
 
     @DisplayName("예보 날짜의 예보 값중 TMX, TMN을 통해 최고 최저 기온을 추출한다.")
     @Test
@@ -34,7 +34,7 @@ class TemperatureExtractorTest {
                 generateWeatherItem("REH", "0504", "1400", "13")
         );
 
-        Temperature temperature = temperatureExtractor.extract("0504", weatherItems);
+        Temperature temperature = temperatureForecastExtractor.extract("0504", weatherItems);
 
         assertAll(
                 () -> assertThat(temperature.getMaxTemperature()).isEqualTo(21),
@@ -61,7 +61,7 @@ class TemperatureExtractorTest {
                 generateWeatherItem("REH", "0504", "1400", "13")
         );
 
-        Temperature temperature = temperatureExtractor.extract("0504", weatherItems);
+        Temperature temperature = temperatureForecastExtractor.extract("0504", weatherItems);
 
         assertAll(
                 () -> assertThat(temperature.getMaxTemperature()).isEqualTo(20),

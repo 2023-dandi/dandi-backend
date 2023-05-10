@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
 @Component
-public class TemperatureExtractor {
+public class TemperatureForecastExtractor {
 
     private static final String MIN_TEMPERATURE = "TMN";
     private static final String MAX_TEMPERATURE = "TMX";
