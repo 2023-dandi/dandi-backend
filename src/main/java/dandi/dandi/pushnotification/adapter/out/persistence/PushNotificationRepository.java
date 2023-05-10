@@ -2,6 +2,8 @@ package dandi.dandi.pushnotification.adapter.out.persistence;
 
 import java.time.LocalTime;
 import java.util.Optional;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -21,4 +23,7 @@ public interface PushNotificationRepository extends JpaRepository<PushNotificati
     @Modifying
     @Query("UPDATE PushNotificationJpaEntity pn SET pn.token = :pushNotificationToken WHERE pn.id = :id")
     void updatePushNotificationToken(Long id, String pushNotificationToken);
+
+    @Query("SELECT pn FROM PushNotificationJpaEntity pn WHERE pn.allowance = true")
+    Slice<PushNotificationJpaEntity> findAllowedPushNotification(Pageable pageable);
 }
