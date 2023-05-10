@@ -1,8 +1,8 @@
 package dandi.dandi.member.adapter.out.persistence;
 
-import dandi.dandi.member.domain.Location;
 import dandi.dandi.member.domain.Member;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -23,22 +23,20 @@ public class MemberJpaEntity {
     @Column(nullable = false, unique = true)
     private String nickname;
 
-    private double latitude;
-
-    private double longitude;
+    @Embedded
+    private LocationJpaEntity locationJpaEntity;
 
     private String profileImgUrl;
 
     protected MemberJpaEntity() {
     }
 
-    private MemberJpaEntity(Long id, String oAuthId, String nickname, double latitude, double longitude,
+    private MemberJpaEntity(Long id, String oAuthId, String nickname, LocationJpaEntity locationJpaEntity,
                             String profileImgUrl) {
         this.id = id;
         this.oAuthId = oAuthId;
         this.nickname = nickname;
-        this.latitude = latitude;
-        this.longitude = longitude;
+        this.locationJpaEntity = locationJpaEntity;
         this.profileImgUrl = profileImgUrl;
     }
 
@@ -47,8 +45,7 @@ public class MemberJpaEntity {
                 member.getId(),
                 member.getOAuthId(),
                 member.getNickname(),
-                member.getLongitude(),
-                member.getLatitude(),
+                new LocationJpaEntity(member.getLatitude(), member.getLongitude()),
                 member.getProfileImgUrl()
         );
     }
@@ -62,7 +59,7 @@ public class MemberJpaEntity {
                 id,
                 oAuthId,
                 nickname,
-                new Location(latitude, longitude),
+                locationJpaEntity.toLocation(),
                 profileImgUrl
         );
     }
