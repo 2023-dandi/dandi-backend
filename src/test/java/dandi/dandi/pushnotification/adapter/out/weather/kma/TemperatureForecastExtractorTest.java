@@ -16,25 +16,22 @@ class TemperatureForecastExtractorTest {
     @Test
     void extract_TMX_TMN() {
         List<WeatherItem> weatherItems = List.of(
-                generateWeatherItem("TMP", "0503", "1100", "10"),
-                generateWeatherItem("TMP", "0503", "1200", "30"),
-                generateWeatherItem("TMP", "0503", "1300", "1"),
-                generateWeatherItem("TMP", "0504", "1100", "10"),
-                generateWeatherItem("TMP", "0504", "1200", "11"),
-                generateWeatherItem("TMP", "0504", "1300", "8"),
-                generateWeatherItem("TMP", "0504", "1400", "13"),
-                generateWeatherItem("TMP", "0504", "1500", "20"),
-                generateWeatherItem("TMP", "0504", "1600", "7"),
-                generateWeatherItem("TMN", "0504", "1600", "7"),
-                generateWeatherItem("TMX", "0504", "1600", "21"),
-                generateWeatherItem("TMP", "0504", "1700", "13"),
-                generateWeatherItem("TMP", "0504", "1800", "14"),
-                generateWeatherItem("TMP", "0504", "1900", "16"),
-                generateWeatherItem("POP", "0504", "1400", "13"),
-                generateWeatherItem("REH", "0504", "1400", "13")
+                generateWeatherItem("TMP", "1100", "10"),
+                generateWeatherItem("TMP", "1200", "11"),
+                generateWeatherItem("TMP", "1300", "8"),
+                generateWeatherItem("TMP", "1400", "13"),
+                generateWeatherItem("TMP", "1500", "20"),
+                generateWeatherItem("TMP", "1600", "7"),
+                generateWeatherItem("TMN", "1600", "7"),
+                generateWeatherItem("TMX", "1600", "21"),
+                generateWeatherItem("TMP", "1700", "13"),
+                generateWeatherItem("TMP", "1800", "14"),
+                generateWeatherItem("TMP", "1900", "16"),
+                generateWeatherItem("POP", "1400", "13"),
+                generateWeatherItem("REH", "1400", "13")
         );
 
-        Temperature temperature = temperatureForecastExtractor.extract("0504", weatherItems);
+        Temperature temperature = temperatureForecastExtractor.extract(weatherItems);
 
         assertAll(
                 () -> assertThat(temperature.getMaxTemperature()).isEqualTo(21),
@@ -46,22 +43,19 @@ class TemperatureForecastExtractorTest {
     @Test
     void extract_TMP() {
         List<WeatherItem> weatherItems = List.of(
-                generateWeatherItem("TMP", "0503", "1100", "10"),
-                generateWeatherItem("TMP", "0503", "1200", "30"),
-                generateWeatherItem("TMP", "0503", "1300", "1"),
-                generateWeatherItem("TMP", "0504", "1100", "10"),
-                generateWeatherItem("TMP", "0504", "1200", "11"),
-                generateWeatherItem("TMP", "0504", "1300", "6"),
-                generateWeatherItem("TMP", "0504", "1400", "13"),
-                generateWeatherItem("TMP", "0504", "1500", "20"),
-                generateWeatherItem("TMP", "0504", "1600", "7"),
-                generateWeatherItem("TMP", "0504", "1800", "14"),
-                generateWeatherItem("TMP", "0504", "1900", "16"),
-                generateWeatherItem("POP", "0504", "1400", "13"),
-                generateWeatherItem("REH", "0504", "1400", "13")
+                generateWeatherItem("TMP", "1100", "10"),
+                generateWeatherItem("TMP", "1200", "11"),
+                generateWeatherItem("TMP", "1300", "6"),
+                generateWeatherItem("TMP", "1400", "13"),
+                generateWeatherItem("TMP", "1500", "20"),
+                generateWeatherItem("TMP", "1600", "7"),
+                generateWeatherItem("TMP", "1800", "14"),
+                generateWeatherItem("TMP", "1900", "16"),
+                generateWeatherItem("POP", "1400", "13"),
+                generateWeatherItem("REH", "1400", "13")
         );
 
-        Temperature temperature = temperatureForecastExtractor.extract("0504", weatherItems);
+        Temperature temperature = temperatureForecastExtractor.extract(weatherItems);
 
         assertAll(
                 () -> assertThat(temperature.getMaxTemperature()).isEqualTo(20),
@@ -69,8 +63,7 @@ class TemperatureForecastExtractorTest {
         );
     }
 
-    private WeatherItem generateWeatherItem(String category, String fcstDate,
-                                            String fcstTime, String fcstValue) {
-        return new WeatherItem("0503", "1100", category, fcstDate, fcstTime, fcstValue, "37", "126");
+    private WeatherItem generateWeatherItem(String category, String fcstTime, String fcstValue) {
+        return new WeatherItem("0503", "1100", category, "0504", fcstTime, fcstValue, "37", "126");
     }
 }
