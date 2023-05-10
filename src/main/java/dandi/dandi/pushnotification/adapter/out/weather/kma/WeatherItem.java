@@ -14,6 +14,18 @@ public class WeatherItem {
     public WeatherItem() {
     }
 
+    public WeatherItem(String baseDate, String baseTime, String category, String fcstDate, String fcstTime,
+                       String fcstValue, String nx, String ny) {
+        this.baseDate = baseDate;
+        this.baseTime = baseTime;
+        this.category = category;
+        this.fcstDate = fcstDate;
+        this.fcstTime = fcstTime;
+        this.fcstValue = fcstValue;
+        this.nx = nx;
+        this.ny = ny;
+    }
+
     public String getBaseDate() {
         return baseDate;
     }
