@@ -34,4 +34,7 @@ public interface MemberRepository extends JpaRepository<MemberJpaEntity, Long> {
     @Query("SELECT m FROM MemberJpaEntity m INNER JOIN PushNotificationJpaEntity pn ON m.id = pn.memberId "
             + "WHERE pn.allowance = true")
     Slice<MemberJpaEntity> findPushNotificationAllowingMember(Pageable pageable);
+
+    @Query("SELECT m.locationJpaEntity FROM MemberJpaEntity m WHERE m.id = :id")
+    Optional<LocationJpaEntity> findLocationById(Long id);
 }
