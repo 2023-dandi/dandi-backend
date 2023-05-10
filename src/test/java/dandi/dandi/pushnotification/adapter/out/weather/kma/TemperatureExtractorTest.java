@@ -12,19 +12,21 @@ class TemperatureExtractorTest {
 
     private final TemperatureExtractor temperatureExtractor = new TemperatureExtractor();
 
-    @DisplayName("예보 날짜의 최저 최고 기온을 추출한다.")
+    @DisplayName("예보 날짜의 예보 값중 TMX, TMN을 통해 최고 최저 기온을 추출한다.")
     @Test
-    void extract() {
+    void extract_TMX_TMN() {
         List<WeatherItem> weatherItems = List.of(
                 generateWeatherItem("TMP", "0503", "1100", "10"),
                 generateWeatherItem("TMP", "0503", "1200", "30"),
                 generateWeatherItem("TMP", "0503", "1300", "1"),
                 generateWeatherItem("TMP", "0504", "1100", "10"),
                 generateWeatherItem("TMP", "0504", "1200", "11"),
-                generateWeatherItem("TMP", "0504", "1300", "9"),
+                generateWeatherItem("TMP", "0504", "1300", "8"),
                 generateWeatherItem("TMP", "0504", "1400", "13"),
-                generateWeatherItem("TMP", "0504", "1500", "21"),
+                generateWeatherItem("TMP", "0504", "1500", "20"),
                 generateWeatherItem("TMP", "0504", "1600", "7"),
+                generateWeatherItem("TMN", "0504", "1600", "7"),
+                generateWeatherItem("TMX", "0504", "1600", "21"),
                 generateWeatherItem("TMP", "0504", "1700", "13"),
                 generateWeatherItem("TMP", "0504", "1800", "14"),
                 generateWeatherItem("TMP", "0504", "1900", "16"),
@@ -37,6 +39,33 @@ class TemperatureExtractorTest {
         assertAll(
                 () -> assertThat(temperature.getMaxTemperature()).isEqualTo(21),
                 () -> assertThat(temperature.getMinTemperature()).isEqualTo(7)
+        );
+    }
+
+    @DisplayName("예보 날짜의 예보 값중 TMX, TMN이 존재하지 않는다면 TMP 값들을 통해 최고 최저 기온을 추출한다.")
+    @Test
+    void extract_TMP() {
+        List<WeatherItem> weatherItems = List.of(
+                generateWeatherItem("TMP", "0503", "1100", "10"),
+                generateWeatherItem("TMP", "0503", "1200", "30"),
+                generateWeatherItem("TMP", "0503", "1300", "1"),
+                generateWeatherItem("TMP", "0504", "1100", "10"),
+                generateWeatherItem("TMP", "0504", "1200", "11"),
+                generateWeatherItem("TMP", "0504", "1300", "6"),
+                generateWeatherItem("TMP", "0504", "1400", "13"),
+                generateWeatherItem("TMP", "0504", "1500", "20"),
+                generateWeatherItem("TMP", "0504", "1600", "7"),
+                generateWeatherItem("TMP", "0504", "1800", "14"),
+                generateWeatherItem("TMP", "0504", "1900", "16"),
+                generateWeatherItem("POP", "0504", "1400", "13"),
+                generateWeatherItem("REH", "0504", "1400", "13")
+        );
+
+        Temperature temperature = temperatureExtractor.extract("0504", weatherItems);
+
+        assertAll(
+                () -> assertThat(temperature.getMaxTemperature()).isEqualTo(20),
+                () -> assertThat(temperature.getMinTemperature()).isEqualTo(6)
         );
     }
 
