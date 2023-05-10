@@ -8,6 +8,7 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import dandi.dandi.common.PersistenceAdapterTest;
+import dandi.dandi.member.domain.Location;
 import dandi.dandi.member.domain.Member;
 import dandi.dandi.pushnotification.adapter.out.persistence.PushNotificationPersistenceAdapter;
 import dandi.dandi.pushnotification.domain.PushNotification;
@@ -168,5 +169,20 @@ class MemberPersistenceAdapterTest extends PersistenceAdapterTest {
         Slice<Member> actual = memberPersistenceAdapter.findPushNotificationAllowingMember(pageable);
 
         assertThat(actual.getContent()).isEqualTo(List.of(secondMember, thirdMember));
+    }
+
+    @DisplayName("회원의 위치 정보를 찾을 수 있다.")
+    @Test
+    void findLocationById() {
+        Location location = new Location(10.0, 12.0);
+        Member member = memberPersistenceAdapter.save(
+                new Member(null, OAUTH_ID, NICKNAME, location, INITIAL_PROFILE_IMAGE_URL));
+
+        Optional<Location> actual = memberPersistenceAdapter.findLocationById(member.getId());
+
+        assertAll(
+                () -> assertThat(actual).isPresent(),
+                () -> assertThat(actual).contains(location)
+        );
     }
 }

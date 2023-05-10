@@ -1,5 +1,6 @@
 package dandi.dandi.member.application.port.out;
 
+import dandi.dandi.member.domain.Location;
 import dandi.dandi.member.domain.Member;
 import java.util.Optional;
 import org.springframework.data.domain.Pageable;
@@ -26,4 +27,6 @@ public interface MemberPersistencePort {
     boolean existsById(Long id);
 
     Slice<Member> findPushNotificationAllowingMember(Pageable pageable);
+
+    Optional<Location> findLocationById(Long id);
 }

@@ -1,6 +1,7 @@
 package dandi.dandi.member.adapter.out.persistence;
 
 import dandi.dandi.member.application.port.out.MemberPersistencePort;
+import dandi.dandi.member.domain.Location;
 import dandi.dandi.member.domain.Member;
 import java.util.List;
 import java.util.Optional;
@@ -74,5 +75,11 @@ public class MemberPersistenceAdapter implements MemberPersistencePort {
                 .map(MemberJpaEntity::toMember)
                 .collect(Collectors.toUnmodifiableList());
         return new SliceImpl<>(pushNotificationAllowingMembers, pageable, memberJpaEntities.hasNext());
+    }
+
+    @Override
+    public Optional<Location> findLocationById(Long id) {
+        return memberRepository.findLocationById(id)
+                .map(LocationJpaEntity::toLocation);
     }
 }
