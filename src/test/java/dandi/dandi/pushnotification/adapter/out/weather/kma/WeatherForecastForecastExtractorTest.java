@@ -3,12 +3,12 @@ package dandi.dandi.pushnotification.adapter.out.weather.kma;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import dandi.dandi.pushnotification.application.port.out.weather.Temperature;
+import dandi.dandi.pushnotification.application.port.out.weather.WeatherForecast;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class TemperatureForecastExtractorTest {
+class WeatherForecastForecastExtractorTest {
 
     private final TemperatureForecastExtractor temperatureForecastExtractor = new TemperatureForecastExtractor();
 
@@ -31,11 +31,11 @@ class TemperatureForecastExtractorTest {
                 generateWeatherItem("REH", "1400", "13")
         );
 
-        Temperature temperature = temperatureForecastExtractor.extract(weatherItems);
+        WeatherForecast weatherForecast = temperatureForecastExtractor.extract(weatherItems);
 
         assertAll(
-                () -> assertThat(temperature.getMaxTemperature()).isEqualTo(21),
-                () -> assertThat(temperature.getMinTemperature()).isEqualTo(7)
+                () -> assertThat(weatherForecast.getMaxTemperature()).isEqualTo(21),
+                () -> assertThat(weatherForecast.getMinTemperature()).isEqualTo(7)
         );
     }
 
@@ -55,11 +55,11 @@ class TemperatureForecastExtractorTest {
                 generateWeatherItem("REH", "1400", "13")
         );
 
-        Temperature temperature = temperatureForecastExtractor.extract(weatherItems);
+        WeatherForecast weatherForecast = temperatureForecastExtractor.extract(weatherItems);
 
         assertAll(
-                () -> assertThat(temperature.getMaxTemperature()).isEqualTo(20),
-                () -> assertThat(temperature.getMinTemperature()).isEqualTo(6)
+                () -> assertThat(weatherForecast.getMaxTemperature()).isEqualTo(20),
+                () -> assertThat(weatherForecast.getMinTemperature()).isEqualTo(6)
         );
     }
 

@@ -1,6 +1,6 @@
 package dandi.dandi.pushnotification.adapter.out.weather.kma;
 
-import dandi.dandi.pushnotification.application.port.out.weather.Temperature;
+import dandi.dandi.pushnotification.application.port.out.weather.WeatherForecast;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
@@ -12,10 +12,10 @@ public class TemperatureForecastExtractor {
     private static final String MAX_TEMPERATURE = "TMX";
     private static final String TEMPERATURE = "TMP";
 
-    public Temperature extract(List<WeatherItem> weatherItems) {
+    public WeatherForecast extract(List<WeatherItem> weatherItems) {
         int minTemperature = findMinTemperature(weatherItems);
         int maxTemperature = findMaxTemperature(weatherItems);
-        return new Temperature(minTemperature, maxTemperature);
+        return new WeatherForecast(minTemperature, maxTemperature);
     }
 
     private int findMinTemperature(List<WeatherItem> weatherItems) {
