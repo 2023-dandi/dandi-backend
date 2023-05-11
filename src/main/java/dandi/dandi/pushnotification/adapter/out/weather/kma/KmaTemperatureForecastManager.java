@@ -1,8 +1,9 @@
 package dandi.dandi.pushnotification.adapter.out.weather.kma;
 
-import dandi.dandi.pushnotification.application.port.out.weather.Temperature;
+import dandi.dandi.member.domain.Location;
+import dandi.dandi.pushnotification.application.port.out.weather.WeatherForecast;
 import dandi.dandi.pushnotification.application.port.out.weather.WeatherForecastInfoManager;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,9 +33,9 @@ public class KmaTemperatureForecastManager implements WeatherForecastInfoManager
         this.temperatureForecastExtractor = temperatureForecastExtractor;
     }
 
-    public Temperature getForecasts(LocalDateTime now, double latitude, double longitude) {
+    public WeatherForecast getForecasts(LocalDate now, Location location) {
         String baseDate = now.format(KMA_DATE_FORMATTER);
-        Coordinate coordinate = kmaCoordinateConvertor.convert(latitude, longitude);
+        Coordinate coordinate = kmaCoordinateConvertor.convert(location.getLatitude(), location.getLongitude());
         WeatherRequest weatherRequest = new WeatherRequest(
                 kmaServiceKey, DATA_TYPE, baseDate, BASE_TIME, ROW_COUNT, coordinate.getNx(), coordinate.getNy());
         List<WeatherItem> todayWeatherForecast = requestTodayWeatherForecast(baseDate, weatherRequest);

@@ -1,8 +1,9 @@
 package dandi.dandi.pushnotification.application.port.out.weather;
 
-import java.time.LocalDateTime;
+import dandi.dandi.member.domain.Location;
+import java.time.LocalDate;
 
 public interface WeatherForecastInfoManager {
 
-    Temperature getForecasts(LocalDateTime now, double latitude, double longitude);
+    WeatherForecast getForecasts(LocalDate now, Location location);
 }

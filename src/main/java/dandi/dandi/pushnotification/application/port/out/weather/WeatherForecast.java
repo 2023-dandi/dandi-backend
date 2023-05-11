@@ -1,11 +1,11 @@
 package dandi.dandi.pushnotification.application.port.out.weather;
 
-public class Temperature {
+public class WeatherForecast {
 
     private final int minTemperature;
     private final int maxTemperature;
 
-    public Temperature(int minTemperature, int maxTemperature) {
+    public WeatherForecast(int minTemperature, int maxTemperature) {
         this.minTemperature = minTemperature;
         this.maxTemperature = maxTemperature;
     }
