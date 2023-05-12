@@ -1,4 +1,4 @@
-package dandi.dandi.pushnotification.application.port.out.weather;
+package dandi.dandi.weather.application.port.out;
 
 public class WeatherForecast {
 

@@ -1,4 +1,4 @@
-package dandi.dandi.pushnotification.application.port.out.weather;
+package dandi.dandi.weather.application.port.out;
 
 import dandi.dandi.member.domain.Location;
 import java.time.LocalDate;

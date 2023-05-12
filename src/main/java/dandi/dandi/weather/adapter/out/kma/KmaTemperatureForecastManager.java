@@ -1,8 +1,8 @@
-package dandi.dandi.pushnotification.adapter.out.weather.kma;
+package dandi.dandi.weather.adapter.out.kma;
 
 import dandi.dandi.member.domain.Location;
-import dandi.dandi.pushnotification.application.port.out.weather.WeatherForecast;
-import dandi.dandi.pushnotification.application.port.out.weather.WeatherForecastInfoManager;
+import dandi.dandi.weather.application.port.out.WeatherForecast;
+import dandi.dandi.weather.application.port.out.WeatherForecastInfoManager;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;

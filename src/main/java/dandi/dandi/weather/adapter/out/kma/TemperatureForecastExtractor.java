@@ -1,6 +1,6 @@
-package dandi.dandi.pushnotification.adapter.out.weather.kma;
+package dandi.dandi.weather.adapter.out.kma;
 
-import dandi.dandi.pushnotification.application.port.out.weather.WeatherForecast;
+import dandi.dandi.weather.application.port.out.WeatherForecast;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;

@@ -2,7 +2,7 @@ package dandi.dandi.pushnotification.application.sevice.message;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
-import dandi.dandi.pushnotification.application.port.out.weather.WeatherForecast;
+import dandi.dandi.weather.application.port.out.WeatherForecast;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
