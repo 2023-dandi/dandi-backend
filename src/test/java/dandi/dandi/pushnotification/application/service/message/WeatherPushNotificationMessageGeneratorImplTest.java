@@ -1,4 +1,4 @@
-package dandi.dandi.pushnotification.application.sevice.message;
+package dandi.dandi.pushnotification.application.service.message;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 

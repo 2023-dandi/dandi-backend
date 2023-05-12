@@ -1,4 +1,4 @@
-package dandi.dandi.pushnotification.application.sevice.message;
+package dandi.dandi.pushnotification.application.service.message;
 
 import dandi.dandi.weather.application.port.out.WeatherForecast;
 import org.springframework.stereotype.Component;

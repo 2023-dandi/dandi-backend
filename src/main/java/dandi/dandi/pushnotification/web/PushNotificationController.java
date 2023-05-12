@@ -2,7 +2,7 @@ package dandi.dandi.pushnotification.web;
 
 import dandi.dandi.auth.web.support.Login;
 import dandi.dandi.pushnotification.application.port.in.PushNotificationResponse;
-import dandi.dandi.pushnotification.application.sevice.PushNotificationService;
+import dandi.dandi.pushnotification.application.service.PushNotificationService;
 import dandi.dandi.pushnotification.web.dto.PushNotificationAllowanceUpdateRequest;
 import dandi.dandi.pushnotification.web.dto.PushNotificationTimeUpdateRequest;
 import org.springframework.http.ResponseEntity;

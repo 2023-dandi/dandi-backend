@@ -13,7 +13,6 @@ import dandi.dandi.pushnotification.application.port.in.PushNotificationAllowanc
 import dandi.dandi.pushnotification.application.port.in.PushNotificationResponse;
 import dandi.dandi.pushnotification.application.port.in.PushNotificationTimeUpdateCommand;
 import dandi.dandi.pushnotification.application.port.out.persistence.PushNotificationPersistencePort;
-import dandi.dandi.pushnotification.application.sevice.PushNotificationService;
 import dandi.dandi.pushnotification.domain.PushNotification;
 import java.time.LocalTime;
 import java.util.Optional;
