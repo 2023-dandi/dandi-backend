@@ -1,4 +1,4 @@
-package dandi.dandi.pushnotification.adapter.out.weather.kma;
+package dandi.dandi.weather.adapter.out.kma;
 
 import org.springframework.stereotype.Component;
 

@@ -1,9 +1,9 @@
-package dandi.dandi.pushnotification.adapter.out.weather.kma;
+package dandi.dandi.weather.adapter.out.kma;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import dandi.dandi.pushnotification.application.port.out.weather.WeatherForecast;
+import dandi.dandi.weather.application.port.out.WeatherForecast;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
