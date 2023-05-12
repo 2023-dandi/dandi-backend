@@ -1,10 +1,10 @@
-package dandi.dandi.pushnotification.application.sevice;
+package dandi.dandi.pushnotification.application.service;
 
 import dandi.dandi.member.application.port.out.MemberPersistencePort;
 import dandi.dandi.member.domain.Location;
 import dandi.dandi.pushnotification.application.port.out.persistence.PushNotificationPersistencePort;
 import dandi.dandi.pushnotification.application.port.out.webpush.WebPushManager;
-import dandi.dandi.pushnotification.application.sevice.message.WeatherPushNotificationMessageGenerator;
+import dandi.dandi.pushnotification.application.service.message.WeatherPushNotificationMessageGenerator;
 import dandi.dandi.pushnotification.domain.PushNotification;
 import dandi.dandi.weather.application.port.out.WeatherForecast;
 import dandi.dandi.weather.application.port.out.WeatherForecastInfoManager;
