@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -31,17 +32,20 @@ public class WeatherPushNotificationScheduler {
     private final WeatherForecastInfoManager weatherForecastInfoManager;
     private final WeatherPushNotificationMessageGenerator weatherPushNotificationMessageGenerator;
     private final WebPushManager webPushManager;
+    private final String weatherPushTitle;
 
     public WeatherPushNotificationScheduler(PushNotificationPersistencePort pushNotificationPersistencePort,
                                             MemberPersistencePort memberPersistencePort,
                                             WeatherForecastInfoManager weatherForecastInfoManager,
                                             WeatherPushNotificationMessageGenerator weatherPushNotificationMessageGenerator,
-                                            WebPushManager webPushManager) {
+                                            WebPushManager webPushManager,
+                                            @Value("${weather.push.title}") String weatherPushTitle) {
         this.pushNotificationPersistencePort = pushNotificationPersistencePort;
         this.memberPersistencePort = memberPersistencePort;
         this.weatherForecastInfoManager = weatherForecastInfoManager;
         this.weatherPushNotificationMessageGenerator = weatherPushNotificationMessageGenerator;
         this.webPushManager = webPushManager;
+        this.weatherPushTitle = weatherPushTitle;
     }
 
     @Scheduled(cron = EVERY_SEVEN_AM)
@@ -72,6 +76,6 @@ public class WeatherPushNotificationScheduler {
         WeatherForecast weatherForecast = weatherForecastInfoManager.getForecasts(LocalDate.now(), location.get());
         String token = pushNotification.getToken();
         String pushMessage = weatherPushNotificationMessageGenerator.generateMessage(weatherForecast);
-        webPushManager.pushMessage(token, pushMessage);
+        webPushManager.pushMessage(token, weatherPushTitle, pushMessage);
     }
 }

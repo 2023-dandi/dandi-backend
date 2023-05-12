@@ -24,8 +24,7 @@ import java.util.stream.LongStream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -34,18 +33,21 @@ import org.springframework.data.domain.SliceImpl;
 @ExtendWith(MockitoExtension.class)
 class WeatherPushNotificationSchedulerTest {
 
-    @Mock
-    private PushNotificationPersistencePort pushNotificationPersistencePort;
-    @Mock
-    private MemberPersistencePort memberPersistencePort;
-    @Mock
-    private WeatherForecastInfoManager weatherForecastInfoManager;
-    @Mock
-    private WeatherPushNotificationMessageGenerator weatherPushNotificationMessageGenerator;
-    @Mock
-    private WebPushManager webPushManager;
-    @InjectMocks
-    private WeatherPushNotificationScheduler weatherPushNotificationScheduler;
+    private final PushNotificationPersistencePort pushNotificationPersistencePort =
+            Mockito.mock(PushNotificationPersistencePort.class);
+    private final MemberPersistencePort memberPersistencePort = Mockito.mock(MemberPersistencePort.class);
+    private final WeatherForecastInfoManager weatherForecastInfoManager =
+            Mockito.mock(WeatherForecastInfoManager.class);
+    private final WeatherPushNotificationMessageGenerator weatherPushNotificationMessageGenerator =
+            Mockito.mock(WeatherPushNotificationMessageGenerator.class);
+    private final WebPushManager webPushManager = Mockito.mock(WebPushManager.class);
+    ;
+    private final String weatherPushTitle = "푸시 알림 제목";
+
+    private final WeatherPushNotificationScheduler weatherPushNotificationScheduler = new WeatherPushNotificationScheduler(
+            pushNotificationPersistencePort, memberPersistencePort, weatherForecastInfoManager,
+            weatherPushNotificationMessageGenerator, webPushManager, weatherPushTitle
+    );
 
     @DisplayName("탈퇴한 회원에 대해 푸시 알림을 전송할수 없다.")
     @Test
@@ -90,7 +92,7 @@ class WeatherPushNotificationSchedulerTest {
 
         weatherPushNotificationScheduler.sendPushWeatherNotification();
 
-        verify(webPushManager, times(21)).pushMessage(anyString(), anyString());
+        verify(webPushManager, times(21)).pushMessage(anyString(), anyString(), anyString());
     }
 
     private List<PushNotification> generatePushNotifications() {
