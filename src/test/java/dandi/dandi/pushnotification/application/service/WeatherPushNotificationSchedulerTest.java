@@ -2,6 +2,7 @@ package dandi.dandi.pushnotification.application.service;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -41,7 +42,6 @@ class WeatherPushNotificationSchedulerTest {
     private final WeatherPushNotificationMessageGenerator weatherPushNotificationMessageGenerator =
             Mockito.mock(WeatherPushNotificationMessageGenerator.class);
     private final WebPushManager webPushManager = Mockito.mock(WebPushManager.class);
-    ;
     private final String weatherPushTitle = "푸시 알림 제목";
 
     private final WeatherPushNotificationScheduler weatherPushNotificationScheduler = new WeatherPushNotificationScheduler(
@@ -92,7 +92,7 @@ class WeatherPushNotificationSchedulerTest {
 
         weatherPushNotificationScheduler.sendPushWeatherNotification();
 
-        verify(webPushManager, times(21)).pushMessage(anyString(), anyString(), anyString());
+        verify(webPushManager, times(3)).pushMessages(anyString(), anyList());
     }
 
     private List<PushNotification> generatePushNotifications() {
