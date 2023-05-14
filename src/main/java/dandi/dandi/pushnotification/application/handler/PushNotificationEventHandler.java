@@ -22,7 +22,9 @@ public class PushNotificationEventHandler {
 
     @TransactionalEventListener
     public void savePushNotificationByMember(NewMemberCreatedEvent newMemberCreatedEvent) {
-        PushNotification pushNotification = PushNotification.initial(newMemberCreatedEvent.getMemberId());
+        PushNotification pushNotification = PushNotification.initial(
+                newMemberCreatedEvent.getMemberId(),
+                newMemberCreatedEvent.getPushNotificationToken());
         pushNotificationPersistencePort.save(pushNotification);
     }
 }

@@ -3,6 +3,7 @@ package dandi.dandi.pushnotification.web;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 import dandi.dandi.advice.ExceptionResponse;
+import dandi.dandi.auth.web.support.Login;
 import dandi.dandi.pushnotification.application.port.in.PushNotificationResponse;
 import dandi.dandi.pushnotification.web.dto.PushNotificationAllowanceUpdateRequest;
 import dandi.dandi.pushnotification.web.dto.PushNotificationTimeUpdateRequest;
@@ -36,4 +37,8 @@ public interface PushNotificationControllerDocs {
     @ApiResponse(responseCode = "204", description = "푸시 알림 허용 여부 정상 변경")
     ResponseEntity<Void> updatePushNotificationAllowance(@Parameter(hidden = true) Long memberId,
                                                          PushNotificationAllowanceUpdateRequest pushNotificationAllowanceUpdateRequest);
+
+    @Operation(summary = "현재 날씨 푸시 알림 발송", parameters = @Parameter(name = AUTHORIZATION, in = ParameterIn.HEADER, required = true, example = "Bearer ${token}"))
+    @ApiResponse(responseCode = "204", description = "푸시 알림 발송 성공")
+    ResponseEntity<Void> pushWeatherNotification(@Login Long memberId);
 }

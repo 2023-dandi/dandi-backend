@@ -1,5 +1,6 @@
 package dandi.dandi.pushnotification.application.handler;
 
+import static dandi.dandi.pushnotification.PushNotificationFixture.PUSH_NOTIFICATION_TOKEN;
 import static org.mockito.Mockito.verify;
 
 import dandi.dandi.member.domain.NewMemberCreatedEvent;
@@ -24,8 +25,10 @@ class PushNotificationEventHandlerTest {
     @DisplayName("새 회원 가입 이벤트를 받아, 새 회원에 대한 푸시 알림을 생성한다.")
     @Test
     void savePushNotificationByMember() {
-        pushNotificationEventHandler.savePushNotificationByMember(new NewMemberCreatedEvent(1L));
+        NewMemberCreatedEvent newMemberCreatedEvent = new NewMemberCreatedEvent(1L, PUSH_NOTIFICATION_TOKEN);
 
-        verify(notificationPersistencePort).save(PushNotification.initial(1L));
+        pushNotificationEventHandler.savePushNotificationByMember(newMemberCreatedEvent);
+
+        verify(notificationPersistencePort).save(PushNotification.initial(1L, PUSH_NOTIFICATION_TOKEN));
     }
 }

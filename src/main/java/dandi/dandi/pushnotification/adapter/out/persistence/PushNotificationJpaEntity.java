@@ -21,6 +21,8 @@ public class PushNotificationJpaEntity {
 
     private Long memberId;
 
+    private String token;
+
     private LocalTime pushNotificationTime;
 
     private boolean allowance;
@@ -28,9 +30,11 @@ public class PushNotificationJpaEntity {
     protected PushNotificationJpaEntity() {
     }
 
-    public PushNotificationJpaEntity(Long id, Long memberId, LocalTime pushNotificationTime, boolean allowance) {
+    public PushNotificationJpaEntity(Long id, Long memberId, String token, LocalTime pushNotificationTime,
+                                     boolean allowance) {
         this.id = id;
         this.memberId = memberId;
+        this.token = token;
         this.pushNotificationTime = pushNotificationTime;
         this.allowance = allowance;
     }
@@ -39,6 +43,7 @@ public class PushNotificationJpaEntity {
         return new PushNotificationJpaEntity(
                 pushNotification.getId(),
                 pushNotification.getMemberId(),
+                pushNotification.getToken(),
                 pushNotification.getPushNotificationTime(),
                 pushNotification.isAllowed()
         );
@@ -48,6 +53,7 @@ public class PushNotificationJpaEntity {
         return new PushNotification(
                 id,
                 memberId,
+                token,
                 PushNotificationTime.from(pushNotificationTime),
                 allowance
         );

@@ -3,22 +3,33 @@ package dandi.dandi.member.adapter.out.persistence;
 import static dandi.dandi.member.MemberTestFixture.INITIAL_PROFILE_IMAGE_URL;
 import static dandi.dandi.member.MemberTestFixture.NICKNAME;
 import static dandi.dandi.member.MemberTestFixture.OAUTH_ID;
+import static dandi.dandi.pushnotification.PushNotificationFixture.PUSH_NOTIFICATION_TOKEN;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import dandi.dandi.common.PersistenceAdapterTest;
+import dandi.dandi.member.domain.Location;
 import dandi.dandi.member.domain.Member;
+import dandi.dandi.pushnotification.adapter.out.persistence.PushNotificationPersistenceAdapter;
+import dandi.dandi.pushnotification.domain.PushNotification;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 
 class MemberPersistenceAdapterTest extends PersistenceAdapterTest {
 
     @Autowired
     private MemberPersistenceAdapter memberPersistenceAdapter;
+
+    @Autowired
+    private PushNotificationPersistenceAdapter pushNotificationPersistenceAdapter;
 
     @DisplayName("회원을 저장할 수 있다.")
     @Test
@@ -134,5 +145,44 @@ class MemberPersistenceAdapterTest extends PersistenceAdapterTest {
         boolean actual = memberPersistenceAdapter.existsById(id);
 
         assertThat(actual).isEqualTo(expected);
+    }
+
+    @DisplayName("푸시 알림을 허용한 사용자를 찾을 수 있다.")
+    @Test
+    void findPushNotificationAllowingMember() {
+        Member firstMember = memberPersistenceAdapter.save(
+                Member.initial(OAUTH_ID, "nickname1", INITIAL_PROFILE_IMAGE_URL));
+        Member secondMember = memberPersistenceAdapter.save(
+                Member.initial(OAUTH_ID, "nickname2", INITIAL_PROFILE_IMAGE_URL));
+        Member thirdMember = memberPersistenceAdapter.save(
+                Member.initial(OAUTH_ID, "nickname3", INITIAL_PROFILE_IMAGE_URL));
+        pushNotificationPersistenceAdapter.save(PushNotification.initial(firstMember.getId(), PUSH_NOTIFICATION_TOKEN));
+        pushNotificationPersistenceAdapter.save(
+                PushNotification.initial(secondMember.getId(), PUSH_NOTIFICATION_TOKEN));
+        pushNotificationPersistenceAdapter.save(PushNotification.initial(thirdMember.getId(), PUSH_NOTIFICATION_TOKEN));
+        PushNotification secondMemberPushNotification = pushNotificationPersistenceAdapter.findPushNotificationByMemberId(
+                        firstMember.getId())
+                .get();
+        pushNotificationPersistenceAdapter.updatePushNotificationAllowance(secondMemberPushNotification.getId(), false);
+        Pageable pageable = PageRequest.of(0, 10);
+
+        Slice<Member> actual = memberPersistenceAdapter.findPushNotificationAllowingMember(pageable);
+
+        assertThat(actual.getContent()).isEqualTo(List.of(secondMember, thirdMember));
+    }
+
+    @DisplayName("회원의 위치 정보를 찾을 수 있다.")
+    @Test
+    void findLocationById() {
+        Location location = new Location(10.0, 12.0);
+        Member member = memberPersistenceAdapter.save(
+                new Member(null, OAUTH_ID, NICKNAME, location, INITIAL_PROFILE_IMAGE_URL));
+
+        Optional<Location> actual = memberPersistenceAdapter.findLocationById(member.getId());
+
+        assertAll(
+                () -> assertThat(actual).isPresent(),
+                () -> assertThat(actual).contains(location)
+        );
     }
 }

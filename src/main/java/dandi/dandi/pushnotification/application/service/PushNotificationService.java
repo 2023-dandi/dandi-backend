@@ -1,4 +1,4 @@
-package dandi.dandi.pushnotification.application.sevice;
+package dandi.dandi.pushnotification.application.service;
 
 import dandi.dandi.advice.InternalServerException;
 import dandi.dandi.pushnotification.application.port.in.PushNotificationAllowanceUpdateCommand;

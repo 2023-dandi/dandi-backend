@@ -1,8 +1,14 @@
 package dandi.dandi.member.adapter.out.persistence;
 
 import dandi.dandi.member.application.port.out.MemberPersistencePort;
+import dandi.dandi.member.domain.Location;
 import dandi.dandi.member.domain.Member;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -60,5 +66,20 @@ public class MemberPersistenceAdapter implements MemberPersistencePort {
     @Override
     public boolean existsById(Long id) {
         return memberRepository.existsById(id);
+    }
+
+    @Override
+    public Slice<Member> findPushNotificationAllowingMember(Pageable pageable) {
+        Slice<MemberJpaEntity> memberJpaEntities = memberRepository.findPushNotificationAllowingMember(pageable);
+        List<Member> pushNotificationAllowingMembers = memberJpaEntities.stream()
+                .map(MemberJpaEntity::toMember)
+                .collect(Collectors.toUnmodifiableList());
+        return new SliceImpl<>(pushNotificationAllowingMembers, pageable, memberJpaEntities.hasNext());
+    }
+
+    @Override
+    public Optional<Location> findLocationById(Long id) {
+        return memberRepository.findLocationById(id)
+                .map(LocationJpaEntity::toLocation);
     }
 }

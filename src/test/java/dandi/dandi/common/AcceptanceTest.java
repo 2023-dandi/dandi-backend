@@ -46,6 +46,7 @@ public class AcceptanceTest {
 
     private static final String APPLE_IDENTITY_TOKEN = "appleIdentityToken";
     private static final String APPLE_IDENTITY_TOKEN2 = "appleIdentityToken2";
+    protected static final String PUSH_NOTIFICATION_TOKEN = "pushNotificationToken";
     private static final String OAUTH_ID2 = "oAuthId2";
 
     @LocalServerPort
@@ -80,7 +81,8 @@ public class AcceptanceTest {
     public String getToken() {
         when(oAuthClientPort.getOAuthMemberId(APPLE_IDENTITY_TOKEN))
                 .thenReturn(OAUTH_ID);
-        return HttpMethodFixture.httpPost(new LoginRequest(APPLE_IDENTITY_TOKEN), LOGIN_REQUEST_URI)
+        return HttpMethodFixture.httpPost(
+                        new LoginRequest(APPLE_IDENTITY_TOKEN, PUSH_NOTIFICATION_TOKEN), LOGIN_REQUEST_URI)
                 .jsonPath()
                 .getObject(".", TokenResponse.class)
                 .getAccessToken();
@@ -89,7 +91,8 @@ public class AcceptanceTest {
     public String getAnotherMemberToken() {
         when(oAuthClientPort.getOAuthMemberId(APPLE_IDENTITY_TOKEN2))
                 .thenReturn(OAUTH_ID2);
-        return HttpMethodFixture.httpPost(new LoginRequest(APPLE_IDENTITY_TOKEN2), LOGIN_REQUEST_URI)
+        return HttpMethodFixture.httpPost(
+                        new LoginRequest(APPLE_IDENTITY_TOKEN2, PUSH_NOTIFICATION_TOKEN), LOGIN_REQUEST_URI)
                 .jsonPath()
                 .getObject(".", TokenResponse.class)
                 .getAccessToken();

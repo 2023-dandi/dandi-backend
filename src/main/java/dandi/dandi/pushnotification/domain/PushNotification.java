@@ -7,18 +7,21 @@ public class PushNotification {
 
     private final Long id;
     private final Long memberId;
+    private final String token;
     private final PushNotificationTime pushNotificationTime;
     private final boolean allowance;
 
-    public PushNotification(Long id, Long memberId, PushNotificationTime pushNotificationTime, boolean allowance) {
+    public PushNotification(Long id, Long memberId, String token, PushNotificationTime pushNotificationTime,
+                            boolean allowance) {
         this.id = id;
         this.memberId = memberId;
+        this.token = token;
         this.pushNotificationTime = pushNotificationTime;
         this.allowance = allowance;
     }
 
-    public static PushNotification initial(Long memberId) {
-        return new PushNotification(null, memberId, PushNotificationTime.initial(), true);
+    public static PushNotification initial(Long memberId, String token) {
+        return new PushNotification(null, memberId, token, PushNotificationTime.initial(), true);
     }
 
     public Long getId() {
@@ -29,12 +32,20 @@ public class PushNotification {
         return memberId;
     }
 
+    public String getToken() {
+        return token;
+    }
+
     public LocalTime getPushNotificationTime() {
         return pushNotificationTime.getValue();
     }
 
     public boolean isAllowed() {
         return allowance;
+    }
+
+    public boolean hasToken(String pushNotificationToken) {
+        return token.equals(pushNotificationToken);
     }
 
     @Override
