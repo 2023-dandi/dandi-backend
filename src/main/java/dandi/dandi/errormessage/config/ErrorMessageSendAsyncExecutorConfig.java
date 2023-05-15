@@ -1,4 +1,4 @@
-package dandi.dandi.external.config;
+package dandi.dandi.errormessage.config;
 
 import java.util.concurrent.Executor;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;

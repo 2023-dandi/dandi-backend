@@ -1,4 +1,4 @@
-package dandi.dandi.external.application.port.out;
+package dandi.dandi.errormessage.application.port.out;
 
 public interface ErrorMessageSender {
 

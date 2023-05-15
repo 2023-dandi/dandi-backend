@@ -1,6 +1,6 @@
-package dandi.dandi.external.adapter;
+package dandi.dandi.errormessage.adapter;
 
-import dandi.dandi.external.application.port.out.ErrorMessageSender;
+import dandi.dandi.errormessage.application.port.out.ErrorMessageSender;
 import net.gpedro.integrations.slack.SlackApi;
 import net.gpedro.integrations.slack.SlackMessage;
 import org.springframework.scheduling.annotation.Async;
