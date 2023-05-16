@@ -6,8 +6,8 @@ import dandi.dandi.pushnotification.application.port.out.persistence.PushNotific
 import dandi.dandi.pushnotification.application.port.out.webpush.WebPushManager;
 import dandi.dandi.pushnotification.application.service.message.WeatherPushNotificationMessageGenerator;
 import dandi.dandi.pushnotification.domain.PushNotification;
-import dandi.dandi.weather.application.port.out.WeatherForecast;
 import dandi.dandi.weather.application.port.out.WeatherForecastInfoManager;
+import dandi.dandi.weather.application.port.out.WeatherForecastResponse;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -77,9 +77,10 @@ public class WeatherPushNotificationScheduler {
             logger.info("탈퇴한 회원(memberId : {})의 푸시 알림 조회", pushNotification.getMemberId());
             return;
         }
-        WeatherForecast weatherForecast = weatherForecastInfoManager.getForecasts(LocalDate.now(), location.get());
+        WeatherForecastResponse weatherForecastResponse = weatherForecastInfoManager.getForecasts(LocalDate.now(),
+                location.get());
         String token = pushNotification.getToken();
-        String pushMessage = weatherPushNotificationMessageGenerator.generateMessage(weatherForecast);
+        String pushMessage = weatherPushNotificationMessageGenerator.generateMessage(weatherForecastResponse);
         pushNotificationSources.add(new PushNotificationSource(token, pushMessage));
     }
 }

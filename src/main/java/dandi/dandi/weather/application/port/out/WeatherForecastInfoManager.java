@@ -5,5 +5,5 @@ import java.time.LocalDate;
 
 public interface WeatherForecastInfoManager {
 
-    WeatherForecast getForecasts(LocalDate now, Location location);
+    WeatherForecastResponse getForecasts(LocalDate now, Location location);
 }

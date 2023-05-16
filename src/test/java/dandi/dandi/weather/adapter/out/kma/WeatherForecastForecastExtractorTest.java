@@ -3,7 +3,7 @@ package dandi.dandi.weather.adapter.out.kma;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import dandi.dandi.weather.application.port.out.WeatherForecast;
+import dandi.dandi.weather.application.port.out.WeatherForecastResponse;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,11 +31,11 @@ class WeatherForecastForecastExtractorTest {
                 generateWeatherItem("REH", "1400", "13")
         );
 
-        WeatherForecast weatherForecast = temperatureForecastExtractor.extract(weatherItems);
+        WeatherForecastResponse weatherForecastResponse = temperatureForecastExtractor.extract(weatherItems);
 
         assertAll(
-                () -> assertThat(weatherForecast.getMaxTemperature()).isEqualTo(21),
-                () -> assertThat(weatherForecast.getMinTemperature()).isEqualTo(7)
+                () -> assertThat(weatherForecastResponse.getMaxTemperature()).isEqualTo(21),
+                () -> assertThat(weatherForecastResponse.getMinTemperature()).isEqualTo(7)
         );
     }
 
@@ -55,11 +55,11 @@ class WeatherForecastForecastExtractorTest {
                 generateWeatherItem("REH", "1400", "13")
         );
 
-        WeatherForecast weatherForecast = temperatureForecastExtractor.extract(weatherItems);
+        WeatherForecastResponse weatherForecastResponse = temperatureForecastExtractor.extract(weatherItems);
 
         assertAll(
-                () -> assertThat(weatherForecast.getMaxTemperature()).isEqualTo(20),
-                () -> assertThat(weatherForecast.getMinTemperature()).isEqualTo(6)
+                () -> assertThat(weatherForecastResponse.getMaxTemperature()).isEqualTo(20),
+                () -> assertThat(weatherForecastResponse.getMinTemperature()).isEqualTo(6)
         );
     }
 
