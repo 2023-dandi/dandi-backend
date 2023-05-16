@@ -3,6 +3,7 @@ package dandi.dandi.pushnotification.application.service.message;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 import dandi.dandi.weather.application.port.out.WeatherForecastResponse;
+import dandi.dandi.weather.application.port.out.WeatherForecastResultCode;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +15,8 @@ class WeatherPushNotificationMessageGeneratorImplTest {
     @DisplayName("날씨 예보를 받아 날씨 푸시 알림 메시지를 생성한다.")
     @Test
     void generateMessage() {
-        WeatherForecastResponse weatherForecastResponse = WeatherForecastResponse.ofSuccess(10, 20);
+        WeatherForecastResponse weatherForecastResponse =
+                new WeatherForecastResponse(WeatherForecastResultCode.SUCCESS, 10, 20);
 
         String pushMessage = weatherPushNotificationMessageGenerator.generateMessage(weatherForecastResponse);
 

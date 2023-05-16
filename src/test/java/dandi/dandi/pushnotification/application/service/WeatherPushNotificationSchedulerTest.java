@@ -18,6 +18,7 @@ import dandi.dandi.pushnotification.domain.PushNotification;
 import dandi.dandi.pushnotification.domain.PushNotificationTime;
 import dandi.dandi.weather.application.port.out.WeatherForecastInfoManager;
 import dandi.dandi.weather.application.port.out.WeatherForecastResponse;
+import dandi.dandi.weather.application.port.out.WeatherForecastResultCode;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -84,7 +85,8 @@ class WeatherPushNotificationSchedulerTest {
                 .thenReturn(new SliceImpl<>(List.of(pushNotification), thirdPageable, false));
         when(memberPersistencePort.findLocationById(any()))
                 .thenReturn(Optional.of(new Location(10.0, 20.0)));
-        WeatherForecastResponse weatherForecastResponse = WeatherForecastResponse.ofSuccess(10, 15);
+        WeatherForecastResponse weatherForecastResponse =
+                new WeatherForecastResponse(WeatherForecastResultCode.SUCCESS, 10, 15);
         when(weatherForecastInfoManager.getForecasts(any(), any()))
                 .thenReturn(weatherForecastResponse);
         when(weatherPushNotificationMessageGenerator.generateMessage(weatherForecastResponse))

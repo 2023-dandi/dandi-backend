@@ -2,22 +2,18 @@ package dandi.dandi.weather.application.port.out;
 
 public class WeatherForecastResponse {
 
-    private final boolean success;
+    private final WeatherForecastResultCode resultCode;
     private final int minTemperature;
     private final int maxTemperature;
 
-    public WeatherForecastResponse(boolean success, int minTemperature, int maxTemperature) {
-        this.success = success;
+    public WeatherForecastResponse(WeatherForecastResultCode resultCode, int minTemperature, int maxTemperature) {
+        this.resultCode = resultCode;
         this.minTemperature = minTemperature;
         this.maxTemperature = maxTemperature;
     }
 
-    public static WeatherForecastResponse ofSuccess(int minTemperature, int maxTemperature) {
-        return new WeatherForecastResponse(true, minTemperature, maxTemperature);
-    }
-
     public static WeatherForecastResponse ofFailure() {
-        return new WeatherForecastResponse(false, 0, 0);
+        return new WeatherForecastResponse(WeatherForecastResultCode.FAILURE, 0, 0);
     }
 
     public int getMinTemperature() {
@@ -28,7 +24,7 @@ public class WeatherForecastResponse {
         return maxTemperature;
     }
 
-    public boolean isSuccessful() {
-        return success;
+    public WeatherForecastResultCode getResultCode() {
+        return resultCode;
     }
 }
