@@ -56,7 +56,7 @@ public class WeatherRequest {
         return ny;
     }
 
-    public WeatherRequest update(String baseDate, int nx, int ny) {
+    public WeatherRequest ofBaseDate(String baseDate) {
         return new WeatherRequest(serviceKey, dataType, baseDate, base_time, numOfRows, nx, ny);
     }
 }
