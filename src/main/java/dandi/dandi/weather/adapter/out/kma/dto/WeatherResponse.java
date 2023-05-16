@@ -1,4 +1,4 @@
-package dandi.dandi.weather.adapter.out.kma;
+package dandi.dandi.weather.adapter.out.kma.dto;
 
 public class WeatherResponse {
 

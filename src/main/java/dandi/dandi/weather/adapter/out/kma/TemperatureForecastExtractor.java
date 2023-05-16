@@ -1,5 +1,7 @@
 package dandi.dandi.weather.adapter.out.kma;
 
+import dandi.dandi.weather.adapter.out.kma.dto.TemperatureDto;
+import dandi.dandi.weather.adapter.out.kma.dto.WeatherItem;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;

@@ -3,6 +3,8 @@ package dandi.dandi.weather.adapter.out.kma;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import dandi.dandi.weather.adapter.out.kma.dto.TemperatureDto;
+import dandi.dandi.weather.adapter.out.kma.dto.WeatherItem;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
