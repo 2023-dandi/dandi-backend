@@ -7,6 +7,10 @@ public class WeatherResponses {
     public WeatherResponses() {
     }
 
+    public WeatherResponses(WeatherResponse response) {
+        this.response = response;
+    }
+
     public WeatherResponse getResponse() {
         return response;
     }
