@@ -9,6 +9,10 @@ public class WeatherItems {
     public WeatherItems() {
     }
 
+    public WeatherItems(List<WeatherItem> item) {
+        this.item = item;
+    }
+
     public List<WeatherItem> getItem() {
         return item;
     }

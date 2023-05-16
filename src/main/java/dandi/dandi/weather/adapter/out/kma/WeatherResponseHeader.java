@@ -8,6 +8,11 @@ public class WeatherResponseHeader {
     public WeatherResponseHeader() {
     }
 
+    public WeatherResponseHeader(String resultCode, String resultMsg) {
+        this.resultCode = resultCode;
+        this.resultMsg = resultMsg;
+    }
+
     public String getResultCode() {
         return resultCode;
     }

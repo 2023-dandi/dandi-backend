@@ -8,6 +8,11 @@ public class WeatherResponse {
     public WeatherResponse() {
     }
 
+    public WeatherResponse(WeatherResponseHeader header, WeatherResponseBody body) {
+        this.header = header;
+        this.body = body;
+    }
+
     public WeatherResponseHeader getHeader() {
         return header;
     }

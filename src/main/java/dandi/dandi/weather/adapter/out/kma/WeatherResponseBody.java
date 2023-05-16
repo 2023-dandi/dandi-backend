@@ -11,6 +11,14 @@ public class WeatherResponseBody {
     public WeatherResponseBody() {
     }
 
+    public WeatherResponseBody(String dataType, WeatherItems items, int numOfRows, int pageNo, int totalCount) {
+        this.dataType = dataType;
+        this.items = items;
+        this.numOfRows = numOfRows;
+        this.pageNo = pageNo;
+        this.totalCount = totalCount;
+    }
+
     public String getDataType() {
         return dataType;
     }
