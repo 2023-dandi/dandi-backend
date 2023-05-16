@@ -24,8 +24,8 @@ public class WeatherRequest {
         this.ny = ny;
     }
 
-    public WeatherRequest(String serviceKey, String dataType, String base_time, int numOfRows) {
-        this(serviceKey, dataType, null, base_time, numOfRows, 0, 0);
+    public WeatherRequest(String serviceKey, String dataType, String base_time, int numOfRows, int nx, int ny) {
+        this(serviceKey, dataType, null, base_time, numOfRows, nx, ny);
     }
 
     public String getServiceKey() {
