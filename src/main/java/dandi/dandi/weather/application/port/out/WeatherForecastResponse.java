@@ -4,6 +4,7 @@ import static dandi.dandi.weather.application.port.out.WeatherForecastResultCode
 import static dandi.dandi.weather.application.port.out.WeatherForecastResultCode.SUCCESS;
 import static dandi.dandi.weather.application.port.out.WeatherForecastResultCode.SUCCESS_BUT_LOCATION_UPDATE;
 
+import java.util.Objects;
 import javax.annotation.Nullable;
 
 public class WeatherForecastResponse {
@@ -58,9 +59,12 @@ public class WeatherForecastResponse {
         return errorMessage;
     }
 
-    @Nullable
-    public Boolean isRetryable() {
-        return retryableError;
+    public boolean isRetryableFailure() {
+        return isFailed() && Objects.equals(retryableError, Boolean.TRUE);
+    }
+
+    public boolean isNonRetryableFailure() {
+        return isFailed() && Objects.equals(retryableError, Boolean.FALSE);
     }
 
     public boolean isFailed() {
