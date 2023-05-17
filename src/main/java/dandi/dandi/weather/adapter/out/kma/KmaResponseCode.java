@@ -44,6 +44,6 @@ public enum KmaResponseCode {
     }
 
     public boolean isRetryableNetworkError() {
-        return this == SERVICE_TIME_OUT;
+        return this == SERVICE_TIME_OUT || this == DB_ERROR;
     }
 }
