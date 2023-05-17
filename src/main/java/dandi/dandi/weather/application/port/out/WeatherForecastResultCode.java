@@ -9,4 +9,8 @@ public enum WeatherForecastResultCode {
     public boolean isFailure() {
         return this == FAILURE;
     }
+
+    public boolean isSuccess() {
+        return this == SUCCESS;
+    }
 }

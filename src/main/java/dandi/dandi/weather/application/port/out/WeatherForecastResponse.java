@@ -31,4 +31,8 @@ public class WeatherForecastResponse {
     public boolean isFailed() {
         return resultCode.isFailure();
     }
+
+    public boolean isSuccess() {
+        return resultCode.isSuccess();
+    }
 }
