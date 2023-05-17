@@ -61,7 +61,7 @@ public class KmaTemperatureForecastManager implements WeatherForecastInfoManager
         } else if (responseCode.isErrorAssociatedWithLocation()) {
             return retryWithDefaultLocation(weatherRequest.getBase_date());
         }
-        return WeatherForecastResponse.ofFailure(responseCode.name(), responseCode.isRetryableNetworkError());
+        return WeatherForecastResponse.ofFailure(responseCode.name(), responseCode.isRetryable());
     }
 
     private WeatherForecastResponse retryWithDefaultLocation(String baseDate) {
@@ -74,7 +74,7 @@ public class KmaTemperatureForecastManager implements WeatherForecastInfoManager
             return WeatherForecastResponse.ofSuccessButLocationUpdate(
                     temperature.getMinTemperature(), temperature.getMaxTemperature());
         }
-        return WeatherForecastResponse.ofFailure(responseCode.name(), responseCode.isRetryableNetworkError());
+        return WeatherForecastResponse.ofFailure(responseCode.name(), responseCode.isRetryable());
     }
 
     private TemperatureDto extractTemperatures(String baseDate, WeatherResponseBody body) {

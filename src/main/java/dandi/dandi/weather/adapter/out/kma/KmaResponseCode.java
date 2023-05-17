@@ -43,7 +43,7 @@ public enum KmaResponseCode {
         return this == NO_DATA_ERROR;
     }
 
-    public boolean isRetryableNetworkError() {
+    public boolean isRetryable() {
         return this == SERVICE_TIME_OUT || this == DB_ERROR || this == HTTP_ERROR ||
                 this == SERVICE_ACCESS_DENIED_ERROR || this == TEMPORARILY_DISABLE_THE_SERVICE_KEY_ERROR ||
                 this == SERVICE_KEY_IS_NOT_REGISTERED_ERROR;
