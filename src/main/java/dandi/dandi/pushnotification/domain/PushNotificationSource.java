@@ -1,4 +1,4 @@
-package dandi.dandi.pushnotification.application.service;
+package dandi.dandi.pushnotification.domain;
 
 public class PushNotificationSource {
 

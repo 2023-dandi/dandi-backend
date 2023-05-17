@@ -5,7 +5,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import com.google.firebase.messaging.FirebaseMessaging;
-import dandi.dandi.pushnotification.application.service.PushNotificationSource;
+import dandi.dandi.pushnotification.domain.PushNotificationSource;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;

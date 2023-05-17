@@ -6,7 +6,7 @@ import com.google.firebase.messaging.ApsAlert;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
 import dandi.dandi.pushnotification.application.port.out.webpush.WebPushManager;
-import dandi.dandi.pushnotification.application.service.PushNotificationSource;
+import dandi.dandi.pushnotification.domain.PushNotificationSource;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
