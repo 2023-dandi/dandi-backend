@@ -14,6 +14,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class FcmWebPushManager implements WebPushManager {
 
+    private static final int MAX_SIZE_ABLE_TO_SEND_IN_ONCE = 100;
+
     private final FirebaseMessaging firebaseMessaging;
 
     public FcmWebPushManager(FirebaseMessaging firebaseMessaging) {
@@ -22,10 +24,29 @@ public class FcmWebPushManager implements WebPushManager {
 
     @Override
     public void pushMessages(String title, List<PushNotificationSource> pushNotificationSources) {
-        List<Message> messages = pushNotificationSources.stream()
+        List<Message> messages = convertToMessages(title, pushNotificationSources);
+        if (messages.size() > MAX_SIZE_ABLE_TO_SEND_IN_ONCE) {
+            pushBySplitting(messages);
+            return;
+        }
+        firebaseMessaging.sendAllAsync(messages);
+    }
+
+    private List<Message> convertToMessages(String title, List<PushNotificationSource> pushNotificationSources) {
+        return pushNotificationSources.stream()
                 .map(notification -> generateMessage(title, notification))
                 .collect(Collectors.toUnmodifiableList());
-        firebaseMessaging.sendAllAsync(messages);
+    }
+
+    private void pushBySplitting(List<Message> messages) {
+        int index;
+        for (index = 0; index + MAX_SIZE_ABLE_TO_SEND_IN_ONCE < messages.size();
+             index += MAX_SIZE_ABLE_TO_SEND_IN_ONCE) {
+            List<Message> temp = messages.subList(index, index + MAX_SIZE_ABLE_TO_SEND_IN_ONCE);
+            firebaseMessaging.sendAllAsync(temp);
+        }
+        List<Message> remaining = messages.subList(index, messages.size());
+        firebaseMessaging.sendAllAsync(remaining);
     }
 
     private Message generateMessage(String title, PushNotificationSource weatherNotification) {
