@@ -1,5 +1,7 @@
 package dandi.dandi.weather.adapter.out.kma.dto;
 
+import java.util.Objects;
+
 public class WeatherRequest {
 
     private String serviceKey;
@@ -58,5 +60,24 @@ public class WeatherRequest {
 
     public WeatherRequest ofBaseDate(String baseDate) {
         return new WeatherRequest(serviceKey, dataType, baseDate, base_time, numOfRows, nx, ny);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof WeatherRequest)) {
+            return false;
+        }
+        WeatherRequest that = (WeatherRequest) o;
+        return numOfRows == that.numOfRows && nx == that.nx && ny == that.ny && Objects.equals(serviceKey,
+                that.serviceKey) && Objects.equals(dataType, that.dataType) && Objects.equals(base_date,
+                that.base_date) && Objects.equals(base_time, that.base_time);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(serviceKey, dataType, base_date, base_time, numOfRows, nx, ny);
     }
 }
