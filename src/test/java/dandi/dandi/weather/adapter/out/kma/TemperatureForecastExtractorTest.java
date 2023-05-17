@@ -17,19 +17,8 @@ class TemperatureForecastExtractorTest {
     @Test
     void extract_TMX_TMN() {
         List<WeatherItem> weatherItems = List.of(
-                generateWeatherItem("TMP", "1100", "10"),
-                generateWeatherItem("TMP", "1200", "11"),
-                generateWeatherItem("TMP", "1300", "8"),
-                generateWeatherItem("TMP", "1400", "13"),
-                generateWeatherItem("TMP", "1500", "20"),
-                generateWeatherItem("TMP", "1600", "7"),
                 generateWeatherItem("TMN", "1600", "7"),
-                generateWeatherItem("TMX", "1600", "21"),
-                generateWeatherItem("TMP", "1700", "13"),
-                generateWeatherItem("TMP", "1800", "14"),
-                generateWeatherItem("TMP", "1900", "16"),
-                generateWeatherItem("POP", "1400", "13"),
-                generateWeatherItem("REH", "1400", "13")
+                generateWeatherItem("TMX", "1600", "21")
         );
 
         TemperatureDto temperatureDto = temperatureForecastExtractor.extract(weatherItems);

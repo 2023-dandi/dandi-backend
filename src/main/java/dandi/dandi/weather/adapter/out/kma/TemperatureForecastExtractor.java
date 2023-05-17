@@ -25,7 +25,7 @@ public class TemperatureForecastExtractor {
                 .map(WeatherItem::getFcstValue)
                 .map(Integer::parseInt)
                 .findFirst()
-                .orElse(extractMinTemperature(weatherItems));
+                .orElseGet(() -> extractMinTemperature(weatherItems));
     }
 
     private int extractMinTemperature(List<WeatherItem> weatherItems) {
@@ -38,7 +38,7 @@ public class TemperatureForecastExtractor {
                 .map(WeatherItem::getFcstValue)
                 .map(Integer::parseInt)
                 .findFirst()
-                .orElse(extractMaxTemperature(weatherItems));
+                .orElseGet(() -> extractMaxTemperature(weatherItems));
     }
 
     private int extractMaxTemperature(List<WeatherItem> weatherItems) {
