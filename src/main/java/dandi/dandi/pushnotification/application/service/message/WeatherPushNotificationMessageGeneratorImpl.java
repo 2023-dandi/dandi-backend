@@ -1,6 +1,6 @@
 package dandi.dandi.pushnotification.application.service.message;
 
-import dandi.dandi.weather.application.port.out.WeatherForecastResponse;
+import dandi.dandi.weather.application.port.out.WeatherForecastResult;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -13,14 +13,14 @@ public class WeatherPushNotificationMessageGeneratorImpl implements WeatherPushN
             WEATHER_MESSAGE + "위치 정보를 수정해서 날씨 정확도를 높여주세요!";
 
     @Override
-    public String generateMessage(WeatherForecastResponse weatherForecastResponse) {
-        if (weatherForecastResponse.isFailed()) {
+    public String generateMessage(WeatherForecastResult weatherForecastResult) {
+        if (weatherForecastResult.isFailed()) {
             return FAILED_MESSAGE;
-        } else if (weatherForecastResponse.isSuccess()) {
+        } else if (weatherForecastResult.isSuccess()) {
             return String.format(SUCCESS_MESSAGE_FORMAT,
-                    weatherForecastResponse.getMinTemperature(), weatherForecastResponse.getMaxTemperature());
+                    weatherForecastResult.getMinTemperature(), weatherForecastResult.getMaxTemperature());
         }
         return String.format(SUCCESS_BUT_LOCATION_UPDATE_MESSAGE_FORMAT,
-                weatherForecastResponse.getMinTemperature(), weatherForecastResponse.getMaxTemperature());
+                weatherForecastResult.getMinTemperature(), weatherForecastResult.getMaxTemperature());
     }
 }

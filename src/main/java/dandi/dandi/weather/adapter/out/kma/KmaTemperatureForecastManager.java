@@ -7,7 +7,7 @@ import dandi.dandi.weather.adapter.out.kma.dto.WeatherRequest;
 import dandi.dandi.weather.adapter.out.kma.dto.WeatherResponse;
 import dandi.dandi.weather.adapter.out.kma.dto.WeatherResponseBody;
 import dandi.dandi.weather.application.port.out.WeatherForecastInfoManager;
-import dandi.dandi.weather.application.port.out.WeatherForecastResponse;
+import dandi.dandi.weather.application.port.out.WeatherForecastResult;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -43,7 +43,7 @@ public class KmaTemperatureForecastManager implements WeatherForecastInfoManager
                 new WeatherRequest(kmaServiceKey, DATA_TYPE, BASE_TIME, ROW_COUNT, DEFAULT_NX, DEFAULT_NY);
     }
 
-    public WeatherForecastResponse getForecasts(LocalDate now, Location location) {
+    public WeatherForecastResult getForecasts(LocalDate now, Location location) {
         String baseDate = now.format(KMA_DATE_FORMATTER);
         Coordinate coordinate = kmaCoordinateConvertor.convert(location.getLatitude(), location.getLongitude());
         WeatherRequest kmaWeatherRequest = new WeatherRequest(
@@ -51,30 +51,30 @@ public class KmaTemperatureForecastManager implements WeatherForecastInfoManager
         return requestWeatherForecast(kmaWeatherRequest);
     }
 
-    private WeatherForecastResponse requestWeatherForecast(WeatherRequest weatherRequest) {
+    private WeatherForecastResult requestWeatherForecast(WeatherRequest weatherRequest) {
         WeatherResponse weatherResponse = weatherApiCaller.getWeathers(weatherRequest)
                 .getResponse();
         KmaResponseCode responseCode = extractResultCode(weatherResponse);
         if (responseCode.isSuccessful()) {
             TemperatureDto temperature = extractTemperatures(weatherRequest.getBase_date(), weatherResponse.getBody());
-            return WeatherForecastResponse.ofSuccess(temperature.getMinTemperature(), temperature.getMaxTemperature());
+            return WeatherForecastResult.ofSuccess(temperature.getMinTemperature(), temperature.getMaxTemperature());
         } else if (responseCode.isErrorAssociatedWithLocation()) {
             return retryWithDefaultLocation(weatherRequest.getBase_date());
         }
-        return WeatherForecastResponse.ofFailure(responseCode.name(), responseCode.isRetryable());
+        return WeatherForecastResult.ofFailure(responseCode.name(), responseCode.isRetryable());
     }
 
-    private WeatherForecastResponse retryWithDefaultLocation(String baseDate) {
+    private WeatherForecastResult retryWithDefaultLocation(String baseDate) {
         WeatherRequest defaultRetryWeatherRequest = locationErrorHandleWeatherRequest.ofBaseDate(baseDate);
         WeatherResponse weatherResponse = weatherApiCaller.getWeathers(defaultRetryWeatherRequest)
                 .getResponse();
         KmaResponseCode responseCode = extractResultCode(weatherResponse);
         if (responseCode.isSuccessful()) {
             TemperatureDto temperature = extractTemperatures(baseDate, weatherResponse.getBody());
-            return WeatherForecastResponse.ofSuccessButLocationUpdate(
+            return WeatherForecastResult.ofSuccessButLocationUpdate(
                     temperature.getMinTemperature(), temperature.getMaxTemperature());
         }
-        return WeatherForecastResponse.ofFailure(responseCode.name(), responseCode.isRetryable());
+        return WeatherForecastResult.ofFailure(responseCode.name(), responseCode.isRetryable());
     }
 
     private TemperatureDto extractTemperatures(String baseDate, WeatherResponseBody body) {

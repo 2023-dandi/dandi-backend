@@ -7,7 +7,7 @@ import static dandi.dandi.weather.application.port.out.WeatherForecastResultCode
 import java.util.Objects;
 import javax.annotation.Nullable;
 
-public class WeatherForecastResponse {
+public class WeatherForecastResult {
 
     private final WeatherForecastResultCode resultCode;
     @Nullable
@@ -19,8 +19,8 @@ public class WeatherForecastResponse {
     @Nullable
     private final Boolean retryableError;
 
-    private WeatherForecastResponse(WeatherForecastResultCode resultCode, Integer minTemperature,
-                                    Integer maxTemperature, String errorMessage, Boolean retryableError) {
+    private WeatherForecastResult(WeatherForecastResultCode resultCode, Integer minTemperature,
+                                  Integer maxTemperature, String errorMessage, Boolean retryableError) {
         this.resultCode = resultCode;
         this.minTemperature = minTemperature;
         this.maxTemperature = maxTemperature;
@@ -28,16 +28,16 @@ public class WeatherForecastResponse {
         this.retryableError = retryableError;
     }
 
-    public static WeatherForecastResponse ofFailure(String errorMessage, boolean retryableError) {
-        return new WeatherForecastResponse(FAILURE, null, null, errorMessage, retryableError);
+    public static WeatherForecastResult ofFailure(String errorMessage, boolean retryableError) {
+        return new WeatherForecastResult(FAILURE, null, null, errorMessage, retryableError);
     }
 
-    public static WeatherForecastResponse ofSuccess(int minTemperature, int maxTemperature) {
-        return new WeatherForecastResponse(SUCCESS, minTemperature, maxTemperature, null, null);
+    public static WeatherForecastResult ofSuccess(int minTemperature, int maxTemperature) {
+        return new WeatherForecastResult(SUCCESS, minTemperature, maxTemperature, null, null);
     }
 
-    public static WeatherForecastResponse ofSuccessButLocationUpdate(int minTemperature, int maxTemperature) {
-        return new WeatherForecastResponse(SUCCESS_BUT_LOCATION_UPDATE, minTemperature, maxTemperature, null, null);
+    public static WeatherForecastResult ofSuccessButLocationUpdate(int minTemperature, int maxTemperature) {
+        return new WeatherForecastResult(SUCCESS_BUT_LOCATION_UPDATE, minTemperature, maxTemperature, null, null);
     }
 
     public WeatherForecastResultCode getResultCode() {

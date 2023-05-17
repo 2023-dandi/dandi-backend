@@ -18,7 +18,7 @@ import dandi.dandi.pushnotification.application.service.message.WeatherPushNotif
 import dandi.dandi.pushnotification.domain.PushNotification;
 import dandi.dandi.pushnotification.domain.PushNotificationTime;
 import dandi.dandi.weather.application.port.out.WeatherForecastInfoManager;
-import dandi.dandi.weather.application.port.out.WeatherForecastResponse;
+import dandi.dandi.weather.application.port.out.WeatherForecastResult;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -86,10 +86,10 @@ class WeatherPushNotificationSchedulerTest {
                 .thenReturn(new SliceImpl<>(List.of(pushNotification), thirdPageable, false));
         when(memberPersistencePort.findLocationById(any()))
                 .thenReturn(Optional.of(new Location(10.0, 20.0)));
-        WeatherForecastResponse weatherForecastResponse = WeatherForecastResponse.ofSuccess(10, 15);
+        WeatherForecastResult weatherForecastResult = WeatherForecastResult.ofSuccess(10, 15);
         when(weatherForecastInfoManager.getForecasts(any(), any()))
-                .thenReturn(weatherForecastResponse);
-        when(weatherPushNotificationMessageGenerator.generateMessage(weatherForecastResponse))
+                .thenReturn(weatherForecastResult);
+        when(weatherPushNotificationMessageGenerator.generateMessage(weatherForecastResult))
                 .thenReturn("푸시 알림 메시지");
 
         weatherPushNotificationScheduler.sendPushWeatherNotification();
@@ -108,7 +108,7 @@ class WeatherPushNotificationSchedulerTest {
         when(memberPersistencePort.findLocationById(pushNotification.getMemberId()))
                 .thenReturn(Optional.of(new Location(10.0, 20.0)));
         when(weatherForecastInfoManager.getForecasts(any(), any()))
-                .thenReturn(WeatherForecastResponse.ofFailure("UNKNOWN_ERROR", false));
+                .thenReturn(WeatherForecastResult.ofFailure("UNKNOWN_ERROR", false));
 
         weatherPushNotificationScheduler.sendPushWeatherNotification();
 
@@ -136,22 +136,22 @@ class WeatherPushNotificationSchedulerTest {
 
     private void mockWeatherForecastInfoManager() {
         when(weatherForecastInfoManager.getForecasts(any(), any()))
-                .thenReturn(WeatherForecastResponse.ofSuccess(10, 50))
-                .thenReturn(WeatherForecastResponse.ofFailure("DB_ERROR", true))
-                .thenReturn(WeatherForecastResponse.ofSuccess(10, 50))
-                .thenReturn(WeatherForecastResponse.ofFailure("DB_ERROR", true))
-                .thenReturn(WeatherForecastResponse.ofSuccess(10, 50))
-                .thenReturn(WeatherForecastResponse.ofFailure("DB_ERROR", true))
-                .thenReturn(WeatherForecastResponse.ofSuccess(10, 50))
-                .thenReturn(WeatherForecastResponse.ofFailure("DB_ERROR", true))
-                .thenReturn(WeatherForecastResponse.ofSuccess(10, 50))
-                .thenReturn(WeatherForecastResponse.ofFailure("DB_ERROR", true))
+                .thenReturn(WeatherForecastResult.ofSuccess(10, 50))
+                .thenReturn(WeatherForecastResult.ofFailure("DB_ERROR", true))
+                .thenReturn(WeatherForecastResult.ofSuccess(10, 50))
+                .thenReturn(WeatherForecastResult.ofFailure("DB_ERROR", true))
+                .thenReturn(WeatherForecastResult.ofSuccess(10, 50))
+                .thenReturn(WeatherForecastResult.ofFailure("DB_ERROR", true))
+                .thenReturn(WeatherForecastResult.ofSuccess(10, 50))
+                .thenReturn(WeatherForecastResult.ofFailure("DB_ERROR", true))
+                .thenReturn(WeatherForecastResult.ofSuccess(10, 50))
+                .thenReturn(WeatherForecastResult.ofFailure("DB_ERROR", true))
                 // retrial Mocking From Here
-                .thenReturn(WeatherForecastResponse.ofSuccess(10, 50))
-                .thenReturn(WeatherForecastResponse.ofFailure("DB_ERROR", true))
-                .thenReturn(WeatherForecastResponse.ofSuccess(10, 50))
-                .thenReturn(WeatherForecastResponse.ofFailure("DB_ERROR", true))
-                .thenReturn(WeatherForecastResponse.ofSuccess(10, 50));
+                .thenReturn(WeatherForecastResult.ofSuccess(10, 50))
+                .thenReturn(WeatherForecastResult.ofFailure("DB_ERROR", true))
+                .thenReturn(WeatherForecastResult.ofSuccess(10, 50))
+                .thenReturn(WeatherForecastResult.ofFailure("DB_ERROR", true))
+                .thenReturn(WeatherForecastResult.ofSuccess(10, 50));
     }
 
     private List<PushNotification> generateTenPushNotificationsOfTenMembers() {

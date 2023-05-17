@@ -12,7 +12,7 @@ import dandi.dandi.weather.adapter.out.kma.dto.WeatherResponse;
 import dandi.dandi.weather.adapter.out.kma.dto.WeatherResponseBody;
 import dandi.dandi.weather.adapter.out.kma.dto.WeatherResponseHeader;
 import dandi.dandi.weather.adapter.out.kma.dto.WeatherResponses;
-import dandi.dandi.weather.application.port.out.WeatherForecastResponse;
+import dandi.dandi.weather.application.port.out.WeatherForecastResult;
 import dandi.dandi.weather.application.port.out.WeatherForecastResultCode;
 import java.time.LocalDate;
 import java.util.List;
@@ -61,9 +61,9 @@ class KmaTemperatureForecastManagerTest {
         when(weatherApiCaller.getWeathers(WEATHER_REQUEST))
                 .thenReturn(SUCCESS_WEATHER_RESPONSES);
 
-        WeatherForecastResponse forecasts = kmaTemperatureForecastManager.getForecasts(NOW, LOCATION);
+        WeatherForecastResult result = kmaTemperatureForecastManager.getForecasts(NOW, LOCATION);
 
-        assertThat(forecasts.getResultCode()).isEqualTo(WeatherForecastResultCode.SUCCESS);
+        assertThat(result.getResultCode()).isEqualTo(WeatherForecastResultCode.SUCCESS);
     }
 
     @DisplayName("기상청에서 재시도 할 수 없는 에러를 응답받는다면 재시도 가능 여부와 FAILURE을 응답한다.")
@@ -72,12 +72,12 @@ class KmaTemperatureForecastManagerTest {
         when(weatherApiCaller.getWeathers(WEATHER_REQUEST))
                 .thenReturn(UNKNOWN_ERROR_WEATHER_RESPONSES);
 
-        WeatherForecastResponse forecasts = kmaTemperatureForecastManager.getForecasts(NOW, LOCATION);
+        WeatherForecastResult result = kmaTemperatureForecastManager.getForecasts(NOW, LOCATION);
 
         assertAll(
-                () -> assertThat(forecasts.getResultCode()).isEqualTo(WeatherForecastResultCode.FAILURE),
-                () -> assertThat(forecasts.getErrorMessage()).isEqualTo("UNKNOWN_ERROR"),
-                () -> assertThat(forecasts.isNonRetryableFailure()).isTrue()
+                () -> assertThat(result.getResultCode()).isEqualTo(WeatherForecastResultCode.FAILURE),
+                () -> assertThat(result.getErrorMessage()).isEqualTo("UNKNOWN_ERROR"),
+                () -> assertThat(result.isNonRetryableFailure()).isTrue()
         );
     }
 
@@ -87,12 +87,12 @@ class KmaTemperatureForecastManagerTest {
         when(weatherApiCaller.getWeathers(WEATHER_REQUEST))
                 .thenReturn(NETWORK_ERROR_WEATHER_RESPONSES);
 
-        WeatherForecastResponse forecasts = kmaTemperatureForecastManager.getForecasts(NOW, LOCATION);
+        WeatherForecastResult result = kmaTemperatureForecastManager.getForecasts(NOW, LOCATION);
 
         assertAll(
-                () -> assertThat(forecasts.getResultCode()).isEqualTo(WeatherForecastResultCode.FAILURE),
-                () -> assertThat(forecasts.getErrorMessage()).isEqualTo("SERVICE_TIME_OUT"),
-                () -> assertThat(forecasts.isRetryableFailure()).isTrue()
+                () -> assertThat(result.getResultCode()).isEqualTo(WeatherForecastResultCode.FAILURE),
+                () -> assertThat(result.getErrorMessage()).isEqualTo("SERVICE_TIME_OUT"),
+                () -> assertThat(result.isRetryableFailure()).isTrue()
         );
     }
 
@@ -106,13 +106,13 @@ class KmaTemperatureForecastManagerTest {
         when(weatherApiCaller.getWeathers(locationErrorHandleWeatherRequest))
                 .thenReturn(SUCCESS_WEATHER_RESPONSES);
 
-        WeatherForecastResponse forecasts = kmaTemperatureForecastManager.getForecasts(NOW, LOCATION);
+        WeatherForecastResult result = kmaTemperatureForecastManager.getForecasts(NOW, LOCATION);
 
         assertAll(
-                () -> assertThat(forecasts.getResultCode())
+                () -> assertThat(result.getResultCode())
                         .isEqualTo(WeatherForecastResultCode.SUCCESS_BUT_LOCATION_UPDATE),
-                () -> assertThat(forecasts.getMinTemperature()).isEqualTo(MIN_TEMPERATURE),
-                () -> assertThat(forecasts.getMaxTemperature()).isEqualTo(MAX_TEMPERATURE)
+                () -> assertThat(result.getMinTemperature()).isEqualTo(MIN_TEMPERATURE),
+                () -> assertThat(result.getMaxTemperature()).isEqualTo(MAX_TEMPERATURE)
         );
     }
 
@@ -126,11 +126,11 @@ class KmaTemperatureForecastManagerTest {
         when(weatherApiCaller.getWeathers(locationErrorHandleWeatherRequest))
                 .thenReturn(UNKNOWN_ERROR_WEATHER_RESPONSES);
 
-        WeatherForecastResponse forecasts = kmaTemperatureForecastManager.getForecasts(NOW, LOCATION);
+        WeatherForecastResult result = kmaTemperatureForecastManager.getForecasts(NOW, LOCATION);
 
         assertAll(
-                () -> assertThat(forecasts.getResultCode()).isEqualTo(WeatherForecastResultCode.FAILURE),
-                () -> assertThat(forecasts.getErrorMessage()).isEqualTo("UNKNOWN_ERROR")
+                () -> assertThat(result.getResultCode()).isEqualTo(WeatherForecastResultCode.FAILURE),
+                () -> assertThat(result.getErrorMessage()).isEqualTo("UNKNOWN_ERROR")
         );
     }
 }

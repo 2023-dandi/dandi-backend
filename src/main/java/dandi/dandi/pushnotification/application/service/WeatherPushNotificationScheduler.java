@@ -10,7 +10,7 @@ import dandi.dandi.pushnotification.domain.PushNotification;
 import dandi.dandi.pushnotification.domain.PushNotificationSource;
 import dandi.dandi.pushnotification.domain.RetryableWeatherPushNotification;
 import dandi.dandi.weather.application.port.out.WeatherForecastInfoManager;
-import dandi.dandi.weather.application.port.out.WeatherForecastResponse;
+import dandi.dandi.weather.application.port.out.WeatherForecastResult;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -90,15 +90,15 @@ public class WeatherPushNotificationScheduler {
     private void addWeatherPushMessageOrHandleFailure(PushNotification pushNotification, Location location,
                                                       List<PushNotificationSource> messages,
                                                       List<RetryableWeatherPushNotification> retryableFailureWeatherPushNotification) {
-        WeatherForecastResponse response = weatherForecastInfoManager.getForecasts(LocalDate.now(), location);
-        if (response.isSuccess()) {
-            String pushMessage = weatherPushNotificationMessageGenerator.generateMessage(response);
+        WeatherForecastResult result = weatherForecastInfoManager.getForecasts(LocalDate.now(), location);
+        if (result.isSuccess()) {
+            String pushMessage = weatherPushNotificationMessageGenerator.generateMessage(result);
             messages.add(new PushNotificationSource(pushNotification.getToken(), pushMessage));
-        } else if (response.isRetryableFailure()) {
+        } else if (result.isRetryableFailure()) {
             retryableFailureWeatherPushNotification.add(
                     RetryableWeatherPushNotification.of(pushNotification, location));
-        } else if (response.isNonRetryableFailure()) {
-            sendErrorMessageToAdmin(pushNotification.getMemberId(), response.getErrorMessage());
+        } else if (result.isNonRetryableFailure()) {
+            sendErrorMessageToAdmin(pushNotification.getMemberId(), result.getErrorMessage());
         }
     }
 
@@ -114,13 +114,12 @@ public class WeatherPushNotificationScheduler {
 
     private void addNotificationSourceOrSendErrorMessageToAdmin(List<PushNotificationSource> messages,
                                                                 RetryableWeatherPushNotification retryable) {
-        WeatherForecastResponse response =
-                weatherForecastInfoManager.getForecasts(LocalDate.now(), retryable.getLocation());
-        if (response.isFailed()) {
-            sendErrorMessageToAdmin(retryable.getMemberId(), response.getErrorMessage());
+        WeatherForecastResult result = weatherForecastInfoManager.getForecasts(LocalDate.now(), retryable.getLocation());
+        if (result.isFailed()) {
+            sendErrorMessageToAdmin(retryable.getMemberId(), result.getErrorMessage());
         }
-        if (response.isSuccess()) {
-            String pushMessage = weatherPushNotificationMessageGenerator.generateMessage(response);
+        if (result.isSuccess()) {
+            String pushMessage = weatherPushNotificationMessageGenerator.generateMessage(result);
             messages.add(new PushNotificationSource(retryable.getToken(), pushMessage));
         }
     }
