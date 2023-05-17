@@ -45,8 +45,8 @@ public class PushNotificationSender {
         if (pushNotification.isAllowed()) {
             Location location = memberPersistencePort.findLocationById(memberId)
                     .orElseThrow(() -> InternalServerException.withdrawnMemberPushNotification(memberId));
-            WeatherForecastResponse weatherForecastResponse = weatherForecastInfoManager.getForecasts(LocalDate.now(),
-                    location);
+            WeatherForecastResponse weatherForecastResponse =
+                    weatherForecastInfoManager.getForecasts(LocalDate.now(), location);
             String pushMessageBody = weatherPushNotificationMessageGenerator.generateMessage(weatherForecastResponse);
             PushNotificationSource pushNotificationSource =
                     new PushNotificationSource(pushNotification.getToken(), pushMessageBody);

@@ -77,8 +77,8 @@ public class WeatherPushNotificationScheduler {
             logger.info("탈퇴한 회원(memberId : {})의 푸시 알림 조회", pushNotification.getMemberId());
             return;
         }
-        WeatherForecastResponse weatherForecastResponse = weatherForecastInfoManager.getForecasts(LocalDate.now(),
-                location.get());
+        WeatherForecastResponse weatherForecastResponse =
+                weatherForecastInfoManager.getForecasts(LocalDate.now(), location.get());
         String token = pushNotification.getToken();
         String pushMessage = weatherPushNotificationMessageGenerator.generateMessage(weatherForecastResponse);
         pushNotificationSources.add(new PushNotificationSource(token, pushMessage));
