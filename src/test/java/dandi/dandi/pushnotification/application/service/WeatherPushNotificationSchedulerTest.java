@@ -79,9 +79,9 @@ class WeatherPushNotificationSchedulerTest {
         PushNotification pushNotification =
                 new PushNotification(1L, 1L, "token1", PushNotificationTime.initial(), true);
         when(pushNotificationPersistencePort.findAllowedPushNotification(firstPageable))
-                .thenReturn(new SliceImpl<>(generatePushNotifications(), firstPageable, true));
+                .thenReturn(new SliceImpl<>(generateTenPushNotificationsOfTenMembers(), firstPageable, true));
         when(pushNotificationPersistencePort.findAllowedPushNotification(secondPageable))
-                .thenReturn(new SliceImpl<>(generatePushNotifications(), secondPageable, true));
+                .thenReturn(new SliceImpl<>(generateTenPushNotificationsOfTenMembers(), secondPageable, true));
         when(pushNotificationPersistencePort.findAllowedPushNotification(thirdPageable))
                 .thenReturn(new SliceImpl<>(List.of(pushNotification), thirdPageable, false));
         when(memberPersistencePort.findLocationById(any()))
@@ -108,14 +108,53 @@ class WeatherPushNotificationSchedulerTest {
         when(memberPersistencePort.findLocationById(pushNotification.getMemberId()))
                 .thenReturn(Optional.of(new Location(10.0, 20.0)));
         when(weatherForecastInfoManager.getForecasts(any(), any()))
-                .thenReturn(WeatherForecastResponse.ofFailure("NETWORK_ERROR_WEATHER_RESPONSES", false));
+                .thenReturn(WeatherForecastResponse.ofFailure("UNKNOWN_ERROR", false));
 
         weatherPushNotificationScheduler.sendPushWeatherNotification();
 
-        verify(errorMessageSender).sendMessage("회원(memberId : 1) 날씨 푸시 알림 전송 실패 / NETWORK_ERROR_WEATHER_RESPONSES");
+        verify(errorMessageSender).sendMessage("회원(memberId : 1) 날씨 푸시 알림 전송 실패 / UNKNOWN_ERROR");
     }
 
-    private List<PushNotification> generatePushNotifications() {
+    @DisplayName("재시도 가능한 날씨 요청 실패에 대해 재시도 하여 푸시 알림을 전송할 수 있다.")
+    @Test
+    void sendPushWeatherNotification_RetrialOfFailure() {
+        Pageable firstPageable = PageRequest.of(0, 10);
+        when(pushNotificationPersistencePort.findAllowedPushNotification(firstPageable))
+                .thenReturn(new SliceImpl<>(generateTenPushNotificationsOfTenMembers(), firstPageable, false));
+        when(memberPersistencePort.findLocationById(any()))
+                .thenReturn(Optional.of(new Location(10.0, 20.0)));
+        mockWeatherForecastInfoManager();
+
+        weatherPushNotificationScheduler.sendPushWeatherNotification();
+
+        assertAll(
+                () -> verify(weatherForecastInfoManager, times(15)).getForecasts(any(), any()),
+                () -> verify(webPushManager, times(2)).pushMessages(anyString(), anyList()),
+                () -> verify(errorMessageSender, times(2)).sendMessage(anyString())
+        );
+    }
+
+    private void mockWeatherForecastInfoManager() {
+        when(weatherForecastInfoManager.getForecasts(any(), any()))
+                .thenReturn(WeatherForecastResponse.ofSuccess(10, 50))
+                .thenReturn(WeatherForecastResponse.ofFailure("DB_ERROR", true))
+                .thenReturn(WeatherForecastResponse.ofSuccess(10, 50))
+                .thenReturn(WeatherForecastResponse.ofFailure("DB_ERROR", true))
+                .thenReturn(WeatherForecastResponse.ofSuccess(10, 50))
+                .thenReturn(WeatherForecastResponse.ofFailure("DB_ERROR", true))
+                .thenReturn(WeatherForecastResponse.ofSuccess(10, 50))
+                .thenReturn(WeatherForecastResponse.ofFailure("DB_ERROR", true))
+                .thenReturn(WeatherForecastResponse.ofSuccess(10, 50))
+                .thenReturn(WeatherForecastResponse.ofFailure("DB_ERROR", true))
+                // retrial Mocking From Here
+                .thenReturn(WeatherForecastResponse.ofSuccess(10, 50))
+                .thenReturn(WeatherForecastResponse.ofFailure("DB_ERROR", true))
+                .thenReturn(WeatherForecastResponse.ofSuccess(10, 50))
+                .thenReturn(WeatherForecastResponse.ofFailure("DB_ERROR", true))
+                .thenReturn(WeatherForecastResponse.ofSuccess(10, 50));
+    }
+
+    private List<PushNotification> generateTenPushNotificationsOfTenMembers() {
         return LongStream.range(1, 11)
                 .mapToObj(index -> new PushNotification(
                         index, index, "token" + index, PushNotificationTime.initial(), true))
