@@ -88,7 +88,7 @@ class WeatherPushNotificationSchedulerTest {
         when(memberPersistencePort.findLocationById(any()))
                 .thenReturn(Optional.of(new Location(10.0, 20.0)));
         WeatherForecastResponse weatherForecastResponse =
-                new WeatherForecastResponse(WeatherForecastResultCode.SUCCESS, 10, 15);
+                WeatherForecastResponse.ofSuccess(WeatherForecastResultCode.SUCCESS, 10, 15);
         when(weatherForecastInfoManager.getForecasts(any(), any()))
                 .thenReturn(weatherForecastResponse);
         when(weatherPushNotificationMessageGenerator.generateMessage(weatherForecastResponse))
@@ -110,7 +110,7 @@ class WeatherPushNotificationSchedulerTest {
         when(memberPersistencePort.findLocationById(pushNotification.getMemberId()))
                 .thenReturn(Optional.of(new Location(10.0, 20.0)));
         when(weatherForecastInfoManager.getForecasts(any(), any()))
-                .thenReturn(WeatherForecastResponse.ofFailure());
+                .thenReturn(WeatherForecastResponse.ofFailure("NETWORK_ERROR_WEATHER_RESPONSES"));
 
         weatherPushNotificationScheduler.sendPushWeatherNotification();
 

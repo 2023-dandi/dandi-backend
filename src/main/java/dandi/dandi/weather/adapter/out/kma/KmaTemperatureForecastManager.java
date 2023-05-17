@@ -72,7 +72,7 @@ public class KmaTemperatureForecastManager implements WeatherForecastInfoManager
                 .filter(kmaWeatherItem -> kmaWeatherItem.getFcstDate().equals(baseDate))
                 .collect(Collectors.toUnmodifiableList());
         TemperatureDto temperature = temperatureForecastExtractor.extract(temperatureForecasts);
-        return new WeatherForecastResponse(
+        return WeatherForecastResponse.ofSuccess(
                 resultCode, temperature.getMinTemperature(), temperature.getMaxTemperature());
     }
 
@@ -85,17 +85,18 @@ public class KmaTemperatureForecastManager implements WeatherForecastInfoManager
                     locationErrorHandleWeatherRequest.ofBaseDate(weatherRequest.getBase_date());
             return retry(WeatherForecastResultCode.SUCCESS_BUT_LOCATION_UPDATE, defaultRetryRequest);
         }
-        return WeatherForecastResponse.ofFailure();
+        return WeatherForecastResponse.ofFailure(responseCode.name());
     }
 
-    private WeatherForecastResponse retry(WeatherForecastResultCode resultCode, WeatherRequest weatherRequest) {
+    private WeatherForecastResponse retry(WeatherForecastResultCode successResultCode, WeatherRequest weatherRequest) {
         WeatherResponse weatherResponse = weatherApiCaller.getWeathers(weatherRequest)
                 .getResponse();
-        if (!extractResultCode(weatherResponse).isSuccessful()) {
-            return WeatherForecastResponse.ofFailure();
+        KmaResponseCode responseCode = extractResultCode(weatherResponse);
+        if (!responseCode.isSuccessful()) {
+            return WeatherForecastResponse.ofFailure(responseCode.name());
         }
         return generateSuccessfulWeatherForecastResponse(
-                resultCode, weatherRequest.getBase_date(), weatherResponse.getBody());
+                successResultCode, weatherRequest.getBase_date(), weatherResponse.getBody());
     }
 
     private KmaResponseCode extractResultCode(WeatherResponse kmaWeatherResponse) {

@@ -75,7 +75,10 @@ class KmaTemperatureForecastManagerTest {
 
         WeatherForecastResponse forecasts = kmaTemperatureForecastManager.getForecasts(NOW, LOCATION);
 
-        assertThat(forecasts.getResultCode()).isEqualTo(WeatherForecastResultCode.FAILURE);
+        assertAll(
+                () -> assertThat(forecasts.getResultCode()).isEqualTo(WeatherForecastResultCode.FAILURE),
+                () -> assertThat(forecasts.getErrorMessage()).isEqualTo("UNKNOWN_ERROR")
+        );
     }
 
     @DisplayName("기상청에서 Service Timeout 응답을 받은 후 재시도를 통해 날씨 정보를 정상적으로 받아올 수 있다.")
@@ -103,7 +106,10 @@ class KmaTemperatureForecastManagerTest {
 
         WeatherForecastResponse forecasts = kmaTemperatureForecastManager.getForecasts(NOW, LOCATION);
 
-        assertThat(forecasts.getResultCode()).isEqualTo(WeatherForecastResultCode.FAILURE);
+        assertAll(
+                () -> assertThat(forecasts.getResultCode()).isEqualTo(WeatherForecastResultCode.FAILURE),
+                () -> assertThat(forecasts.getErrorMessage()).isEqualTo("SERVICE_TIME_OUT")
+        );
     }
 
     @DisplayName("기상청에서 위치 정보 오류에 의한 NODATA_ERROR 응답을 받은 후 기본 위치 정보 기반 재시도에 성공하면 SUCCESS_BUT_LOCATION_UPDATE를 응답한다.")
@@ -138,6 +144,9 @@ class KmaTemperatureForecastManagerTest {
 
         WeatherForecastResponse forecasts = kmaTemperatureForecastManager.getForecasts(NOW, LOCATION);
 
-        assertThat(forecasts.getResultCode()).isEqualTo(WeatherForecastResultCode.FAILURE);
+        assertAll(
+                () -> assertThat(forecasts.getResultCode()).isEqualTo(WeatherForecastResultCode.FAILURE),
+                () -> assertThat(forecasts.getErrorMessage()).isEqualTo("UNKNOWN_ERROR")
+        );
     }
 }
