@@ -8,7 +8,6 @@ import dandi.dandi.weather.adapter.out.kma.dto.WeatherResponse;
 import dandi.dandi.weather.adapter.out.kma.dto.WeatherResponseBody;
 import dandi.dandi.weather.application.port.out.WeatherForecastInfoManager;
 import dandi.dandi.weather.application.port.out.WeatherForecastResponse;
-import dandi.dandi.weather.application.port.out.WeatherForecastResultCode;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -57,46 +56,34 @@ public class KmaTemperatureForecastManager implements WeatherForecastInfoManager
                 .getResponse();
         KmaResponseCode responseCode = extractResultCode(weatherResponse);
         if (responseCode.isSuccessful()) {
-            return generateSuccessfulWeatherForecastResponse(
-                    WeatherForecastResultCode.SUCCESS, weatherRequest.getBase_date(), weatherResponse.getBody());
+            TemperatureDto temperature = extractTemperatures(weatherRequest.getBase_date(), weatherResponse.getBody());
+            return WeatherForecastResponse.ofSuccess(temperature.getMinTemperature(), temperature.getMaxTemperature());
+        } else if (responseCode.isErrorAssociatedWithLocation()) {
+            return retryWithDefaultLocation(weatherRequest.getBase_date());
         }
-        return retry(responseCode, weatherRequest);
+        return WeatherForecastResponse.ofFailure(responseCode.name(), responseCode.isRetryableNetworkError());
     }
 
-    private WeatherForecastResponse generateSuccessfulWeatherForecastResponse(WeatherForecastResultCode resultCode,
-                                                                              String baseDate,
-                                                                              WeatherResponseBody body) {
+    private WeatherForecastResponse retryWithDefaultLocation(String baseDate) {
+        WeatherRequest defaultRetryWeatherRequest = locationErrorHandleWeatherRequest.ofBaseDate(baseDate);
+        WeatherResponse weatherResponse = weatherApiCaller.getWeathers(defaultRetryWeatherRequest)
+                .getResponse();
+        KmaResponseCode responseCode = extractResultCode(weatherResponse);
+        if (responseCode.isSuccessful()) {
+            TemperatureDto temperature = extractTemperatures(baseDate, weatherResponse.getBody());
+            return WeatherForecastResponse.ofSuccessButLocationUpdate(
+                    temperature.getMinTemperature(), temperature.getMaxTemperature());
+        }
+        return WeatherForecastResponse.ofFailure(responseCode.name(), responseCode.isRetryableNetworkError());
+    }
+
+    private TemperatureDto extractTemperatures(String baseDate, WeatherResponseBody body) {
         List<WeatherItem> temperatureForecasts = body.getItems()
                 .getItem()
                 .stream()
                 .filter(kmaWeatherItem -> kmaWeatherItem.getFcstDate().equals(baseDate))
                 .collect(Collectors.toUnmodifiableList());
-        TemperatureDto temperature = temperatureForecastExtractor.extract(temperatureForecasts);
-        return WeatherForecastResponse.ofSuccess(
-                resultCode, temperature.getMinTemperature(), temperature.getMaxTemperature());
-    }
-
-    private WeatherForecastResponse retry(KmaResponseCode responseCode, WeatherRequest weatherRequest) {
-        if (responseCode.isRetryableNetworkError()) {
-            return retry(WeatherForecastResultCode.SUCCESS, weatherRequest);
-        }
-        if (responseCode.isErrorAssociatedWithLocation()) {
-            WeatherRequest defaultRetryRequest =
-                    locationErrorHandleWeatherRequest.ofBaseDate(weatherRequest.getBase_date());
-            return retry(WeatherForecastResultCode.SUCCESS_BUT_LOCATION_UPDATE, defaultRetryRequest);
-        }
-        return WeatherForecastResponse.ofFailure(responseCode.name());
-    }
-
-    private WeatherForecastResponse retry(WeatherForecastResultCode successResultCode, WeatherRequest weatherRequest) {
-        WeatherResponse weatherResponse = weatherApiCaller.getWeathers(weatherRequest)
-                .getResponse();
-        KmaResponseCode responseCode = extractResultCode(weatherResponse);
-        if (!responseCode.isSuccessful()) {
-            return WeatherForecastResponse.ofFailure(responseCode.name());
-        }
-        return generateSuccessfulWeatherForecastResponse(
-                successResultCode, weatherRequest.getBase_date(), weatherResponse.getBody());
+        return temperatureForecastExtractor.extract(temperatureForecasts);
     }
 
     private KmaResponseCode extractResultCode(WeatherResponse kmaWeatherResponse) {

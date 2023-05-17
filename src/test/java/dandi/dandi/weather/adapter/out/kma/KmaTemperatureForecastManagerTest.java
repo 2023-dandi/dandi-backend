@@ -2,7 +2,6 @@ package dandi.dandi.weather.adapter.out.kma;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
 import dandi.dandi.member.domain.Location;
@@ -67,7 +66,7 @@ class KmaTemperatureForecastManagerTest {
         assertThat(forecasts.getResultCode()).isEqualTo(WeatherForecastResultCode.SUCCESS);
     }
 
-    @DisplayName("기상청에서 재시도 할 수 없는 에러를 응답받는다면 FAILURE을 응답한다.")
+    @DisplayName("기상청에서 재시도 할 수 없는 에러를 응답받는다면 재시도 가능 여부와 FAILURE을 응답한다.")
     @Test
     void getForecasts_Failure() {
         when(weatherApiCaller.getWeathers(WEATHER_REQUEST))
@@ -77,30 +76,14 @@ class KmaTemperatureForecastManagerTest {
 
         assertAll(
                 () -> assertThat(forecasts.getResultCode()).isEqualTo(WeatherForecastResultCode.FAILURE),
-                () -> assertThat(forecasts.getErrorMessage()).isEqualTo("UNKNOWN_ERROR")
+                () -> assertThat(forecasts.getErrorMessage()).isEqualTo("UNKNOWN_ERROR"),
+                () -> assertThat(forecasts.isRetryable()).isFalse()
         );
     }
 
-    @DisplayName("기상청에서 Service Timeout 응답을 받은 후 재시도를 통해 날씨 정보를 정상적으로 받아올 수 있다.")
+    @DisplayName("기상청에서 재시도 할 수 있는 에러를 응답받는다면 재시도 가능 여부와 FAILURE을 응답한다")
     @Test
     void getForecasts_RetrySuccessAfterNetworkError() {
-        when(weatherApiCaller.getWeathers(WEATHER_REQUEST))
-                .thenReturn(NETWORK_ERROR_WEATHER_RESPONSES)
-                .thenReturn(SUCCESS_WEATHER_RESPONSES);
-
-        WeatherForecastResponse forecasts = kmaTemperatureForecastManager.getForecasts(NOW, LOCATION);
-
-        assertAll(
-                () -> assertThat(forecasts.getResultCode()).isEqualTo(WeatherForecastResultCode.SUCCESS),
-                () -> assertThat(forecasts.getMinTemperature()).isEqualTo(MIN_TEMPERATURE),
-                () -> assertThat(forecasts.getMaxTemperature()).isEqualTo(MAX_TEMPERATURE),
-                () -> Mockito.verify(weatherApiCaller, times(2)).getWeathers(WEATHER_REQUEST)
-        );
-    }
-
-    @DisplayName("기상청에서 Service Timeout 응답을 받은 후 재시도에 실패하면 Failure을 응답한다.")
-    @Test
-    void getForecasts_RetryFailureAfterNetworkError() {
         when(weatherApiCaller.getWeathers(WEATHER_REQUEST))
                 .thenReturn(NETWORK_ERROR_WEATHER_RESPONSES);
 
@@ -108,7 +91,8 @@ class KmaTemperatureForecastManagerTest {
 
         assertAll(
                 () -> assertThat(forecasts.getResultCode()).isEqualTo(WeatherForecastResultCode.FAILURE),
-                () -> assertThat(forecasts.getErrorMessage()).isEqualTo("SERVICE_TIME_OUT")
+                () -> assertThat(forecasts.getErrorMessage()).isEqualTo("SERVICE_TIME_OUT"),
+                () -> assertThat(forecasts.isRetryable()).isTrue()
         );
     }
 
