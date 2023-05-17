@@ -4,5 +4,9 @@ public enum WeatherForecastResultCode {
 
     SUCCESS,
     FAILURE,
-    SUCCESS_BUT_LOCATION_UPDATE,
+    SUCCESS_BUT_LOCATION_UPDATE;
+
+    public boolean isFailure() {
+        return this == FAILURE;
+    }
 }

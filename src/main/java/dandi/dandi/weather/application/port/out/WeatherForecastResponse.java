@@ -27,4 +27,8 @@ public class WeatherForecastResponse {
     public WeatherForecastResultCode getResultCode() {
         return resultCode;
     }
+
+    public boolean isFailed() {
+        return resultCode.isFailure();
+    }
 }

@@ -1,5 +1,6 @@
 package dandi.dandi.pushnotification.application.service;
 
+import dandi.dandi.errormessage.application.port.out.ErrorMessageSender;
 import dandi.dandi.member.application.port.out.MemberPersistencePort;
 import dandi.dandi.member.domain.Location;
 import dandi.dandi.pushnotification.application.port.out.persistence.PushNotificationPersistencePort;
@@ -27,6 +28,7 @@ public class WeatherPushNotificationScheduler {
     private static final Logger logger = LoggerFactory.getLogger(WeatherPushNotificationScheduler.class);
     private static final int PUSH_NUMBER_UNIT = 10;
     private static final String EVERY_SEVEN_AM = "0 0 7 * * *";
+    private static final String PUSH_NOTIFICATION_SEND_FAILURE_MESSAGE_FORMAT = "회원(memberId : %d) 날씨 푸시 알림 전송 실패";
 
     private final PushNotificationPersistencePort pushNotificationPersistencePort;
     private final MemberPersistencePort memberPersistencePort;
@@ -34,19 +36,22 @@ public class WeatherPushNotificationScheduler {
     private final WeatherPushNotificationMessageGenerator weatherPushNotificationMessageGenerator;
     private final WebPushManager webPushManager;
     private final String weatherPushTitle;
+    private final ErrorMessageSender errorMessageSender;
 
     public WeatherPushNotificationScheduler(PushNotificationPersistencePort pushNotificationPersistencePort,
                                             MemberPersistencePort memberPersistencePort,
                                             WeatherForecastInfoManager weatherForecastInfoManager,
                                             WeatherPushNotificationMessageGenerator weatherPushNotificationMessageGenerator,
                                             WebPushManager webPushManager,
-                                            @Value("${weather.push.title}") String weatherPushTitle) {
+                                            @Value("${weather.push.title}") String weatherPushTitle,
+                                            ErrorMessageSender errorMessageSender) {
         this.pushNotificationPersistencePort = pushNotificationPersistencePort;
         this.memberPersistencePort = memberPersistencePort;
         this.weatherForecastInfoManager = weatherForecastInfoManager;
         this.weatherPushNotificationMessageGenerator = weatherPushNotificationMessageGenerator;
         this.webPushManager = webPushManager;
         this.weatherPushTitle = weatherPushTitle;
+        this.errorMessageSender = errorMessageSender;
     }
 
     @Scheduled(cron = EVERY_SEVEN_AM)
@@ -79,6 +84,12 @@ public class WeatherPushNotificationScheduler {
         }
         WeatherForecastResponse weatherForecastResponse =
                 weatherForecastInfoManager.getForecasts(LocalDate.now(), location.get());
+        if (weatherForecastResponse.isFailed()) {
+            String errorMessage = String.format(
+                    PUSH_NOTIFICATION_SEND_FAILURE_MESSAGE_FORMAT, pushNotification.getMemberId());
+            errorMessageSender.sendMessage(errorMessage);
+            return;
+        }
         String token = pushNotification.getToken();
         String pushMessage = weatherPushNotificationMessageGenerator.generateMessage(weatherForecastResponse);
         pushNotificationSources.add(new PushNotificationSource(token, pushMessage));

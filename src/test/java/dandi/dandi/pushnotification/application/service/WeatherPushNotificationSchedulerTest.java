@@ -9,6 +9,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import dandi.dandi.errormessage.application.port.out.ErrorMessageSender;
 import dandi.dandi.member.application.port.out.MemberPersistencePort;
 import dandi.dandi.member.domain.Location;
 import dandi.dandi.pushnotification.application.port.out.persistence.PushNotificationPersistencePort;
@@ -44,11 +45,12 @@ class WeatherPushNotificationSchedulerTest {
             Mockito.mock(WeatherPushNotificationMessageGenerator.class);
     private final WebPushManager webPushManager = Mockito.mock(WebPushManager.class);
     private final String weatherPushTitle = "푸시 알림 제목";
+    private final ErrorMessageSender errorMessageSender = Mockito.mock(ErrorMessageSender.class);
 
-    private final WeatherPushNotificationScheduler weatherPushNotificationScheduler = new WeatherPushNotificationScheduler(
-            pushNotificationPersistencePort, memberPersistencePort, weatherForecastInfoManager,
-            weatherPushNotificationMessageGenerator, webPushManager, weatherPushTitle
-    );
+    private final WeatherPushNotificationScheduler weatherPushNotificationScheduler =
+            new WeatherPushNotificationScheduler(pushNotificationPersistencePort, memberPersistencePort,
+                    weatherForecastInfoManager, weatherPushNotificationMessageGenerator, webPushManager,
+                    weatherPushTitle, errorMessageSender);
 
     @DisplayName("탈퇴한 회원에 대해 푸시 알림을 전송할수 없다.")
     @Test
@@ -95,6 +97,26 @@ class WeatherPushNotificationSchedulerTest {
         weatherPushNotificationScheduler.sendPushWeatherNotification();
 
         verify(webPushManager, times(3)).pushMessages(anyString(), anyList());
+    }
+
+    @DisplayName("날씨 정보를 얻어오는데 실패하면 관리자에게 실패 메시지를 전송한다.")
+    @Test
+    void sendPushWeatherNotification_FailureMessageToAdmin() {
+        Pageable pageable = PageRequest.of(0, 10);
+        PushNotification pushNotification =
+                new PushNotification(1L, 1L, "token1", PushNotificationTime.initial(), true);
+        when(pushNotificationPersistencePort.findAllowedPushNotification(pageable))
+                .thenReturn(new SliceImpl<>(List.of(pushNotification), pageable, false));
+        when(memberPersistencePort.findLocationById(pushNotification.getMemberId()))
+                .thenReturn(Optional.of(new Location(10.0, 20.0)));
+        when(weatherForecastInfoManager.getForecasts(any(), any()))
+                .thenReturn(WeatherForecastResponse.ofFailure());
+
+        weatherPushNotificationScheduler.sendPushWeatherNotification();
+
+        assertAll(
+                () -> verify(errorMessageSender).sendMessage(anyString())
+        );
     }
 
     private List<PushNotification> generatePushNotifications() {
