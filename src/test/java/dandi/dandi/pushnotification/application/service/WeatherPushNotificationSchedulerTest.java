@@ -114,9 +114,7 @@ class WeatherPushNotificationSchedulerTest {
 
         weatherPushNotificationScheduler.sendPushWeatherNotification();
 
-        assertAll(
-                () -> verify(errorMessageSender).sendMessage(anyString())
-        );
+        verify(errorMessageSender).sendMessage("회원(memberId : 1) 날씨 푸시 알림 전송 실패 / NETWORK_ERROR_WEATHER_RESPONSES");
     }
 
     private List<PushNotification> generatePushNotifications() {

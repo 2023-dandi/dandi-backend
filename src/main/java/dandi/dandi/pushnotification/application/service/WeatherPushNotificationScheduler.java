@@ -28,7 +28,8 @@ public class WeatherPushNotificationScheduler {
     private static final Logger logger = LoggerFactory.getLogger(WeatherPushNotificationScheduler.class);
     private static final int PUSH_NUMBER_UNIT = 10;
     private static final String EVERY_SEVEN_AM = "0 0 7 * * *";
-    private static final String PUSH_NOTIFICATION_SEND_FAILURE_MESSAGE_FORMAT = "회원(memberId : %d) 날씨 푸시 알림 전송 실패";
+    private static final String PUSH_NOTIFICATION_SEND_FAILURE_MESSAGE_FORMAT =
+            "회원(memberId : %d) 날씨 푸시 알림 전송 실패 / %s";
 
     private final PushNotificationPersistencePort pushNotificationPersistencePort;
     private final MemberPersistencePort memberPersistencePort;
@@ -85,8 +86,8 @@ public class WeatherPushNotificationScheduler {
         WeatherForecastResponse weatherForecastResponse =
                 weatherForecastInfoManager.getForecasts(LocalDate.now(), location.get());
         if (weatherForecastResponse.isFailed()) {
-            String errorMessage = String.format(
-                    PUSH_NOTIFICATION_SEND_FAILURE_MESSAGE_FORMAT, pushNotification.getMemberId());
+            String errorMessage = String.format(PUSH_NOTIFICATION_SEND_FAILURE_MESSAGE_FORMAT,
+                    pushNotification.getMemberId(), weatherForecastResponse.getErrorMessage());
             errorMessageSender.sendMessage(errorMessage);
         }
         String token = pushNotification.getToken();
