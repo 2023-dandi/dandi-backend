@@ -20,7 +20,7 @@ class WeatherPushNotificationMessageGeneratorImplTest {
             "FAILURE, 단디에서 최저 최고 기온에 따른 옷차림을 확인해보세요!"})
     void generateMessage(WeatherForecastResultCode weatherForecastResultCode, String expectedMessage) {
         WeatherForecastResponse weatherForecastResponse =
-                WeatherForecastResponse.ofSuccess(weatherForecastResultCode, 10, 20);
+                WeatherForecastResponse.ofSuccess(10, 20);
 
         String pushMessage = weatherPushNotificationMessageGenerator.generateMessage(weatherForecastResponse);
 
