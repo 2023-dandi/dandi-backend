@@ -88,7 +88,6 @@ public class WeatherPushNotificationScheduler {
             String errorMessage = String.format(
                     PUSH_NOTIFICATION_SEND_FAILURE_MESSAGE_FORMAT, pushNotification.getMemberId());
             errorMessageSender.sendMessage(errorMessage);
-            return;
         }
         String token = pushNotification.getToken();
         String pushMessage = weatherPushNotificationMessageGenerator.generateMessage(weatherForecastResponse);

@@ -1,12 +1,12 @@
 package dandi.dandi.pushnotification.application.service.message;
 
-import dandi.dandi.pushnotification.exception.WeatherMessageGenerationFailedException;
 import dandi.dandi.weather.application.port.out.WeatherForecastResponse;
 import org.springframework.stereotype.Component;
 
 @Component
 public class WeatherPushNotificationMessageGeneratorImpl implements WeatherPushNotificationMessageGenerator {
 
+    private static final String FAILED_MESSAGE = "단디에서 최저 최고 기온에 따른 옷차림을 확인해보세요!";
     private static final String WEATHER_MESSAGE = "오늘 날씨는 최저 %d / 최고 %d입니다. ";
     private static final String SUCCESS_MESSAGE_FORMAT = WEATHER_MESSAGE + "단디에서 옷차림을 확인해보세요";
     private static final String SUCCESS_BUT_LOCATION_UPDATE_MESSAGE_FORMAT =
@@ -15,7 +15,7 @@ public class WeatherPushNotificationMessageGeneratorImpl implements WeatherPushN
     @Override
     public String generateMessage(WeatherForecastResponse weatherForecastResponse) {
         if (weatherForecastResponse.isFailed()) {
-            throw new WeatherMessageGenerationFailedException();
+            return FAILED_MESSAGE;
         } else if (weatherForecastResponse.isSuccess()) {
             return String.format(SUCCESS_MESSAGE_FORMAT,
                     weatherForecastResponse.getMinTemperature(), weatherForecastResponse.getMaxTemperature());
