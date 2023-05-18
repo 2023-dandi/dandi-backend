@@ -6,6 +6,7 @@ import static dandi.dandi.common.HttpMethodFixture.httpPost;
 import static dandi.dandi.common.HttpMethodFixture.httpPostWithAuthorization;
 import static dandi.dandi.common.HttpMethodFixture.httpPutWithAuthorizationAndImgFile;
 import static dandi.dandi.common.HttpResponseExtractor.extractExceptionMessage;
+import static dandi.dandi.common.RequestURI.FEED_REQUEST_URI;
 import static dandi.dandi.common.RequestURI.LOGIN_REQUEST_URI;
 import static dandi.dandi.common.RequestURI.MEMBER_BLOCK_REQUEST_URI;
 import static dandi.dandi.common.RequestURI.MEMBER_INFO_URI;
@@ -16,7 +17,7 @@ import static dandi.dandi.common.RequestURI.MEMBER_PROFILE_IMAGE_URI;
 import static dandi.dandi.member.MemberTestFixture.OAUTH_ID;
 import static dandi.dandi.utils.TestImageUtils.TEST_IMAGE_FILE_NAME;
 import static dandi.dandi.utils.TestImageUtils.generateTestImgFile;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.when;
 
@@ -29,9 +30,12 @@ import dandi.dandi.member.application.port.in.NicknameDuplicationCheckResponse;
 import dandi.dandi.member.application.port.in.ProfileImageUpdateResponse;
 import dandi.dandi.member.web.dto.in.LocationUpdateRequest;
 import dandi.dandi.member.web.dto.in.NicknameUpdateRequest;
+import dandi.dandi.post.application.port.in.FeedResponse;
+import dandi.dandi.post.application.port.in.PostResponse;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.io.File;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -224,17 +228,27 @@ class MemberAcceptanceTest extends AcceptanceTest {
         assertThat(response.statusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
     }
 
-    @DisplayName("다른 사용자 차단 요청에 성공하면 201을 응답한다.")
+    @DisplayName("다른 사용자 차단 요청에 성공하면 201을 응답하고 차단한 사용자의 게시글들은 더이상 신고자에게 노출되지 않는다.")
     @Test
     void blockMember_Created() {
         String token = getToken();
-        signUpAnotherMember();
+        String anotherToken = getAnotherMemberToken();
         Long anotherMemberId = 2L;
+        registerPost(anotherToken);
 
         ExtractableResponse<Response> response =
                 httpPostWithAuthorization(MEMBER_BLOCK_REQUEST_URI, new MemberBlockCommand(anotherMemberId), token);
 
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
+        String feedQueryString = "?min=20.0&max=30.0&page=0&size=10&sort=createdAt,DESC";
+        List<PostResponse> feedPostsAfterReport = httpGetWithAuthorization(
+                FEED_REQUEST_URI + feedQueryString, token)
+                .jsonPath()
+                .getObject(".", FeedResponse.class)
+                .getPosts();
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value()),
+                () -> assertThat(feedPostsAfterReport).isEmpty()
+        );
     }
 
     @DisplayName("존재하지 않는 사용자 차단 요청에 대해 404를 응답한다.")
