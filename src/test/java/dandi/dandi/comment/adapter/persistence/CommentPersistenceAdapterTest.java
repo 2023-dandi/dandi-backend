@@ -57,7 +57,7 @@ class CommentPersistenceAdapterTest extends PersistenceAdapterTest {
         Long thirdMemberId = memberPersistenceAdapter.save(Member.initial(
                 OAUTH_ID, "nickname3", INITIAL_PROFILE_IMAGE_URL)).getId();
         Comment comment = Comment.initial(COMMENT_CONTENT);
-        commentPersistenceAdapter.save(comment, POST_ID, firstMemberId);
+        Long firstSavedCommentId = commentPersistenceAdapter.save(comment, POST_ID, firstMemberId);
         commentPersistenceAdapter.save(comment, POST_ID, secondMemberId);
         Long thirdSavedCommentId = commentPersistenceAdapter.save(comment, POST_ID, thirdMemberId);
         commentPersistenceAdapter.save(comment, 2L, firstMemberId);
@@ -67,7 +67,10 @@ class CommentPersistenceAdapterTest extends PersistenceAdapterTest {
         Slice<Comment> comments = commentPersistenceAdapter.findByPostId(
                 firstMemberId, POST_ID, CREATED_AT_DESC_TEST_SIZE_PAGEABLE);
 
-        assertThat(comments).hasSize(1);
+        assertAll(
+                () -> assertThat(comments).hasSize(1),
+                () -> assertThat(comments.getContent().get(0).getId()).isEqualTo(firstSavedCommentId)
+        );
     }
 
     @DisplayName("id에 해당하는 댓글을 찾을 수 있다.")
