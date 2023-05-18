@@ -264,7 +264,7 @@ class MemberAcceptanceTest extends AcceptanceTest {
         );
     }
 
-    @DisplayName("다른 사용자 차단 요청에 성공하면 201을 응답하고 차단 당한 사용자는 차단을 한 사용자의 댓글을 조회할 수 없다.")
+    @DisplayName("다른 사용자 차단 요청에 성공하면 201을 응답하고 차단 당한 사용자는 차단을 한 사용자의 게시글과 댓글을 조회할 수 없다.")
     @Test
     void blockMember_BlockingMemberComment() {
         String token = getToken();
@@ -276,6 +276,12 @@ class MemberAcceptanceTest extends AcceptanceTest {
         ExtractableResponse<Response> response = httpPostWithAuthorization(
                 MEMBER_BLOCK_REQUEST_URI, new MemberBlockCommand(anotherMemberId), token);
 
+        String feedQueryString = "?min=20.0&max=30.0&page=0&size=10&sort=createdAt,DESC";
+        List<PostResponse> feedPostsAfterBlock = httpGetWithAuthorization(
+                FEED_REQUEST_URI + feedQueryString, anotherToken)
+                .jsonPath()
+                .getObject(".", FeedResponse.class)
+                .getPosts();
         String commentsQueryString = "?page=0&size=10&sort=createdAt,DESC";
         List<CommentResponse> commentsAfterBlock = httpGetWithAuthorization(
                 "/posts/" + postId + "/comments" + commentsQueryString, anotherToken)
@@ -284,6 +290,7 @@ class MemberAcceptanceTest extends AcceptanceTest {
                 .getComments();
         assertAll(
                 () -> AssertionsForClassTypes.assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value()),
+                () -> assertThat(feedPostsAfterBlock).isEmpty(),
                 () -> assertThat(commentsAfterBlock).isEmpty()
         );
     }
