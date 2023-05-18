@@ -9,7 +9,7 @@ public interface CommentPersistencePort {
 
     Long save(Comment comment, Long postId, Long memberId);
 
-    Slice<Comment> findByPostId(Long postId, Pageable pageable);
+    Slice<Comment> findByPostId(Long memberId, Long postId, Pageable pageable);
 
     Optional<Comment> findById(Long id);
 

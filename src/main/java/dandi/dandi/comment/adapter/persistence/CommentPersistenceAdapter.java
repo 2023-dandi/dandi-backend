@@ -32,8 +32,8 @@ public class CommentPersistenceAdapter implements CommentPersistencePort {
     }
 
     @Override
-    public Slice<Comment> findByPostId(Long postId, Pageable pageable) {
-        Slice<CommentJpaEntity> commentJpaEntities = commentRepository.findByPostId(postId, pageable);
+    public Slice<Comment> findByPostId(Long memberId, Long postId, Pageable pageable) {
+        Slice<CommentJpaEntity> commentJpaEntities = commentRepository.findByPostId(memberId, postId, pageable);
         List<Comment> comments = commentJpaEntities.stream()
                 .map(commentJpaEntity -> commentJpaEntity.toComment(findMember(commentJpaEntity.getMemberId())))
                 .collect(Collectors.toUnmodifiableList());

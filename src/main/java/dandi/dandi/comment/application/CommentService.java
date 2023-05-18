@@ -64,7 +64,7 @@ public class CommentService implements CommentUseCase {
     public CommentResponses getComments(Long memberId, Long postId, Pageable pageable) {
         Post post = postPersistencePort.findById(postId)
                 .orElseThrow(NotFoundException::post);
-        Slice<Comment> comments = commentPersistencePort.findByPostId(postId, pageable);
+        Slice<Comment> comments = commentPersistencePort.findByPostId(memberId, postId, pageable);
         List<CommentResponse> commentResponses = comments.stream()
                 .map(comment -> mapToCommentResponse(comment, post, memberId))
                 .collect(Collectors.toUnmodifiableList());

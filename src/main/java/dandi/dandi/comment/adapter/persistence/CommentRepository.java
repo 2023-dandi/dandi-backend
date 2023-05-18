@@ -3,10 +3,14 @@ package dandi.dandi.comment.adapter.persistence;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 public interface CommentRepository extends JpaRepository<CommentJpaEntity, Long> {
 
-    Slice<CommentJpaEntity> findByPostId(Long postId, Pageable pageable);
+    @Query("SELECT c FROM CommentJpaEntity c WHERE c.postId = :postId "
+            + "AND c.memberId NOT IN "
+            + "(SELECT mb.blockedMemberId FROM MemberBlockJpaEntity mb WHERE mb.blockingMemberId = :memberId)")
+    Slice<CommentJpaEntity> findByPostId(Long memberId, Long postId, Pageable pageable);
 
     boolean existsById(Long id);
 }

@@ -12,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import dandi.dandi.comment.domain.Comment;
 import dandi.dandi.common.PersistenceAdapterTest;
+import dandi.dandi.member.adapter.out.persistence.MemberBlockPersistenceAdapter;
 import dandi.dandi.member.adapter.out.persistence.MemberPersistenceAdapter;
 import dandi.dandi.member.domain.Member;
 import java.util.Optional;
@@ -30,6 +31,9 @@ class CommentPersistenceAdapterTest extends PersistenceAdapterTest {
     @Autowired
     private MemberPersistenceAdapter memberPersistenceAdapter;
 
+    @Autowired
+    private MemberBlockPersistenceAdapter memberBlockPersistenceAdapter;
+
     @DisplayName("댓글을 저장할 수 있다.")
     @Test
     void save() {
@@ -40,19 +44,23 @@ class CommentPersistenceAdapterTest extends PersistenceAdapterTest {
         assertThat(commentId).isNotNull();
     }
 
-    @DisplayName("게시글에 해당하는 댓글들을 찾을 수 있다.")
+    @DisplayName("게시글에 해당하고 차단한 사용자가 작성하지 않은 댓글들을 찾을 수 있다.")
     @Test
     void findByPostId() {
-        Long memberId = memberPersistenceAdapter.save(Member.initial(OAUTH_ID, NICKNAME, INITIAL_PROFILE_IMAGE_URL))
-                .getId();
+        Long firstMemberId = memberPersistenceAdapter.save(Member.initial(
+                OAUTH_ID, NICKNAME, INITIAL_PROFILE_IMAGE_URL)).getId();
+        Long secondMemberId = memberPersistenceAdapter.save(Member.initial(
+                OAUTH_ID, "nickname2", INITIAL_PROFILE_IMAGE_URL)).getId();
         Comment comment = Comment.initial(COMMENT_CONTENT);
-        commentPersistenceAdapter.save(comment, POST_ID, memberId);
-        commentPersistenceAdapter.save(comment, POST_ID, memberId);
-        commentPersistenceAdapter.save(comment, 2L, memberId);
+        commentPersistenceAdapter.save(comment, POST_ID, firstMemberId);
+        commentPersistenceAdapter.save(comment, POST_ID, secondMemberId);
+        commentPersistenceAdapter.save(comment, 2L, firstMemberId);
+        memberBlockPersistenceAdapter.saveMemberBlockOf(firstMemberId, secondMemberId);
 
-        Slice<Comment> comments = commentPersistenceAdapter.findByPostId(POST_ID, CREATED_AT_DESC_TEST_SIZE_PAGEABLE);
+        Slice<Comment> comments = commentPersistenceAdapter.findByPostId(
+                firstMemberId, POST_ID, CREATED_AT_DESC_TEST_SIZE_PAGEABLE);
 
-        assertThat(comments).hasSize(2);
+        assertThat(comments).hasSize(1);
     }
 
     @DisplayName("id에 해당하는 댓글을 찾을 수 있다.")
