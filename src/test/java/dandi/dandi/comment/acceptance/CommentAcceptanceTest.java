@@ -128,7 +128,16 @@ class CommentAcceptanceTest extends AcceptanceTest {
 
         ExtractableResponse<Response> response = httpPostWithAuthorization("/comments/1/reports", token);
 
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
+        String commentsQueryString = "?page=0&size=10&sort=createdAt,DESC";
+        List<CommentResponse> commentsAfterReport = httpGetWithAuthorization(
+                "/posts/" + postId + "/comments" + commentsQueryString, token)
+                .jsonPath()
+                .getObject(".", CommentResponses.class)
+                .getComments();
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value()),
+                () -> assertThat(commentsAfterReport).isEmpty()
+        );
     }
 
     @DisplayName("이미 신고한 댓글 신고 요청에 대해 400을 응답한다.")
