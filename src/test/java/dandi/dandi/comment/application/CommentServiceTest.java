@@ -100,7 +100,7 @@ class CommentServiceTest {
         List<Comment> comments = List.of(
                 new Comment(2L, "댓글 내용2", MEMBER, LocalDate.now()),
                 new Comment(1L, "댓글 내용1", MEMBER2, LocalDate.now()));
-        when(commentPersistencePort.findByPostId(POST_ID, CREATED_AT_DESC_TEST_SIZE_PAGEABLE))
+        when(commentPersistencePort.findByPostId(MEMBER_ID, POST_ID, CREATED_AT_DESC_TEST_SIZE_PAGEABLE))
                 .thenReturn(new SliceImpl<>(comments, CREATED_AT_DESC_TEST_SIZE_PAGEABLE, false));
 
         CommentResponses commentResponses = commentService.getComments(MEMBER_ID, POST_ID,

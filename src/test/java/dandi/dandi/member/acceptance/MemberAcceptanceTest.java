@@ -1,5 +1,6 @@
 package dandi.dandi.member.acceptance;
 
+import static dandi.dandi.comment.CommentFixture.COMMENT_REGISTER_COMMAND;
 import static dandi.dandi.common.HttpMethodFixture.httpGetWithAuthorization;
 import static dandi.dandi.common.HttpMethodFixture.httpPatchWithAuthorization;
 import static dandi.dandi.common.HttpMethodFixture.httpPost;
@@ -23,6 +24,8 @@ import static org.mockito.Mockito.when;
 
 import dandi.dandi.auth.application.port.in.TokenResponse;
 import dandi.dandi.auth.web.in.LoginRequest;
+import dandi.dandi.comment.application.port.in.CommentResponse;
+import dandi.dandi.comment.application.port.in.CommentResponses;
 import dandi.dandi.common.AcceptanceTest;
 import dandi.dandi.member.application.port.in.MemberBlockCommand;
 import dandi.dandi.member.application.port.in.MemberInfoResponse;
@@ -235,19 +238,28 @@ class MemberAcceptanceTest extends AcceptanceTest {
         String anotherToken = getAnotherMemberToken();
         Long anotherMemberId = 2L;
         registerPost(anotherToken);
+        Long postId = registerPost(token);
+        httpPostWithAuthorization("/posts/" + postId + "/comments", COMMENT_REGISTER_COMMAND, anotherToken);
 
         ExtractableResponse<Response> response =
                 httpPostWithAuthorization(MEMBER_BLOCK_REQUEST_URI, new MemberBlockCommand(anotherMemberId), token);
 
         String feedQueryString = "?min=20.0&max=30.0&page=0&size=10&sort=createdAt,DESC";
-        List<PostResponse> feedPostsAfterReport = httpGetWithAuthorization(
+        List<PostResponse> feedPostsAfterBlock = httpGetWithAuthorization(
                 FEED_REQUEST_URI + feedQueryString, token)
                 .jsonPath()
                 .getObject(".", FeedResponse.class)
                 .getPosts();
+        String commentsQueryString = "?page=0&size=10&sort=createdAt,DESC";
+        List<CommentResponse> commentsAfterBlock = httpGetWithAuthorization(
+                "/posts/" + postId + "/comments" + commentsQueryString, token)
+                .jsonPath()
+                .getObject(".", CommentResponses.class)
+                .getComments();
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value()),
-                () -> assertThat(feedPostsAfterReport).isEmpty()
+                () -> assertThat(feedPostsAfterBlock).hasSize(1),
+                () -> assertThat(commentsAfterBlock).isEmpty()
         );
     }
 
