@@ -13,6 +13,7 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import dandi.dandi.common.PersistenceAdapterTest;
+import dandi.dandi.member.application.port.out.MemberBlockPersistencePort;
 import dandi.dandi.member.application.port.out.MemberPersistencePort;
 import dandi.dandi.member.domain.Member;
 import dandi.dandi.post.domain.Post;
@@ -36,6 +37,9 @@ class PostPersistenceAdapterTest extends PersistenceAdapterTest {
 
     @Autowired
     private MemberPersistencePort memberPersistencePort;
+
+    @Autowired
+    private MemberBlockPersistencePort memberBlockPersistencePort;
 
     @Autowired
     private PostLikePersistenceAdapter postLikePersistenceAdapter;
@@ -111,18 +115,20 @@ class PostPersistenceAdapterTest extends PersistenceAdapterTest {
         );
     }
 
-    @DisplayName("기온에 따른 차단한 사용자를 제외한 모든 사용자의 게시글들과 신고하지 않은 게시글들을 작성일 기준 내림차순으로 페이징 처리해서 반환할 수 있다.(반환되는 게시글 존재)")
+    @DisplayName("기온에 따라 차단한 사용자를 제외한 모든 사용자의 게시글들과 신고하지 않은 게시글들을 작성일 기준 내림차순으로 페이징 처리해서 반환할 수 있다.(반환되는 게시글 존재)")
     @Test
     void findByTemperature_NotEmptyResult() {
         Long firstMemberId = saveMember(NICKNAME);
         Long secondMemberId = saveMember("nickname123");
+        Long thirdMemberId = saveMember("nickname456");
         Post firstPost = Post.initial(new Temperatures(10.0, 20.0), POST_IMAGE_URL, WEATHER_FEELING);
         Post secondPost = Post.initial(new Temperatures(11.0, 20.0), POST_IMAGE_URL, WEATHER_FEELING);
         Post thirdPost = Post.initial(new Temperatures(13.0, 22.0), POST_IMAGE_URL, WEATHER_FEELING);
         Long savedFirstPostId = postPersistenceAdapter.save(firstPost, firstMemberId);
         Long savedSecondPostId = postPersistenceAdapter.save(secondPost, secondMemberId);
-        Long savedThirdPostId = postPersistenceAdapter.save(thirdPost, firstMemberId);
-        postReportPersistenceAdapter.savePostReportOf(firstMemberId, savedThirdPostId);
+        postPersistenceAdapter.save(thirdPost, thirdMemberId);
+        postReportPersistenceAdapter.savePostReportOf(firstMemberId, savedSecondPostId);
+        memberBlockPersistencePort.saveMemberBlockOf(thirdMemberId, firstMemberId);
 
         TemperatureSearchCondition temperatureSearchCondition =
                 new TemperatureSearchCondition(9.0, 12.0, 19.0, 21.0);
@@ -131,9 +137,8 @@ class PostPersistenceAdapterTest extends PersistenceAdapterTest {
                 firstMemberId, temperatureSearchCondition, CREATED_AT_DESC_TEST_SIZE_PAGEABLE);
 
         assertAll(
-                () -> assertThat(actual).hasSize(2),
-                () -> assertThat(actual.getContent().get(0).getId()).isEqualTo(savedSecondPostId),
-                () -> assertThat(actual.getContent().get(1).getId()).isEqualTo(savedFirstPostId)
+                () -> assertThat(actual).hasSize(1),
+                () -> assertThat(actual.getContent().get(0).getId()).isEqualTo(savedFirstPostId)
         );
     }
 
