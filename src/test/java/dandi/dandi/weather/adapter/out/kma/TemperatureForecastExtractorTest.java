@@ -3,12 +3,13 @@ package dandi.dandi.weather.adapter.out.kma;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import dandi.dandi.weather.application.port.out.WeatherForecast;
+import dandi.dandi.weather.adapter.out.kma.dto.TemperatureDto;
+import dandi.dandi.weather.adapter.out.kma.dto.WeatherItem;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class WeatherForecastForecastExtractorTest {
+class TemperatureForecastExtractorTest {
 
     private final TemperatureForecastExtractor temperatureForecastExtractor = new TemperatureForecastExtractor();
 
@@ -16,26 +17,15 @@ class WeatherForecastForecastExtractorTest {
     @Test
     void extract_TMX_TMN() {
         List<WeatherItem> weatherItems = List.of(
-                generateWeatherItem("TMP", "1100", "10"),
-                generateWeatherItem("TMP", "1200", "11"),
-                generateWeatherItem("TMP", "1300", "8"),
-                generateWeatherItem("TMP", "1400", "13"),
-                generateWeatherItem("TMP", "1500", "20"),
-                generateWeatherItem("TMP", "1600", "7"),
                 generateWeatherItem("TMN", "1600", "7"),
-                generateWeatherItem("TMX", "1600", "21"),
-                generateWeatherItem("TMP", "1700", "13"),
-                generateWeatherItem("TMP", "1800", "14"),
-                generateWeatherItem("TMP", "1900", "16"),
-                generateWeatherItem("POP", "1400", "13"),
-                generateWeatherItem("REH", "1400", "13")
+                generateWeatherItem("TMX", "1600", "21")
         );
 
-        WeatherForecast weatherForecast = temperatureForecastExtractor.extract(weatherItems);
+        TemperatureDto temperatureDto = temperatureForecastExtractor.extract(weatherItems);
 
         assertAll(
-                () -> assertThat(weatherForecast.getMaxTemperature()).isEqualTo(21),
-                () -> assertThat(weatherForecast.getMinTemperature()).isEqualTo(7)
+                () -> assertThat(temperatureDto.getMaxTemperature()).isEqualTo(21),
+                () -> assertThat(temperatureDto.getMinTemperature()).isEqualTo(7)
         );
     }
 
@@ -55,11 +45,11 @@ class WeatherForecastForecastExtractorTest {
                 generateWeatherItem("REH", "1400", "13")
         );
 
-        WeatherForecast weatherForecast = temperatureForecastExtractor.extract(weatherItems);
+        TemperatureDto temperatureDto = temperatureForecastExtractor.extract(weatherItems);
 
         assertAll(
-                () -> assertThat(weatherForecast.getMaxTemperature()).isEqualTo(20),
-                () -> assertThat(weatherForecast.getMinTemperature()).isEqualTo(6)
+                () -> assertThat(temperatureDto.getMaxTemperature()).isEqualTo(20),
+                () -> assertThat(temperatureDto.getMinTemperature()).isEqualTo(6)
         );
     }
 

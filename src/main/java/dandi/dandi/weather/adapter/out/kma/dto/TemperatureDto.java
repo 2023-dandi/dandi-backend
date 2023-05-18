@@ -1,11 +1,11 @@
-package dandi.dandi.weather.application.port.out;
+package dandi.dandi.weather.adapter.out.kma.dto;
 
-public class WeatherForecast {
+public class TemperatureDto {
 
     private final int minTemperature;
     private final int maxTemperature;
 
-    public WeatherForecast(int minTemperature, int maxTemperature) {
+    public TemperatureDto(int minTemperature, int maxTemperature) {
         this.minTemperature = minTemperature;
         this.maxTemperature = maxTemperature;
     }

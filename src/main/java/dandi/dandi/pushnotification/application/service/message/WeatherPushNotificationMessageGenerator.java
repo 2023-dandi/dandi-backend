@@ -1,8 +1,8 @@
 package dandi.dandi.pushnotification.application.service.message;
 
-import dandi.dandi.weather.application.port.out.WeatherForecast;
+import dandi.dandi.weather.application.port.out.WeatherForecastResult;
 
 public interface WeatherPushNotificationMessageGenerator {
 
-    String generateMessage(WeatherForecast weatherForecast);
+    String generateMessage(WeatherForecastResult weatherForecastResult);
 }

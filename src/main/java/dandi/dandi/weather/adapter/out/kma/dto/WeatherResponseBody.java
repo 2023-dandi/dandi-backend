@@ -1,4 +1,4 @@
-package dandi.dandi.weather.adapter.out.kma;
+package dandi.dandi.weather.adapter.out.kma.dto;
 
 public class WeatherResponseBody {
 
@@ -9,6 +9,14 @@ public class WeatherResponseBody {
     private int totalCount;
 
     public WeatherResponseBody() {
+    }
+
+    public WeatherResponseBody(String dataType, WeatherItems items, int numOfRows, int pageNo, int totalCount) {
+        this.dataType = dataType;
+        this.items = items;
+        this.numOfRows = numOfRows;
+        this.pageNo = pageNo;
+        this.totalCount = totalCount;
     }
 
     public String getDataType() {

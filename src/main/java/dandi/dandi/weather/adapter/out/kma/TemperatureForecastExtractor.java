@@ -1,6 +1,7 @@
 package dandi.dandi.weather.adapter.out.kma;
 
-import dandi.dandi.weather.application.port.out.WeatherForecast;
+import dandi.dandi.weather.adapter.out.kma.dto.TemperatureDto;
+import dandi.dandi.weather.adapter.out.kma.dto.WeatherItem;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
@@ -12,10 +13,10 @@ public class TemperatureForecastExtractor {
     private static final String MAX_TEMPERATURE = "TMX";
     private static final String TEMPERATURE = "TMP";
 
-    public WeatherForecast extract(List<WeatherItem> weatherItems) {
+    public TemperatureDto extract(List<WeatherItem> weatherItems) {
         int minTemperature = findMinTemperature(weatherItems);
         int maxTemperature = findMaxTemperature(weatherItems);
-        return new WeatherForecast(minTemperature, maxTemperature);
+        return new TemperatureDto(minTemperature, maxTemperature);
     }
 
     private int findMinTemperature(List<WeatherItem> weatherItems) {
@@ -24,7 +25,7 @@ public class TemperatureForecastExtractor {
                 .map(WeatherItem::getFcstValue)
                 .map(Integer::parseInt)
                 .findFirst()
-                .orElse(extractMinTemperature(weatherItems));
+                .orElseGet(() -> extractMinTemperature(weatherItems));
     }
 
     private int extractMinTemperature(List<WeatherItem> weatherItems) {
@@ -37,7 +38,7 @@ public class TemperatureForecastExtractor {
                 .map(WeatherItem::getFcstValue)
                 .map(Integer::parseInt)
                 .findFirst()
-                .orElse(extractMaxTemperature(weatherItems));
+                .orElseGet(() -> extractMaxTemperature(weatherItems));
     }
 
     private int extractMaxTemperature(List<WeatherItem> weatherItems) {
