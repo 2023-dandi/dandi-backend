@@ -39,6 +39,7 @@ import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.io.File;
 import java.util.List;
+import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -259,6 +260,30 @@ class MemberAcceptanceTest extends AcceptanceTest {
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value()),
                 () -> assertThat(feedPostsAfterBlock).hasSize(1),
+                () -> assertThat(commentsAfterBlock).isEmpty()
+        );
+    }
+
+    @DisplayName("다른 사용자 차단 요청에 성공하면 201을 응답하고 차단 당한 사용자는 차단을 한 사용자의 댓글을 조회할 수 없다.")
+    @Test
+    void blockMember_BlockingMemberComment() {
+        String token = getToken();
+        String anotherToken = getAnotherMemberToken();
+        Long anotherMemberId = 2L;
+        Long postId = registerPost(token);
+        httpPostWithAuthorization("/posts/" + postId + "/comments", COMMENT_REGISTER_COMMAND, token);
+
+        ExtractableResponse<Response> response = httpPostWithAuthorization(
+                MEMBER_BLOCK_REQUEST_URI, new MemberBlockCommand(anotherMemberId), token);
+
+        String commentsQueryString = "?page=0&size=10&sort=createdAt,DESC";
+        List<CommentResponse> commentsAfterBlock = httpGetWithAuthorization(
+                "/posts/" + postId + "/comments" + commentsQueryString, anotherToken)
+                .jsonPath()
+                .getObject(".", CommentResponses.class)
+                .getComments();
+        assertAll(
+                () -> AssertionsForClassTypes.assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value()),
                 () -> assertThat(commentsAfterBlock).isEmpty()
         );
     }
