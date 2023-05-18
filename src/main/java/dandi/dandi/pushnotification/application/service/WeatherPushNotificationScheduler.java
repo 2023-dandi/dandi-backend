@@ -30,8 +30,7 @@ public class WeatherPushNotificationScheduler {
     private static final Logger logger = LoggerFactory.getLogger(WeatherPushNotificationScheduler.class);
     private static final int PUSH_NUMBER_UNIT = 10;
     private static final String EVERY_SEVEN_AM = "0 0 7 * * *";
-    private static final String PUSH_NOTIFICATION_SEND_FAILURE_MESSAGE_FORMAT =
-            "회원(memberId : %d) 날씨 푸시 알림 전송 실패 / %s";
+    private static final String FAILED_WEATHER_RESULT_MESSAGE_FORMAT = "날씨 정보 요청 실패 (memberId : %d) / %s";
 
     private final PushNotificationPersistencePort pushNotificationPersistencePort;
     private final MemberPersistencePort memberPersistencePort;
@@ -95,7 +94,7 @@ public class WeatherPushNotificationScheduler {
             retryableFailurePushNotifications.add(RetryableWeatherPushNotification.of(pushNotification, location));
             return;
         } else if (result.isNonRetryableFailure()) {
-            sendErrorMessageToAdmin(pushNotification.getMemberId(), result.getErrorMessage());
+            handleFailedWeatherResult(pushNotification.getMemberId(), result.getErrorMessage());
         }
         String pushMessage = weatherPushNotificationMessageGenerator.generateMessage(result);
         messages.add(new PushNotificationSource(pushNotification.getToken(), pushMessage));
@@ -113,17 +112,18 @@ public class WeatherPushNotificationScheduler {
 
     private void addNotificationSourceOrSendErrorMessageToAdmin(List<PushNotificationSource> messages,
                                                                 RetryableWeatherPushNotification retryable) {
-        WeatherForecastResult result = weatherForecastInfoManager.getForecasts(LocalDate.now(), retryable.getLocation());
+        WeatherForecastResult result = weatherForecastInfoManager.getForecasts(LocalDate.now(),
+                retryable.getLocation());
         if (result.isFailed()) {
-            sendErrorMessageToAdmin(retryable.getMemberId(), result.getErrorMessage());
+            handleFailedWeatherResult(retryable.getMemberId(), result.getErrorMessage());
         }
         String pushMessage = weatherPushNotificationMessageGenerator.generateMessage(result);
         messages.add(new PushNotificationSource(retryable.getToken(), pushMessage));
     }
 
-    private void sendErrorMessageToAdmin(Long memberId, String errorMessage) {
-        String errorMessageToAdmin = String.format(
-                PUSH_NOTIFICATION_SEND_FAILURE_MESSAGE_FORMAT, memberId, errorMessage);
+    private void handleFailedWeatherResult(Long memberId, String errorMessage) {
+        String errorMessageToAdmin = String.format(FAILED_WEATHER_RESULT_MESSAGE_FORMAT, memberId, errorMessage);
+        logger.error(errorMessageToAdmin);
         errorMessageSender.sendMessage(errorMessageToAdmin);
     }
 }
