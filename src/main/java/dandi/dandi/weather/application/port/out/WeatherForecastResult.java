@@ -15,16 +15,16 @@ public class WeatherForecastResult {
     @Nullable
     private final Integer maxTemperature;
     @Nullable
-    private final String errorMessage;
+    private final String failureMessage;
     @Nullable
     private final Boolean retryableError;
 
     private WeatherForecastResult(WeatherForecastResultCode resultCode, Integer minTemperature,
-                                  Integer maxTemperature, String errorMessage, Boolean retryableError) {
+                                  Integer maxTemperature, String failureMessage, Boolean retryableError) {
         this.resultCode = resultCode;
         this.minTemperature = minTemperature;
         this.maxTemperature = maxTemperature;
-        this.errorMessage = errorMessage;
+        this.failureMessage = failureMessage;
         this.retryableError = retryableError;
     }
 
@@ -55,8 +55,8 @@ public class WeatherForecastResult {
     }
 
     @Nullable
-    public String getErrorMessage() {
-        return errorMessage;
+    public String getFailureMessage() {
+        return failureMessage;
     }
 
     public boolean isRetryableFailure() {

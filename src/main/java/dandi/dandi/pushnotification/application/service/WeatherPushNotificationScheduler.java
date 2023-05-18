@@ -94,7 +94,7 @@ public class WeatherPushNotificationScheduler {
             retryableFailurePushNotifications.add(RetryableWeatherPushNotification.of(pushNotification, location));
             return;
         } else if (result.isNonRetryableFailure()) {
-            handleFailedWeatherResult(pushNotification.getMemberId(), result.getErrorMessage());
+            handleFailedWeatherResult(pushNotification.getMemberId(), result.getFailureMessage());
         }
         String pushMessage = weatherPushNotificationMessageGenerator.generateMessage(result);
         messages.add(new PushNotificationSource(pushNotification.getToken(), pushMessage));
@@ -115,14 +115,14 @@ public class WeatherPushNotificationScheduler {
         WeatherForecastResult result = weatherForecastInfoManager.getForecasts(LocalDate.now(),
                 retryable.getLocation());
         if (result.isFailed()) {
-            handleFailedWeatherResult(retryable.getMemberId(), result.getErrorMessage());
+            handleFailedWeatherResult(retryable.getMemberId(), result.getFailureMessage());
         }
         String pushMessage = weatherPushNotificationMessageGenerator.generateMessage(result);
         messages.add(new PushNotificationSource(retryable.getToken(), pushMessage));
     }
 
-    private void handleFailedWeatherResult(Long memberId, String errorMessage) {
-        String errorMessageToAdmin = String.format(FAILED_WEATHER_RESULT_MESSAGE_FORMAT, memberId, errorMessage);
+    private void handleFailedWeatherResult(Long memberId, String failureMessage) {
+        String errorMessageToAdmin = String.format(FAILED_WEATHER_RESULT_MESSAGE_FORMAT, memberId, failureMessage);
         logger.error(errorMessageToAdmin);
         errorMessageSender.sendMessage(errorMessageToAdmin);
     }

@@ -76,7 +76,7 @@ class KmaTemperatureForecastManagerTest {
 
         assertAll(
                 () -> assertThat(result.getResultCode()).isEqualTo(WeatherForecastResultCode.FAILURE),
-                () -> assertThat(result.getErrorMessage()).isEqualTo("UNKNOWN_ERROR"),
+                () -> assertThat(result.getFailureMessage()).isEqualTo("UNKNOWN_ERROR"),
                 () -> assertThat(result.isNonRetryableFailure()).isTrue()
         );
     }
@@ -91,7 +91,7 @@ class KmaTemperatureForecastManagerTest {
 
         assertAll(
                 () -> assertThat(result.getResultCode()).isEqualTo(WeatherForecastResultCode.FAILURE),
-                () -> assertThat(result.getErrorMessage()).isEqualTo("SERVICE_TIME_OUT"),
+                () -> assertThat(result.getFailureMessage()).isEqualTo("SERVICE_TIME_OUT"),
                 () -> assertThat(result.isRetryableFailure()).isTrue()
         );
     }
@@ -130,7 +130,7 @@ class KmaTemperatureForecastManagerTest {
 
         assertAll(
                 () -> assertThat(result.getResultCode()).isEqualTo(WeatherForecastResultCode.FAILURE),
-                () -> assertThat(result.getErrorMessage()).isEqualTo("UNKNOWN_ERROR")
+                () -> assertThat(result.getFailureMessage()).isEqualTo("UNKNOWN_ERROR")
         );
     }
 }
