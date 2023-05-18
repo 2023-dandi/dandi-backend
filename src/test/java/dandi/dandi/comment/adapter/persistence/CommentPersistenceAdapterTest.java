@@ -47,7 +47,7 @@ class CommentPersistenceAdapterTest extends PersistenceAdapterTest {
         assertThat(commentId).isNotNull();
     }
 
-    @DisplayName("게시글에 해당하고 신고하지 않고 차단한 사용자가 작성하지 않은 댓글들을 찾을 수 있다.")
+    @DisplayName("게시글에 해당하고 신고하지 않고 차단하거나 차단 당한 사용자가 작성하지 않은 댓글들을 찾을 수 있다.")
     @Test
     void findByPostId() {
         Long firstMemberId = memberPersistenceAdapter.save(Member.initial(
@@ -56,12 +56,16 @@ class CommentPersistenceAdapterTest extends PersistenceAdapterTest {
                 OAUTH_ID, "nickname2", INITIAL_PROFILE_IMAGE_URL)).getId();
         Long thirdMemberId = memberPersistenceAdapter.save(Member.initial(
                 OAUTH_ID, "nickname3", INITIAL_PROFILE_IMAGE_URL)).getId();
+        Long fourthMemberId = memberPersistenceAdapter.save(Member.initial(
+                OAUTH_ID, "nickname4", INITIAL_PROFILE_IMAGE_URL)).getId();
         Comment comment = Comment.initial(COMMENT_CONTENT);
         Long firstSavedCommentId = commentPersistenceAdapter.save(comment, POST_ID, firstMemberId);
         commentPersistenceAdapter.save(comment, POST_ID, secondMemberId);
         Long thirdSavedCommentId = commentPersistenceAdapter.save(comment, POST_ID, thirdMemberId);
+        commentPersistenceAdapter.save(comment, POST_ID, fourthMemberId);
         commentPersistenceAdapter.save(comment, 2L, firstMemberId);
         memberBlockPersistenceAdapter.saveMemberBlockOf(firstMemberId, secondMemberId);
+        memberBlockPersistenceAdapter.saveMemberBlockOf(fourthMemberId, firstMemberId);
         commentReportPersistenceAdapter.saveReportOf(firstMemberId, thirdSavedCommentId);
 
         Slice<Comment> comments = commentPersistenceAdapter.findByPostId(
