@@ -34,6 +34,7 @@ import dandi.dandi.post.application.port.in.MyPostsByTemperatureResponses;
 import dandi.dandi.post.application.port.in.PostDetailResponse;
 import dandi.dandi.post.application.port.in.PostImageRegisterResponse;
 import dandi.dandi.post.application.port.in.PostRegisterResponse;
+import dandi.dandi.post.application.port.in.PostResponse;
 import dandi.dandi.post.application.port.in.PostWriterResponse;
 import dandi.dandi.post.web.in.OutfitFeelingRequest;
 import dandi.dandi.post.web.in.PostRegisterRequest;
@@ -275,7 +276,7 @@ class PostAcceptanceTest extends AcceptanceTest {
         );
     }
 
-    @DisplayName("게시글 신고에 성공하면 201을 응답한다.")
+    @DisplayName("게시글 신고에 성공하면 201을 응답하고 해당 게시글은 더이상 신고자에게 노출되지 않는다.")
     @Test
     void reportPost_Created() {
         String token = getToken();
@@ -285,7 +286,16 @@ class PostAcceptanceTest extends AcceptanceTest {
         ExtractableResponse<Response> response =
                 httpPostWithAuthorization("/posts/" + postId + "/reports", anotherToken);
 
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
+        String feedQueryString = "?min=11.0&max=20.0&page=0&size=10&sort=createdAt,DESC";
+        List<PostResponse> feedPostsAfterReport = httpGetWithAuthorization(
+                FEED_REQUEST_URI + feedQueryString, anotherToken)
+                .jsonPath()
+                .getObject(".", FeedResponse.class)
+                .getPosts();
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value()),
+                () -> assertThat(feedPostsAfterReport).isEmpty()
+        );
     }
 
     @DisplayName("존재하지 않는 게시글 신고 요청에 대해 404를 응답한다.")
