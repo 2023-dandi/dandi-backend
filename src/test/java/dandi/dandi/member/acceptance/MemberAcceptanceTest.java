@@ -232,7 +232,7 @@ class MemberAcceptanceTest extends AcceptanceTest {
         assertThat(response.statusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
     }
 
-    @DisplayName("다른 사용자 차단 요청에 성공하면 201을 응답하고 차단한 사용자의 게시글들은 더이상 신고자에게 노출되지 않는다.")
+    @DisplayName("다른 사용자 차단 요청에 성공하면 201을 응답하고 차단한 사용자의 게시글과 댓글들은 더이상 노출되지 않는다.")
     @Test
     void blockMember_Created() {
         String token = getToken();
