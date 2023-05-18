@@ -89,17 +89,16 @@ public class WeatherPushNotificationScheduler {
 
     private void addWeatherPushMessageOrHandleFailure(PushNotification pushNotification, Location location,
                                                       List<PushNotificationSource> messages,
-                                                      List<RetryableWeatherPushNotification> retryableFailureWeatherPushNotification) {
+                                                      List<RetryableWeatherPushNotification> retryableFailurePushNotifications) {
         WeatherForecastResult result = weatherForecastInfoManager.getForecasts(LocalDate.now(), location);
-        if (result.isSuccess()) {
-            String pushMessage = weatherPushNotificationMessageGenerator.generateMessage(result);
-            messages.add(new PushNotificationSource(pushNotification.getToken(), pushMessage));
-        } else if (result.isRetryableFailure()) {
-            retryableFailureWeatherPushNotification.add(
-                    RetryableWeatherPushNotification.of(pushNotification, location));
+        if (result.isRetryableFailure()) {
+            retryableFailurePushNotifications.add(RetryableWeatherPushNotification.of(pushNotification, location));
+            return;
         } else if (result.isNonRetryableFailure()) {
             sendErrorMessageToAdmin(pushNotification.getMemberId(), result.getErrorMessage());
         }
+        String pushMessage = weatherPushNotificationMessageGenerator.generateMessage(result);
+        messages.add(new PushNotificationSource(pushNotification.getToken(), pushMessage));
     }
 
     private void retry(List<RetryableWeatherPushNotification> retryableFailureWeatherPushNotification) {
@@ -118,10 +117,8 @@ public class WeatherPushNotificationScheduler {
         if (result.isFailed()) {
             sendErrorMessageToAdmin(retryable.getMemberId(), result.getErrorMessage());
         }
-        if (result.isSuccess()) {
-            String pushMessage = weatherPushNotificationMessageGenerator.generateMessage(result);
-            messages.add(new PushNotificationSource(retryable.getToken(), pushMessage));
-        }
+        String pushMessage = weatherPushNotificationMessageGenerator.generateMessage(result);
+        messages.add(new PushNotificationSource(retryable.getToken(), pushMessage));
     }
 
     private void sendErrorMessageToAdmin(Long memberId, String errorMessage) {
