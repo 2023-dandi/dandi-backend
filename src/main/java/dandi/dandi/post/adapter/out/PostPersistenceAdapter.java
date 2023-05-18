@@ -64,8 +64,10 @@ public class PostPersistenceAdapter implements PostPersistencePort {
     }
 
     @Override
-    public Slice<Post> findByTemperature(TemperatureSearchCondition temperatureSearchCondition, Pageable pageable) {
+    public Slice<Post> findByTemperature(Long memberId, TemperatureSearchCondition temperatureSearchCondition,
+                                         Pageable pageable) {
         Slice<PostJpaEntity> postJpaEntities = postRepository.findByTemperature(
+                memberId,
                 temperatureSearchCondition.getMinTemperatureMinSearchCondition(),
                 temperatureSearchCondition.getMinTemperatureMaxSearchCondition(),
                 temperatureSearchCondition.getMaxTemperatureMinSearchCondition(),

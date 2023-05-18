@@ -110,7 +110,7 @@ public class PostService implements PostUseCase {
         Temperatures temperatures = new Temperatures(minTemperature, maxTemperature);
         TemperatureSearchCondition searchCondition =
                 temperatures.calculateTemperatureSearchCondition(TEMPERATURE_SEARCH_THRESHOLD);
-        Slice<Post> posts = postPersistencePort.findByTemperature(searchCondition, pageable);
+        Slice<Post> posts = postPersistencePort.findByTemperature(memberId, searchCondition, pageable);
         return convertToFeedResponse(memberId, posts);
     }
 

@@ -19,8 +19,10 @@ public interface PostRepository extends JpaRepository<PostJpaEntity, Long> {
     @Query("SELECT p FROM PostJpaEntity p WHERE "
             + "p.minTemperature BETWEEN :minTemperatureMinSearchCondition AND :minTemperatureMaxSearchCondition "
             + "AND "
-            + "p.maxTemperature BETWEEN :maxTemperatureMinSearchCondition AND :maxTemperatureMaxSearchCondition")
-    Slice<PostJpaEntity> findByTemperature(Double minTemperatureMinSearchCondition,
+            + "p.maxTemperature BETWEEN :maxTemperatureMinSearchCondition AND :maxTemperatureMaxSearchCondition "
+            + "AND "
+            + "p.id NOT IN (SELECT pr.postId FROM PostReportJpaEntity pr WHERE pr.memberId = :memberId)")
+    Slice<PostJpaEntity> findByTemperature(Long memberId, Double minTemperatureMinSearchCondition,
                                            Double minTemperatureMaxSearchCondition,
                                            Double maxTemperatureMinSearchCondition,
                                            Double maxTemperatureMaxSearchCondition,
