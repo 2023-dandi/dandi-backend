@@ -40,6 +40,9 @@ class PostPersistenceAdapterTest extends PersistenceAdapterTest {
     @Autowired
     private PostLikePersistenceAdapter postLikePersistenceAdapter;
 
+    @Autowired
+    private PostReportPersistenceAdapter postReportPersistenceAdapter;
+
     @DisplayName("게시글을 저장할 수 있다.")
     @Test
     void save() {
@@ -108,7 +111,7 @@ class PostPersistenceAdapterTest extends PersistenceAdapterTest {
         );
     }
 
-    @DisplayName("기온에 따른 모든 사용자의 게시글들을 작성일 기준 내림차순으로 페이징 처리해서 반환할 수 있다.(반환되는 게시글 존재)")
+    @DisplayName("기온에 따른 차단한 사용자를 제외한 모든 사용자의 게시글들과 신고하지 않은 게시글들을 작성일 기준 내림차순으로 페이징 처리해서 반환할 수 있다.(반환되는 게시글 존재)")
     @Test
     void findByTemperature_NotEmptyResult() {
         Long firstMemberId = saveMember(NICKNAME);
@@ -116,23 +119,21 @@ class PostPersistenceAdapterTest extends PersistenceAdapterTest {
         Post firstPost = Post.initial(new Temperatures(10.0, 20.0), POST_IMAGE_URL, WEATHER_FEELING);
         Post secondPost = Post.initial(new Temperatures(11.0, 20.0), POST_IMAGE_URL, WEATHER_FEELING);
         Post thirdPost = Post.initial(new Temperatures(13.0, 22.0), POST_IMAGE_URL, WEATHER_FEELING);
-        postPersistenceAdapter.save(firstPost, firstMemberId);
-        postPersistenceAdapter.save(secondPost, secondMemberId);
-        postPersistenceAdapter.save(thirdPost, firstMemberId);
+        Long savedFirstPostId = postPersistenceAdapter.save(firstPost, firstMemberId);
+        Long savedSecondPostId = postPersistenceAdapter.save(secondPost, secondMemberId);
+        Long savedThirdPostId = postPersistenceAdapter.save(thirdPost, firstMemberId);
+        postReportPersistenceAdapter.savePostReportOf(firstMemberId, savedThirdPostId);
+
         TemperatureSearchCondition temperatureSearchCondition =
                 new TemperatureSearchCondition(9.0, 12.0, 19.0, 21.0);
 
-        Slice<Post> actual = postPersistenceAdapter.findByTemperature(temperatureSearchCondition,
-                CREATED_AT_DESC_TEST_SIZE_PAGEABLE);
+        Slice<Post> actual = postPersistenceAdapter.findByTemperature(
+                firstMemberId, temperatureSearchCondition, CREATED_AT_DESC_TEST_SIZE_PAGEABLE);
 
-        boolean isPostsWrittenByMoreThanOneMember = actual.stream()
-                .map(Post::getWriterId)
-                .distinct()
-                .count() != 1;
         assertAll(
                 () -> assertThat(actual).hasSize(2),
-                () -> assertThat(isPostsWrittenByMoreThanOneMember).isTrue(),
-                () -> assertThat(isDescendingDirectionByCreatedAt(actual.getContent())).isTrue()
+                () -> assertThat(actual.getContent().get(0).getId()).isEqualTo(savedSecondPostId),
+                () -> assertThat(actual.getContent().get(1).getId()).isEqualTo(savedFirstPostId)
         );
     }
 
@@ -154,8 +155,8 @@ class PostPersistenceAdapterTest extends PersistenceAdapterTest {
                 minTemperatureMinSearchCondition, minTemperatureMaxSearchCondition,
                 maxTemperatureMinSearchCondition, maxTemperatureMaxSearchCondition);
 
-        Slice<Post> actual = postPersistenceAdapter.findByTemperature(temperatureSearchCondition,
-                CREATED_AT_DESC_TEST_SIZE_PAGEABLE);
+        Slice<Post> actual = postPersistenceAdapter.findByTemperature(
+                firstMemberId, temperatureSearchCondition, CREATED_AT_DESC_TEST_SIZE_PAGEABLE);
 
         assertThat(actual).isEmpty();
     }
