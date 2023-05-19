@@ -14,9 +14,9 @@ class CoordinateTest {
     void isInRange(int nx, int ny, boolean expected) {
         Coordinate coordinate = new Coordinate(0, 0);
         Coordinate another = new Coordinate(nx, ny);
-        int range = 5;
+        double distance = Math.sqrt(Math.pow(5, 2) + Math.pow(5, 2));
 
-        boolean actual = coordinate.isInRange(another, range);
+        boolean actual = coordinate.isCloserThan(another, distance);
 
         assertThat(actual).isEqualTo(expected);
     }

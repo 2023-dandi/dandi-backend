@@ -11,16 +11,16 @@ import org.springframework.stereotype.Component;
 public class WeatherForecastResultCache {
 
     private final Map<Coordinate, Forecast> values = new HashMap<>();
-    private final int cacheRange;
+    private final double cacheEnableDistance;
 
-    public WeatherForecastResultCache(@Value("${weather.kma.cache-range}") int cacheRange) {
-        this.cacheRange = cacheRange;
+    public WeatherForecastResultCache(@Value("${weather.kma.cache-range}") int cacheEnableDistance) {
+        this.cacheEnableDistance = Math.sqrt(Math.pow(cacheEnableDistance, 2) + Math.pow(cacheEnableDistance, 2));
     }
 
     public boolean hasKeyInRange(Coordinate coordinate) {
         return values.keySet()
                 .stream()
-                .anyMatch(cache -> coordinate.isInRange(cache, cacheRange));
+                .anyMatch(cache -> coordinate.isCloserThan(cache, cacheEnableDistance));
     }
 
     public void put(Coordinate coordinate, Forecast forecast) {
@@ -30,7 +30,7 @@ public class WeatherForecastResultCache {
     public Forecast get(Coordinate coordinate) {
         Coordinate cacheKey = values.keySet()
                 .stream()
-                .filter(cache -> coordinate.isInRange(cache, cacheRange))
+                .filter(cache -> coordinate.isCloserThan(cache, cacheEnableDistance))
                 .findFirst()
                 .orElseThrow(InvalidKmaWeatherForecastCacheKeyException::new);
         return values.get(cacheKey);

@@ -20,10 +20,9 @@ public class Coordinate {
         return ny;
     }
 
-    public boolean isInRange(Coordinate another, int range) {
-        double maxDistanceInRange = Math.sqrt(Math.pow(range, 2) + Math.pow(range, 2));
-        double distance = Math.sqrt(Math.pow(nx - another.nx, 2) + Math.pow(ny - another.ny, 2));
-        return distance <= maxDistanceInRange;
+    public boolean isCloserThan(Coordinate another, double distance) {
+        double distanceBetween = Math.sqrt(Math.pow(nx - another.nx, 2) + Math.pow(ny - another.ny, 2));
+        return distanceBetween <= distance;
     }
 
     @Override
