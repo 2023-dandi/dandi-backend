@@ -69,6 +69,7 @@ public class WeatherPushNotificationScheduler {
             pushWeatherNotification(pushNotifications.getContent(), retryableFailureWeatherPushNotification);
         }
         retry(retryableFailureWeatherPushNotification);
+        weatherForecastInfoManager.finish();
     }
 
     private void pushWeatherNotification(List<PushNotification> pushNotifications,

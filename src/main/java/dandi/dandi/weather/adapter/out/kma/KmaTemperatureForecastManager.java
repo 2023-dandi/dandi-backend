@@ -108,4 +108,9 @@ public class KmaTemperatureForecastManager implements WeatherForecastInfoManager
                 .getResultCode();
         return KmaResponseCode.from(resultCode);
     }
+
+    @Override
+    public void finish() {
+        weatherForecastResultCache.clear();
+    }
 }
