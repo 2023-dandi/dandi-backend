@@ -1,6 +1,6 @@
 package dandi.dandi.weather.adapter.out.kma;
 
-import dandi.dandi.weather.adapter.out.kma.dto.TemperatureDto;
+import dandi.dandi.weather.adapter.out.kma.dto.Forecast;
 import dandi.dandi.weather.adapter.out.kma.dto.WeatherItem;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,10 +13,10 @@ public class TemperatureForecastExtractor {
     private static final String MAX_TEMPERATURE = "TMX";
     private static final String TEMPERATURE = "TMP";
 
-    public TemperatureDto extract(List<WeatherItem> weatherItems) {
+    public Forecast extract(List<WeatherItem> weatherItems) {
         int minTemperature = findMinTemperature(weatherItems);
         int maxTemperature = findMaxTemperature(weatherItems);
-        return new TemperatureDto(minTemperature, maxTemperature);
+        return new Forecast(minTemperature, maxTemperature);
     }
 
     private int findMinTemperature(List<WeatherItem> weatherItems) {

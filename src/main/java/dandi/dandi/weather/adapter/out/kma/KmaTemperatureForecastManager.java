@@ -1,7 +1,7 @@
 package dandi.dandi.weather.adapter.out.kma;
 
 import dandi.dandi.member.domain.Location;
-import dandi.dandi.weather.adapter.out.kma.dto.TemperatureDto;
+import dandi.dandi.weather.adapter.out.kma.dto.Forecast;
 import dandi.dandi.weather.adapter.out.kma.dto.WeatherItem;
 import dandi.dandi.weather.adapter.out.kma.dto.WeatherRequest;
 import dandi.dandi.weather.adapter.out.kma.dto.WeatherResponse;
@@ -56,7 +56,7 @@ public class KmaTemperatureForecastManager implements WeatherForecastInfoManager
                 .getResponse();
         KmaResponseCode responseCode = extractResultCode(weatherResponse);
         if (responseCode.isSuccessful()) {
-            TemperatureDto temperature = extractTemperatures(weatherRequest.getBase_date(), weatherResponse.getBody());
+            Forecast temperature = extractTemperatures(weatherRequest.getBase_date(), weatherResponse.getBody());
             return WeatherForecastResult.ofSuccess(temperature.getMinTemperature(), temperature.getMaxTemperature());
         } else if (responseCode.isErrorAssociatedWithLocation()) {
             return retryWithDefaultLocation(weatherRequest.getBase_date());
@@ -70,14 +70,14 @@ public class KmaTemperatureForecastManager implements WeatherForecastInfoManager
                 .getResponse();
         KmaResponseCode responseCode = extractResultCode(weatherResponse);
         if (responseCode.isSuccessful()) {
-            TemperatureDto temperature = extractTemperatures(baseDate, weatherResponse.getBody());
+            Forecast temperature = extractTemperatures(baseDate, weatherResponse.getBody());
             return WeatherForecastResult.ofSuccessButLocationUpdate(
                     temperature.getMinTemperature(), temperature.getMaxTemperature());
         }
         return WeatherForecastResult.ofFailure(responseCode.name(), responseCode.isRetryable());
     }
 
-    private TemperatureDto extractTemperatures(String baseDate, WeatherResponseBody body) {
+    private Forecast extractTemperatures(String baseDate, WeatherResponseBody body) {
         List<WeatherItem> temperatureForecasts = body.getItems()
                 .getItem()
                 .stream()
