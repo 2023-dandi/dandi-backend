@@ -17,8 +17,8 @@ class TemperatureForecastExtractorTest {
     @Test
     void extract_TMX_TMN() {
         List<WeatherItem> weatherItems = List.of(
-                generateWeatherItem("TMN", "1600", "7"),
-                generateWeatherItem("TMX", "1600", "21")
+                generateWeatherItem("TMN", "1600", "7.0"),
+                generateWeatherItem("TMX", "1600", "21.0")
         );
 
         Forecast forecast = temperatureForecastExtractor.extract(weatherItems);
@@ -33,16 +33,16 @@ class TemperatureForecastExtractorTest {
     @Test
     void extract_TMP() {
         List<WeatherItem> weatherItems = List.of(
-                generateWeatherItem("TMP", "1100", "10"),
-                generateWeatherItem("TMP", "1200", "11"),
-                generateWeatherItem("TMP", "1300", "6"),
-                generateWeatherItem("TMP", "1400", "13"),
-                generateWeatherItem("TMP", "1500", "20"),
-                generateWeatherItem("TMP", "1600", "7"),
-                generateWeatherItem("TMP", "1800", "14"),
-                generateWeatherItem("TMP", "1900", "16"),
-                generateWeatherItem("POP", "1400", "13"),
-                generateWeatherItem("REH", "1400", "13")
+                generateWeatherItem("TMP", "1100", "10.0"),
+                generateWeatherItem("TMP", "1200", "11.0"),
+                generateWeatherItem("TMP", "1300", "6.0"),
+                generateWeatherItem("TMP", "1400", "13.0"),
+                generateWeatherItem("TMP", "1500", "20.0"),
+                generateWeatherItem("TMP", "1600", "7.0"),
+                generateWeatherItem("TMP", "1800", "14.0"),
+                generateWeatherItem("TMP", "1900", "16.0"),
+                generateWeatherItem("POP", "1400", "13.0"),
+                generateWeatherItem("REH", "1400", "13.0")
         );
 
         Forecast forecast = temperatureForecastExtractor.extract(weatherItems);

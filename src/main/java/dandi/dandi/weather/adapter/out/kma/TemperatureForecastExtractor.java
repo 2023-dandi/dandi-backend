@@ -22,9 +22,9 @@ public class TemperatureForecastExtractor {
     private int findMinTemperature(List<WeatherItem> weatherItems) {
         return weatherItems.stream()
                 .filter(weatherItem -> weatherItem.getCategory().equals(MIN_TEMPERATURE))
-                .map(WeatherItem::getFcstValue)
-                .map(Integer::parseInt)
                 .findFirst()
+                .map(WeatherItem::getFcstValue)
+                .map(min -> (int) Math.round(Double.parseDouble(min)))
                 .orElseGet(() -> extractMinTemperature(weatherItems));
     }
 
@@ -35,9 +35,9 @@ public class TemperatureForecastExtractor {
     private int findMaxTemperature(List<WeatherItem> weatherItems) {
         return weatherItems.stream()
                 .filter(weatherItem -> weatherItem.getCategory().equals(MAX_TEMPERATURE))
-                .map(WeatherItem::getFcstValue)
-                .map(Integer::parseInt)
                 .findFirst()
+                .map(WeatherItem::getFcstValue)
+                .map(min -> (int) Math.round(Double.parseDouble(min)))
                 .orElseGet(() -> extractMaxTemperature(weatherItems));
     }
 
