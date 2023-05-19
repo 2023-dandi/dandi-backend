@@ -1,6 +1,7 @@
 package dandi.dandi.weather.adapter.out.kma;
 
 import dandi.dandi.weather.adapter.out.kma.dto.Forecast;
+import dandi.dandi.weather.exception.InvalidKmaWeatherForecastCacheKeyException;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,7 +17,7 @@ public class WeatherForecastResultCache {
         this.cacheRange = cacheRange;
     }
 
-    public boolean hasKey(Coordinate coordinate) {
+    public boolean hasKeyInRange(Coordinate coordinate) {
         return values.keySet()
                 .stream()
                 .anyMatch(cache -> coordinate.isInRange(cache, cacheRange));
@@ -31,7 +32,7 @@ public class WeatherForecastResultCache {
                 .stream()
                 .filter(cache -> coordinate.isInRange(cache, cacheRange))
                 .findFirst()
-                .orElseThrow();
+                .orElseThrow(InvalidKmaWeatherForecastCacheKeyException::new);
         return values.get(cacheKey);
     }
 

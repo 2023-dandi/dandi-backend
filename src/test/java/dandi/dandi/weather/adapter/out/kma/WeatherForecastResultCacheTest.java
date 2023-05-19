@@ -1,8 +1,10 @@
 package dandi.dandi.weather.adapter.out.kma;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 import dandi.dandi.weather.adapter.out.kma.dto.Forecast;
+import dandi.dandi.weather.exception.InvalidKmaWeatherForecastCacheKeyException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -21,7 +23,7 @@ class WeatherForecastResultCacheTest {
         weatherForecastResultCache.put(new Coordinate(1, 1), new Forecast(10, 15));
         Coordinate coordinate = new Coordinate(nx, ny);
 
-        boolean actual = weatherForecastResultCache.hasKey(coordinate);
+        boolean actual = weatherForecastResultCache.hasKeyInRange(coordinate);
 
         assertThat(actual).isEqualTo(expected);
     }
@@ -39,6 +41,18 @@ class WeatherForecastResultCacheTest {
         assertThat(actual).isEqualTo(forecast);
     }
 
+    @DisplayName("범위에 존재하지 않는 좌표로 캐시를 조회하려고 하면 예외를 발생시킨다.")
+    @Test
+    void get_InvalidKmaWeatherForecastCacheKey() {
+        WeatherForecastResultCache weatherForecastResultCache = new WeatherForecastResultCache(CACHE_RANGE);
+        Forecast forecast = new Forecast(10, 15);
+        weatherForecastResultCache.put(new Coordinate(0, 0), forecast);
+        Coordinate coordinate = new Coordinate(6, -5);
+
+        assertThatThrownBy(() -> weatherForecastResultCache.get(coordinate))
+                .isInstanceOf(InvalidKmaWeatherForecastCacheKeyException.class);
+    }
+
     @DisplayName("캐시를 비울 수 있다.")
     @Test
     void clear() {
@@ -48,6 +62,6 @@ class WeatherForecastResultCacheTest {
 
         weatherForecastResultCache.clear();
 
-        assertThat(weatherForecastResultCache.get(coordinate)).isNull();
+        assertThat(weatherForecastResultCache.hasKeyInRange(coordinate)).isFalse();
     }
 }
