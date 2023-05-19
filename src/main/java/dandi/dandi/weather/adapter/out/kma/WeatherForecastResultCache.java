@@ -2,15 +2,15 @@ package dandi.dandi.weather.adapter.out.kma;
 
 import dandi.dandi.weather.adapter.out.kma.dto.Forecast;
 import dandi.dandi.weather.exception.InvalidKmaWeatherForecastCacheKeyException;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
 public class WeatherForecastResultCache {
 
-    private final Map<Coordinate, Forecast> values = new HashMap<>();
+    private final Map<Coordinate, Forecast> values = new ConcurrentHashMap<>();
     private final double cacheEnableDistance;
 
     public WeatherForecastResultCache(@Value("${weather.kma.cache-range}") int cacheEnableDistance) {
