@@ -4,10 +4,13 @@ import static dandi.dandi.member.MemberTestFixture.DISTRICT;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.only;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import dandi.dandi.member.domain.District;
 import dandi.dandi.member.domain.Location;
-import dandi.dandi.weather.adapter.out.kma.dto.Forecast;
 import dandi.dandi.weather.adapter.out.kma.dto.WeatherItem;
 import dandi.dandi.weather.adapter.out.kma.dto.WeatherItems;
 import dandi.dandi.weather.adapter.out.kma.dto.WeatherRequest;
@@ -53,17 +56,12 @@ class KmaTemperatureForecastManagerTest {
     private final String serviceKey = "serviceKey";
     private final KmaCoordinateConvertor kmaCoordinateConvertor = new KmaCoordinateConvertor();
     private final TemperatureForecastExtractor temperatureForecastExtractor = new TemperatureForecastExtractor();
-    private final WeatherForecastResultCache weatherForecastResultCache =
-            Mockito.mock(WeatherForecastResultCache.class);
     private final KmaTemperatureForecastManager kmaTemperatureForecastManager = new KmaTemperatureForecastManager(
-            weatherApiCaller, serviceKey, kmaCoordinateConvertor,
-            temperatureForecastExtractor, weatherForecastResultCache);
+            weatherApiCaller, serviceKey, kmaCoordinateConvertor, temperatureForecastExtractor);
 
     @DisplayName("기상청에서 날씨 정보를 정상적으로 받아올 수 있다.")
     @Test
     void getForecasts_Success() {
-        when(weatherForecastResultCache.hasKeyInRange(any()))
-                .thenReturn(false);
         when(weatherApiCaller.getWeathers(WEATHER_REQUEST))
                 .thenReturn(SUCCESS_WEATHER_RESPONSES);
 
@@ -79,27 +77,23 @@ class KmaTemperatureForecastManagerTest {
     @DisplayName("캐시에 저장된 기상청 날씨 정보를 받아올 수 있다.")
     @Test
     void getForecasts_Success_CacheHit() {
-        when(weatherForecastResultCache.hasKeyInRange(any()))
-                .thenReturn(true);
-        when(weatherForecastResultCache.get(any()))
-                .thenReturn(new Forecast(MIN_TEMPERATURE, MAX_TEMPERATURE));
         when(weatherApiCaller.getWeathers(WEATHER_REQUEST))
                 .thenReturn(SUCCESS_WEATHER_RESPONSES);
+        kmaTemperatureForecastManager.getForecasts(NOW, LOCATION);
 
         WeatherForecastResult result = kmaTemperatureForecastManager.getForecasts(NOW, LOCATION);
 
         assertAll(
                 () -> assertThat(result.getResultCode()).isEqualTo(WeatherForecastResultCode.SUCCESS),
                 () -> assertThat(result.getMinTemperature()).isEqualTo(MIN_TEMPERATURE),
-                () -> assertThat(result.getMaxTemperature()).isEqualTo(MAX_TEMPERATURE)
+                () -> assertThat(result.getMaxTemperature()).isEqualTo(MAX_TEMPERATURE),
+                () -> verify(weatherApiCaller, only()).getWeathers(any())
         );
     }
 
     @DisplayName("날씨 API 요청에서 재시도 할 수 없는 에러를 응답받는다면 재시도 가능 여부와 FAILURE을 응답한다.")
     @Test
     void getForecasts_Failure() {
-        when(weatherForecastResultCache.hasKeyInRange(any()))
-                .thenReturn(false);
         when(weatherApiCaller.getWeathers(WEATHER_REQUEST))
                 .thenReturn(UNKNOWN_ERROR_WEATHER_RESPONSES);
 
@@ -115,8 +109,6 @@ class KmaTemperatureForecastManagerTest {
     @DisplayName("날씨 API 요청에서 재시도 할 수 있는 에러를 응답받는다면 재시도 가능 여부와 FAILURE을 응답한다")
     @Test
     void getForecasts_RetrySuccessAfterNetworkError() {
-        when(weatherForecastResultCache.hasKeyInRange(any()))
-                .thenReturn(false);
         when(weatherApiCaller.getWeathers(WEATHER_REQUEST))
                 .thenReturn(NETWORK_ERROR_WEATHER_RESPONSES);
 
@@ -132,8 +124,6 @@ class KmaTemperatureForecastManagerTest {
     @DisplayName("날씨 API 요청에서 위치 정보 오류에 의한 NODATA_ERROR 응답을 받은 후 기본 위치 정보 기반 날씨 API 요청 재시도에 성공하면 SUCCESS_BUT_LOCATION_UPDATE를 응답한다.")
     @Test
     void getForecasts_RetrySuccessAfterNoDataError() {
-        when(weatherForecastResultCache.hasKeyInRange(any()))
-                .thenReturn(false);
         when(weatherApiCaller.getWeathers(WEATHER_REQUEST))
                 .thenReturn(NO_DATA_ERROR_WEATHER_RESPONSES);
         WeatherRequest locationErrorHandleWeatherRequest =
@@ -154,16 +144,15 @@ class KmaTemperatureForecastManagerTest {
     @DisplayName("날씨 API 요청에서 위치 정보 오류에 의한 NODATA_ERROR 응답을 받은 후 기본 위치 정보 기반 재시도에 캐시에 있는 날씨 정보 조회에 성공하면 SUCCESS_BUT_LOCATION_UPDATE를 응답한다.")
     @Test
     void getForecasts_RetrySuccessAfterNoDataError_RetryCacheHit() {
-        when(weatherForecastResultCache.hasKeyInRange(new Coordinate(88, 90)))
-                .thenReturn(false);
+        District defaultDistrict = new District("대한민국");
+        Location defaultLocation = new Location(37.56356944444444, 126.98000833333333, defaultDistrict);
+        WeatherRequest defaultLocationWeatherRequest = new WeatherRequest(
+                "serviceKey", "JSON", "20230517", "0200", 300, 60, 127);
+        when(weatherApiCaller.getWeathers(defaultLocationWeatherRequest))
+                .thenReturn(SUCCESS_WEATHER_RESPONSES);
+        kmaTemperatureForecastManager.getForecasts(NOW, defaultLocation);
         when(weatherApiCaller.getWeathers(WEATHER_REQUEST))
                 .thenReturn(NO_DATA_ERROR_WEATHER_RESPONSES);
-        WeatherRequest locationErrorHandleWeatherRequest =
-                new WeatherRequest("serviceKey", "JSON", "20230517", "0200", 300, 60, 127);
-        when(weatherForecastResultCache.hasKeyInRange(locationErrorHandleWeatherRequest.getCoordinate()))
-                .thenReturn(true);
-        when(weatherForecastResultCache.get(locationErrorHandleWeatherRequest.getCoordinate()))
-                .thenReturn(new Forecast(MIN_TEMPERATURE, MAX_TEMPERATURE));
 
         WeatherForecastResult result = kmaTemperatureForecastManager.getForecasts(NOW, LOCATION);
 
@@ -171,15 +160,14 @@ class KmaTemperatureForecastManagerTest {
                 () -> assertThat(result.getResultCode())
                         .isEqualTo(WeatherForecastResultCode.SUCCESS_BUT_LOCATION_UPDATE),
                 () -> assertThat(result.getMinTemperature()).isEqualTo(MIN_TEMPERATURE),
-                () -> assertThat(result.getMaxTemperature()).isEqualTo(MAX_TEMPERATURE)
+                () -> assertThat(result.getMaxTemperature()).isEqualTo(MAX_TEMPERATURE),
+                () -> verify(weatherApiCaller, times(2)).getWeathers(any())
         );
     }
 
     @DisplayName("날씨 API 요청에서 위치 정보 오류에 의한 NODATA_ERROR 응답을 받은 후 기본 위치 정보 기반 캐시 조회와 API 요청 재시도에 모두 실패하면 FAILURE을 응답한다.")
     @Test
     void getForecasts_RetryFailureAfterNoDataError() {
-        when(weatherForecastResultCache.hasKeyInRange(any()))
-                .thenReturn(false);
         when(weatherApiCaller.getWeathers(WEATHER_REQUEST))
                 .thenReturn(NO_DATA_ERROR_WEATHER_RESPONSES);
         WeatherRequest locationErrorHandleWeatherRequest =
