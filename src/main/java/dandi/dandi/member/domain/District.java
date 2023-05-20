@@ -2,15 +2,27 @@ package dandi.dandi.member.domain;
 
 public class District {
 
-    private final String first;
-    private final String second;
+    private static final District INITIAL_DISTRICT = new District("서울특별시");
 
-    public District(String first, String second) {
-        this.first = first;
-        this.second = second;
+    private final String country;
+    private final String city;
+    private final String town;
+
+    public District(String country, String city, String town) {
+        this.country = country;
+        this.city = city;
+        this.town = town;
     }
 
-    public District(String first) {
-        this(first, null);
+    public District(String country, String city) {
+        this(country, city, null);
+    }
+
+    public District(String country) {
+        this(country, null, null);
+    }
+
+    public static District getInitialDistrict() {
+        return INITIAL_DISTRICT;
     }
 }
