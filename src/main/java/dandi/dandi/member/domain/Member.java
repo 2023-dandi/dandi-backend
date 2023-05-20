@@ -54,6 +54,10 @@ public class Member {
         return profileImgUrl;
     }
 
+    public District getDistrict() {
+        return location.getDistrict();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

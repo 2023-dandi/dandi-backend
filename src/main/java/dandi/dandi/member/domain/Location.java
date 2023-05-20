@@ -28,6 +28,10 @@ public class Location {
         return longitude;
     }
 
+    public District getDistrict() {
+        return district;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
