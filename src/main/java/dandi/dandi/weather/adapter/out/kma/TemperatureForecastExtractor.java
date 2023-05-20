@@ -51,7 +51,7 @@ public class TemperatureForecastExtractor {
                 .stream()
                 .filter(weather -> weather.getCategory().equals(TEMPERATURE))
                 .map(WeatherItem::getFcstValue)
-                .map(Integer::parseInt)
+                .map(min -> (int) Math.round(Double.parseDouble(min)))
                 .sorted()
                 .collect(Collectors.toUnmodifiableList());
     }
