@@ -1,5 +1,6 @@
 package dandi.dandi.member.application;
 
+import static dandi.dandi.member.MemberTestFixture.DISTRICT;
 import static dandi.dandi.member.MemberTestFixture.INITIAL_PROFILE_IMAGE_URL;
 import static dandi.dandi.member.MemberTestFixture.MEMBER;
 import static dandi.dandi.member.MemberTestFixture.MEMBER_ID;
@@ -108,7 +109,7 @@ class MemberServiceTest {
     void updateLocation() {
         double latitude = 1.0;
         double longitude = 1.0;
-        LocationUpdateCommand locationUpdateCommand = new LocationUpdateCommand(latitude, longitude);
+        LocationUpdateCommand locationUpdateCommand = new LocationUpdateCommand(latitude, longitude, DISTRICT);
         when(memberPersistencePort.findById(MEMBER.getId()))
                 .thenReturn(Optional.of(MEMBER));
 

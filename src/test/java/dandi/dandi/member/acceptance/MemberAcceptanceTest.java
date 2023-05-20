@@ -15,6 +15,7 @@ import static dandi.dandi.common.RequestURI.MEMBER_NICKNAME_DUPLICATION_CHECK_UR
 import static dandi.dandi.common.RequestURI.MEMBER_NICKNAME_LOCATION;
 import static dandi.dandi.common.RequestURI.MEMBER_NICKNAME_URI;
 import static dandi.dandi.common.RequestURI.MEMBER_PROFILE_IMAGE_URI;
+import static dandi.dandi.member.MemberTestFixture.DISTRICT;
 import static dandi.dandi.member.MemberTestFixture.OAUTH_ID;
 import static dandi.dandi.utils.TestImageUtils.TEST_IMAGE_FILE_NAME;
 import static dandi.dandi.utils.TestImageUtils.generateTestImgFile;
@@ -170,7 +171,7 @@ class MemberAcceptanceTest extends AcceptanceTest {
         String token = getToken();
         double latitude = 1.0;
         double longitude = 2.0;
-        LocationUpdateRequest locationUpdateRequest = new LocationUpdateRequest(latitude, longitude);
+        LocationUpdateRequest locationUpdateRequest = new LocationUpdateRequest(latitude, longitude, DISTRICT);
 
         ExtractableResponse<Response> response =
                 httpPatchWithAuthorization(MEMBER_NICKNAME_LOCATION, locationUpdateRequest, token);
@@ -190,7 +191,7 @@ class MemberAcceptanceTest extends AcceptanceTest {
     void updateMemberLocation_BadRequest() {
         String token = getToken();
         double invalidLatitude = -91.0;
-        LocationUpdateRequest invalidLocationUpdateRequest = new LocationUpdateRequest(invalidLatitude, -2.0);
+        LocationUpdateRequest invalidLocationUpdateRequest = new LocationUpdateRequest(invalidLatitude, -2.0, DISTRICT);
 
         ExtractableResponse<Response> response =
                 httpPatchWithAuthorization(MEMBER_NICKNAME_LOCATION, invalidLocationUpdateRequest, token);
