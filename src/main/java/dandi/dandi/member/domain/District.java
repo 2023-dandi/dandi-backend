@@ -4,7 +4,7 @@ import java.util.Objects;
 
 public class District {
 
-    private static final District INITIAL_DISTRICT = new District("서울특별시");
+    private static final District INITIAL_DISTRICT = new District("대한민국");
 
     private final String country;
     private final String city;
