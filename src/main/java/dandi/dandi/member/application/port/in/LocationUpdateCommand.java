@@ -39,4 +39,8 @@ public class LocationUpdateCommand extends SelfValidating<LocationUpdateCommand>
     public Double getLongitude() {
         return longitude;
     }
+
+    public String getDistrict() {
+        return district;
+    }
 }
