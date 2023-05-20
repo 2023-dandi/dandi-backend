@@ -20,7 +20,7 @@ public interface MemberPersistencePort {
 
     void updateNickname(Long memberId, String newNickname);
 
-    void updateLocation(Long memberId, Double latitude, Double longitude);
+    void updateLocation(Long memberId, Location location);
 
     boolean existsMemberByNickname(String nickname);
 

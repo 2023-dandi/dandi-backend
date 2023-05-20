@@ -28,8 +28,9 @@ public interface MemberRepository extends JpaRepository<MemberJpaEntity, Long> {
 
     @Modifying
     @Query("UPDATE MemberJpaEntity m SET m.locationJpaEntity.longitude = :longitude,"
-            + " m.locationJpaEntity.latitude = :latitude WHERE m.id = :memberId")
-    void updateLocation(Long memberId, Double latitude, Double longitude);
+            + " m.locationJpaEntity.latitude = :latitude , m.locationJpaEntity.country = :country, "
+            + "m.locationJpaEntity.city = :city, m.locationJpaEntity.town = :town WHERE m.id = :memberId")
+    void updateLocation(Long memberId, Double latitude, Double longitude, String country, String city, String town);
 
     @Query("SELECT m FROM MemberJpaEntity m INNER JOIN PushNotificationJpaEntity pn ON m.id = pn.memberId "
             + "WHERE pn.allowance = true")

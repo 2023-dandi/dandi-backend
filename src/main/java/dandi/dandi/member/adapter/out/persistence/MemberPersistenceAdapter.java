@@ -1,6 +1,7 @@
 package dandi.dandi.member.adapter.out.persistence;
 
 import dandi.dandi.member.application.port.out.MemberPersistencePort;
+import dandi.dandi.member.domain.District;
 import dandi.dandi.member.domain.Location;
 import dandi.dandi.member.domain.Member;
 import java.util.List;
@@ -59,8 +60,10 @@ public class MemberPersistenceAdapter implements MemberPersistencePort {
     }
 
     @Override
-    public void updateLocation(Long memberId, Double latitude, Double longitude) {
-        memberRepository.updateLocation(memberId, latitude, longitude);
+    public void updateLocation(Long memberId, Location location) {
+        District district = location.getDistrict();
+        memberRepository.updateLocation(memberId, location.getLatitude(), location.getLongitude(),
+                district.getCountry(), district.getCity(), district.getTown());
     }
 
     @Override
