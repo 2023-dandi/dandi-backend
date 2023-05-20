@@ -25,9 +25,9 @@ public class KmaTemperatureForecastManager implements WeatherForecastInfoManager
     private static final DateTimeFormatter KMA_DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd");
     private static final String DATA_TYPE = "JSON";
     private static final String BASE_TIME = "0200";
-    private static final int DEFAULT_NX = 60;
-    private static final int DEFAULT_NY = 127;
-    private static final District DEFAULT_DISTRICT = new District("대한민국");
+    private static final int DEFAULT_NX = 67;
+    private static final int DEFAULT_NY = 100;
+    private static final District DEFAULT_DISTRICT = new District("대전광역시");
     private static final int ROW_COUNT = 300;
 
     private final KmaWeatherApiCaller weatherApiCaller;

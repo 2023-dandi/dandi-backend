@@ -127,7 +127,7 @@ class KmaTemperatureForecastManagerTest {
         when(weatherApiCaller.getWeathers(WEATHER_REQUEST))
                 .thenReturn(NO_DATA_ERROR_WEATHER_RESPONSES);
         WeatherRequest locationErrorHandleWeatherRequest =
-                new WeatherRequest("serviceKey", "JSON", "20230517", "0200", 300, 60, 127);
+                new WeatherRequest("serviceKey", "JSON", "20230517", "0200", 300, 67, 100);
         when(weatherApiCaller.getWeathers(locationErrorHandleWeatherRequest))
                 .thenReturn(SUCCESS_WEATHER_RESPONSES);
 
@@ -144,10 +144,10 @@ class KmaTemperatureForecastManagerTest {
     @DisplayName("날씨 API 요청에서 위치 정보 오류에 의한 NODATA_ERROR 응답을 받은 후 기본 위치 정보 기반 재시도에 캐시에 있는 날씨 정보 조회에 성공하면 SUCCESS_BUT_LOCATION_UPDATE를 응답한다.")
     @Test
     void getForecasts_RetrySuccessAfterNoDataError_RetryCacheHit() {
-        District defaultDistrict = new District("대한민국");
-        Location defaultLocation = new Location(37.56356944444444, 126.98000833333333, defaultDistrict);
+        District defaultDistrict = new District("대전광역시");
+        Location defaultLocation = new Location(36.347119444444445, 127.38656666666667, defaultDistrict);
         WeatherRequest defaultLocationWeatherRequest = new WeatherRequest(
-                "serviceKey", "JSON", "20230517", "0200", 300, 60, 127);
+                "serviceKey", "JSON", "20230517", "0200", 300, 67, 100);
         when(weatherApiCaller.getWeathers(defaultLocationWeatherRequest))
                 .thenReturn(SUCCESS_WEATHER_RESPONSES);
         kmaTemperatureForecastManager.getForecasts(NOW, defaultLocation);
@@ -171,7 +171,7 @@ class KmaTemperatureForecastManagerTest {
         when(weatherApiCaller.getWeathers(WEATHER_REQUEST))
                 .thenReturn(NO_DATA_ERROR_WEATHER_RESPONSES);
         WeatherRequest locationErrorHandleWeatherRequest =
-                new WeatherRequest("serviceKey", "JSON", "20230517", "0200", 300, 60, 127);
+                new WeatherRequest("serviceKey", "JSON", "20230517", "0200", 300, 67, 100);
         when(weatherApiCaller.getWeathers(locationErrorHandleWeatherRequest))
                 .thenReturn(UNKNOWN_ERROR_WEATHER_RESPONSES);
 
