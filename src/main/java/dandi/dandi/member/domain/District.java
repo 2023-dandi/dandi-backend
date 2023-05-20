@@ -28,6 +28,18 @@ public class District {
         return INITIAL_DISTRICT;
     }
 
+    public String getCountry() {
+        return country;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public String getTown() {
+        return town;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
