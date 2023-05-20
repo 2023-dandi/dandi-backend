@@ -1,6 +1,6 @@
 package dandi.dandi.member.adapter.out.persistence;
 
-import static dandi.dandi.member.MemberTestFixture.DISTRICT_VALUE;
+import static dandi.dandi.member.MemberTestFixture.DISTRICT;
 import static dandi.dandi.member.MemberTestFixture.INITIAL_PROFILE_IMAGE_URL;
 import static dandi.dandi.member.MemberTestFixture.NICKNAME;
 import static dandi.dandi.member.MemberTestFixture.OAUTH_ID;
@@ -175,7 +175,7 @@ class MemberPersistenceAdapterTest extends PersistenceAdapterTest {
     @DisplayName("회원의 위치 정보를 찾을 수 있다.")
     @Test
     void findLocationById() {
-        Location location = new Location(10.0, 12.0, DISTRICT_VALUE);
+        Location location = new Location(10.0, 12.0, DISTRICT);
         Member member = memberPersistenceAdapter.save(
                 new Member(null, OAUTH_ID, NICKNAME, location, INITIAL_PROFILE_IMAGE_URL));
 

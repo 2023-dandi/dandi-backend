@@ -4,14 +4,16 @@ import java.util.Objects;
 
 public class Location {
 
-    private static final Location INITIAL_LOCATION = new Location(0.0, 0.0);
+    private static final Location INITIAL_LOCATION = new Location(0.0, 0.0, District.getInitialDistrict());
 
     private final double latitude;
     private final double longitude;
+    private final District district;
 
-    public Location(double latitude, double longitude) {
+    public Location(double latitude, double longitude, District district) {
         this.latitude = latitude;
         this.longitude = longitude;
+        this.district = district;
     }
 
     public static Location initial() {

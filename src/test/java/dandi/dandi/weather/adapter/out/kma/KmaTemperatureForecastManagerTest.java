@@ -1,5 +1,6 @@
 package dandi.dandi.weather.adapter.out.kma;
 
+import static dandi.dandi.member.MemberTestFixture.DISTRICT;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
@@ -28,7 +29,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class KmaTemperatureForecastManagerTest {
 
     private static final LocalDate NOW = LocalDate.of(2023, 5, 17);
-    private static final Location LOCATION = new Location(35.82795555555556, 128.53049722222224);
+    private static final Location LOCATION = new Location(35.82795555555556, 128.53049722222224, DISTRICT);
     private static final WeatherRequest WEATHER_REQUEST = new WeatherRequest("serviceKey", "JSON", "20230517", "0200",
             300, 88, 90);
     private static final int MIN_TEMPERATURE = 10;
