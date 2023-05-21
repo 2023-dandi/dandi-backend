@@ -16,10 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/exhibition")
 public class ExhibitionController {
 
-    private final PushNotificationSender pushNotificationSender;
+    private final ExhibitionService exhibitionService;
 
-    public ExhibitionController(PushNotificationSender pushNotificationSender) {
-        this.pushNotificationSender = pushNotificationSender;
+    public ExhibitionController(ExhibitionService exhibitionService) {
+        this.exhibitionService = exhibitionService;
     }
 
     @Operation(summary = "현재 날씨 푸시 알림 발송")
@@ -29,7 +29,7 @@ public class ExhibitionController {
     })
     @PostMapping("/weather")
     public ResponseEntity<Void> pushWeatherNotification(@RequestBody ExhibitionPushNotificationRequest request) {
-        pushNotificationSender.pushWeatherNotification(request.getNickname());
+        exhibitionService.pushWeatherNotification(request.getNickname());
         return ResponseEntity.noContent().build();
     }
 }

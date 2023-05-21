@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 //전시회 푸시 알림을 위한 임시 객체
 @Service
-public class PushNotificationSender {
+public class ExhibitionService {
 
     private final PushNotificationPersistencePort pushNotificationPersistencePort;
     private final MemberPersistencePort memberPersistencePort;
@@ -27,11 +27,11 @@ public class PushNotificationSender {
     private final WeatherPushNotificationMessageGenerator weatherPushNotificationMessageGenerator;
     private final String weatherPushTitle;
 
-    public PushNotificationSender(PushNotificationPersistencePort pushNotificationPersistencePort,
-                                  MemberPersistencePort memberPersistencePort, WebPushManager webPushManager,
-                                  WeatherForecastInfoManager weatherForecastInfoManager,
-                                  WeatherPushNotificationMessageGenerator weatherPushNotificationMessageGenerator,
-                                  @Value("${weather.push.title}") String weatherPushTitle) {
+    public ExhibitionService(PushNotificationPersistencePort pushNotificationPersistencePort,
+                             MemberPersistencePort memberPersistencePort, WebPushManager webPushManager,
+                             WeatherForecastInfoManager weatherForecastInfoManager,
+                             WeatherPushNotificationMessageGenerator weatherPushNotificationMessageGenerator,
+                             @Value("${weather.push.title}") String weatherPushTitle) {
         this.pushNotificationPersistencePort = pushNotificationPersistencePort;
         this.memberPersistencePort = memberPersistencePort;
         this.weatherForecastInfoManager = weatherForecastInfoManager;
