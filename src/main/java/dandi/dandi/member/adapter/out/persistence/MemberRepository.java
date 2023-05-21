@@ -37,4 +37,7 @@ public interface MemberRepository extends JpaRepository<MemberJpaEntity, Long> {
 
     @Query("SELECT m.locationJpaEntity FROM MemberJpaEntity m WHERE m.id = :id")
     Optional<LocationJpaEntity> findLocationById(Long id);
+
+    @Query("SELECT m.id FROM MemberJpaEntity m where m.nickname = :nickname")
+    Optional<Long> findIdByNickname(String nickname);
 }
