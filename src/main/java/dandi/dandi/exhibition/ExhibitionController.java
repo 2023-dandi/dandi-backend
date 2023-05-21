@@ -1,9 +1,8 @@
 package dandi.dandi.exhibition;
 
-import dandi.dandi.auth.web.support.Login;
-import dandi.dandi.pushnotification.application.service.PushNotificationSender;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,8 +18,8 @@ public class ExhibitionController {
     }
 
     @PostMapping("/weather")
-    public ResponseEntity<Void> pushWeatherNotification(@Login Long memberId) {
-        pushNotificationSender.pushWeatherNotification(memberId);
+    public ResponseEntity<Void> pushWeatherNotification(@RequestBody ExhibitionPushNotificationRequest request) {
+        pushNotificationSender.pushWeatherNotification(request.getNickname());
         return ResponseEntity.noContent().build();
     }
 }
