@@ -29,4 +29,6 @@ public interface MemberPersistencePort {
     Slice<Member> findPushNotificationAllowingMember(Pageable pageable);
 
     Optional<Location> findLocationById(Long id);
+
+    Optional<Long> findIdByNickname(String nickname);
 }

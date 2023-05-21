@@ -1,4 +1,4 @@
-package dandi.dandi.pushnotification.application.service;
+package dandi.dandi.exhibition;
 
 import dandi.dandi.advice.InternalServerException;
 import dandi.dandi.member.application.port.out.MemberPersistencePort;
@@ -16,8 +16,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+//전시회 푸시 알림을 위한 임시 객체
 @Service
-public class PushNotificationSender {
+public class ExhibitionService {
 
     private final PushNotificationPersistencePort pushNotificationPersistencePort;
     private final MemberPersistencePort memberPersistencePort;
@@ -26,11 +27,11 @@ public class PushNotificationSender {
     private final WeatherPushNotificationMessageGenerator weatherPushNotificationMessageGenerator;
     private final String weatherPushTitle;
 
-    public PushNotificationSender(PushNotificationPersistencePort pushNotificationPersistencePort,
-                                  MemberPersistencePort memberPersistencePort, WebPushManager webPushManager,
-                                  WeatherForecastInfoManager weatherForecastInfoManager,
-                                  WeatherPushNotificationMessageGenerator weatherPushNotificationMessageGenerator,
-                                  @Value("${weather.push.title}") String weatherPushTitle) {
+    public ExhibitionService(PushNotificationPersistencePort pushNotificationPersistencePort,
+                             MemberPersistencePort memberPersistencePort, WebPushManager webPushManager,
+                             WeatherForecastInfoManager weatherForecastInfoManager,
+                             WeatherPushNotificationMessageGenerator weatherPushNotificationMessageGenerator,
+                             @Value("${weather.push.title}") String weatherPushTitle) {
         this.pushNotificationPersistencePort = pushNotificationPersistencePort;
         this.memberPersistencePort = memberPersistencePort;
         this.weatherForecastInfoManager = weatherForecastInfoManager;
@@ -40,7 +41,9 @@ public class PushNotificationSender {
     }
 
     @Transactional(readOnly = true)
-    public void pushWeatherNotification(Long memberId) {
+    public void pushWeatherNotification(String nickname) {
+        Long memberId = memberPersistencePort.findIdByNickname(nickname)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 닉네임입니다."));
         PushNotification pushNotification = pushNotificationPersistencePort.findPushNotificationByMemberId(memberId)
                 .orElseThrow(() -> InternalServerException.pushNotificationNotFound(memberId));
         if (pushNotification.isAllowed()) {

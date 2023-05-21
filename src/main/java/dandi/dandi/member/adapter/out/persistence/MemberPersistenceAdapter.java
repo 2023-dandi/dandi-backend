@@ -82,4 +82,9 @@ public class MemberPersistenceAdapter implements MemberPersistencePort {
         return memberRepository.findLocationById(id)
                 .map(LocationJpaEntity::toLocation);
     }
+
+    @Override
+    public Optional<Long> findIdByNickname(String nickname) {
+        return memberRepository.findIdByNickname(nickname);
+    }
 }
