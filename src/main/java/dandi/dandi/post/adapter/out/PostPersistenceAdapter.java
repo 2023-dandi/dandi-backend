@@ -40,7 +40,7 @@ public class PostPersistenceAdapter implements PostPersistencePort {
 
     @Override
     public Optional<Post> findById(Long postId) {
-        return postRepository.findByIdWithAdditionalFeelingIndicesJpaEntities(postId)
+        return postRepository.findById(postId)
                 .map(this::toPost);
     }
 

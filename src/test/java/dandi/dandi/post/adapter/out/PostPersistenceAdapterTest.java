@@ -19,10 +19,14 @@ import dandi.dandi.member.domain.Member;
 import dandi.dandi.post.domain.Post;
 import dandi.dandi.post.domain.TemperatureSearchCondition;
 import dandi.dandi.post.domain.Temperatures;
+import dandi.dandi.post.domain.WeatherFeeling;
 import dandi.dandi.postlike.adapter.PostLikePersistenceAdapter;
 import dandi.dandi.postlike.domain.PostLike;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -47,6 +51,9 @@ class PostPersistenceAdapterTest extends PersistenceAdapterTest {
     @Autowired
     private PostReportPersistenceAdapter postReportPersistenceAdapter;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     @DisplayName("게시글을 저장할 수 있다.")
     @Test
     void save() {
@@ -61,6 +68,18 @@ class PostPersistenceAdapterTest extends PersistenceAdapterTest {
     void findById() {
         Long memberId = saveMember(NICKNAME);
         Post post = Post.initial(TEMPERATURES, POST_IMAGE_URL, WEATHER_FEELING);
+        Long savedPostId = postPersistenceAdapter.save(post, memberId);
+
+        Optional<Post> actual = postPersistenceAdapter.findById(savedPostId);
+
+        assertThat(actual.get().getId()).isEqualTo(savedPostId);
+    }
+
+    @DisplayName("id로 게시글을 찾을 수 있다.")
+    @Test
+    void findById_A() {
+        Long memberId = saveMember(NICKNAME);
+        Post post = Post.initial(TEMPERATURES, POST_IMAGE_URL, new WeatherFeeling(1L, new ArrayList<>()));
         Long savedPostId = postPersistenceAdapter.save(post, memberId);
 
         Optional<Post> actual = postPersistenceAdapter.findById(savedPostId);
