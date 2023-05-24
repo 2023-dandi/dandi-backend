@@ -5,6 +5,7 @@ import dandi.dandi.post.domain.Post;
 import dandi.dandi.post.domain.Temperatures;
 import dandi.dandi.post.domain.WeatherFeeling;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.persistence.Column;
@@ -47,7 +48,7 @@ public class PostJpaEntity {
     @OneToMany(mappedBy = "postJpaEntity")
     @Cascade(value = CascadeType.ALL)
     @BatchSize(size = 10)
-    private List<AdditionalFeelingIndexJpaEntity> additionalFeelingIndicesJpaEntities;
+    private List<AdditionalFeelingIndexJpaEntity> additionalFeelingIndicesJpaEntities = new ArrayList<>();
 
     protected PostJpaEntity() {
     }
