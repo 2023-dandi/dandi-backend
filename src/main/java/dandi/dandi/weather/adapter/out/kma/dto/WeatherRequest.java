@@ -1,5 +1,6 @@
 package dandi.dandi.weather.adapter.out.kma.dto;
 
+import dandi.dandi.weather.adapter.out.kma.Coordinate;
 import java.util.Objects;
 
 public class WeatherRequest {
@@ -56,6 +57,10 @@ public class WeatherRequest {
 
     public int getNy() {
         return ny;
+    }
+
+    public Coordinate getCoordinate() {
+        return new Coordinate(nx, ny);
     }
 
     public WeatherRequest ofBaseDate(String baseDate) {

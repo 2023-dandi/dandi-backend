@@ -45,7 +45,7 @@ public class MemberJpaEntity {
                 member.getId(),
                 member.getOAuthId(),
                 member.getNickname(),
-                new LocationJpaEntity(member.getLatitude(), member.getLongitude()),
+                new LocationJpaEntity(member.getLatitude(), member.getLongitude(), member.getDistrict()),
                 member.getProfileImgUrl()
         );
     }

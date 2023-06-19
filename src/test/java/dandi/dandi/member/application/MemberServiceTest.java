@@ -1,5 +1,7 @@
 package dandi.dandi.member.application;
 
+import static dandi.dandi.member.MemberTestFixture.DISTRICT;
+import static dandi.dandi.member.MemberTestFixture.DISTRICT_VALUE;
 import static dandi.dandi.member.MemberTestFixture.INITIAL_PROFILE_IMAGE_URL;
 import static dandi.dandi.member.MemberTestFixture.MEMBER;
 import static dandi.dandi.member.MemberTestFixture.MEMBER_ID;
@@ -22,6 +24,8 @@ import dandi.dandi.member.application.port.in.NicknameUpdateCommand;
 import dandi.dandi.member.application.port.out.MemberBlockPersistencePort;
 import dandi.dandi.member.application.port.out.MemberPersistencePort;
 import dandi.dandi.member.application.service.MemberService;
+import dandi.dandi.member.domain.DistrictParser;
+import dandi.dandi.member.domain.Location;
 import dandi.dandi.member.domain.Member;
 import dandi.dandi.post.application.port.out.MemberPostPersistencePort;
 import java.util.Optional;
@@ -39,8 +43,9 @@ class MemberServiceTest {
     private final MemberBlockPersistencePort memberBlockPersistencePort =
             Mockito.mock(MemberBlockPersistencePort.class);
     private final MemberPostPersistencePort memberPostPersistencePort = Mockito.mock(MemberPostPersistencePort.class);
-    private final MemberService memberService =
-            new MemberService(memberPersistencePort, memberBlockPersistencePort, memberPostPersistencePort, IMAGE_ACCESS_URL);
+    private final DistrictParser districtParser = new DistrictParser();
+    private final MemberService memberService = new MemberService(memberPersistencePort, memberBlockPersistencePort,
+            memberPostPersistencePort, districtParser, IMAGE_ACCESS_URL);
 
     @DisplayName("기본 프로필 이미지의 회원 정보를 반환할 수 있다.")
     @Test
@@ -108,13 +113,13 @@ class MemberServiceTest {
     void updateLocation() {
         double latitude = 1.0;
         double longitude = 1.0;
-        LocationUpdateCommand locationUpdateCommand = new LocationUpdateCommand(latitude, longitude);
+        LocationUpdateCommand locationUpdateCommand = new LocationUpdateCommand(latitude, longitude, DISTRICT_VALUE);
         when(memberPersistencePort.findById(MEMBER.getId()))
                 .thenReturn(Optional.of(MEMBER));
 
         memberService.updateLocation(MEMBER.getId(), locationUpdateCommand);
 
-        verify(memberPersistencePort).updateLocation(MEMBER.getId(), latitude, latitude);
+        verify(memberPersistencePort).updateLocation(MEMBER.getId(), new Location(latitude, longitude, DISTRICT));
     }
 
     @DisplayName("존재하지 않는 id의 사용자를 차단하려고 하면 예외를 발생시킨다.")

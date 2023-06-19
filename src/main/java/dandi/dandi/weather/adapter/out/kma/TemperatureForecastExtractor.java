@@ -1,6 +1,6 @@
 package dandi.dandi.weather.adapter.out.kma;
 
-import dandi.dandi.weather.adapter.out.kma.dto.TemperatureDto;
+import dandi.dandi.weather.adapter.out.kma.dto.Forecast;
 import dandi.dandi.weather.adapter.out.kma.dto.WeatherItem;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,18 +13,18 @@ public class TemperatureForecastExtractor {
     private static final String MAX_TEMPERATURE = "TMX";
     private static final String TEMPERATURE = "TMP";
 
-    public TemperatureDto extract(List<WeatherItem> weatherItems) {
+    public Forecast extract(List<WeatherItem> weatherItems) {
         int minTemperature = findMinTemperature(weatherItems);
         int maxTemperature = findMaxTemperature(weatherItems);
-        return new TemperatureDto(minTemperature, maxTemperature);
+        return new Forecast(minTemperature, maxTemperature);
     }
 
     private int findMinTemperature(List<WeatherItem> weatherItems) {
         return weatherItems.stream()
                 .filter(weatherItem -> weatherItem.getCategory().equals(MIN_TEMPERATURE))
-                .map(WeatherItem::getFcstValue)
-                .map(Integer::parseInt)
                 .findFirst()
+                .map(WeatherItem::getFcstValue)
+                .map(min -> (int) Math.round(Double.parseDouble(min)))
                 .orElseGet(() -> extractMinTemperature(weatherItems));
     }
 
@@ -35,9 +35,9 @@ public class TemperatureForecastExtractor {
     private int findMaxTemperature(List<WeatherItem> weatherItems) {
         return weatherItems.stream()
                 .filter(weatherItem -> weatherItem.getCategory().equals(MAX_TEMPERATURE))
-                .map(WeatherItem::getFcstValue)
-                .map(Integer::parseInt)
                 .findFirst()
+                .map(WeatherItem::getFcstValue)
+                .map(min -> (int) Math.round(Double.parseDouble(min)))
                 .orElseGet(() -> extractMaxTemperature(weatherItems));
     }
 
@@ -51,7 +51,7 @@ public class TemperatureForecastExtractor {
                 .stream()
                 .filter(weather -> weather.getCategory().equals(TEMPERATURE))
                 .map(WeatherItem::getFcstValue)
-                .map(Integer::parseInt)
+                .map(min -> (int) Math.round(Double.parseDouble(min)))
                 .sorted()
                 .collect(Collectors.toUnmodifiableList());
     }

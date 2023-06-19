@@ -10,6 +10,8 @@ import dandi.dandi.member.application.port.in.NicknameDuplicationCheckResponse;
 import dandi.dandi.member.application.port.in.NicknameUpdateCommand;
 import dandi.dandi.member.application.port.out.MemberBlockPersistencePort;
 import dandi.dandi.member.application.port.out.MemberPersistencePort;
+import dandi.dandi.member.domain.DistrictParser;
+import dandi.dandi.member.domain.Location;
 import dandi.dandi.member.domain.Member;
 import dandi.dandi.post.application.port.out.MemberPostPersistencePort;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,15 +25,17 @@ public class MemberService implements MemberUseCase {
     private final MemberPersistencePort memberPersistencePort;
     private final MemberBlockPersistencePort memberBlockPersistencePort;
     private final MemberPostPersistencePort memberPostPersistencePort;
+    private final DistrictParser districtParser;
     private final String imageAccessUrl;
 
     public MemberService(MemberPersistencePort memberPersistencePort,
                          MemberBlockPersistencePort memberBlockPersistencePort,
-                         MemberPostPersistencePort memberPostPersistencePort,
+                         MemberPostPersistencePort memberPostPersistencePort, DistrictParser districtParser,
                          @Value("${cloud.aws.cloud-front.uri}") String imageAccessUrl) {
         this.memberPersistencePort = memberPersistencePort;
         this.memberBlockPersistencePort = memberBlockPersistencePort;
         this.memberPostPersistencePort = memberPostPersistencePort;
+        this.districtParser = districtParser;
         this.imageAccessUrl = imageAccessUrl;
     }
 
@@ -58,8 +62,9 @@ public class MemberService implements MemberUseCase {
     @Transactional
     public void updateLocation(Long memberId, LocationUpdateCommand locationUpdateCommand) {
         Member member = findMember(memberId);
-        memberPersistencePort.updateLocation(member.getId(),
-                locationUpdateCommand.getLatitude(), locationUpdateCommand.getLongitude());
+        Location location = new Location(locationUpdateCommand.getLatitude(), locationUpdateCommand.getLongitude(),
+                districtParser.parse(locationUpdateCommand.getDistrict()));
+        memberPersistencePort.updateLocation(member.getId(), location);
     }
 
     private Member findMember(Long memberId) {

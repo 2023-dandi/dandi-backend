@@ -1,5 +1,6 @@
 package dandi.dandi.member.adapter.out.persistence;
 
+import static dandi.dandi.member.MemberTestFixture.DISTRICT;
 import static dandi.dandi.member.MemberTestFixture.INITIAL_PROFILE_IMAGE_URL;
 import static dandi.dandi.member.MemberTestFixture.NICKNAME;
 import static dandi.dandi.member.MemberTestFixture.OAUTH_ID;
@@ -8,6 +9,7 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import dandi.dandi.common.PersistenceAdapterTest;
+import dandi.dandi.member.domain.District;
 import dandi.dandi.member.domain.Location;
 import dandi.dandi.member.domain.Member;
 import dandi.dandi.pushnotification.adapter.out.persistence.PushNotificationPersistenceAdapter;
@@ -122,16 +124,17 @@ class MemberPersistenceAdapterTest extends PersistenceAdapterTest {
     void updateLocation() {
         Member member = Member.initial(OAUTH_ID, "nickname", INITIAL_PROFILE_IMAGE_URL);
         Member saved = memberPersistenceAdapter.save(member);
-        double newLatitude = 10.0;
-        double newLongitude = 20.0;
+        District district = new District("country", "city", "town");
+        Location location = new Location(20.0, 10.0, district);
 
-        memberPersistenceAdapter.updateLocation(saved.getId(), newLatitude, newLongitude);
+        memberPersistenceAdapter.updateLocation(saved.getId(), location);
 
         entityManager.clear();
         Member locationUpdatedMember = memberPersistenceAdapter.findById(saved.getId()).get();
         assertAll(
-                () -> assertThat(locationUpdatedMember.getLatitude()).isEqualTo(newLatitude),
-                () -> assertThat(locationUpdatedMember.getLongitude()).isEqualTo(newLongitude)
+                () -> assertThat(locationUpdatedMember.getLatitude()).isEqualTo(location.getLatitude()),
+                () -> assertThat(locationUpdatedMember.getLongitude()).isEqualTo(location.getLongitude()),
+                () -> assertThat(locationUpdatedMember.getDistrict()).isEqualTo(district)
         );
     }
 
@@ -174,7 +177,7 @@ class MemberPersistenceAdapterTest extends PersistenceAdapterTest {
     @DisplayName("회원의 위치 정보를 찾을 수 있다.")
     @Test
     void findLocationById() {
-        Location location = new Location(10.0, 12.0);
+        Location location = new Location(10.0, 12.0, DISTRICT);
         Member member = memberPersistenceAdapter.save(
                 new Member(null, OAUTH_ID, NICKNAME, location, INITIAL_PROFILE_IMAGE_URL));
 
