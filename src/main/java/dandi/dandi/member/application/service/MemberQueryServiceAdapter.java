@@ -36,7 +36,6 @@ public class MemberQueryServiceAdapter implements MemberQueryServicePort {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public NicknameDuplicationCheckResponse checkDuplication(Long memberId, String nickname) {
         boolean duplicated = memberPersistencePort.existsMemberByNicknameExceptMine(memberId, nickname);
         return new NicknameDuplicationCheckResponse(duplicated);

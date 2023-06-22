@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class MemberUseCaseServiceAdapter implements MemberUseCaseServicePort {
 
     private final MemberPersistencePort memberPersistencePort;
@@ -31,7 +32,6 @@ public class MemberUseCaseServiceAdapter implements MemberUseCaseServicePort {
     }
 
     @Override
-    @Transactional
     public void updateNickname(Long memberId, NicknameUpdateCommand nicknameUpdateCommand) {
         Member member = findMember(memberId);
         try {
@@ -42,7 +42,6 @@ public class MemberUseCaseServiceAdapter implements MemberUseCaseServicePort {
     }
 
     @Override
-    @Transactional
     public void updateLocation(Long memberId, LocationUpdateCommand locationUpdateCommand) {
         Member member = findMember(memberId);
         Location location = new Location(locationUpdateCommand.getLatitude(), locationUpdateCommand.getLongitude(),
@@ -56,7 +55,6 @@ public class MemberUseCaseServiceAdapter implements MemberUseCaseServicePort {
     }
 
     @Override
-    @Transactional
     public void blockMember(Long memberId, MemberBlockCommand memberBlockCommand) {
         Long blockedMemberId = memberBlockCommand.getBlockerMemberId();
         validateMemberExistence(blockedMemberId);
