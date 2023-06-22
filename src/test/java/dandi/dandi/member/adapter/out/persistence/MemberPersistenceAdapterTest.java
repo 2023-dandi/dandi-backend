@@ -192,8 +192,8 @@ class MemberPersistenceAdapterTest extends PersistenceAdapterTest {
     @DisplayName("닉네임으로 회원 id를 찾을 수 있다.")
     @Test
     void findIdByNickname() {
-        Member member = memberPersistenceAdapter.save(
-                new Member(null, OAUTH_ID, NICKNAME, new Location(10, 10), INITIAL_PROFILE_IMAGE_URL));
+        memberPersistenceAdapter.save(
+                new Member(null, OAUTH_ID, NICKNAME, Location.initial(), INITIAL_PROFILE_IMAGE_URL));
 
         Optional<Long> actual = memberPersistenceAdapter.findIdByNickname(NICKNAME);
 
