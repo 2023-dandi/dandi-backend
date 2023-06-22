@@ -27,16 +27,16 @@ public interface MemberRepository extends JpaRepository<MemberEntity, Long> {
     void updateNickname(Long memberId, String nickname);
 
     @Modifying
-    @Query("UPDATE MemberEntity m SET m.locationJpaEntity.longitude = :longitude,"
-            + " m.locationJpaEntity.latitude = :latitude , m.locationJpaEntity.country = :country, "
-            + "m.locationJpaEntity.city = :city, m.locationJpaEntity.town = :town WHERE m.id = :memberId")
+    @Query("UPDATE MemberEntity m SET m.locationEntity.longitude = :longitude,"
+            + " m.locationEntity.latitude = :latitude , m.locationEntity.country = :country, "
+            + "m.locationEntity.city = :city, m.locationEntity.town = :town WHERE m.id = :memberId")
     void updateLocation(Long memberId, Double latitude, Double longitude, String country, String city, String town);
 
     @Query("SELECT m FROM MemberEntity m INNER JOIN PushNotificationJpaEntity pn ON m.id = pn.memberId "
             + "WHERE pn.allowance = true")
     Slice<MemberEntity> findPushNotificationAllowingMember(Pageable pageable);
 
-    @Query("SELECT m.locationJpaEntity FROM MemberEntity m WHERE m.id = :id")
+    @Query("SELECT m.locationEntity FROM MemberEntity m WHERE m.id = :id")
     Optional<LocationEntity> findLocationById(Long id);
 
     @Query("SELECT m.id FROM MemberEntity m where m.nickname = :nickname")
