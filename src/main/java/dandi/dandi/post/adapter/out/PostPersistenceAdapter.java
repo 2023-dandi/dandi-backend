@@ -1,7 +1,7 @@
 package dandi.dandi.post.adapter.out;
 
 import dandi.dandi.advice.InternalServerException;
-import dandi.dandi.member.adapter.out.persistence.MemberRepository;
+import dandi.dandi.member.adapter.out.persistence.jpa.MemberRepository;
 import dandi.dandi.member.domain.Member;
 import dandi.dandi.post.application.port.out.PostPersistencePort;
 import dandi.dandi.post.domain.Post;

@@ -18,7 +18,6 @@ class ImageAcceptanceTest extends AcceptanceTest {
 
     @DisplayName("1MB 보다 큰 사진 파일을 등록하려 하면 400을 응답한다.")
     @Test
-    @Disabled
     void postImage_BadRequest() {
         String token = getToken();
         File file = new File(new File("")

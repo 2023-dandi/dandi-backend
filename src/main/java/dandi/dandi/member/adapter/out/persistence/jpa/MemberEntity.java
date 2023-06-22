@@ -1,4 +1,4 @@
-package dandi.dandi.member.adapter.out.persistence;
+package dandi.dandi.member.adapter.out.persistence.jpa;
 
 import dandi.dandi.member.domain.Member;
 import javax.persistence.Column;
@@ -11,7 +11,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "member")
-public class MemberJpaEntity {
+public class MemberEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,28 +24,28 @@ public class MemberJpaEntity {
     private String nickname;
 
     @Embedded
-    private LocationJpaEntity locationJpaEntity;
+    private LocationEntity locationEntity;
 
     private String profileImgUrl;
 
-    protected MemberJpaEntity() {
+    protected MemberEntity() {
     }
 
-    private MemberJpaEntity(Long id, String oAuthId, String nickname, LocationJpaEntity locationJpaEntity,
-                            String profileImgUrl) {
+    private MemberEntity(Long id, String oAuthId, String nickname, LocationEntity locationEntity,
+                         String profileImgUrl) {
         this.id = id;
         this.oAuthId = oAuthId;
         this.nickname = nickname;
-        this.locationJpaEntity = locationJpaEntity;
+        this.locationEntity = locationEntity;
         this.profileImgUrl = profileImgUrl;
     }
 
-    public static MemberJpaEntity fromMember(Member member) {
-        return new MemberJpaEntity(
+    public static MemberEntity fromMember(Member member) {
+        return new MemberEntity(
                 member.getId(),
                 member.getOAuthId(),
                 member.getNickname(),
-                new LocationJpaEntity(member.getLatitude(), member.getLongitude(), member.getDistrict()),
+                new LocationEntity(member.getLatitude(), member.getLongitude(), member.getDistrict()),
                 member.getProfileImgUrl()
         );
     }
@@ -59,7 +59,7 @@ public class MemberJpaEntity {
                 id,
                 oAuthId,
                 nickname,
-                locationJpaEntity.toLocation(),
+                locationEntity.toLocation(),
                 profileImgUrl
         );
     }

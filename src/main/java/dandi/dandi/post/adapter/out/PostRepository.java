@@ -15,8 +15,8 @@ public interface PostRepository extends JpaRepository<PostJpaEntity, Long> {
             + "p.minTemperature BETWEEN :minTemperatureMinSearchCondition AND :minTemperatureMaxSearchCondition AND "
             + "p.maxTemperature BETWEEN :maxTemperatureMinSearchCondition AND :maxTemperatureMaxSearchCondition AND "
             + "p.id NOT IN (SELECT pr.postId FROM PostReportJpaEntity pr WHERE pr.memberId = :memberId) AND "
-            + "p.memberId NOT IN (SELECT mb.blockedMemberId FROM MemberBlockJpaEntity mb where mb.blockingMemberId = :memberId) AND "
-            + "p.memberId NOT IN (SELECT mb.blockingMemberId FROM MemberBlockJpaEntity mb WHERE mb.blockedMemberId = :memberId )")
+            + "p.memberId NOT IN (SELECT mb.blockedMemberId FROM MemberBlockEntity mb where mb.blockingMemberId = :memberId) AND "
+            + "p.memberId NOT IN (SELECT mb.blockingMemberId FROM MemberBlockEntity mb WHERE mb.blockedMemberId = :memberId )")
     Slice<PostJpaEntity> findByTemperature(Long memberId, Double minTemperatureMinSearchCondition,
                                            Double minTemperatureMaxSearchCondition,
                                            Double maxTemperatureMinSearchCondition,

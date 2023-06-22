@@ -1,4 +1,4 @@
-package dandi.dandi.member.application;
+package dandi.dandi.member.application.service;
 
 import static dandi.dandi.member.MemberTestFixture.INITIAL_PROFILE_IMAGE_URL;
 import static dandi.dandi.member.MemberTestFixture.NICKNAME;
@@ -20,7 +20,6 @@ import dandi.dandi.auth.exception.UnauthorizedException;
 import dandi.dandi.image.application.out.ImageManager;
 import dandi.dandi.image.exception.ImageUploadFailedException;
 import dandi.dandi.member.application.port.out.MemberPersistencePort;
-import dandi.dandi.member.application.service.ProfileImageService;
 import dandi.dandi.member.domain.Member;
 import java.io.IOException;
 import java.util.Optional;
@@ -31,7 +30,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class ProfileImageServiceTest {
+class MemberImageServiceTest {
 
     private static final String NOT_INITIAL_PROFILE_IMAGE_URL = "notInitialProfileImageUrl";
 
@@ -39,8 +38,8 @@ class ProfileImageServiceTest {
 
     private final MemberPersistencePort memberPersistencePort = Mockito.mock(MemberPersistencePort.class);
     private final ImageManager imageManager = Mockito.mock(ImageManager.class);
-    private final ProfileImageService profileImageService = new ProfileImageService(memberPersistencePort,
-            imageManager, INITIAL_PROFILE_IMAGE_URL, TEST_PROFILE_BUCKET_IMG_DIR, IMAGE_ACCESS_URL);
+    private final MemberImageService memberImageService = new MemberImageService(memberPersistencePort, imageManager,
+            INITIAL_PROFILE_IMAGE_URL, TEST_PROFILE_BUCKET_IMG_DIR, IMAGE_ACCESS_URL);
 
     @DisplayName("기본 프로필 사진이 아닌 회원의 프로필 사진을 변경하면 기존 사진을 삭제하고 사진을 업로드 한 후, 사진의 식별값을 반환한다.")
     @Test
@@ -50,7 +49,7 @@ class ProfileImageServiceTest {
         when(memberPersistencePort.findById(memberId))
                 .thenReturn(Optional.of(initialProfileImageMember));
 
-        String imgUrl = profileImageService.updateProfileImage(memberId, generateTestImgMultipartFile())
+        String imgUrl = memberImageService.updateProfileImage(memberId, generateTestImgMultipartFile())
                 .getProfileImageUrl();
 
         assertAll(
@@ -68,7 +67,7 @@ class ProfileImageServiceTest {
         when(memberPersistencePort.findById(memberId))
                 .thenReturn(Optional.of(Member.initial(OAUTH_ID, NICKNAME, INITIAL_PROFILE_IMAGE_URL)));
 
-        String imgUrl = profileImageService.updateProfileImage(memberId, generateTestImgMultipartFile())
+        String imgUrl = memberImageService.updateProfileImage(memberId, generateTestImgMultipartFile())
                 .getProfileImageUrl();
 
         assertAll(
@@ -87,7 +86,7 @@ class ProfileImageServiceTest {
                 .when(imageManager)
                 .upload(anyString(), any());
 
-        assertThatThrownBy(() -> profileImageService.updateProfileImage(memberId, generateTestImgMultipartFile()))
+        assertThatThrownBy(() -> memberImageService.updateProfileImage(memberId, generateTestImgMultipartFile()))
                 .isInstanceOf(ImageUploadFailedException.class);
     }
 
@@ -99,7 +98,7 @@ class ProfileImageServiceTest {
                 .thenReturn(Optional.empty());
 
         assertThatThrownBy(
-                () -> profileImageService.updateProfileImage(notExistentMemberId, generateTestImgMultipartFile()))
+                () -> memberImageService.updateProfileImage(notExistentMemberId, generateTestImgMultipartFile()))
                 .isInstanceOf(UnauthorizedException.class)
                 .hasMessage(UnauthorizedException.notExistentMember().getMessage());
     }

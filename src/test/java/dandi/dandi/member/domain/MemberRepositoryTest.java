@@ -4,8 +4,8 @@ import static dandi.dandi.member.MemberTestFixture.MEMBER_JPA_ENTITY;
 import static dandi.dandi.member.MemberTestFixture.OAUTH_ID;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-import dandi.dandi.member.adapter.out.persistence.MemberJpaEntity;
-import dandi.dandi.member.adapter.out.persistence.MemberRepository;
+import dandi.dandi.member.adapter.out.persistence.jpa.MemberEntity;
+import dandi.dandi.member.adapter.out.persistence.jpa.MemberRepository;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,7 +27,7 @@ class MemberRepositoryTest {
     void findByOAuthId() {
         memberRepository.save(MEMBER_JPA_ENTITY);
 
-        Optional<MemberJpaEntity> member = memberRepository.findByOAuthId(OAUTH_ID);
+        Optional<MemberEntity> member = memberRepository.findByOAuthId(OAUTH_ID);
 
         assertThat(member).isPresent();
     }
