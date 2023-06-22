@@ -1,18 +1,15 @@
 package dandi.dandi.member.web;
 
 import dandi.dandi.auth.web.support.Login;
-import dandi.dandi.member.application.port.in.MemberBlockCommand;
 import dandi.dandi.member.application.port.in.MemberInfoResponse;
 import dandi.dandi.member.application.port.in.MemberQueryServicePort;
 import dandi.dandi.member.application.port.in.MemberUseCaseServicePort;
 import dandi.dandi.member.application.port.in.NicknameDuplicationCheckResponse;
 import dandi.dandi.member.web.dto.in.LocationUpdateRequest;
 import dandi.dandi.member.web.dto.in.NicknameUpdateRequest;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -54,11 +51,5 @@ public class MemberController implements MemberControllerDocs {
                                                      @RequestBody LocationUpdateRequest locationUpdateRequest) {
         memberUseCaseServicePort.updateLocation(memberId, locationUpdateRequest.toCommand());
         return ResponseEntity.noContent().build();
-    }
-
-    @PostMapping("/blocks")
-    public ResponseEntity<Void> blockMember(@Login Long memberId, @RequestBody MemberBlockCommand memberBlockCommand) {
-        memberUseCaseServicePort.blockMember(memberId, memberBlockCommand);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }
