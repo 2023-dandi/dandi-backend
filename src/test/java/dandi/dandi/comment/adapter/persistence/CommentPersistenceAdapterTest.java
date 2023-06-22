@@ -12,8 +12,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import dandi.dandi.comment.domain.Comment;
 import dandi.dandi.common.PersistenceAdapterTest;
-import dandi.dandi.member.adapter.out.persistence.MemberBlockPersistenceAdapter;
-import dandi.dandi.member.adapter.out.persistence.MemberPersistenceAdapter;
+import dandi.dandi.member.adapter.out.persistence.jpa.MemberBlockPersistenceAdapter;
+import dandi.dandi.member.adapter.out.persistence.jpa.MemberPersistenceAdapter;
 import dandi.dandi.member.domain.Member;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;

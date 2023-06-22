@@ -1,4 +1,4 @@
-package dandi.dandi.member.adapter.out.persistence;
+package dandi.dandi.member.adapter.out.persistence.jpa;
 
 import dandi.dandi.member.application.port.out.MemberPersistencePort;
 import dandi.dandi.member.domain.District;
@@ -23,20 +23,20 @@ public class MemberPersistenceAdapter implements MemberPersistencePort {
 
     @Override
     public Member save(Member member) {
-        return memberRepository.save(MemberJpaEntity.fromMember(member))
+        return memberRepository.save(MemberEntity.fromMember(member))
                 .toMember();
     }
 
     @Override
     public Optional<Member> findById(Long memberId) {
         return memberRepository.findById(memberId)
-                .map(MemberJpaEntity::toMember);
+                .map(MemberEntity::toMember);
     }
 
     @Override
     public Optional<Member> findByOAuthId(String oAuthId) {
         return memberRepository.findByOAuthId(oAuthId)
-                .map(MemberJpaEntity::toMember);
+                .map(MemberEntity::toMember);
     }
 
     @Override
@@ -73,9 +73,9 @@ public class MemberPersistenceAdapter implements MemberPersistencePort {
 
     @Override
     public Slice<Member> findPushNotificationAllowingMember(Pageable pageable) {
-        Slice<MemberJpaEntity> memberJpaEntities = memberRepository.findPushNotificationAllowingMember(pageable);
+        Slice<MemberEntity> memberJpaEntities = memberRepository.findPushNotificationAllowingMember(pageable);
         List<Member> pushNotificationAllowingMembers = memberJpaEntities.stream()
-                .map(MemberJpaEntity::toMember)
+                .map(MemberEntity::toMember)
                 .collect(Collectors.toUnmodifiableList());
         return new SliceImpl<>(pushNotificationAllowingMembers, pageable, memberJpaEntities.hasNext());
     }
@@ -83,7 +83,7 @@ public class MemberPersistenceAdapter implements MemberPersistencePort {
     @Override
     public Optional<Location> findLocationById(Long id) {
         return memberRepository.findLocationById(id)
-                .map(LocationJpaEntity::toLocation);
+                .map(LocationEntity::toLocation);
     }
 
     @Override

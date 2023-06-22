@@ -3,7 +3,7 @@ package dandi.dandi.comment.adapter.persistence;
 import dandi.dandi.advice.InternalServerException;
 import dandi.dandi.comment.application.port.out.CommentPersistencePort;
 import dandi.dandi.comment.domain.Comment;
-import dandi.dandi.member.adapter.out.persistence.MemberRepository;
+import dandi.dandi.member.adapter.out.persistence.jpa.MemberRepository;
 import dandi.dandi.member.domain.Member;
 import java.util.List;
 import java.util.Optional;

@@ -1,4 +1,4 @@
-package dandi.dandi.member.adapter.out.persistence;
+package dandi.dandi.member.adapter.out.persistence.jpa;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,7 +9,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "member_block")
-public class MemberBlockJpaEntity {
+public class MemberBlockEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,10 +19,10 @@ public class MemberBlockJpaEntity {
     private Long blockingMemberId;
     private Long blockedMemberId;
 
-    protected MemberBlockJpaEntity() {
+    protected MemberBlockEntity() {
     }
 
-    public MemberBlockJpaEntity(Long blockingMemberId, Long blockedMemberId) {
+    public MemberBlockEntity(Long blockingMemberId, Long blockedMemberId) {
         this.blockingMemberId = blockingMemberId;
         this.blockedMemberId = blockedMemberId;
     }

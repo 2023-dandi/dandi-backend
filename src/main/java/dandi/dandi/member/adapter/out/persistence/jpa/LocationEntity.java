@@ -1,11 +1,11 @@
-package dandi.dandi.member.adapter.out.persistence;
+package dandi.dandi.member.adapter.out.persistence.jpa;
 
 import dandi.dandi.member.domain.District;
 import dandi.dandi.member.domain.Location;
 import javax.persistence.Embeddable;
 
 @Embeddable
-public class LocationJpaEntity {
+public class LocationEntity {
 
     private double latitude;
     private double longitude;
@@ -13,10 +13,10 @@ public class LocationJpaEntity {
     private String city;
     private String town;
 
-    private LocationJpaEntity() {
+    private LocationEntity() {
     }
 
-    public LocationJpaEntity(double latitude, double longitude, District district) {
+    public LocationEntity(double latitude, double longitude, District district) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.country = district.getCountry();

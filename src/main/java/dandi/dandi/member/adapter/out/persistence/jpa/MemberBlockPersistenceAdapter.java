@@ -1,4 +1,4 @@
-package dandi.dandi.member.adapter.out.persistence;
+package dandi.dandi.member.adapter.out.persistence.jpa;
 
 import dandi.dandi.member.application.port.out.MemberBlockPersistencePort;
 import org.springframework.stereotype.Component;
@@ -14,8 +14,8 @@ public class MemberBlockPersistenceAdapter implements MemberBlockPersistencePort
 
     @Override
     public void saveMemberBlockOf(Long blockingMemberId, Long blockedMemberId) {
-        MemberBlockJpaEntity memberBlockJpaEntity = new MemberBlockJpaEntity(blockingMemberId, blockedMemberId);
-        memberBlockRepository.save(memberBlockJpaEntity);
+        MemberBlockEntity memberBlockEntity = new MemberBlockEntity(blockingMemberId, blockedMemberId);
+        memberBlockRepository.save(memberBlockEntity);
     }
 
     @Override
