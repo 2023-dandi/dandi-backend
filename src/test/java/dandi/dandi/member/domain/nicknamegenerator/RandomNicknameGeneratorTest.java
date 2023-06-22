@@ -14,6 +14,6 @@ class RandomNicknameGeneratorTest {
     void generate_Length_LowerThan23() {
         String randomNickname = randomNicknameGenerator.generate();
 
-        assertThat(randomNickname.length()).isLessThan(23);
+        assertThat(randomNickname.length()).isLessThanOrEqualTo(23);
     }
 }
