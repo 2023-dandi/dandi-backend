@@ -4,47 +4,30 @@ import dandi.dandi.auth.exception.UnauthorizedException;
 import dandi.dandi.common.exception.NotFoundException;
 import dandi.dandi.member.application.port.in.LocationUpdateCommand;
 import dandi.dandi.member.application.port.in.MemberBlockCommand;
-import dandi.dandi.member.application.port.in.MemberInfoResponse;
-import dandi.dandi.member.application.port.in.MemberUseCase;
-import dandi.dandi.member.application.port.in.NicknameDuplicationCheckResponse;
+import dandi.dandi.member.application.port.in.MemberUseCaseServicePort;
 import dandi.dandi.member.application.port.in.NicknameUpdateCommand;
 import dandi.dandi.member.application.port.out.MemberBlockPersistencePort;
 import dandi.dandi.member.application.port.out.MemberPersistencePort;
 import dandi.dandi.member.domain.DistrictParser;
 import dandi.dandi.member.domain.Location;
 import dandi.dandi.member.domain.Member;
-import dandi.dandi.post.application.port.out.MemberPostPersistencePort;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class MemberService implements MemberUseCase {
+public class MemberUseCaseServiceAdapter implements MemberUseCaseServicePort {
 
     private final MemberPersistencePort memberPersistencePort;
     private final MemberBlockPersistencePort memberBlockPersistencePort;
-    private final MemberPostPersistencePort memberPostPersistencePort;
     private final DistrictParser districtParser;
-    private final String imageAccessUrl;
 
-    public MemberService(MemberPersistencePort memberPersistencePort,
-                         MemberBlockPersistencePort memberBlockPersistencePort,
-                         MemberPostPersistencePort memberPostPersistencePort, DistrictParser districtParser,
-                         @Value("${cloud.aws.cloud-front.uri}") String imageAccessUrl) {
+    public MemberUseCaseServiceAdapter(MemberPersistencePort memberPersistencePort,
+                                       MemberBlockPersistencePort memberBlockPersistencePort,
+                                       DistrictParser districtParser) {
         this.memberPersistencePort = memberPersistencePort;
         this.memberBlockPersistencePort = memberBlockPersistencePort;
-        this.memberPostPersistencePort = memberPostPersistencePort;
         this.districtParser = districtParser;
-        this.imageAccessUrl = imageAccessUrl;
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public MemberInfoResponse findMemberInfo(Long memberId) {
-        Member member = findMember(memberId);
-        int postCount = memberPostPersistencePort.countPostByMemberId(memberId);
-        return new MemberInfoResponse(member, postCount, imageAccessUrl);
     }
 
     @Override
@@ -70,13 +53,6 @@ public class MemberService implements MemberUseCase {
     private Member findMember(Long memberId) {
         return memberPersistencePort.findById(memberId)
                 .orElseThrow(UnauthorizedException::notExistentMember);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public NicknameDuplicationCheckResponse checkDuplication(Long memberId, String nickname) {
-        boolean duplicated = memberPersistencePort.existsMemberByNicknameExceptMine(memberId, nickname);
-        return new NicknameDuplicationCheckResponse(duplicated);
     }
 
     @Override

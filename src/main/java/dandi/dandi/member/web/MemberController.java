@@ -3,7 +3,8 @@ package dandi.dandi.member.web;
 import dandi.dandi.auth.web.support.Login;
 import dandi.dandi.member.application.port.in.MemberBlockCommand;
 import dandi.dandi.member.application.port.in.MemberInfoResponse;
-import dandi.dandi.member.application.port.in.MemberUseCase;
+import dandi.dandi.member.application.port.in.MemberQueryServicePort;
+import dandi.dandi.member.application.port.in.MemberUseCaseServicePort;
 import dandi.dandi.member.application.port.in.NicknameDuplicationCheckResponse;
 import dandi.dandi.member.web.dto.in.LocationUpdateRequest;
 import dandi.dandi.member.web.dto.in.NicknameUpdateRequest;
@@ -21,40 +22,43 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/members")
 public class MemberController implements MemberControllerDocs {
 
-    private final MemberUseCase memberUseCase;
+    private final MemberUseCaseServicePort memberUseCaseServicePort;
+    private final MemberQueryServicePort memberQueryServicePort;
 
-    public MemberController(MemberUseCase memberUseCase) {
-        this.memberUseCase = memberUseCase;
+    public MemberController(MemberUseCaseServicePort memberUseCaseServicePort,
+                            MemberQueryServicePort memberQueryServicePort) {
+        this.memberUseCaseServicePort = memberUseCaseServicePort;
+        this.memberQueryServicePort = memberQueryServicePort;
     }
 
     @GetMapping
     public ResponseEntity<MemberInfoResponse> getMemberInfo(@Login Long memberId) {
-        return ResponseEntity.ok(memberUseCase.findMemberInfo(memberId));
+        return ResponseEntity.ok(memberQueryServicePort.findMemberInfo(memberId));
     }
 
     @GetMapping(value = "/nickname/duplication", params = "nickname")
     public ResponseEntity<NicknameDuplicationCheckResponse> checkNicknameDuplication(@Login Long memberId,
                                                                                      @RequestParam String nickname) {
-        return ResponseEntity.ok(memberUseCase.checkDuplication(memberId, nickname));
+        return ResponseEntity.ok(memberQueryServicePort.checkDuplication(memberId, nickname));
     }
 
     @PatchMapping("/nickname")
     public ResponseEntity<Void> updateMemberNickname(@Login Long memberId,
                                                      @RequestBody NicknameUpdateRequest nicknameUpdateRequest) {
-        memberUseCase.updateNickname(memberId, nicknameUpdateRequest.toCommand());
+        memberUseCaseServicePort.updateNickname(memberId, nicknameUpdateRequest.toCommand());
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/location")
     public ResponseEntity<Void> updateMemberLocation(@Login Long memberId,
                                                      @RequestBody LocationUpdateRequest locationUpdateRequest) {
-        memberUseCase.updateLocation(memberId, locationUpdateRequest.toCommand());
+        memberUseCaseServicePort.updateLocation(memberId, locationUpdateRequest.toCommand());
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/blocks")
     public ResponseEntity<Void> blockMember(@Login Long memberId, @RequestBody MemberBlockCommand memberBlockCommand) {
-        memberUseCase.blockMember(memberId, memberBlockCommand);
+        memberUseCaseServicePort.blockMember(memberId, memberBlockCommand);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }
