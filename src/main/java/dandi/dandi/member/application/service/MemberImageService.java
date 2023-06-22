@@ -4,8 +4,8 @@ import dandi.dandi.auth.exception.UnauthorizedException;
 import dandi.dandi.image.application.out.ImageManager;
 import dandi.dandi.image.exception.ImageDeletionFailedException;
 import dandi.dandi.image.exception.ImageUploadFailedException;
+import dandi.dandi.member.application.port.in.MemberImageUseCase;
 import dandi.dandi.member.application.port.in.ProfileImageUpdateResponse;
-import dandi.dandi.member.application.port.in.ProfileImageUseCase;
 import dandi.dandi.member.application.port.out.MemberPersistencePort;
 import dandi.dandi.member.domain.Member;
 import java.io.IOException;
@@ -18,9 +18,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
-public class ProfileImageService implements ProfileImageUseCase {
+public class MemberImageService implements MemberImageUseCase {
 
-    private static final Logger logger = LoggerFactory.getLogger(ProfileImageService.class);
+    private static final Logger logger = LoggerFactory.getLogger(MemberImageService.class);
 
     private static final String S3_FILE_KEY_FORMAT = "%s/%s_%s";
 
@@ -30,10 +30,10 @@ public class ProfileImageService implements ProfileImageUseCase {
     private final String profileImageDir;
     private final String imageAccessUrl;
 
-    public ProfileImageService(MemberPersistencePort memberPersistencePort, ImageManager imageManager,
-                               @Value("${image.member-initial-profile-image-url}") String initialProfileImageUrl,
-                               @Value("${image.profile-dir}") String profileImageDir,
-                               @Value("${cloud.aws.cloud-front.uri}") String imageAccessUrl) {
+    public MemberImageService(MemberPersistencePort memberPersistencePort, ImageManager imageManager,
+                              @Value("${image.member-initial-profile-image-url}") String initialProfileImageUrl,
+                              @Value("${image.profile-dir}") String profileImageDir,
+                              @Value("${cloud.aws.cloud-front.uri}") String imageAccessUrl) {
         this.memberPersistencePort = memberPersistencePort;
         this.imageManager = imageManager;
         this.initialProfileImageUrl = initialProfileImageUrl;

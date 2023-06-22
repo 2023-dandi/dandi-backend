@@ -5,34 +5,26 @@ import dandi.dandi.member.application.port.in.MemberBlockCommand;
 import dandi.dandi.member.application.port.in.MemberInfoResponse;
 import dandi.dandi.member.application.port.in.MemberUseCase;
 import dandi.dandi.member.application.port.in.NicknameDuplicationCheckResponse;
-import dandi.dandi.member.application.port.in.ProfileImageUpdateResponse;
-import dandi.dandi.member.application.port.in.ProfileImageUseCase;
 import dandi.dandi.member.web.dto.in.LocationUpdateRequest;
 import dandi.dandi.member.web.dto.in.NicknameUpdateRequest;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/members")
 public class MemberController implements MemberControllerDocs {
 
     private final MemberUseCase memberUseCase;
-    private final ProfileImageUseCase profileImageUseCase;
 
-    public MemberController(MemberUseCase memberUseCase, ProfileImageUseCase profileImageUseCase) {
+    public MemberController(MemberUseCase memberUseCase) {
         this.memberUseCase = memberUseCase;
-        this.profileImageUseCase = profileImageUseCase;
     }
 
     @GetMapping
@@ -58,13 +50,6 @@ public class MemberController implements MemberControllerDocs {
                                                      @RequestBody LocationUpdateRequest locationUpdateRequest) {
         memberUseCase.updateLocation(memberId, locationUpdateRequest.toCommand());
         return ResponseEntity.noContent().build();
-    }
-
-    @PutMapping(path = "/profile-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ProfileImageUpdateResponse> updateMemberProfileImage(@Login Long memberId,
-                                                                               @RequestPart(value = "profileImage")
-                                                                               MultipartFile profileImage) {
-        return ResponseEntity.ok(profileImageUseCase.updateProfileImage(memberId, profileImage));
     }
 
     @PostMapping("/blocks")
