@@ -79,8 +79,4 @@ public class MemberImageService implements MemberImageUseCase {
             logger.info("Profile Image Deletion Failed : " + currentProfileImageUrl);
         }
     }
-
-    public boolean isInitialProfileImage(String profileImage) {
-        return profileImage.equals(initialProfileImageUrl);
-    }
 }
