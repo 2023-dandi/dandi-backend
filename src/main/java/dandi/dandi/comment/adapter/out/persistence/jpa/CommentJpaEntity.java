@@ -1,4 +1,4 @@
-package dandi.dandi.comment.adapter.persistence;
+package dandi.dandi.comment.adapter.out.persistence.jpa;
 
 import dandi.dandi.comment.domain.Comment;
 import dandi.dandi.member.domain.Member;

@@ -1,4 +1,4 @@
-package dandi.dandi.comment.adapter.persistence;
+package dandi.dandi.comment.adapter.out.persistence.jpa;
 
 import static dandi.dandi.comment.CommentFixture.COMMENT_CONTENT;
 import static dandi.dandi.member.MemberTestFixture.INITIAL_PROFILE_IMAGE_URL;

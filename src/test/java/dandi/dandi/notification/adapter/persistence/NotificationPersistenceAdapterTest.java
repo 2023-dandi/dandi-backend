@@ -8,7 +8,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatCode;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import dandi.dandi.comment.adapter.persistence.CommentPersistenceAdapter;
+import dandi.dandi.comment.adapter.out.persistence.jpa.CommentPersistenceAdapter;
 import dandi.dandi.comment.domain.Comment;
 import dandi.dandi.common.PersistenceAdapterTest;
 import dandi.dandi.notification.domain.Notification;

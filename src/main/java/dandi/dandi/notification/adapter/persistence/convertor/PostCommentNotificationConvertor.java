@@ -1,7 +1,7 @@
 package dandi.dandi.notification.adapter.persistence.convertor;
 
 import dandi.dandi.advice.InternalServerException;
-import dandi.dandi.comment.adapter.persistence.CommentRepository;
+import dandi.dandi.comment.adapter.out.persistence.jpa.CommentRepository;
 import dandi.dandi.notification.adapter.persistence.NotificationJpaEntity;
 import dandi.dandi.notification.domain.Notification;
 import dandi.dandi.notification.domain.NotificationType;

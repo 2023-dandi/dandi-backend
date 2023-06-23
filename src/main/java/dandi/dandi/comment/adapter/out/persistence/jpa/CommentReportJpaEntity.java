@@ -1,4 +1,4 @@
-package dandi.dandi.comment.adapter.persistence;
+package dandi.dandi.comment.adapter.out.persistence.jpa;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

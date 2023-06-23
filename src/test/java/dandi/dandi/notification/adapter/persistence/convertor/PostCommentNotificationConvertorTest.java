@@ -6,8 +6,8 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.when;
 
-import dandi.dandi.comment.adapter.persistence.CommentJpaEntity;
-import dandi.dandi.comment.adapter.persistence.CommentRepository;
+import dandi.dandi.comment.adapter.out.persistence.jpa.CommentJpaEntity;
+import dandi.dandi.comment.adapter.out.persistence.jpa.CommentRepository;
 import dandi.dandi.notification.adapter.persistence.NotificationJpaEntity;
 import dandi.dandi.notification.domain.Notification;
 import dandi.dandi.notification.domain.NotificationType;
