@@ -1,4 +1,4 @@
-package dandi.dandi.pushnotification.adapter.out.persistence;
+package dandi.dandi.pushnotification.adapter.out.persistence.jpa;
 
 import static dandi.dandi.member.MemberTestFixture.MEMBER_ID;
 import static dandi.dandi.pushnotification.PushNotificationFixture.PUSH_NOTIFICATION_TOKEN;

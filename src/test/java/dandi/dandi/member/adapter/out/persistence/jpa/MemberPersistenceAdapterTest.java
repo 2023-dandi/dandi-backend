@@ -12,7 +12,7 @@ import dandi.dandi.common.PersistenceAdapterTest;
 import dandi.dandi.member.domain.District;
 import dandi.dandi.member.domain.Location;
 import dandi.dandi.member.domain.Member;
-import dandi.dandi.pushnotification.adapter.out.persistence.PushNotificationPersistenceAdapter;
+import dandi.dandi.pushnotification.adapter.out.persistence.jpa.PushNotificationPersistenceAdapter;
 import dandi.dandi.pushnotification.domain.PushNotification;
 import java.util.List;
 import java.util.Optional;

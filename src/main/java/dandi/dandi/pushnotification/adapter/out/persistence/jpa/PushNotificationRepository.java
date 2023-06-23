@@ -1,4 +1,4 @@
-package dandi.dandi.pushnotification.adapter.out.persistence;
+package dandi.dandi.pushnotification.adapter.out.persistence.jpa;
 
 import java.time.LocalTime;
 import java.util.Optional;

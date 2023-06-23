@@ -1,4 +1,4 @@
-package dandi.dandi.pushnotification.adapter.out.persistence;
+package dandi.dandi.pushnotification.adapter.out.persistence.jpa;
 
 import dandi.dandi.pushnotification.application.port.out.persistence.PushNotificationPersistencePort;
 import dandi.dandi.pushnotification.domain.PushNotification;
