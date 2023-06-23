@@ -1,4 +1,4 @@
-package dandi.dandi.clothes.adapter.persistence;
+package dandi.dandi.clothes.adapter.out.persistence.jpa;
 
 import dandi.dandi.clothes.domain.Season;
 import javax.persistence.Column;

@@ -1,4 +1,4 @@
-package dandi.dandi.clothes.adapter.persistence;
+package dandi.dandi.clothes.adapter.out.persistence.jpa;
 
 import static dandi.dandi.clothes.ClothesFixture.CLOTHES_CATEGORY;
 import static dandi.dandi.clothes.ClothesFixture.CLOTHES_IMAGE_URL;
