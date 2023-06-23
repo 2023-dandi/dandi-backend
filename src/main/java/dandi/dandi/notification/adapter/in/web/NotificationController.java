@@ -1,4 +1,4 @@
-package dandi.dandi.notification.web;
+package dandi.dandi.notification.adapter.in.web;
 
 import dandi.dandi.auth.adapter.in.web.support.Login;
 import dandi.dandi.notification.application.port.in.NotificationResponses;

@@ -1,4 +1,4 @@
-package dandi.dandi.notification.web;
+package dandi.dandi.notification.adapter.in.web;
 
 import dandi.dandi.notification.application.port.in.NotificationResponses;
 import io.swagger.v3.oas.annotations.Operation;
