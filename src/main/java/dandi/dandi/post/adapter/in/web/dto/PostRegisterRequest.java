@@ -1,4 +1,4 @@
-package dandi.dandi.post.web.in;
+package dandi.dandi.post.adapter.in.web.dto;
 
 import dandi.dandi.post.application.port.in.PostRegisterCommand;
 

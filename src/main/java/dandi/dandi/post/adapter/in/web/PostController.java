@@ -1,6 +1,7 @@
-package dandi.dandi.post.web;
+package dandi.dandi.post.adapter.in.web;
 
 import dandi.dandi.auth.adapter.in.web.support.Login;
+import dandi.dandi.post.adapter.in.web.dto.PostRegisterRequest;
 import dandi.dandi.post.application.port.in.FeedResponse;
 import dandi.dandi.post.application.port.in.LikedPostResponses;
 import dandi.dandi.post.application.port.in.MyPostResponses;
@@ -10,7 +11,6 @@ import dandi.dandi.post.application.port.in.PostImageRegisterResponse;
 import dandi.dandi.post.application.port.in.PostImageUseCase;
 import dandi.dandi.post.application.port.in.PostRegisterResponse;
 import dandi.dandi.post.application.port.in.PostUseCase;
-import dandi.dandi.post.web.in.PostRegisterRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;

@@ -1,9 +1,10 @@
-package dandi.dandi.post.web;
+package dandi.dandi.post.adapter.in.web;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
 
 import dandi.dandi.advice.ExceptionResponse;
+import dandi.dandi.post.adapter.in.web.dto.PostRegisterRequest;
 import dandi.dandi.post.application.port.in.FeedResponse;
 import dandi.dandi.post.application.port.in.LikedPostResponses;
 import dandi.dandi.post.application.port.in.MyPostResponses;
@@ -11,7 +12,6 @@ import dandi.dandi.post.application.port.in.MyPostsByTemperatureResponses;
 import dandi.dandi.post.application.port.in.PostDetailResponse;
 import dandi.dandi.post.application.port.in.PostImageRegisterResponse;
 import dandi.dandi.post.application.port.in.PostRegisterResponse;
-import dandi.dandi.post.web.in.PostRegisterRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;

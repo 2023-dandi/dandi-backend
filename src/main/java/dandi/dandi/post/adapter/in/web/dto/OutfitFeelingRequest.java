@@ -1,4 +1,4 @@
-package dandi.dandi.post.web.in;
+package dandi.dandi.post.adapter.in.web.dto;
 
 import java.util.List;
 
