@@ -1,4 +1,4 @@
-package dandi.dandi.notification.application;
+package dandi.dandi.notification.application.service.eventhandler;
 
 import dandi.dandi.notification.application.port.out.NotificationPersistencePort;
 import dandi.dandi.notification.domain.Notification;

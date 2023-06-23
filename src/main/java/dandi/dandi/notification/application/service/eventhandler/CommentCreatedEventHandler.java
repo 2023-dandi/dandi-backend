@@ -1,4 +1,4 @@
-package dandi.dandi.notification.application;
+package dandi.dandi.notification.application.service.eventhandler;
 
 import dandi.dandi.comment.domain.CommentCreatedEvent;
 import dandi.dandi.notification.application.port.out.NotificationPersistencePort;
