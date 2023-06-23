@@ -1,8 +1,9 @@
 package dandi.dandi.notification.adapter.in.web;
 
 import dandi.dandi.auth.adapter.in.web.support.Login;
+import dandi.dandi.notification.application.port.in.NotificationCommandServicePort;
+import dandi.dandi.notification.application.port.in.NotificationQueryServicePort;
 import dandi.dandi.notification.application.port.in.NotificationResponses;
-import dandi.dandi.notification.application.port.in.NotificationUseCase;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,20 +14,23 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class NotificationController implements NotificationControllerDocs {
 
-    private final NotificationUseCase notificationUseCase;
+    private final NotificationCommandServicePort notificationCommandServicePort;
+    private final NotificationQueryServicePort notificationQueryServicePort;
 
-    public NotificationController(NotificationUseCase notificationUseCase) {
-        this.notificationUseCase = notificationUseCase;
+    public NotificationController(NotificationCommandServicePort notificationCommandServicePort,
+                                  NotificationQueryServicePort notificationQueryServicePort) {
+        this.notificationCommandServicePort = notificationCommandServicePort;
+        this.notificationQueryServicePort = notificationQueryServicePort;
     }
 
     @GetMapping("/notifications")
     public ResponseEntity<NotificationResponses> getNotifications(@Login Long memberId, Pageable pageable) {
-        return ResponseEntity.ok(notificationUseCase.getNotifications(memberId, pageable));
+        return ResponseEntity.ok(notificationQueryServicePort.getNotifications(memberId, pageable));
     }
 
     @PutMapping("/notifications/{notificationId}/check")
     public ResponseEntity<Void> checkNotification(@Login Long memberId, @PathVariable Long notificationId) {
-        notificationUseCase.checkNotification(memberId, notificationId);
+        notificationCommandServicePort.checkNotification(memberId, notificationId);
         return ResponseEntity.noContent().build();
     }
 }
