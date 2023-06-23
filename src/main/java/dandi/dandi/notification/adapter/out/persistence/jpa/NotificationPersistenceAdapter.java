@@ -1,6 +1,6 @@
-package dandi.dandi.notification.adapter.persistence;
+package dandi.dandi.notification.adapter.out.persistence.jpa;
 
-import dandi.dandi.notification.adapter.persistence.convertor.NotificationConvertors;
+import dandi.dandi.notification.adapter.out.persistence.jpa.convertor.NotificationConvertors;
 import dandi.dandi.notification.application.port.out.NotificationPersistencePort;
 import dandi.dandi.notification.domain.Notification;
 import java.util.List;

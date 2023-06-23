@@ -1,4 +1,4 @@
-package dandi.dandi.notification.adapter.persistence;
+package dandi.dandi.notification.adapter.out.persistence.jpa;
 
 import static dandi.dandi.comment.CommentFixture.COMMENT_CONTENT;
 import static dandi.dandi.member.MemberTestFixture.MEMBER_ID;

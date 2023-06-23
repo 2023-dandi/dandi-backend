@@ -1,4 +1,4 @@
-package dandi.dandi.notification.adapter.persistence;
+package dandi.dandi.notification.adapter.out.persistence.jpa;
 
 import static dandi.dandi.notification.domain.NotificationType.COMMENT;
 import static dandi.dandi.notification.domain.NotificationType.POST_LIKE;

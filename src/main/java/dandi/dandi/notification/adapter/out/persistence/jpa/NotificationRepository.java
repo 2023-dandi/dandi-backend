@@ -1,4 +1,4 @@
-package dandi.dandi.notification.adapter.persistence;
+package dandi.dandi.notification.adapter.out.persistence.jpa;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;

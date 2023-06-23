@@ -1,10 +1,10 @@
-package dandi.dandi.notification.adapter.persistence.convertor;
+package dandi.dandi.notification.adapter.out.persistence.jpa.convertor;
 
 import static dandi.dandi.notification.domain.NotificationType.WEATHER;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import dandi.dandi.notification.adapter.persistence.NotificationJpaEntity;
+import dandi.dandi.notification.adapter.out.persistence.jpa.NotificationJpaEntity;
 import dandi.dandi.notification.domain.Notification;
 import dandi.dandi.notification.domain.NotificationType;
 import dandi.dandi.notification.domain.WeatherNotification;

@@ -1,4 +1,4 @@
-package dandi.dandi.notification.adapter.persistence.convertor;
+package dandi.dandi.notification.adapter.out.persistence.jpa.convertor;
 
 import static dandi.dandi.comment.CommentFixture.COMMENT_ID;
 import static dandi.dandi.member.MemberTestFixture.MEMBER_ID;
@@ -9,7 +9,7 @@ import static org.mockito.Mockito.when;
 
 import dandi.dandi.comment.adapter.out.persistence.jpa.CommentJpaEntity;
 import dandi.dandi.comment.adapter.out.persistence.jpa.CommentRepository;
-import dandi.dandi.notification.adapter.persistence.NotificationJpaEntity;
+import dandi.dandi.notification.adapter.out.persistence.jpa.NotificationJpaEntity;
 import dandi.dandi.notification.domain.Notification;
 import dandi.dandi.notification.domain.NotificationType;
 import dandi.dandi.notification.domain.PostCommentNotification;
