@@ -1,4 +1,4 @@
-package dandi.dandi.notification.application;
+package dandi.dandi.notification.application.service.eventhandler;
 
 import static dandi.dandi.member.MemberTestFixture.MEMBER_ID;
 import static org.mockito.ArgumentMatchers.any;
