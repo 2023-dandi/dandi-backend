@@ -20,7 +20,7 @@ import dandi.dandi.post.domain.Post;
 import dandi.dandi.post.domain.TemperatureSearchCondition;
 import dandi.dandi.post.domain.Temperatures;
 import dandi.dandi.post.domain.WeatherFeeling;
-import dandi.dandi.postlike.adapter.PostLikePersistenceAdapter;
+import dandi.dandi.postlike.adapter.out.persistence.jpa.PostLikePersistenceAdapter;
 import dandi.dandi.postlike.domain.PostLike;
 import java.util.ArrayList;
 import java.util.List;

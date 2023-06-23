@@ -1,4 +1,4 @@
-package dandi.dandi.postlike.adapter;
+package dandi.dandi.postlike.adapter.out.persistence.jpa;
 
 import java.util.List;
 import java.util.Optional;

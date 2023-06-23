@@ -1,4 +1,4 @@
-package dandi.dandi.postlike.adapter;
+package dandi.dandi.postlike.adapter.out.persistence.jpa;
 
 import dandi.dandi.postlike.domain.PostLike;
 import javax.persistence.Column;

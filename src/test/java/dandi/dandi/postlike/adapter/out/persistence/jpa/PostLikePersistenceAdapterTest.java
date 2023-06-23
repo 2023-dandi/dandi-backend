@@ -1,4 +1,4 @@
-package dandi.dandi.postlike.adapter;
+package dandi.dandi.postlike.adapter.out.persistence.jpa;
 
 import static dandi.dandi.member.MemberTestFixture.MEMBER_ID;
 import static dandi.dandi.post.PostFixture.POST_ID;
