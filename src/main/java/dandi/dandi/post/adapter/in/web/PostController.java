@@ -9,6 +9,7 @@ import dandi.dandi.post.application.port.in.MyPostsByTemperatureResponses;
 import dandi.dandi.post.application.port.in.PostDetailResponse;
 import dandi.dandi.post.application.port.in.PostImageRegisterResponse;
 import dandi.dandi.post.application.port.in.PostImageUseCase;
+import dandi.dandi.post.application.port.in.PostQueryServicePort;
 import dandi.dandi.post.application.port.in.PostRegisterResponse;
 import dandi.dandi.post.application.port.in.PostUseCase;
 import org.springframework.data.domain.Pageable;
@@ -30,10 +31,13 @@ import org.springframework.web.multipart.MultipartFile;
 public class PostController implements PostControllerDocs {
 
     private final PostUseCase postUseCase;
+    private final PostQueryServicePort postQueryServicePort;
     private final PostImageUseCase postImageUseCase;
 
-    public PostController(PostUseCase postUseCase, PostImageUseCase postImageUseCase) {
+    public PostController(PostUseCase postUseCase, PostQueryServicePort postQueryServicePort,
+                          PostImageUseCase postImageUseCase) {
         this.postUseCase = postUseCase;
+        this.postQueryServicePort = postQueryServicePort;
         this.postImageUseCase = postImageUseCase;
     }
 
@@ -54,7 +58,7 @@ public class PostController implements PostControllerDocs {
 
     @GetMapping("/posts/{postId}")
     public ResponseEntity<PostDetailResponse> getPostDetails(@Login Long memberId, @PathVariable Long postId) {
-        return ResponseEntity.ok(postUseCase.getPostDetails(memberId, postId));
+        return ResponseEntity.ok(postQueryServicePort.getPostDetails(memberId, postId));
     }
 
     @DeleteMapping("/posts/{postId}")
@@ -68,14 +72,15 @@ public class PostController implements PostControllerDocs {
                                                                         @PageableDefault(size = 500, sort = "createdAt",
                                                                                 direction = Direction.DESC)
                                                                         Pageable pageable) {
-        return ResponseEntity.ok(postUseCase.getMyPostIdsAndPostImageUrls(memberId, pageable));
+        return ResponseEntity.ok(postQueryServicePort.getMyPostIdsAndPostImageUrls(memberId, pageable));
     }
 
     @GetMapping("/posts/feed/temperature")
     public ResponseEntity<FeedResponse> getFeedsByTemperature(@Login Long memberId, Pageable pageable,
                                                               @RequestParam(value = "min") Double minTemperature,
                                                               @RequestParam(value = "max") Double maxTemperature) {
-        return ResponseEntity.ok(postUseCase.getPostsByTemperature(memberId, minTemperature, maxTemperature, pageable));
+        return ResponseEntity.ok(
+                postQueryServicePort.getPostsByTemperature(memberId, minTemperature, maxTemperature, pageable));
     }
 
     @GetMapping("/posts/my/temperature")
@@ -86,7 +91,7 @@ public class PostController implements PostControllerDocs {
                                                                                  @RequestParam(value = "max")
                                                                                  Double maxTemperature) {
         return ResponseEntity.ok(
-                postUseCase.getMyPostsByTemperature(memberId, minTemperature, maxTemperature, pageable));
+                postQueryServicePort.getMyPostsByTemperature(memberId, minTemperature, maxTemperature, pageable));
     }
 
     @PostMapping("/posts/{postId}/reports")
@@ -97,6 +102,6 @@ public class PostController implements PostControllerDocs {
 
     @GetMapping("/liking-posts")
     public ResponseEntity<LikedPostResponses> getLikedPost(@Login Long memberId, Pageable pageable) {
-        return ResponseEntity.ok(postUseCase.getLikedPost(memberId, pageable));
+        return ResponseEntity.ok(postQueryServicePort.getLikedPost(memberId, pageable));
     }
 }
