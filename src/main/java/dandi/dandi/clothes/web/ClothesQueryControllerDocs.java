@@ -3,7 +3,6 @@ package dandi.dandi.clothes.web;
 import dandi.dandi.advice.ExceptionResponse;
 import dandi.dandi.clothes.application.port.in.CategorySeasonsResponses;
 import dandi.dandi.clothes.application.port.in.ClothesDetailResponse;
-import dandi.dandi.clothes.application.port.in.ClothesRegisterCommand;
 import dandi.dandi.clothes.application.port.in.ClothesResponses;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -19,16 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Tag(name = "옷장")
-public interface ClothesControllerDocs {
-
-    @Operation(summary = "옷 등록")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "옷 이미지 등록 성공"),
-            @ApiResponse(responseCode = "400", description = "존재하지 않는 계절 혹은 옷 카테고리",
-                    content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
-    })
-    ResponseEntity<Void> registerClothes(@Parameter(hidden = true) Long memberId,
-                                         ClothesRegisterCommand clothesRegisterCommand);
+public interface ClothesQueryControllerDocs {
 
     @Operation(summary = "옷들의 카테고리-계절 조회")
     @ApiResponse(responseCode = "200", description = "옷들의 카테고리-계절 조회 성공")
@@ -50,16 +40,6 @@ public interface ClothesControllerDocs {
                                                 @RequestParam("category") String category,
                                                 @RequestParam("season") Set<String> seasons,
                                                 @Parameter(hidden = true) Pageable pageable);
-
-    @Operation(summary = "옷 삭제")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "옷 삭제 성공"),
-            @ApiResponse(responseCode = "404", description = "존재하지 않는 옷 삭제",
-                    content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
-            @ApiResponse(responseCode = "403", description = "다른 사람의 옷 삭제",
-                    content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
-    })
-    ResponseEntity<Void> deleteClothes(@Parameter(hidden = true) Long memberId, @PathVariable Long clothesId);
 
     @Operation(summary = "계절에 따른 옷 조회", parameters = {@Parameter(name = "size"), @Parameter(name = "page"),
             @Parameter(name = "sort"), @Parameter(example = "DESC")})
