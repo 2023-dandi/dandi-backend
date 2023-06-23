@@ -1,4 +1,4 @@
-package dandi.dandi.postlike.web;
+package dandi.dandi.postlike.adapter.in.web;
 
 import dandi.dandi.advice.ExceptionResponse;
 import io.swagger.v3.oas.annotations.Operation;

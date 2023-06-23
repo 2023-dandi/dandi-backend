@@ -1,4 +1,4 @@
-package dandi.dandi.postlike.web;
+package dandi.dandi.postlike.adapter.in.web;
 
 import dandi.dandi.auth.adapter.in.web.support.Login;
 import dandi.dandi.postlike.application.port.in.PostLikeUseCase;
