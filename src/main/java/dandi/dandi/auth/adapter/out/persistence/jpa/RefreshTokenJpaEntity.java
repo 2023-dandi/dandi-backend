@@ -1,4 +1,4 @@
-package dandi.dandi.auth.adapter.out.persistence;
+package dandi.dandi.auth.adapter.out.persistence.jpa;
 
 import dandi.dandi.auth.domain.RefreshToken;
 import java.time.LocalDateTime;

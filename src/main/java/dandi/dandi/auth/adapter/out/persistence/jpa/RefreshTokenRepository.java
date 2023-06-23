@@ -1,4 +1,4 @@
-package dandi.dandi.auth.adapter.out.persistence;
+package dandi.dandi.auth.adapter.out.persistence.jpa;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
