@@ -2,7 +2,7 @@ package dandi.dandi.pushnotification.application.service;
 
 import dandi.dandi.advice.InternalServerException;
 import dandi.dandi.pushnotification.application.port.in.PushNotificationAllowanceUpdateCommand;
-import dandi.dandi.pushnotification.application.port.in.PushNotificationResponse;
+import dandi.dandi.pushnotification.application.port.in.PushNotificationCommandServicePort;
 import dandi.dandi.pushnotification.application.port.in.PushNotificationTimeUpdateCommand;
 import dandi.dandi.pushnotification.application.port.out.persistence.PushNotificationPersistencePort;
 import dandi.dandi.pushnotification.domain.PushNotification;
@@ -11,18 +11,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class PushNotificationService {
+public class PushNotificationCommandServiceAdapter implements PushNotificationCommandServicePort {
 
     private final PushNotificationPersistencePort pushNotificationPersistencePort;
 
-    public PushNotificationService(PushNotificationPersistencePort pushNotificationPersistencePort) {
+    public PushNotificationCommandServiceAdapter(PushNotificationPersistencePort pushNotificationPersistencePort) {
         this.pushNotificationPersistencePort = pushNotificationPersistencePort;
-    }
-
-    @Transactional(readOnly = true)
-    public PushNotificationResponse findPushNotification(Long memberId) {
-        PushNotification pushNotification = findPushNotificationByMemberId(memberId);
-        return new PushNotificationResponse(pushNotification);
     }
 
     @Transactional
