@@ -1,6 +1,6 @@
 package dandi.dandi.member.adapter.out.persistence.jpa;
 
-import dandi.dandi.post.adapter.out.PostRepository;
+import dandi.dandi.post.adapter.out.persistence.jpa.PostRepository;
 import dandi.dandi.post.application.port.out.MemberPostPersistencePort;
 import org.springframework.stereotype.Component;
 

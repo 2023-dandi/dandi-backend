@@ -1,4 +1,4 @@
-package dandi.dandi.post.adapter.out;
+package dandi.dandi.post.adapter.out.persistence.jpa;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -1,4 +1,4 @@
-package dandi.dandi.post.adapter.out;
+package dandi.dandi.post.adapter.out.persistence.jpa;
 
 import dandi.dandi.member.domain.Member;
 import dandi.dandi.post.domain.Post;

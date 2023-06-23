@@ -1,4 +1,4 @@
-package dandi.dandi.post.adapter.out;
+package dandi.dandi.post.adapter.out.persistence.jpa;
 
 import static dandi.dandi.member.MemberTestFixture.INITIAL_PROFILE_IMAGE_URL;
 import static dandi.dandi.member.MemberTestFixture.MEMBER_ID;
