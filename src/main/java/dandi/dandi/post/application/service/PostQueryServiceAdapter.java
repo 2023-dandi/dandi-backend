@@ -1,6 +1,5 @@
 package dandi.dandi.post.application.service;
 
-import dandi.dandi.common.exception.ForbiddenException;
 import dandi.dandi.common.exception.NotFoundException;
 import dandi.dandi.post.application.port.in.FeedResponse;
 import dandi.dandi.post.application.port.in.LikedPostResponse;
@@ -10,17 +9,13 @@ import dandi.dandi.post.application.port.in.MyPostResponse;
 import dandi.dandi.post.application.port.in.MyPostResponses;
 import dandi.dandi.post.application.port.in.MyPostsByTemperatureResponses;
 import dandi.dandi.post.application.port.in.PostDetailResponse;
-import dandi.dandi.post.application.port.in.PostRegisterCommand;
-import dandi.dandi.post.application.port.in.PostRegisterResponse;
+import dandi.dandi.post.application.port.in.PostQueryServicePort;
 import dandi.dandi.post.application.port.in.PostResponse;
-import dandi.dandi.post.application.port.in.PostUseCase;
 import dandi.dandi.post.application.port.in.PostWriterResponse;
 import dandi.dandi.post.application.port.out.PostPersistencePort;
-import dandi.dandi.post.application.port.out.PostReportPersistencePort;
 import dandi.dandi.post.domain.Post;
 import dandi.dandi.post.domain.TemperatureSearchCondition;
 import dandi.dandi.post.domain.Temperatures;
-import dandi.dandi.post.domain.WeatherFeeling;
 import dandi.dandi.postlike.application.port.out.PostLikePersistencePort;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,48 +23,25 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class PostService implements PostUseCase {
+public class PostQueryServiceAdapter implements PostQueryServicePort {
 
-    private static final int POST_IMAGE_URL_INDEX = 1;
     private static final int TEMPERATURE_SEARCH_THRESHOLD = 3;
 
     private final PostPersistencePort postPersistencePort;
     private final PostLikePersistencePort postLikePersistencePort;
-    private final PostReportPersistencePort postReportPersistencePort;
     private final String imageAccessUrl;
 
-    public PostService(PostPersistencePort postPersistencePort, PostLikePersistencePort postLikePersistencePort,
-                       PostReportPersistencePort postReportPersistencePort,
-                       @Value("${cloud.aws.cloud-front.uri}") String imageAccessUrl) {
+    public PostQueryServiceAdapter(PostPersistencePort postPersistencePort,
+                                   PostLikePersistencePort postLikePersistencePort,
+                                   @Value("${cloud.aws.cloud-front.uri}") String imageAccessUrl) {
         this.postPersistencePort = postPersistencePort;
         this.postLikePersistencePort = postLikePersistencePort;
-        this.postReportPersistencePort = postReportPersistencePort;
         this.imageAccessUrl = imageAccessUrl;
     }
 
     @Override
-    @Transactional
-    public PostRegisterResponse registerPost(Long memberId, PostRegisterCommand postRegisterCommand) {
-        Temperatures temperatures = new Temperatures(
-                postRegisterCommand.getMinTemperature(), postRegisterCommand.getMaxTemperature());
-        WeatherFeeling weatherFeeling = new WeatherFeeling(
-                postRegisterCommand.getFeelingIndex(), postRegisterCommand.getAdditionalFeelingIndices());
-        String postImageUrl = removeImageAccessUrl(postRegisterCommand.getPostImageUrl());
-
-        Post post = Post.initial(temperatures, postImageUrl, weatherFeeling);
-        Long postId = postPersistencePort.save(post, memberId);
-        return new PostRegisterResponse(postId);
-    }
-
-    private String removeImageAccessUrl(String postImageUrl) {
-        return postImageUrl.split(imageAccessUrl)[POST_IMAGE_URL_INDEX];
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public PostDetailResponse getPostDetails(Long memberId, Long postId) {
         Post post = postPersistencePort.findById(postId)
                 .orElseThrow(NotFoundException::post);
@@ -79,22 +51,6 @@ public class PostService implements PostUseCase {
     }
 
     @Override
-    @Transactional
-    public void deletePost(Long memberId, Long postId) {
-        Post post = postPersistencePort.findById(postId)
-                .orElseThrow(NotFoundException::post);
-        validateDeleteAuthorization(post, memberId);
-        postPersistencePort.deleteById(postId);
-    }
-
-    public void validateDeleteAuthorization(Post post, Long memberId) {
-        if (!post.isWrittenBy(memberId)) {
-            throw ForbiddenException.postDeletion();
-        }
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public MyPostResponses getMyPostIdsAndPostImageUrls(Long memberId, Pageable pageable) {
         Slice<Post> posts = postPersistencePort.findByMemberId(memberId, pageable);
         List<MyPostResponse> myPostResponses = posts.stream()
@@ -104,7 +60,6 @@ public class PostService implements PostUseCase {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public FeedResponse getPostsByTemperature(Long memberId, Double minTemperature, Double maxTemperature,
                                               Pageable pageable) {
         Temperatures temperatures = new Temperatures(minTemperature, maxTemperature);
@@ -122,7 +77,6 @@ public class PostService implements PostUseCase {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public MyPostsByTemperatureResponses getMyPostsByTemperature(Long memberId, Double minTemperature,
                                                                  Double maxTemperature, Pageable pageable) {
         Temperatures temperatures = new Temperatures(minTemperature, maxTemperature);
@@ -152,27 +106,6 @@ public class PostService implements PostUseCase {
     }
 
     @Override
-    @Transactional
-    public void reportPost(Long memberId, Long postId) {
-        validatePostExistence(postId);
-        validateAlreadyReported(memberId, postId);
-        postReportPersistencePort.savePostReportOf(memberId, postId);
-    }
-
-    private void validatePostExistence(Long postId) {
-        if (!postPersistencePort.existsById(postId)) {
-            throw NotFoundException.post();
-        }
-    }
-
-    private void validateAlreadyReported(Long memberId, Long postId) {
-        if (postReportPersistencePort.existsByMemberIdAndPostId(memberId, postId)) {
-            throw new IllegalStateException("이미 신고한 게시글입니다.");
-        }
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public LikedPostResponses getLikedPost(Long memberId, Pageable pageable) {
         Slice<Post> posts = postPersistencePort.findLikedPosts(memberId, pageable);
         List<LikedPostResponse> likedPostResponses = posts.stream()

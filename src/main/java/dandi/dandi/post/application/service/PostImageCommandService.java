@@ -2,8 +2,8 @@ package dandi.dandi.post.application.service;
 
 import dandi.dandi.image.application.out.ImageManager;
 import dandi.dandi.image.exception.ImageUploadFailedException;
+import dandi.dandi.post.application.port.in.PostImageCommandPort;
 import dandi.dandi.post.application.port.in.PostImageRegisterResponse;
-import dandi.dandi.post.application.port.in.PostImageUseCase;
 import java.io.IOException;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
-public class PostImageService implements PostImageUseCase {
+public class PostImageCommandService implements PostImageCommandPort {
 
     private static final String POST_IMAGE_FILE_KEY_FORMAT = "%s/%s_%s_%s";
 
@@ -19,8 +19,8 @@ public class PostImageService implements PostImageUseCase {
     private final String postImageDir;
     private final String imageAccessUrl;
 
-    public PostImageService(ImageManager imageManager, @Value("${image.post-dir}") String postImageDir,
-                            @Value("${cloud.aws.cloud-front.uri}") String imageAccessUrl) {
+    public PostImageCommandService(ImageManager imageManager, @Value("${image.post-dir}") String postImageDir,
+                                   @Value("${cloud.aws.cloud-front.uri}") String imageAccessUrl) {
         this.imageManager = imageManager;
         this.postImageDir = postImageDir;
         this.imageAccessUrl = imageAccessUrl;
