@@ -1,6 +1,6 @@
 package dandi.dandi.postlike.application.port.in;
 
-public interface PostLikeUseCase {
+public interface PostLikeCommandServicePort {
 
     void reverseLike(Long memberId, Long postId);
 }
