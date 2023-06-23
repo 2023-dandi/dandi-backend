@@ -1,4 +1,4 @@
-package dandi.dandi.pushnotification.application.handler;
+package dandi.dandi.pushnotification.application.service.eventhandler;
 
 import static dandi.dandi.pushnotification.PushNotificationFixture.PUSH_NOTIFICATION_TOKEN;
 import static org.mockito.Mockito.verify;
