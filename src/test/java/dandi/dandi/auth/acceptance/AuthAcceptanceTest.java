@@ -12,10 +12,10 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import dandi.dandi.auth.adapter.in.web.dto.LoginRequest;
 import dandi.dandi.auth.application.port.in.TokenResponse;
 import dandi.dandi.auth.domain.RefreshToken;
 import dandi.dandi.auth.exception.UnauthorizedException;
-import dandi.dandi.auth.web.in.LoginRequest;
 import dandi.dandi.common.AcceptanceTest;
 import dandi.dandi.common.HttpMethodFixture;
 import io.restassured.response.ExtractableResponse;

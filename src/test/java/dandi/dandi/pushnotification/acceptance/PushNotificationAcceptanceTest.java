@@ -10,9 +10,9 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import dandi.dandi.common.AcceptanceTest;
+import dandi.dandi.pushnotification.adapter.in.web.dto.PushNotificationAllowanceUpdateRequest;
+import dandi.dandi.pushnotification.adapter.in.web.dto.PushNotificationTimeUpdateRequest;
 import dandi.dandi.pushnotification.application.port.in.PushNotificationResponse;
-import dandi.dandi.pushnotification.web.dto.PushNotificationAllowanceUpdateRequest;
-import dandi.dandi.pushnotification.web.dto.PushNotificationTimeUpdateRequest;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.time.LocalTime;
