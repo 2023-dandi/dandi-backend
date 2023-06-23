@@ -1,6 +1,6 @@
 package dandi.dandi.member.adapter.in.web;
 
-import dandi.dandi.auth.web.support.Login;
+import dandi.dandi.auth.adapter.in.web.support.Login;
 import dandi.dandi.member.application.port.in.MemberInfoResponse;
 import dandi.dandi.member.application.port.in.MemberQueryServicePort;
 import dandi.dandi.member.application.port.in.NicknameDuplicationCheckResponse;

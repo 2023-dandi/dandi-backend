@@ -1,4 +1,4 @@
-package dandi.dandi.auth.web.support;
+package dandi.dandi.auth.adapter.in.web.support;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

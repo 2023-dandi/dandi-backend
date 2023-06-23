@@ -1,6 +1,6 @@
 package dandi.dandi.comment.web;
 
-import dandi.dandi.auth.web.support.Login;
+import dandi.dandi.auth.adapter.in.web.support.Login;
 import dandi.dandi.comment.application.port.in.CommentRegisterCommand;
 import dandi.dandi.comment.application.port.in.CommentResponses;
 import dandi.dandi.comment.application.port.in.CommentUseCase;

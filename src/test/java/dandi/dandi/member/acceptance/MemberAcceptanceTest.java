@@ -23,8 +23,8 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.when;
 
+import dandi.dandi.auth.adapter.in.web.dto.LoginRequest;
 import dandi.dandi.auth.application.port.in.TokenResponse;
-import dandi.dandi.auth.web.in.LoginRequest;
 import dandi.dandi.comment.application.port.in.CommentResponse;
 import dandi.dandi.comment.application.port.in.CommentResponses;
 import dandi.dandi.common.AcceptanceTest;

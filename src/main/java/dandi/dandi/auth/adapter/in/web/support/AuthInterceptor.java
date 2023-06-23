@@ -1,4 +1,4 @@
-package dandi.dandi.auth.web.support;
+package dandi.dandi.auth.adapter.in.web.support;
 
 import dandi.dandi.auth.adapter.out.jwt.AccessTokenManagerAdapter;
 import javax.servlet.http.HttpServletRequest;

@@ -1,6 +1,6 @@
 package dandi.dandi.post.web;
 
-import dandi.dandi.auth.web.support.Login;
+import dandi.dandi.auth.adapter.in.web.support.Login;
 import dandi.dandi.post.application.port.in.FeedResponse;
 import dandi.dandi.post.application.port.in.LikedPostResponses;
 import dandi.dandi.post.application.port.in.MyPostResponses;

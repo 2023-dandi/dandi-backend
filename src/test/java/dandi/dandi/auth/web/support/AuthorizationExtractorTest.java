@@ -5,6 +5,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
+import dandi.dandi.auth.adapter.in.web.support.AuthorizationExtractor;
 import dandi.dandi.auth.exception.UnauthorizedException;
 import java.util.Enumeration;
 import javax.servlet.http.HttpServletRequest;

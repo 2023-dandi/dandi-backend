@@ -1,6 +1,6 @@
 package dandi.dandi.clothes.web;
 
-import dandi.dandi.auth.web.support.Login;
+import dandi.dandi.auth.adapter.in.web.support.Login;
 import dandi.dandi.clothes.application.port.in.ClothesImageRegisterResponse;
 import dandi.dandi.clothes.application.port.in.ClothesImageUseCase;
 import org.springframework.http.HttpStatus;

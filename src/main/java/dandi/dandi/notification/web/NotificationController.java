@@ -1,6 +1,6 @@
 package dandi.dandi.notification.web;
 
-import dandi.dandi.auth.web.support.Login;
+import dandi.dandi.auth.adapter.in.web.support.Login;
 import dandi.dandi.notification.application.port.in.NotificationResponses;
 import dandi.dandi.notification.application.port.in.NotificationUseCase;
 import org.springframework.data.domain.Pageable;

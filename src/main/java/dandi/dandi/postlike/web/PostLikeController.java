@@ -1,6 +1,6 @@
 package dandi.dandi.postlike.web;
 
-import dandi.dandi.auth.web.support.Login;
+import dandi.dandi.auth.adapter.in.web.support.Login;
 import dandi.dandi.postlike.application.port.in.PostLikeUseCase;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PatchMapping;

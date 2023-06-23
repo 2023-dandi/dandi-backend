@@ -1,4 +1,4 @@
-package dandi.dandi.auth.web.in;
+package dandi.dandi.auth.adapter.in.web.dto;
 
 import dandi.dandi.auth.application.port.in.LoginCommand;
 

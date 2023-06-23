@@ -1,6 +1,6 @@
 package dandi.dandi.member.adapter.in.web;
 
-import dandi.dandi.auth.web.support.Login;
+import dandi.dandi.auth.adapter.in.web.support.Login;
 import dandi.dandi.member.application.port.in.MemberImageUseCase;
 import dandi.dandi.member.application.port.in.ProfileImageUpdateResponse;
 import org.springframework.http.MediaType;

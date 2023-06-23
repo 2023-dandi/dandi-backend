@@ -14,10 +14,10 @@ import static org.mockito.Mockito.when;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.services.s3.AmazonS3;
+import dandi.dandi.auth.adapter.in.web.dto.LoginRequest;
 import dandi.dandi.auth.adapter.out.jwt.RefreshTokenManagerAdapter;
 import dandi.dandi.auth.application.port.in.TokenResponse;
 import dandi.dandi.auth.application.port.out.oauth.OAuthClientPort;
-import dandi.dandi.auth.web.in.LoginRequest;
 import dandi.dandi.config.AsyncTestConfig;
 import dandi.dandi.post.application.port.in.PostRegisterResponse;
 import dandi.dandi.post.web.in.OutfitFeelingRequest;

@@ -1,4 +1,4 @@
-package dandi.dandi.auth.web.support;
+package dandi.dandi.auth.adapter.in.web.support;
 
 import java.time.Duration;
 import org.springframework.beans.factory.annotation.Value;

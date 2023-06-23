@@ -1,13 +1,13 @@
-package dandi.dandi.auth.web;
+package dandi.dandi.auth.adapter.in.web;
 
-import static dandi.dandi.auth.web.support.RefreshTokenCookieProvider.REFRESH_TOKEN;
+import static dandi.dandi.auth.adapter.in.web.support.RefreshTokenCookieProvider.REFRESH_TOKEN;
 import static org.springframework.http.HttpStatus.CREATED;
 
+import dandi.dandi.auth.adapter.in.web.dto.LoginRequest;
+import dandi.dandi.auth.adapter.in.web.support.Login;
 import dandi.dandi.auth.application.port.in.AuthUseCase;
 import dandi.dandi.auth.application.port.in.LoginResponse;
 import dandi.dandi.auth.application.port.in.TokenResponse;
-import dandi.dandi.auth.web.in.LoginRequest;
-import dandi.dandi.auth.web.support.Login;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
