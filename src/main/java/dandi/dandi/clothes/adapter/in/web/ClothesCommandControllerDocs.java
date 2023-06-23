@@ -1,4 +1,4 @@
-package dandi.dandi.clothes.web;
+package dandi.dandi.clothes.adapter.in.web;
 
 import dandi.dandi.advice.ExceptionResponse;
 import dandi.dandi.clothes.application.port.in.ClothesRegisterCommand;

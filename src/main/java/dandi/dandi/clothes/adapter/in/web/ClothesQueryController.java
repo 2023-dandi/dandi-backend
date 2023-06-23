@@ -1,4 +1,4 @@
-package dandi.dandi.clothes.web;
+package dandi.dandi.clothes.adapter.in.web;
 
 import dandi.dandi.auth.adapter.in.web.support.Login;
 import dandi.dandi.clothes.application.port.in.CategorySeasonsResponses;

@@ -1,4 +1,4 @@
-package dandi.dandi.clothes.web;
+package dandi.dandi.clothes.adapter.in.web;
 
 import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
 
