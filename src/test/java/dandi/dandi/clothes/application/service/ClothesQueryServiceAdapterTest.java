@@ -1,11 +1,8 @@
 package dandi.dandi.clothes.application.service;
 
 import static dandi.dandi.clothes.ClothesFixture.CLOTHES;
-import static dandi.dandi.clothes.ClothesFixture.CLOTHES_CATEGORY;
-import static dandi.dandi.clothes.ClothesFixture.CLOTHES_ID;
 import static dandi.dandi.clothes.ClothesFixture.CLOTHES_IMAGE_FULL_URL;
 import static dandi.dandi.clothes.ClothesFixture.CLOTHES_IMAGE_URL;
-import static dandi.dandi.clothes.ClothesFixture.CLOTHES_SEASONS;
 import static dandi.dandi.clothes.domain.Category.BAG;
 import static dandi.dandi.clothes.domain.Category.BOTTOM;
 import static dandi.dandi.clothes.domain.Category.TOP;
@@ -17,10 +14,9 @@ import static dandi.dandi.clothes.domain.Season.SUMMER;
 import static dandi.dandi.member.MemberTestFixture.MEMBER_ID;
 import static dandi.dandi.utils.PaginationUtils.CREATED_AT_DESC_TEST_SIZE_PAGEABLE;
 import static dandi.dandi.utils.TestImageUtils.IMAGE_ACCESS_URL;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.data.domain.Sort.Direction.DESC;
@@ -28,7 +24,6 @@ import static org.springframework.data.domain.Sort.Direction.DESC;
 import dandi.dandi.clothes.application.port.in.CategorySeasonsResponse;
 import dandi.dandi.clothes.application.port.in.CategorySeasonsResponses;
 import dandi.dandi.clothes.application.port.in.ClothesDetailResponse;
-import dandi.dandi.clothes.application.port.in.ClothesRegisterCommand;
 import dandi.dandi.clothes.application.port.in.ClothesResponse;
 import dandi.dandi.clothes.application.port.in.ClothesResponses;
 import dandi.dandi.clothes.application.port.out.persistence.CategorySeasonProjection;
@@ -36,11 +31,11 @@ import dandi.dandi.clothes.application.port.out.persistence.ClothesPersistencePo
 import dandi.dandi.clothes.domain.Clothes;
 import dandi.dandi.clothes.domain.Season;
 import dandi.dandi.common.exception.ForbiddenException;
-import dandi.dandi.common.exception.NotFoundException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import org.assertj.core.api.AssertionsForInterfaceTypes;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -52,62 +47,11 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 
 @ExtendWith(MockitoExtension.class)
-class ClothesServiceTest {
+class ClothesQueryServiceAdapterTest {
 
     private final ClothesPersistencePort clothesPersistencePort = Mockito.mock(ClothesPersistencePort.class);
-    private final ClothesImageService clothesImageService = Mockito.mock(ClothesImageService.class);
-    private final ClothesService clothesService =
-            new ClothesService(clothesPersistencePort, clothesImageService, IMAGE_ACCESS_URL);
-
-    @DisplayName("옷을 저장할 수 있다.")
-    @Test
-    void registerClothes() {
-        ClothesRegisterCommand clothesRegisterCommand =
-                new ClothesRegisterCommand(CLOTHES_CATEGORY, CLOTHES_SEASONS, CLOTHES_IMAGE_FULL_URL);
-
-        clothesService.registerClothes(MEMBER_ID, clothesRegisterCommand);
-
-        verify(clothesPersistencePort).save(any(Clothes.class));
-    }
-
-    @DisplayName("자신의 옷을 삭제할 수 있다.")
-    @Test
-    void deleteClothes() {
-        when(clothesPersistencePort.findById(CLOTHES_ID))
-                .thenReturn(Optional.of(CLOTHES));
-
-        clothesService.deleteClothes(MEMBER_ID, CLOTHES_ID);
-
-        verify(clothesPersistencePort).deleteById(CLOTHES_ID);
-        verify(clothesImageService).deleteClothesImage(CLOTHES);
-    }
-
-    @DisplayName("존재하지 않는 옷을 삭제하려하면 예외를 발생시킨다.")
-    @Test
-    void deleteClothes_NotFound() {
-        Long notFountClothesId = 1L;
-        when(clothesPersistencePort.findById(notFountClothesId))
-                .thenReturn(Optional.empty());
-
-        assertThatThrownBy(() -> clothesService.deleteClothes(MEMBER_ID, notFountClothesId))
-                .isInstanceOf(NotFoundException.class)
-                .hasMessage(NotFoundException.clothes().getMessage());
-    }
-
-    @DisplayName("자신의 소유가 아닌 옷을 삭제하려 하면 예외를 발생시킨다.")
-    @Test
-    void deleteClothes_Forbidden() {
-        Long clothesId = 1L;
-        Long anotherMemberId = 2L;
-        Clothes anotherMembersClothes = new Clothes(
-                clothesId, anotherMemberId, TOP, List.of(SUMMER), CLOTHES_IMAGE_URL);
-        when(clothesPersistencePort.findById(clothesId))
-                .thenReturn(Optional.of(anotherMembersClothes));
-
-        assertThatThrownBy(() -> clothesService.deleteClothes(MEMBER_ID, clothesId))
-                .isInstanceOf(ForbiddenException.class)
-                .hasMessage(ForbiddenException.clothesDeletion().getMessage());
-    }
+    private final ClothesQueryServiceAdapter clothesQueryServiceAdapter =
+            new ClothesQueryServiceAdapter(clothesPersistencePort, IMAGE_ACCESS_URL);
 
     @DisplayName("옷 세부 정보를 조회할 수 있다.")
     @Test
@@ -116,7 +60,8 @@ class ClothesServiceTest {
         when(clothesPersistencePort.findById(clothesId))
                 .thenReturn(Optional.of(CLOTHES));
 
-        ClothesDetailResponse clothesDetailResponse = clothesService.getSingleClothesDetails(MEMBER_ID, clothesId);
+        ClothesDetailResponse clothesDetailResponse = clothesQueryServiceAdapter.getSingleClothesDetails(MEMBER_ID,
+                clothesId);
 
         assertAll(
                 () -> assertThat(clothesDetailResponse.getId()).isEqualTo(CLOTHES.getId()),
@@ -132,7 +77,7 @@ class ClothesServiceTest {
         when(clothesPersistencePort.findById(clothesId))
                 .thenReturn(Optional.of(CLOTHES));
 
-        assertThatThrownBy(() -> clothesService.getSingleClothesDetails(anotherMember, clothesId))
+        assertThatThrownBy(() -> clothesQueryServiceAdapter.getSingleClothesDetails(anotherMember, clothesId))
                 .isInstanceOf(ForbiddenException.class)
                 .hasMessage(ForbiddenException.clothesLookUp().getMessage());
     }
@@ -143,9 +88,9 @@ class ClothesServiceTest {
         when(clothesPersistencePort.findDistinctCategoryAndSeason(MEMBER_ID))
                 .thenReturn(List.of());
 
-        CategorySeasonsResponses actual = clothesService.getCategoriesAndSeasons(MEMBER_ID);
+        CategorySeasonsResponses actual = clothesQueryServiceAdapter.getCategoriesAndSeasons(MEMBER_ID);
 
-        assertThat(actual.getCategories()).isEmpty();
+        AssertionsForInterfaceTypes.assertThat(actual.getCategories()).isEmpty();
     }
 
     @DisplayName("카테고리와 카테코리에 따른 계절들을 조회할 수 있다.")
@@ -156,21 +101,21 @@ class ClothesServiceTest {
                         new CategorySeasonProjectionTestImpl(TOP.name(), SUMMER.name()),
                         new CategorySeasonProjectionTestImpl(BOTTOM.name(), SPRING.name())));
 
-        CategorySeasonsResponses actual = clothesService.getCategoriesAndSeasons(MEMBER_ID);
+        CategorySeasonsResponses actual = clothesQueryServiceAdapter.getCategoriesAndSeasons(MEMBER_ID);
 
         List<CategorySeasonsResponse> categorySeasonsResponses = actual.getCategories();
         assertAll(
                 () -> assertThat(categorySeasonsResponses.get(0).getCategory())
                         .isEqualTo("ALL"),
-                () -> assertThat(categorySeasonsResponses.get(0).getSeasons())
+                () -> AssertionsForInterfaceTypes.assertThat(categorySeasonsResponses.get(0).getSeasons())
                         .isEqualTo(Set.of("SPRING", "SUMMER", "FALL")),
                 () -> assertThat(categorySeasonsResponses.get(1).getCategory())
                         .isEqualTo("TOP"),
-                () -> assertThat(categorySeasonsResponses.get(1).getSeasons())
+                () -> AssertionsForInterfaceTypes.assertThat(categorySeasonsResponses.get(1).getSeasons())
                         .isEqualTo(Set.of("SUMMER", "FALL")),
                 () -> assertThat(categorySeasonsResponses.get(2).getCategory())
                         .isEqualTo("BOTTOM"),
-                () -> assertThat(categorySeasonsResponses.get(2).getSeasons())
+                () -> AssertionsForInterfaceTypes.assertThat(categorySeasonsResponses.get(2).getSeasons())
                         .isEqualTo(Set.of("SPRING"))
         );
     }
@@ -184,7 +129,7 @@ class ClothesServiceTest {
                 MEMBER_ID, Set.of(TOP), Set.of(SPRING, SUMMER), CREATED_AT_DESC_TEST_SIZE_PAGEABLE))
                 .thenReturn(new SliceImpl<>(List.of(clothes2, clothes1), CREATED_AT_DESC_TEST_SIZE_PAGEABLE, false));
 
-        ClothesResponses actual = clothesService.getClothes(MEMBER_ID, TOP.name(),
+        ClothesResponses actual = clothesQueryServiceAdapter.getClothes(MEMBER_ID, TOP.name(),
                 Set.of(SPRING.name(), SUMMER.name()), CREATED_AT_DESC_TEST_SIZE_PAGEABLE);
 
         ClothesResponse firstClothesResponse = actual.getClothes().get(0);
@@ -204,7 +149,7 @@ class ClothesServiceTest {
                 MEMBER_ID, getAllCategories(), Set.of(SPRING, SUMMER), CREATED_AT_DESC_TEST_SIZE_PAGEABLE))
                 .thenReturn(new SliceImpl<>(List.of(clothes2, clothes1), CREATED_AT_DESC_TEST_SIZE_PAGEABLE, false));
 
-        clothesService.getClothes(MEMBER_ID, "ALL", seasons, CREATED_AT_DESC_TEST_SIZE_PAGEABLE);
+        clothesQueryServiceAdapter.getClothes(MEMBER_ID, "ALL", seasons, CREATED_AT_DESC_TEST_SIZE_PAGEABLE);
 
         verify(clothesPersistencePort)
                 .findByMemberIdAndCategoryAndSeasons(MEMBER_ID, getAllCategories(), Set.of(SPRING, SUMMER),
@@ -226,10 +171,10 @@ class ClothesServiceTest {
                 .thenReturn(clothes);
 
         ClothesResponses clothesResponses =
-                clothesService.getTodayClothes(MEMBER_ID, LocalDate.of(2023, 5, 11), pageable);
+                clothesQueryServiceAdapter.getTodayClothes(MEMBER_ID, LocalDate.of(2023, 5, 11), pageable);
 
         assertAll(
-                () -> assertThat(clothesResponses.getClothes()).hasSize(3),
+                () -> AssertionsForInterfaceTypes.assertThat(clothesResponses.getClothes()).hasSize(3),
                 () -> assertThat(clothesResponses.isLastPage()).isTrue()
         );
     }
