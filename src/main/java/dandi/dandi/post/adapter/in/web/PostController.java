@@ -11,7 +11,8 @@ import dandi.dandi.post.application.port.in.PostImageRegisterResponse;
 import dandi.dandi.post.application.port.in.PostImageUseCase;
 import dandi.dandi.post.application.port.in.PostQueryServicePort;
 import dandi.dandi.post.application.port.in.PostRegisterResponse;
-import dandi.dandi.post.application.port.in.PostUseCase;
+import dandi.dandi.post.application.port.in.PostReportUseCaseServicePort;
+import dandi.dandi.post.application.port.in.PostUseCaseServicePort;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
@@ -30,14 +31,17 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 public class PostController implements PostControllerDocs {
 
-    private final PostUseCase postUseCase;
+    private final PostUseCaseServicePort postUseCaseServicePort;
     private final PostQueryServicePort postQueryServicePort;
+    private final PostReportUseCaseServicePort postReportUseCaseServicePort;
     private final PostImageUseCase postImageUseCase;
 
-    public PostController(PostUseCase postUseCase, PostQueryServicePort postQueryServicePort,
+    public PostController(PostUseCaseServicePort postUseCaseServicePort, PostQueryServicePort postQueryServicePort,
+                          PostReportUseCaseServicePort postReportUseCaseServicePort,
                           PostImageUseCase postImageUseCase) {
-        this.postUseCase = postUseCase;
+        this.postUseCaseServicePort = postUseCaseServicePort;
         this.postQueryServicePort = postQueryServicePort;
+        this.postReportUseCaseServicePort = postReportUseCaseServicePort;
         this.postImageUseCase = postImageUseCase;
     }
 
@@ -53,7 +57,7 @@ public class PostController implements PostControllerDocs {
     public ResponseEntity<PostRegisterResponse> registerPost(@Login Long memberId,
                                                              @RequestBody PostRegisterRequest postRegisterRequest) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(postUseCase.registerPost(memberId, postRegisterRequest.toCommand()));
+                .body(postUseCaseServicePort.registerPost(memberId, postRegisterRequest.toCommand()));
     }
 
     @GetMapping("/posts/{postId}")
@@ -63,7 +67,7 @@ public class PostController implements PostControllerDocs {
 
     @DeleteMapping("/posts/{postId}")
     public ResponseEntity<Void> deletePost(@Login Long memberId, @PathVariable Long postId) {
-        postUseCase.deletePost(memberId, postId);
+        postUseCaseServicePort.deletePost(memberId, postId);
         return ResponseEntity.noContent().build();
     }
 
@@ -96,7 +100,7 @@ public class PostController implements PostControllerDocs {
 
     @PostMapping("/posts/{postId}/reports")
     public ResponseEntity<Void> reportPost(@Login Long memberId, @PathVariable Long postId) {
-        postUseCase.reportPost(memberId, postId);
+        postReportUseCaseServicePort.reportPost(memberId, postId);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
