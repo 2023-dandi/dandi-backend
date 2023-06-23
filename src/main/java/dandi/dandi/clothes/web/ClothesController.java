@@ -5,9 +5,10 @@ import dandi.dandi.clothes.application.port.in.CategorySeasonsResponses;
 import dandi.dandi.clothes.application.port.in.ClothesDetailResponse;
 import dandi.dandi.clothes.application.port.in.ClothesImageRegisterResponse;
 import dandi.dandi.clothes.application.port.in.ClothesImageUseCase;
+import dandi.dandi.clothes.application.port.in.ClothesQueryServicePort;
 import dandi.dandi.clothes.application.port.in.ClothesRegisterCommand;
 import dandi.dandi.clothes.application.port.in.ClothesResponses;
-import dandi.dandi.clothes.application.port.in.ClothesUseCase;
+import dandi.dandi.clothes.application.port.in.ClothesUseCasePort;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Set;
@@ -30,12 +31,15 @@ import org.springframework.web.multipart.MultipartFile;
 public class ClothesController implements ClothesControllerDocs {
 
     private final ClothesImageUseCase clothesImageUseCase;
-    private final ClothesUseCase clothesUseCase;
+    private final ClothesUseCasePort clothesUseCasePort;
+    private final ClothesQueryServicePort queryServicePort;
     private final Clock clock;
 
-    public ClothesController(ClothesImageUseCase clothesImageUseCase, ClothesUseCase clothesUseCase, Clock clock) {
+    public ClothesController(ClothesImageUseCase clothesImageUseCase, ClothesUseCasePort clothesUseCasePort,
+                             ClothesQueryServicePort queryServicePort, Clock clock) {
         this.clothesImageUseCase = clothesImageUseCase;
-        this.clothesUseCase = clothesUseCase;
+        this.clothesUseCasePort = clothesUseCasePort;
+        this.queryServicePort = queryServicePort;
         this.clock = clock;
     }
 
@@ -51,37 +55,37 @@ public class ClothesController implements ClothesControllerDocs {
     @GetMapping("/{clothesId}")
     public ResponseEntity<ClothesDetailResponse> getSingleClothesDetails(@Login Long memberId,
                                                                          @PathVariable Long clothesId) {
-        return ResponseEntity.ok(clothesUseCase.getSingleClothesDetails(memberId, clothesId));
+        return ResponseEntity.ok(queryServicePort.getSingleClothesDetails(memberId, clothesId));
     }
 
     @GetMapping
     public ResponseEntity<ClothesResponses> getClothes(@Login Long memberId, @RequestParam("category") String category,
                                                        @RequestParam("season") Set<String> seasons,
                                                        Pageable pageable) {
-        return ResponseEntity.ok(clothesUseCase.getClothes(memberId, category, seasons, pageable));
+        return ResponseEntity.ok(queryServicePort.getClothes(memberId, category, seasons, pageable));
     }
 
     @GetMapping("/categories-seasons")
     public ResponseEntity<CategorySeasonsResponses> getCategoriesAndSeasons(@Login Long memberId) {
-        return ResponseEntity.ok(clothesUseCase.getCategoriesAndSeasons(memberId));
+        return ResponseEntity.ok(queryServicePort.getCategoriesAndSeasons(memberId));
     }
 
     @PostMapping
     public ResponseEntity<Void> registerClothes(@Login Long memberId,
                                                 @RequestBody ClothesRegisterCommand clothesRegisterCommand) {
-        clothesUseCase.registerClothes(memberId, clothesRegisterCommand);
+        clothesUseCasePort.registerClothes(memberId, clothesRegisterCommand);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @DeleteMapping({"/{clothesId}"})
     public ResponseEntity<Void> deleteClothes(@Login Long memberId, @PathVariable Long clothesId) {
-        clothesUseCase.deleteClothes(memberId, clothesId);
+        clothesUseCasePort.deleteClothes(memberId, clothesId);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/today")
     public ResponseEntity<ClothesResponses> getTodayClothes(@Login Long memberId, Pageable pageable) {
         LocalDate today = LocalDate.now(clock);
-        return ResponseEntity.ok(clothesUseCase.getTodayClothes(memberId, today, pageable));
+        return ResponseEntity.ok(queryServicePort.getTodayClothes(memberId, today, pageable));
     }
 }
