@@ -1,4 +1,4 @@
-package dandi.dandi.pushnotification.application.handler;
+package dandi.dandi.pushnotification.application.service.eventhandler;
 
 import dandi.dandi.member.domain.NewMemberCreatedEvent;
 import dandi.dandi.pushnotification.application.port.out.persistence.PushNotificationPersistencePort;
