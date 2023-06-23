@@ -3,8 +3,6 @@ package dandi.dandi.clothes.web;
 import dandi.dandi.auth.web.support.Login;
 import dandi.dandi.clothes.application.port.in.CategorySeasonsResponses;
 import dandi.dandi.clothes.application.port.in.ClothesDetailResponse;
-import dandi.dandi.clothes.application.port.in.ClothesImageRegisterResponse;
-import dandi.dandi.clothes.application.port.in.ClothesImageUseCase;
 import dandi.dandi.clothes.application.port.in.ClothesQueryServicePort;
 import dandi.dandi.clothes.application.port.in.ClothesRegisterCommand;
 import dandi.dandi.clothes.application.port.in.ClothesResponses;
@@ -22,34 +20,21 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/clothes")
 public class ClothesController implements ClothesControllerDocs {
 
-    private final ClothesImageUseCase clothesImageUseCase;
     private final ClothesUseCasePort clothesUseCasePort;
     private final ClothesQueryServicePort queryServicePort;
     private final Clock clock;
 
-    public ClothesController(ClothesImageUseCase clothesImageUseCase, ClothesUseCasePort clothesUseCasePort,
-                             ClothesQueryServicePort queryServicePort, Clock clock) {
-        this.clothesImageUseCase = clothesImageUseCase;
+    public ClothesController(ClothesUseCasePort clothesUseCasePort, ClothesQueryServicePort queryServicePort,
+                             Clock clock) {
         this.clothesUseCasePort = clothesUseCasePort;
         this.queryServicePort = queryServicePort;
         this.clock = clock;
-    }
-
-    @PostMapping("/image")
-    public ResponseEntity<ClothesImageRegisterResponse> registerClothesImage(@Login Long memberId,
-                                                                             @RequestPart(value = "clothesImage")
-                                                                             MultipartFile clothesImage) {
-        ClothesImageRegisterResponse clothesImageRegisterResponse =
-                clothesImageUseCase.uploadClothesImage(memberId, clothesImage);
-        return ResponseEntity.status(HttpStatus.CREATED).body(clothesImageRegisterResponse);
     }
 
     @GetMapping("/{clothesId}")
