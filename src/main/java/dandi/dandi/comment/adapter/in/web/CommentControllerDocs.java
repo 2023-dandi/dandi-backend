@@ -1,4 +1,4 @@
-package dandi.dandi.comment.web;
+package dandi.dandi.comment.adapter.in.web;
 
 import dandi.dandi.advice.ExceptionResponse;
 import dandi.dandi.comment.application.port.in.CommentRegisterCommand;
