@@ -7,7 +7,7 @@ import static dandi.dandi.post.PostFixture.WEATHER_FEELING;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 import dandi.dandi.common.PersistenceAdapterTest;
-import dandi.dandi.post.adapter.out.PostPersistenceAdapter;
+import dandi.dandi.post.adapter.out.persistence.jpa.PostPersistenceAdapter;
 import dandi.dandi.post.domain.Post;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
