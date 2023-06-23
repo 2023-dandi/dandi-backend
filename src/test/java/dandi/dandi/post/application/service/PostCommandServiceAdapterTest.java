@@ -26,11 +26,11 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class PostUseCaseServiceAdapterTest {
+class PostCommandServiceAdapterTest {
 
     private final PostPersistencePort postPersistencePort = Mockito.mock(PostPersistencePort.class);
-    private final PostUseCaseServiceAdapter postService =
-            new PostUseCaseServiceAdapter(postPersistencePort, IMAGE_ACCESS_URL);
+    private final PostCommandServiceAdapter postService =
+            new PostCommandServiceAdapter(postPersistencePort, IMAGE_ACCESS_URL);
 
     @DisplayName("게시글을 작성할 수 있다.")
     @Test

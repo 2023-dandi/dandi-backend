@@ -1,6 +1,6 @@
 package dandi.dandi.post.application.port.in;
 
-public interface PostUseCaseServicePort {
+public interface PostCommandServicePort {
 
     PostRegisterResponse registerPost(Long memberId, PostRegisterCommand postRegisterCommand);
 

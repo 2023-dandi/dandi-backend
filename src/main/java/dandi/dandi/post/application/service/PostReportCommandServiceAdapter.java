@@ -1,7 +1,7 @@
 package dandi.dandi.post.application.service;
 
 import dandi.dandi.common.exception.NotFoundException;
-import dandi.dandi.post.application.port.in.PostReportUseCaseServicePort;
+import dandi.dandi.post.application.port.in.PostReportCommandServicePort;
 import dandi.dandi.post.application.port.out.PostPersistencePort;
 import dandi.dandi.post.application.port.out.PostReportPersistencePort;
 import org.springframework.stereotype.Service;
@@ -9,12 +9,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
-public class PostReportUseCaseServiceAdapter implements PostReportUseCaseServicePort {
+public class PostReportCommandServiceAdapter implements PostReportCommandServicePort {
 
     private final PostPersistencePort postPersistencePort;
     private final PostReportPersistencePort postReportPersistencePort;
 
-    public PostReportUseCaseServiceAdapter(PostPersistencePort postPersistencePort,
+    public PostReportCommandServiceAdapter(PostPersistencePort postPersistencePort,
                                            PostReportPersistencePort postReportPersistencePort) {
         this.postPersistencePort = postPersistencePort;
         this.postReportPersistencePort = postReportPersistencePort;

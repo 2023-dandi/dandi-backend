@@ -2,9 +2,9 @@ package dandi.dandi.post.application.service;
 
 import dandi.dandi.common.exception.ForbiddenException;
 import dandi.dandi.common.exception.NotFoundException;
+import dandi.dandi.post.application.port.in.PostCommandServicePort;
 import dandi.dandi.post.application.port.in.PostRegisterCommand;
 import dandi.dandi.post.application.port.in.PostRegisterResponse;
-import dandi.dandi.post.application.port.in.PostUseCaseServicePort;
 import dandi.dandi.post.application.port.out.PostPersistencePort;
 import dandi.dandi.post.domain.Post;
 import dandi.dandi.post.domain.Temperatures;
@@ -14,14 +14,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class PostUseCaseServiceAdapter implements PostUseCaseServicePort {
+public class PostCommandServiceAdapter implements PostCommandServicePort {
 
     private static final int POST_IMAGE_URL_INDEX = 1;
 
     private final PostPersistencePort postPersistencePort;
     private final String imageAccessUrl;
 
-    public PostUseCaseServiceAdapter(PostPersistencePort postPersistencePort,
+    public PostCommandServiceAdapter(PostPersistencePort postPersistencePort,
                                      @Value("${cloud.aws.cloud-front.uri}") String imageAccessUrl) {
         this.postPersistencePort = postPersistencePort;
         this.imageAccessUrl = imageAccessUrl;

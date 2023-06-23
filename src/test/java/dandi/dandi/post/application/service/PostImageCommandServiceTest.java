@@ -24,11 +24,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.multipart.MultipartFile;
 
 @ExtendWith(MockitoExtension.class)
-class PostImageServiceTest {
+class PostImageCommandServiceTest {
 
     private final ImageManager imageManager = Mockito.mock(ImageManager.class);
-    private final PostImageService postImageService =
-            new PostImageService(imageManager, POST_IMAGE_DIR, IMAGE_ACCESS_URL);
+    private final PostImageCommandService postImageCommandService =
+            new PostImageCommandService(imageManager, POST_IMAGE_DIR, IMAGE_ACCESS_URL);
 
     @DisplayName("게시글 사진을 업로드할 수 있다.")
     @Test
@@ -36,7 +36,8 @@ class PostImageServiceTest {
         Long memberId = 1L;
         MultipartFile multipartFile = generateTestImgMultipartFile();
 
-        PostImageRegisterResponse postImageRegisterResponse = postImageService.uploadPostImage(memberId, multipartFile);
+        PostImageRegisterResponse postImageRegisterResponse = postImageCommandService.uploadPostImage(memberId,
+                multipartFile);
 
         assertAll(
                 () -> verify(imageManager).upload(anyString(), any(InputStream.class)),
@@ -56,7 +57,7 @@ class PostImageServiceTest {
                 .when(imageManager)
                 .upload(anyString(), any(InputStream.class));
 
-        assertThatThrownBy(() -> postImageService.uploadPostImage(memberId, multipartFile))
+        assertThatThrownBy(() -> postImageCommandService.uploadPostImage(memberId, multipartFile))
                 .isInstanceOf(ImageUploadFailedException.class);
     }
 }

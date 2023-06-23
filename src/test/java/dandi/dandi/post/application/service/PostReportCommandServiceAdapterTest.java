@@ -24,7 +24,7 @@ class PostReportCommandServiceAdapterTest {
     @Mock
     private PostReportPersistencePort postReportPersistencePort;
     @InjectMocks
-    private PostReportUseCaseServiceAdapter postReportCommandServiceAdapter;
+    private PostReportCommandServiceAdapter postReportCommandServiceAdapter;
 
 
     @DisplayName("존재하지 않는 글을 신고하려고 하면 예외를 발생시킨다.")
