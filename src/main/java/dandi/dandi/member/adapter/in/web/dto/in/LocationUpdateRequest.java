@@ -1,4 +1,4 @@
-package dandi.dandi.member.web.dto.in;
+package dandi.dandi.member.adapter.in.web.dto.in;
 
 import dandi.dandi.member.application.port.in.LocationUpdateCommand;
 

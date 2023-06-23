@@ -1,4 +1,4 @@
-package dandi.dandi.member.web;
+package dandi.dandi.member.adapter.in.web;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 

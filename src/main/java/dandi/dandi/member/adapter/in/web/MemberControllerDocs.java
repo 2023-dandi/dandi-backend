@@ -1,10 +1,10 @@
-package dandi.dandi.member.web;
+package dandi.dandi.member.adapter.in.web;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 import dandi.dandi.advice.ExceptionResponse;
-import dandi.dandi.member.web.dto.in.LocationUpdateRequest;
-import dandi.dandi.member.web.dto.in.NicknameUpdateRequest;
+import dandi.dandi.member.adapter.in.web.dto.in.LocationUpdateRequest;
+import dandi.dandi.member.adapter.in.web.dto.in.NicknameUpdateRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;

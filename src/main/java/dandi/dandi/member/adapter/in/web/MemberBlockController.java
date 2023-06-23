@@ -1,4 +1,4 @@
-package dandi.dandi.member.web;
+package dandi.dandi.member.adapter.in.web;
 
 import dandi.dandi.auth.web.support.Login;
 import dandi.dandi.member.application.port.in.MemberBlockCommand;

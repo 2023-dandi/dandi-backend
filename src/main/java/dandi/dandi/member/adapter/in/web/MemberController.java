@@ -1,9 +1,9 @@
-package dandi.dandi.member.web;
+package dandi.dandi.member.adapter.in.web;
 
 import dandi.dandi.auth.web.support.Login;
+import dandi.dandi.member.adapter.in.web.dto.in.LocationUpdateRequest;
+import dandi.dandi.member.adapter.in.web.dto.in.NicknameUpdateRequest;
 import dandi.dandi.member.application.port.in.MemberUseCaseServicePort;
-import dandi.dandi.member.web.dto.in.LocationUpdateRequest;
-import dandi.dandi.member.web.dto.in.NicknameUpdateRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
