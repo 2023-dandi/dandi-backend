@@ -12,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 
 @Tag(name = "게시글 좋아요")
-public interface PostLikeControllerDocs {
+public interface PostLikeCommandControllerDocs {
 
     @Operation(summary = "좋아요 등록/취소")
     @ApiResponses(value = {

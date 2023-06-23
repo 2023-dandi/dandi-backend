@@ -25,7 +25,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 
 @ExtendWith(MockitoExtension.class)
-class PostLikeServiceTest {
+class PostLikeCommandServiceAdapterTest {
 
     @Mock
     private PostPersistencePort postPersistencePort;
@@ -37,7 +37,7 @@ class PostLikeServiceTest {
     private ApplicationEventPublisher applicationEventPublisher;
 
     @InjectMocks
-    private PostLikeService postLikeService;
+    private PostLikeCommandServiceAdapter postLikeCommandServiceAdapter;
 
     @DisplayName("좋아요를 누르지 않은 자신의 게시글에 좋아요를 등록할 수 있다.")
     @Test
@@ -47,7 +47,7 @@ class PostLikeServiceTest {
         when(postLikePersistencePort.findByMemberIdAndPostId(MEMBER_ID, POST_ID))
                 .thenReturn(Optional.empty());
 
-        postLikeService.reverseLike(MEMBER_ID, POST_ID);
+        postLikeCommandServiceAdapter.reverseLike(MEMBER_ID, POST_ID);
 
         assertAll(
                 () -> verify(postLikePersistencePort).save(any(PostLike.class)),
@@ -64,7 +64,7 @@ class PostLikeServiceTest {
         when(postLikePersistencePort.findByMemberIdAndPostId(memberId, POST_ID))
                 .thenReturn(Optional.empty());
 
-        postLikeService.reverseLike(memberId, POST_ID);
+        postLikeCommandServiceAdapter.reverseLike(memberId, POST_ID);
 
         assertAll(
                 () -> verify(postLikePersistencePort).save(any(PostLike.class)),
@@ -81,7 +81,7 @@ class PostLikeServiceTest {
         when(postLikePersistencePort.findByMemberIdAndPostId(MEMBER_ID, POST_ID))
                 .thenReturn(Optional.of(postLike));
 
-        postLikeService.reverseLike(MEMBER_ID, POST_ID);
+        postLikeCommandServiceAdapter.reverseLike(MEMBER_ID, POST_ID);
 
         verify(postLikePersistencePort).deleteById(postLike.getId());
     }
@@ -92,7 +92,7 @@ class PostLikeServiceTest {
         when(postPersistencePort.findById(POST_ID))
                 .thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> postLikeService.reverseLike(MEMBER_ID, POST_ID))
+        assertThatThrownBy(() -> postLikeCommandServiceAdapter.reverseLike(MEMBER_ID, POST_ID))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessage(NotFoundException.post().getMessage());
     }
