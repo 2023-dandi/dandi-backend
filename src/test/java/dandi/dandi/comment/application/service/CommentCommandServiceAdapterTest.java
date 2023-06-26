@@ -19,24 +19,28 @@ import dandi.dandi.comment.domain.Comment;
 import dandi.dandi.comment.domain.CommentCreatedEvent;
 import dandi.dandi.common.exception.ForbiddenException;
 import dandi.dandi.common.exception.NotFoundException;
+import dandi.dandi.event.application.port.out.EventPort;
 import dandi.dandi.post.application.port.out.PostPersistencePort;
 import java.time.LocalDate;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.ApplicationEventPublisher;
 
 @ExtendWith(MockitoExtension.class)
 class CommentCommandServiceAdapterTest {
 
-    private final CommentPersistencePort commentPersistencePort = Mockito.mock(CommentPersistencePort.class);
-    private final PostPersistencePort postPersistencePort = Mockito.mock(PostPersistencePort.class);
-    private final ApplicationEventPublisher applicationEventPublisher = Mockito.mock(ApplicationEventPublisher.class);
-    private final CommentCommandServiceAdapter commentCommandServiceAdapter =
-            new CommentCommandServiceAdapter(commentPersistencePort, postPersistencePort, applicationEventPublisher);
+    @Mock
+    private CommentPersistencePort commentPersistencePort;
+    @Mock
+    private PostPersistencePort postPersistencePort;
+    @Mock
+    private EventPort eventPort;
+    @InjectMocks
+    private CommentCommandServiceAdapter commentCommandServiceAdapter;
 
     @DisplayName("자신의 게시글에 댓글을 등록할 수 있다.")
     @Test
@@ -50,7 +54,7 @@ class CommentCommandServiceAdapterTest {
 
         assertAll(
                 () -> verify(commentPersistencePort).save(any(), any(), any()),
-                () -> verify(applicationEventPublisher, never()).publishEvent(any(CommentCreatedEvent.class))
+                () -> verify(eventPort, never()).publishEvent(any(CommentCreatedEvent.class))
         );
     }
 
@@ -67,15 +71,15 @@ class CommentCommandServiceAdapterTest {
 
         assertAll(
                 () -> verify(commentPersistencePort).save(any(), any(), any()),
-                () -> verify(applicationEventPublisher).publishEvent(any(CommentCreatedEvent.class))
+                () -> verify(eventPort).publishEvent(any(CommentCreatedEvent.class))
         );
     }
 
     @DisplayName("존재하지 않는 게시글에 댓글을 등록하려하면 예외를 발생시킨다.")
     @Test
     void registerComment_NotFoundPost() {
-        when(postPersistencePort.existsById(POST_ID))
-                .thenReturn(false);
+        when(postPersistencePort.findById(POST_ID))
+                .thenReturn(Optional.empty());
 
         assertThatThrownBy(
                 () -> commentCommandServiceAdapter.registerComment(MEMBER_ID, POST_ID, COMMENT_REGISTER_COMMAND))

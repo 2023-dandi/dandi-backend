@@ -8,6 +8,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import dandi.dandi.event.application.port.out.EventPort;
 import dandi.dandi.member.application.port.out.MemberPersistencePort;
 import dandi.dandi.member.application.service.MemberSignupManager;
 import dandi.dandi.member.domain.nicknamegenerator.NicknameGenerator;
@@ -17,7 +18,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.ApplicationEventPublisher;
 
 @ExtendWith(MockitoExtension.class)
 class MemberSignupManagerTest {
@@ -29,7 +29,7 @@ class MemberSignupManagerTest {
     private MemberPersistencePort memberPersistencePort;
 
     @Mock
-    private ApplicationEventPublisher applicationEventPublisher;
+    private EventPort eventPort;
 
     @InjectMocks
     private MemberSignupManager memberSignupManager;
@@ -48,7 +48,7 @@ class MemberSignupManagerTest {
         Long newMemberId = memberSignupManager.signup(OAUTH_ID, pushNotitificationToken);
 
         assertThat(newMemberId).isEqualTo(MEMBER.getId());
-        verify(applicationEventPublisher).publishEvent(
+        verify(eventPort).publishEvent(
                 new NewMemberCreatedEvent(MEMBER.getId(), pushNotitificationToken));
     }
 }

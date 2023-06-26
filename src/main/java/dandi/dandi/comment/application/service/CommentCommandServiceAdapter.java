@@ -7,9 +7,9 @@ import dandi.dandi.comment.domain.Comment;
 import dandi.dandi.comment.domain.CommentCreatedEvent;
 import dandi.dandi.common.exception.ForbiddenException;
 import dandi.dandi.common.exception.NotFoundException;
+import dandi.dandi.event.application.port.out.EventPort;
 import dandi.dandi.post.application.port.out.PostPersistencePort;
 import dandi.dandi.post.domain.Post;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,14 +18,14 @@ public class CommentCommandServiceAdapter implements CommentUseCaseServicePort {
 
     private final CommentPersistencePort commentPersistencePort;
     private final PostPersistencePort postPersistencePort;
-    private final ApplicationEventPublisher applicationEventPublisher;
+    private final EventPort eventPort;
 
     public CommentCommandServiceAdapter(CommentPersistencePort commentPersistencePort,
                                         PostPersistencePort postPersistencePort,
-                                        ApplicationEventPublisher applicationEventPublisher) {
+                                        EventPort eventPort) {
         this.commentPersistencePort = commentPersistencePort;
         this.postPersistencePort = postPersistencePort;
-        this.applicationEventPublisher = applicationEventPublisher;
+        this.eventPort = eventPort;
     }
 
     @Override
@@ -40,7 +40,7 @@ public class CommentCommandServiceAdapter implements CommentUseCaseServicePort {
 
     private void publishPostNotificationIfNotifiable(Long memberId, Post post, Long commentId) {
         if (!post.isWrittenBy(memberId)) {
-            applicationEventPublisher.publishEvent(
+            eventPort.publishEvent(
                     new CommentCreatedEvent(post.getWriterId(), post.getId(), commentId));
         }
     }

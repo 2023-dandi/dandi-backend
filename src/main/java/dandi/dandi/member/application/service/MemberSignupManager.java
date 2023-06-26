@@ -1,11 +1,11 @@
 package dandi.dandi.member.application.service;
 
+import dandi.dandi.event.application.port.out.EventPort;
 import dandi.dandi.member.application.port.out.MemberPersistencePort;
 import dandi.dandi.member.domain.Member;
 import dandi.dandi.member.domain.NewMemberCreatedEvent;
 import dandi.dandi.member.domain.nicknamegenerator.NicknameGenerator;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -14,15 +14,15 @@ public class MemberSignupManager {
     private final MemberPersistencePort memberPersistencePort;
     private final NicknameGenerator nicknameGenerator;
     private final String initialProfileImageUrl;
-    private final ApplicationEventPublisher applicationEventPublisher;
+    private final EventPort eventPort;
 
     public MemberSignupManager(MemberPersistencePort memberPersistencePort, NicknameGenerator nicknameGenerator,
                                @Value("${image.member-initial-profile-image-url}") String initialProfileImageUrl,
-                               ApplicationEventPublisher applicationEventPublisher) {
+                               EventPort eventPort) {
         this.memberPersistencePort = memberPersistencePort;
         this.nicknameGenerator = nicknameGenerator;
         this.initialProfileImageUrl = initialProfileImageUrl;
-        this.applicationEventPublisher = applicationEventPublisher;
+        this.eventPort = eventPort;
     }
 
     public Long signup(String oAuthMemberId, String pushNotificationToken) {
@@ -32,7 +32,7 @@ public class MemberSignupManager {
         }
         Member newMember = memberPersistencePort.save(
                 Member.initial(oAuthMemberId, randomNickname, initialProfileImageUrl));
-        applicationEventPublisher.publishEvent(new NewMemberCreatedEvent(newMember.getId(), pushNotificationToken));
+        eventPort.publishEvent(new NewMemberCreatedEvent(newMember.getId(), pushNotificationToken));
         return newMember.getId();
     }
 }
