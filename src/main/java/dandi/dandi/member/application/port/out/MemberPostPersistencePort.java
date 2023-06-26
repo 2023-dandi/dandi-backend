@@ -1,4 +1,4 @@
-package dandi.dandi.post.application.port.out;
+package dandi.dandi.member.application.port.out;
 
 public interface MemberPostPersistencePort {
 
