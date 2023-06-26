@@ -11,6 +11,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import dandi.dandi.common.exception.NotFoundException;
+import dandi.dandi.event.application.port.out.EventPort;
 import dandi.dandi.post.application.port.out.PostPersistencePort;
 import dandi.dandi.postlike.application.port.out.PostLikePersistencePort;
 import dandi.dandi.postlike.domain.PostLike;
@@ -22,7 +23,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.ApplicationEventPublisher;
 
 @ExtendWith(MockitoExtension.class)
 class PostLikeCommandServiceAdapterTest {
@@ -34,7 +34,7 @@ class PostLikeCommandServiceAdapterTest {
     private PostLikePersistencePort postLikePersistencePort;
 
     @Mock
-    private ApplicationEventPublisher applicationEventPublisher;
+    private EventPort eventPort;
 
     @InjectMocks
     private PostLikeCommandServiceAdapter postLikeCommandServiceAdapter;
@@ -51,7 +51,7 @@ class PostLikeCommandServiceAdapterTest {
 
         assertAll(
                 () -> verify(postLikePersistencePort).save(any(PostLike.class)),
-                () -> verify(applicationEventPublisher, never()).publishEvent(any(PostLikedEvent.class))
+                () -> verify(eventPort, never()).publishEvent(any(PostLikedEvent.class))
         );
     }
 
@@ -68,7 +68,7 @@ class PostLikeCommandServiceAdapterTest {
 
         assertAll(
                 () -> verify(postLikePersistencePort).save(any(PostLike.class)),
-                () -> verify(applicationEventPublisher).publishEvent(any(PostLikedEvent.class))
+                () -> verify(eventPort).publishEvent(any(PostLikedEvent.class))
         );
     }
 

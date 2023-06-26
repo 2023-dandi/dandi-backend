@@ -1,13 +1,13 @@
 package dandi.dandi.postlike.application.service;
 
 import dandi.dandi.common.exception.NotFoundException;
+import dandi.dandi.event.application.port.out.EventPort;
 import dandi.dandi.post.application.port.out.PostPersistencePort;
 import dandi.dandi.post.domain.Post;
 import dandi.dandi.postlike.application.port.in.PostLikeCommandServicePort;
 import dandi.dandi.postlike.application.port.out.PostLikePersistencePort;
 import dandi.dandi.postlike.domain.PostLike;
 import dandi.dandi.postlike.domain.PostLikedEvent;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,14 +17,13 @@ public class PostLikeCommandServiceAdapter implements PostLikeCommandServicePort
 
     private final PostPersistencePort postPersistencePort;
     private final PostLikePersistencePort postLikePersistencePort;
-    private final ApplicationEventPublisher applicationEventPublisher;
+    private final EventPort eventPort;
 
     public PostLikeCommandServiceAdapter(PostPersistencePort postPersistencePort,
-                                         PostLikePersistencePort postLikePersistencePort,
-                                         ApplicationEventPublisher applicationEventPublisher) {
+                                         PostLikePersistencePort postLikePersistencePort, EventPort eventPort) {
         this.postPersistencePort = postPersistencePort;
         this.postLikePersistencePort = postLikePersistencePort;
-        this.applicationEventPublisher = applicationEventPublisher;
+        this.eventPort = eventPort;
     }
 
     @Override
@@ -46,7 +45,7 @@ public class PostLikeCommandServiceAdapter implements PostLikeCommandServicePort
 
     private void publishPostLikeEventIfNotifiable(Long memberId, Post post) {
         if (!post.isWrittenBy(memberId)) {
-            applicationEventPublisher.publishEvent(new PostLikedEvent(post.getWriterId(), post.getId()));
+            eventPort.publishEvent(new PostLikedEvent(post.getWriterId(), post.getId()));
         }
     }
 }
