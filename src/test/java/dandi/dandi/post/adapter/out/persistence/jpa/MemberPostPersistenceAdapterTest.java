@@ -1,4 +1,4 @@
-package dandi.dandi.member.adapter.out.persistence.jpa;
+package dandi.dandi.post.adapter.out.persistence.jpa;
 
 import static dandi.dandi.member.MemberTestFixture.MEMBER_ID;
 import static dandi.dandi.post.PostFixture.POST_IMAGE_URL;
@@ -7,7 +7,6 @@ import static dandi.dandi.post.PostFixture.WEATHER_FEELING;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 import dandi.dandi.common.PersistenceAdapterTest;
-import dandi.dandi.post.adapter.out.persistence.jpa.PostPersistenceAdapter;
 import dandi.dandi.post.domain.Post;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
