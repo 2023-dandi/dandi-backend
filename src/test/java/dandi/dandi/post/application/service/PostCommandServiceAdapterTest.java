@@ -29,8 +29,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class PostCommandServiceAdapterTest {
 
     private final PostPersistencePort postPersistencePort = Mockito.mock(PostPersistencePort.class);
+    private final PostImageCommandService postImageCommandService = Mockito.mock(PostImageCommandService.class);
     private final PostCommandServiceAdapter postService =
-            new PostCommandServiceAdapter(postPersistencePort, IMAGE_ACCESS_URL);
+            new PostCommandServiceAdapter(postPersistencePort, postImageCommandService, IMAGE_ACCESS_URL);
 
     @DisplayName("게시글을 작성할 수 있다.")
     @Test
@@ -57,6 +58,7 @@ class PostCommandServiceAdapterTest {
         postService.deletePost(MEMBER_ID, postId);
 
         verify(postPersistencePort).deleteById(postId);
+        verify(postImageCommandService).deletePostImage(POST.getPostImageUrl());
     }
 
     @DisplayName("자신이 작성하지 않은 게시글을 삭제하려고 할 시에 예외를 발생시킨다.")
