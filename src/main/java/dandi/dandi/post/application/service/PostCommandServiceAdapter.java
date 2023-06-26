@@ -19,11 +19,14 @@ public class PostCommandServiceAdapter implements PostCommandServicePort {
     private static final int POST_IMAGE_URL_INDEX = 1;
 
     private final PostPersistencePort postPersistencePort;
+    private final PostImageCommandService postImageCommandService;
     private final String imageAccessUrl;
 
     public PostCommandServiceAdapter(PostPersistencePort postPersistencePort,
+                                     PostImageCommandService postImageCommandService,
                                      @Value("${cloud.aws.cloud-front.uri}") String imageAccessUrl) {
         this.postPersistencePort = postPersistencePort;
+        this.postImageCommandService = postImageCommandService;
         this.imageAccessUrl = imageAccessUrl;
     }
 
@@ -52,6 +55,7 @@ public class PostCommandServiceAdapter implements PostCommandServicePort {
                 .orElseThrow(NotFoundException::post);
         validateDeleteAuthorization(post, memberId);
         postPersistencePort.deleteById(postId);
+        postImageCommandService.deletePostImage(post.getPostImageUrl());
     }
 
     public void validateDeleteAuthorization(Post post, Long memberId) {
