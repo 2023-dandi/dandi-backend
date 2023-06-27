@@ -5,13 +5,16 @@ import static dandi.dandi.utils.TestImageUtils.IMAGE_ACCESS_URL;
 import static dandi.dandi.utils.TestImageUtils.generateTestImgMultipartFile;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 import dandi.dandi.clothes.application.port.in.ClothesImageRegisterResponse;
 import dandi.dandi.image.application.out.ImageManager;
+import dandi.dandi.image.application.out.UnusedImagePersistencePort;
 import dandi.dandi.image.exception.ImageUploadFailedException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,9 +29,11 @@ import org.springframework.web.multipart.MultipartFile;
 class ClothesImageServiceTest {
 
     private final ImageManager imageManager = Mockito.mock(ImageManager.class);
+    private final UnusedImagePersistencePort unusedImagePersistencePort =
+            Mockito.mock(UnusedImagePersistencePort.class);
     private final String clothesImageDir = "clothes";
     private final ClothesImageService clothesImageService =
-            new ClothesImageService(imageManager, clothesImageDir, IMAGE_ACCESS_URL);
+            new ClothesImageService(imageManager, unusedImagePersistencePort, clothesImageDir, IMAGE_ACCESS_URL);
 
     @DisplayName("옷 사진을 등록할 수 있다.")
     @Test
@@ -39,9 +44,12 @@ class ClothesImageServiceTest {
         ClothesImageRegisterResponse clothesImageRegisterResponse =
                 clothesImageService.uploadClothesImage(memberId, multipartFile);
 
-        verify(imageManager).upload(any(), any());
-        assertThat(clothesImageRegisterResponse.getClothesImageUrl())
-                .startsWith(IMAGE_ACCESS_URL + clothesImageDir + "/" + memberId);
+        assertAll(
+                () -> verify(imageManager).upload(any(), any()),
+                () -> verify(unusedImagePersistencePort).save(anyString()),
+                () -> assertThat(clothesImageRegisterResponse.getClothesImageUrl())
+                        .startsWith(IMAGE_ACCESS_URL + clothesImageDir + "/" + memberId)
+        );
     }
 
     @DisplayName("옷 사진 등록에 실패하면 예외를 발생시킨다.")
@@ -53,8 +61,11 @@ class ClothesImageServiceTest {
                 .when(imageManager)
                 .upload(anyString(), any(InputStream.class));
 
-        assertThatThrownBy(() -> clothesImageService.uploadClothesImage(memberId, multipartFile))
-                .isInstanceOf(ImageUploadFailedException.class);
+        assertAll(
+                () -> verify(unusedImagePersistencePort, never()).save(anyString()),
+                () -> assertThatThrownBy(() -> clothesImageService.uploadClothesImage(memberId, multipartFile))
+                        .isInstanceOf(ImageUploadFailedException.class)
+        );
     }
 
     @DisplayName("옷 사진을 삭제할 수 있다.")

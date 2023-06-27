@@ -4,6 +4,7 @@ import dandi.dandi.clothes.application.port.in.ClothesImageRegisterResponse;
 import dandi.dandi.clothes.application.port.in.ClothesImageUseCase;
 import dandi.dandi.clothes.domain.Clothes;
 import dandi.dandi.image.application.out.ImageManager;
+import dandi.dandi.image.application.out.UnusedImagePersistencePort;
 import dandi.dandi.image.exception.ImageUploadFailedException;
 import java.io.IOException;
 import java.util.UUID;
@@ -17,13 +18,16 @@ public class ClothesImageService implements ClothesImageUseCase {
     private static final String CLOTHES_IMAGE_FILE_KEY_FORMAT = "%s/%s_%s_%s";
 
     private final ImageManager imageManager;
+    private final UnusedImagePersistencePort unusedImagePersistencePort;
     private final String clothesImageDir;
     private final String imageAccessUrl;
 
     public ClothesImageService(ImageManager imageManager,
+                               UnusedImagePersistencePort unusedImagePersistencePort,
                                @Value("${image.clothes-dir}") String clothesImageDir,
                                @Value("${cloud.aws.cloud-front.uri}") String imageAccessUrl) {
         this.imageManager = imageManager;
+        this.unusedImagePersistencePort = unusedImagePersistencePort;
         this.clothesImageDir = clothesImageDir;
         this.imageAccessUrl = imageAccessUrl;
     }
@@ -32,6 +36,7 @@ public class ClothesImageService implements ClothesImageUseCase {
     public ClothesImageRegisterResponse uploadClothesImage(Long memberId, MultipartFile multipartFile) {
         String fileKey = generateFileKey(memberId, multipartFile);
         uploadImage(multipartFile, fileKey);
+        unusedImagePersistencePort.save(fileKey);
         return new ClothesImageRegisterResponse(imageAccessUrl + fileKey);
     }
 
