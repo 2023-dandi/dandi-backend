@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -33,10 +34,11 @@ public class ClothesImageService implements ClothesImageUseCase {
     }
 
     @Override
+    @Transactional
     public ClothesImageRegisterResponse uploadClothesImage(Long memberId, MultipartFile multipartFile) {
         String fileKey = generateFileKey(memberId, multipartFile);
-        uploadImage(multipartFile, fileKey);
         unusedImagePersistencePort.save(fileKey);
+        uploadImage(multipartFile, fileKey);
         return new ClothesImageRegisterResponse(imageAccessUrl + fileKey);
     }
 

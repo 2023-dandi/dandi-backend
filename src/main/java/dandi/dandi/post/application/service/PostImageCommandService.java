@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -31,10 +32,11 @@ public class PostImageCommandService implements PostImageCommandPort {
     }
 
     @Override
+    @Transactional
     public PostImageRegisterResponse uploadPostImage(Long memberId, MultipartFile multipartFile) {
         String fileKey = generateFileKey(memberId, multipartFile);
-        uploadImage(multipartFile, fileKey);
         unusedImagePersistencePort.save(fileKey);
+        uploadImage(multipartFile, fileKey);
         return new PostImageRegisterResponse(imageAccessUrl + fileKey);
     }
 
