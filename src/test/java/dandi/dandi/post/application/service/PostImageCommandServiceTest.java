@@ -9,9 +9,11 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 import dandi.dandi.image.application.out.ImageManager;
+import dandi.dandi.image.application.out.UnusedImagePersistencePort;
 import dandi.dandi.image.exception.ImageUploadFailedException;
 import dandi.dandi.post.application.port.in.PostImageRegisterResponse;
 import java.io.IOException;
@@ -27,8 +29,10 @@ import org.springframework.web.multipart.MultipartFile;
 class PostImageCommandServiceTest {
 
     private final ImageManager imageManager = Mockito.mock(ImageManager.class);
+    private final UnusedImagePersistencePort unusedImagePersistencePort =
+            Mockito.mock(UnusedImagePersistencePort.class);
     private final PostImageCommandService postImageCommandService =
-            new PostImageCommandService(imageManager, POST_IMAGE_DIR, IMAGE_ACCESS_URL);
+            new PostImageCommandService(imageManager, unusedImagePersistencePort, POST_IMAGE_DIR, IMAGE_ACCESS_URL);
 
     @DisplayName("게시글 사진을 업로드할 수 있다.")
     @Test
@@ -41,6 +45,7 @@ class PostImageCommandServiceTest {
 
         assertAll(
                 () -> verify(imageManager).upload(anyString(), any(InputStream.class)),
+                () -> verify(unusedImagePersistencePort).save(anyString()),
                 () -> assertThat(postImageRegisterResponse.getPostImageUrl())
                         .startsWith(IMAGE_ACCESS_URL + POST_IMAGE_DIR)
                         .contains(multipartFile.getOriginalFilename())
@@ -57,7 +62,10 @@ class PostImageCommandServiceTest {
                 .when(imageManager)
                 .upload(anyString(), any(InputStream.class));
 
-        assertThatThrownBy(() -> postImageCommandService.uploadPostImage(memberId, multipartFile))
-                .isInstanceOf(ImageUploadFailedException.class);
+        assertAll(
+                () -> verify(unusedImagePersistencePort, never()).save(POST_IMAGE_DIR),
+                () -> assertThatThrownBy(() -> postImageCommandService.uploadPostImage(memberId, multipartFile))
+                        .isInstanceOf(ImageUploadFailedException.class)
+        );
     }
 }
