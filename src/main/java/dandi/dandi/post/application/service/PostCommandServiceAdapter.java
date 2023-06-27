@@ -41,6 +41,7 @@ public class PostCommandServiceAdapter implements PostCommandServicePort {
 
         Post post = Post.initial(temperatures, postImageUrl, weatherFeeling);
         Long postId = postPersistencePort.save(post, memberId);
+        postImageCommandService.deletePostImageUrlInUnused(postImageUrl);
         return new PostRegisterResponse(postId);
     }
 

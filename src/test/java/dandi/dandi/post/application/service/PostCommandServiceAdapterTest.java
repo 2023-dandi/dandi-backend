@@ -10,7 +10,9 @@ import static dandi.dandi.post.PostFixture.POST_IMAGE_FULL_URL;
 import static dandi.dandi.utils.TestImageUtils.IMAGE_ACCESS_URL;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -45,7 +47,10 @@ class PostCommandServiceAdapterTest {
         Long postId = postService.registerPost(memberId, postRegisterCommand)
                 .getPostId();
 
-        assertThat(postId).isEqualTo(1L);
+        assertAll(
+                () -> verify(postImageCommandService).deletePostImageUrlInUnused(anyString()),
+                () -> assertThat(postId).isEqualTo(1L)
+        );
     }
 
     @DisplayName("자신이 작성한 게시글을 삭제할 수 있다.")

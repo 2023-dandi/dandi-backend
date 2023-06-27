@@ -52,6 +52,10 @@ public class PostImageCommandService implements PostImageCommandPort {
                 postImageDir, memberId, uuid, profileImage.getOriginalFilename());
     }
 
+    public void deletePostImageUrlInUnused(String imageUrl) {
+        unusedImagePersistencePort.delete(imageUrl);
+    }
+
     public void deletePostImage(String imageUrl) {
         imageManager.delete(imageUrl);
     }
