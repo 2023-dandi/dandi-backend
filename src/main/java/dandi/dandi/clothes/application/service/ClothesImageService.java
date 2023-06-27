@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -56,10 +57,12 @@ public class ClothesImageService implements ClothesImageUseCase {
                 clothesImageDir, memberId, uuid, profileImage.getOriginalFilename());
     }
 
+    @Transactional(propagation = Propagation.MANDATORY)
     public void deleteClothesImageUrlInUnused(String imageUrl) {
         unusedImagePersistencePort.delete(imageUrl);
     }
 
+    @Transactional(propagation = Propagation.MANDATORY)
     public void deleteClothesImage(Clothes clothes) {
         imageManager.delete(clothes.getClothesImageUrl());
     }

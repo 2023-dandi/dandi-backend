@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -54,10 +55,12 @@ public class PostImageCommandService implements PostImageCommandPort {
                 postImageDir, memberId, uuid, profileImage.getOriginalFilename());
     }
 
+    @Transactional(propagation = Propagation.MANDATORY)
     public void deletePostImageUrlInUnused(String imageUrl) {
         unusedImagePersistencePort.delete(imageUrl);
     }
 
+    @Transactional(propagation = Propagation.MANDATORY)
     public void deletePostImage(String imageUrl) {
         imageManager.delete(imageUrl);
     }
