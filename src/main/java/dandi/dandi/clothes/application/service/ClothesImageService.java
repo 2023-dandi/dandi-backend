@@ -56,6 +56,10 @@ public class ClothesImageService implements ClothesImageUseCase {
                 clothesImageDir, memberId, uuid, profileImage.getOriginalFilename());
     }
 
+    public void deleteClothesImageUrlInUnused(String imageUrl) {
+        unusedImagePersistencePort.delete(imageUrl);
+    }
+
     public void deleteClothesImage(Clothes clothes) {
         imageManager.delete(clothes.getClothesImageUrl());
     }

@@ -34,6 +34,7 @@ public class ClothesUseCasePortServiceAdapter implements ClothesUseCasePort {
         Clothes clothes = Clothes.initial(memberId, clothesRegisterCommand.getCategory(),
                 clothesRegisterCommand.getSeasons(), clothesImageUrl);
         clothesPersistencePort.save(clothes);
+        clothesImageService.deleteClothesImageUrlInUnused(clothesImageUrl);
     }
 
     private String removeImageAccessUrl(String clothesImageUrl) {

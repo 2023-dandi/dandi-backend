@@ -11,7 +11,9 @@ import static dandi.dandi.clothes.domain.Season.SUMMER;
 import static dandi.dandi.member.MemberTestFixture.MEMBER_ID;
 import static dandi.dandi.utils.TestImageUtils.IMAGE_ACCESS_URL;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -44,7 +46,10 @@ class ClothesUseCaseServiceAdapterTest {
 
         clothesUseCaseServiceAdapter.registerClothes(MEMBER_ID, clothesRegisterCommand);
 
-        verify(clothesPersistencePort).save(any(Clothes.class));
+        assertAll(
+                () -> verify(clothesImageService).deleteClothesImageUrlInUnused(anyString()),
+                () -> verify(clothesPersistencePort).save(any(Clothes.class))
+        );
     }
 
     @DisplayName("자신의 옷을 삭제할 수 있다.")
