@@ -1,0 +1,6 @@
+package dandi.dandi.image.application.out;
+
+public interface UnusedImagePersistencePort {
+
+    void save(String imageUrl);
+}
