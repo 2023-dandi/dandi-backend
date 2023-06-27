@@ -17,4 +17,9 @@ public class UnusedImagePersistenceAdapter implements UnusedImagePersistencePort
         UnusedImageJpaEntity unusedImageJpaEntity = new UnusedImageJpaEntity(imageUrl);
         unusedImageRepository.save(unusedImageJpaEntity);
     }
+
+    @Override
+    public void delete(String imageUrl) {
+        unusedImageRepository.deleteByImageUrl(imageUrl);
+    }
 }
