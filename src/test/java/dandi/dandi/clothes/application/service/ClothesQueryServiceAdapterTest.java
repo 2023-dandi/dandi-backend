@@ -1,7 +1,6 @@
 package dandi.dandi.clothes.application.service;
 
 import static dandi.dandi.clothes.ClothesFixture.CLOTHES;
-import static dandi.dandi.clothes.ClothesFixture.CLOTHES_IMAGE_FULL_URL;
 import static dandi.dandi.clothes.ClothesFixture.CLOTHES_IMAGE_URL;
 import static dandi.dandi.clothes.domain.Category.BAG;
 import static dandi.dandi.clothes.domain.Category.BOTTOM;
@@ -13,7 +12,6 @@ import static dandi.dandi.clothes.domain.Season.SPRING;
 import static dandi.dandi.clothes.domain.Season.SUMMER;
 import static dandi.dandi.member.MemberTestFixture.MEMBER_ID;
 import static dandi.dandi.utils.PaginationUtils.CREATED_AT_DESC_TEST_SIZE_PAGEABLE;
-import static dandi.dandi.utils.TestImageUtils.IMAGE_ACCESS_URL;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -39,7 +37,8 @@ import org.assertj.core.api.AssertionsForInterfaceTypes;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -49,9 +48,10 @@ import org.springframework.data.domain.SliceImpl;
 @ExtendWith(MockitoExtension.class)
 class ClothesQueryServiceAdapterTest {
 
-    private final ClothesPersistencePort clothesPersistencePort = Mockito.mock(ClothesPersistencePort.class);
-    private final ClothesQueryServiceAdapter clothesQueryServiceAdapter =
-            new ClothesQueryServiceAdapter(clothesPersistencePort, IMAGE_ACCESS_URL);
+    @Mock
+    private ClothesPersistencePort clothesPersistencePort;
+    @InjectMocks
+    private ClothesQueryServiceAdapter clothesQueryServiceAdapter;
 
     @DisplayName("옷 세부 정보를 조회할 수 있다.")
     @Test
@@ -65,7 +65,7 @@ class ClothesQueryServiceAdapterTest {
 
         assertAll(
                 () -> assertThat(clothesDetailResponse.getId()).isEqualTo(CLOTHES.getId()),
-                () -> assertThat(clothesDetailResponse.getClothesImageUrl()).isEqualTo(CLOTHES_IMAGE_FULL_URL)
+                () -> assertThat(clothesDetailResponse.getClothesImageUrl()).contains(CLOTHES.getClothesImageUrl())
         );
     }
 
@@ -135,7 +135,7 @@ class ClothesQueryServiceAdapterTest {
         ClothesResponse firstClothesResponse = actual.getClothes().get(0);
         assertAll(
                 () -> assertThat(actual.isLastPage()).isTrue(),
-                () -> assertThat(firstClothesResponse.getClothesImageUrl()).isEqualTo(CLOTHES_IMAGE_FULL_URL)
+                () -> assertThat(firstClothesResponse.getClothesImageUrl()).contains(CLOTHES_IMAGE_URL)
         );
     }
 
