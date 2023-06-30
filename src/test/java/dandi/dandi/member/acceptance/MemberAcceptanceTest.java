@@ -10,6 +10,7 @@ import static dandi.dandi.common.HttpResponseExtractor.extractExceptionMessage;
 import static dandi.dandi.common.RequestURI.FEED_REQUEST_URI;
 import static dandi.dandi.common.RequestURI.LOGIN_REQUEST_URI;
 import static dandi.dandi.common.RequestURI.MEMBER_BLOCK_REQUEST_URI;
+import static dandi.dandi.common.RequestURI.MEMBER_DEFAULT_PROFILE_IMAGE;
 import static dandi.dandi.common.RequestURI.MEMBER_INFO_URI;
 import static dandi.dandi.common.RequestURI.MEMBER_NICKNAME_DUPLICATION_CHECK_URI;
 import static dandi.dandi.common.RequestURI.MEMBER_NICKNAME_LOCATION;
@@ -17,6 +18,7 @@ import static dandi.dandi.common.RequestURI.MEMBER_NICKNAME_URI;
 import static dandi.dandi.common.RequestURI.MEMBER_PROFILE_IMAGE_URI;
 import static dandi.dandi.member.MemberTestFixture.DISTRICT_VALUE;
 import static dandi.dandi.member.MemberTestFixture.OAUTH_ID;
+import static dandi.dandi.utils.TestImageUtils.IMAGE_ACCESS_URL;
 import static dandi.dandi.utils.TestImageUtils.TEST_IMAGE_FILE_NAME;
 import static dandi.dandi.utils.TestImageUtils.generateTestImgFile;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
@@ -68,7 +70,8 @@ class MemberAcceptanceTest extends AcceptanceTest {
                 () -> assertThat(memberInfoResponse.getPostCount()).isEqualTo(2),
                 () -> assertThat(memberInfoResponse.getLatitude()).isEqualTo(initialLatitude),
                 () -> assertThat(memberInfoResponse.getLongitude()).isEqualTo(initialLongitude),
-                () -> assertThat(memberInfoResponse.getProfileImageUrl()).isNotNull()
+                () -> assertThat(memberInfoResponse.getProfileImageUrl())
+                        .isEqualTo(IMAGE_ACCESS_URL + MEMBER_DEFAULT_PROFILE_IMAGE)
         );
     }
 
