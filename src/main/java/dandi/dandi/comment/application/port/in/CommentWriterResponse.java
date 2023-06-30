@@ -11,10 +11,16 @@ public class CommentWriterResponse {
     public CommentWriterResponse() {
     }
 
-    public CommentWriterResponse(Member member, String imageAccessUrl) {
+    public CommentWriterResponse(Long id, String nickname, String profileImageUrl) {
+        this.id = id;
+        this.nickname = nickname;
+        this.profileImageUrl = profileImageUrl;
+    }
+
+    public CommentWriterResponse(Member member) {
         this.id = member.getId();
         this.nickname = member.getNickname();
-        this.profileImageUrl = imageAccessUrl + member.getProfileImgUrl();
+        this.profileImageUrl = member.getProfileImgUrl();
     }
 
     public Long getId() {
