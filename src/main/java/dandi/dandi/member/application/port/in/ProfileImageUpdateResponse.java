@@ -1,6 +1,8 @@
 package dandi.dandi.member.application.port.in;
 
-public class ProfileImageUpdateResponse {
+import dandi.dandi.image.application.in.ImageResponse;
+
+public class ProfileImageUpdateResponse implements ImageResponse {
 
     private String profileImageUrl;
 
@@ -13,5 +15,10 @@ public class ProfileImageUpdateResponse {
 
     public String getProfileImageUrl() {
         return profileImageUrl;
+    }
+
+    @Override
+    public ImageResponse addImageAccessUrl(String imageAccessUrl) {
+        return new ProfileImageUpdateResponse(imageAccessUrl + profileImageUrl);
     }
 }
