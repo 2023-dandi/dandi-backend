@@ -1,13 +1,13 @@
 package dandi.dandi.member.application.service;
 
 import dandi.dandi.auth.exception.UnauthorizedException;
+import dandi.dandi.image.aspect.ImageUrlInclusion;
 import dandi.dandi.member.application.port.in.MemberInfoResponse;
 import dandi.dandi.member.application.port.in.MemberQueryServicePort;
 import dandi.dandi.member.application.port.in.NicknameDuplicationCheckResponse;
 import dandi.dandi.member.application.port.out.MemberPersistencePort;
 import dandi.dandi.member.application.port.out.MemberPostPersistencePort;
 import dandi.dandi.member.domain.Member;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,22 +17,20 @@ public class MemberQueryServiceAdapter implements MemberQueryServicePort {
 
     private final MemberPersistencePort memberPersistencePort;
     private final MemberPostPersistencePort memberPostPersistencePort;
-    private final String imageAccessUrl;
 
     public MemberQueryServiceAdapter(MemberPersistencePort memberPersistencePort,
-                                     MemberPostPersistencePort memberPostPersistencePort,
-                                     @Value("${cloud.aws.cloud-front.uri}") String imageAccessUrl) {
+                                     MemberPostPersistencePort memberPostPersistencePort) {
         this.memberPersistencePort = memberPersistencePort;
         this.memberPostPersistencePort = memberPostPersistencePort;
-        this.imageAccessUrl = imageAccessUrl;
     }
 
     @Override
+    @ImageUrlInclusion
     public MemberInfoResponse findMemberInfo(Long memberId) {
         Member member = memberPersistencePort.findById(memberId)
                 .orElseThrow(UnauthorizedException::notExistentMember);
         int postCount = memberPostPersistencePort.countPostByMemberId(memberId);
-        return new MemberInfoResponse(member, postCount, imageAccessUrl);
+        return new MemberInfoResponse(member, postCount);
     }
 
     @Override

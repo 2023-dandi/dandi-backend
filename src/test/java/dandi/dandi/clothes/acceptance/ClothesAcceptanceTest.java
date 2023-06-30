@@ -239,7 +239,8 @@ class ClothesAcceptanceTest extends AcceptanceTest {
                 .getClothes();
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
-                () -> assertThat(clothes).hasSize(2)
+                () -> assertThat(clothes).hasSize(2),
+                () -> assertThat(clothes.get(0).getClothesImageUrl()).isEqualTo(CLOTHES_IMAGE_FULL_URL)
         );
     }
 

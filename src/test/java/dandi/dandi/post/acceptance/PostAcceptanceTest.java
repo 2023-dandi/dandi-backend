@@ -9,6 +9,7 @@ import static dandi.dandi.common.HttpMethodFixture.httpPostWithAuthorizationAndI
 import static dandi.dandi.common.HttpResponseExtractor.extractExceptionMessage;
 import static dandi.dandi.common.RequestURI.FEED_REQUEST_URI;
 import static dandi.dandi.common.RequestURI.LIKED_POST_REQUEST_URI;
+import static dandi.dandi.common.RequestURI.MEMBER_DEFAULT_PROFILE_IMAGE;
 import static dandi.dandi.common.RequestURI.MY_POST_BY_TEMPERATURE_REQUEST_URI;
 import static dandi.dandi.common.RequestURI.MY_POST_REQUEST_URI;
 import static dandi.dandi.common.RequestURI.POST_DETAILS_REQUEST_URI;
@@ -20,7 +21,9 @@ import static dandi.dandi.post.PostFixture.MIN_TEMPERATURE;
 import static dandi.dandi.post.PostFixture.OUTFIT_FEELING_INDEX;
 import static dandi.dandi.post.PostFixture.POST_IMAGE_FULL_URL;
 import static dandi.dandi.post.PostFixture.POST_IMAGE_URL;
+import static dandi.dandi.utils.TestImageUtils.IMAGE_ACCESS_URL;
 import static dandi.dandi.utils.TestImageUtils.generateTestImgFile;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -139,7 +142,8 @@ class PostAcceptanceTest extends AcceptanceTest {
                 () -> assertThat(postDetailResponse.getPostImageUrl()).isNotNull(),
                 () -> assertThat(postWriterResponse.getId()).isNotNull(),
                 () -> assertThat(postWriterResponse.getNickname()).isNotNull(),
-                () -> assertThat(postWriterResponse.getProfileImageUrl()).isNotNull(),
+                () -> assertThat(postWriterResponse.getProfileImageUrl())
+                        .isEqualTo(IMAGE_ACCESS_URL + MEMBER_DEFAULT_PROFILE_IMAGE),
                 () -> assertThat(postDetailResponse.isMine()).isTrue(),
                 () -> assertThat(postDetailResponse.isLiked()).isFalse(),
                 () -> assertThat(postDetailResponse.getOutfitFeelings().getFeelingIndex())
@@ -199,8 +203,8 @@ class PostAcceptanceTest extends AcceptanceTest {
                 () -> assertThat(posts).hasSize(size),
                 () -> assertThat(posts.get(0).getId()).isEqualTo(4L),
                 () -> assertThat(posts.get(1).getId()).isEqualTo(3L),
-                () -> assertThat(posts.get(0).getPostImageUrl()).isNotNull(),
-                () -> assertThat(posts.get(1).getPostImageUrl()).isNotNull()
+                () -> assertThat(posts.get(0).getPostImageUrl()).isEqualTo(POST_IMAGE_FULL_URL),
+                () -> assertThat(posts.get(1).getPostImageUrl()).isEqualTo(POST_IMAGE_FULL_URL)
         );
     }
 
@@ -224,8 +228,8 @@ class PostAcceptanceTest extends AcceptanceTest {
                 () -> assertThat(posts).hasSize(4),
                 () -> assertThat(posts.get(0).getId()).isEqualTo(4L),
                 () -> assertThat(posts.get(1).getId()).isEqualTo(3L),
-                () -> assertThat(posts.get(0).getPostImageUrl()).isNotNull(),
-                () -> assertThat(posts.get(1).getPostImageUrl()).isNotNull()
+                () -> assertThat(posts.get(0).getPostImageUrl()).isEqualTo(POST_IMAGE_FULL_URL),
+                () -> assertThat(posts.get(1).getPostImageUrl()).isEqualTo(POST_IMAGE_FULL_URL)
         );
     }
 
@@ -248,7 +252,10 @@ class PostAcceptanceTest extends AcceptanceTest {
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
                 () -> assertThat(feedResponse.isLastPage()).isTrue(),
-                () -> assertThat(feedResponse.getPosts()).hasSize(4)
+                () -> assertThat(feedResponse.getPosts()).hasSize(4),
+                () -> assertThat(feedResponse.getPosts().get(0).getPostImageUrl()).isEqualTo(POST_IMAGE_FULL_URL),
+                () -> assertThat(feedResponse.getPosts().get(0).getWriter().getProfileImageUrl())
+                        .isEqualTo(IMAGE_ACCESS_URL + MEMBER_DEFAULT_PROFILE_IMAGE)
         );
     }
 
@@ -272,7 +279,11 @@ class PostAcceptanceTest extends AcceptanceTest {
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
                 () -> assertThat(myPostsByTemperatureResponses.isLastPage()).isTrue(),
                 () -> assertThat(myPostsByTemperatureResponses.getWriter()).isNotNull(),
-                () -> assertThat(myPostsByTemperatureResponses.getPosts()).hasSize(2)
+                () -> assertThat(myPostsByTemperatureResponses.getPosts()).hasSize(2),
+                () -> assertThat(myPostsByTemperatureResponses.getPosts().get(0).getPostImageUrl())
+                        .isEqualTo(POST_IMAGE_FULL_URL),
+                () -> assertThat(myPostsByTemperatureResponses.getWriter().getProfileImageUrl())
+                        .isEqualTo(IMAGE_ACCESS_URL + MEMBER_DEFAULT_PROFILE_IMAGE)
         );
     }
 
@@ -343,7 +354,11 @@ class PostAcceptanceTest extends AcceptanceTest {
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
                 () -> assertThat(posts).hasSize(2),
                 () -> assertThat(posts.get(0).getId()).isEqualTo(2L),
-                () -> assertThat(posts.get(1).getId()).isEqualTo(1L)
+                () -> assertThat(posts.get(1).getId()).isEqualTo(1L),
+                () -> assertThat(posts.get(0).getPostImageUrl()).isEqualTo(POST_IMAGE_FULL_URL),
+                () -> assertThat(posts.get(0).getWriter().getProfileImageUrl())
+                        .isEqualTo(IMAGE_ACCESS_URL + MEMBER_DEFAULT_PROFILE_IMAGE)
+
         );
     }
 

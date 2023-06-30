@@ -11,9 +11,15 @@ public class PostWriterResponse {
     public PostWriterResponse() {
     }
 
-    public PostWriterResponse(Post post, String imageAccessUrl) {
+    private PostWriterResponse(Long id, String nickname, String profileImageUrl) {
+        this.id = id;
+        this.nickname = nickname;
+        this.profileImageUrl = profileImageUrl;
+    }
+
+    public PostWriterResponse(Post post) {
         this.id = post.getWriterId();
-        this.profileImageUrl = imageAccessUrl + post.getWriterProfileImageUrl();
+        this.profileImageUrl = post.getWriterProfileImageUrl();
         this.nickname = post.getWriterNickname();
     }
 
@@ -27,5 +33,9 @@ public class PostWriterResponse {
 
     public String getNickname() {
         return nickname;
+    }
+
+    public PostWriterResponse addImageAccessUrl(String imageAccessUrl) {
+        return new PostWriterResponse(id, nickname, imageAccessUrl + profileImageUrl);
     }
 }

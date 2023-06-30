@@ -6,7 +6,6 @@ import static dandi.dandi.member.MemberTestFixture.MEMBER_ID;
 import static dandi.dandi.post.PostFixture.POST;
 import static dandi.dandi.post.PostFixture.POST_ID;
 import static dandi.dandi.utils.PaginationUtils.CREATED_AT_DESC_TEST_SIZE_PAGEABLE;
-import static dandi.dandi.utils.TestImageUtils.IMAGE_ACCESS_URL;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -33,7 +32,7 @@ class CommentQueryServiceAdapterTest {
     private final PostPersistencePort postPersistencePort = Mockito.mock(PostPersistencePort.class);
     private final CommentPersistencePort commentPersistencePort = Mockito.mock(CommentPersistencePort.class);
     private final CommentQueryServiceAdapter commentQueryServiceAdapter =
-            new CommentQueryServiceAdapter(postPersistencePort, commentPersistencePort, IMAGE_ACCESS_URL);
+            new CommentQueryServiceAdapter(postPersistencePort, commentPersistencePort);
 
     @DisplayName("게시글의 댓글들을 조회할 수 있다.")
     @Test

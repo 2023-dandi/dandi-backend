@@ -14,6 +14,7 @@ import dandi.dandi.clothes.domain.Month;
 import dandi.dandi.clothes.domain.Season;
 import dandi.dandi.common.exception.ForbiddenException;
 import dandi.dandi.common.exception.NotFoundException;
+import dandi.dandi.image.aspect.ImageUrlInclusion;
 import java.time.LocalDate;
 import java.util.EnumMap;
 import java.util.EnumSet;
@@ -22,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -35,12 +35,9 @@ public class ClothesQueryServiceAdapter implements ClothesQueryServicePort {
     private static final String ALL = "ALL";
 
     private final ClothesPersistencePort clothesPersistencePort;
-    private final String imageAccessUrl;
 
-    public ClothesQueryServiceAdapter(ClothesPersistencePort clothesPersistencePort,
-                                      @Value("${cloud.aws.cloud-front.uri}") String imageAccessUrl) {
+    public ClothesQueryServiceAdapter(ClothesPersistencePort clothesPersistencePort) {
         this.clothesPersistencePort = clothesPersistencePort;
-        this.imageAccessUrl = imageAccessUrl;
     }
 
     @Override
@@ -82,11 +79,12 @@ public class ClothesQueryServiceAdapter implements ClothesQueryServicePort {
     }
 
     @Override
+    @ImageUrlInclusion
     public ClothesDetailResponse getSingleClothesDetails(Long memberId, Long clothesId) {
         Clothes clothes = clothesPersistencePort.findById(clothesId)
                 .orElseThrow(NotFoundException::clothes);
         validateLookUpPermission(memberId, clothes);
-        return new ClothesDetailResponse(clothes, imageAccessUrl);
+        return new ClothesDetailResponse(clothes);
     }
 
     private void validateLookUpPermission(Long memberId, Clothes clothes) {
@@ -96,11 +94,12 @@ public class ClothesQueryServiceAdapter implements ClothesQueryServicePort {
     }
 
     @Override
+    @ImageUrlInclusion
     public ClothesResponses getClothes(Long memberId, String category, Set<String> seasons, Pageable pageable) {
         Slice<Clothes> clothesSearchResult = clothesPersistencePort.findByMemberIdAndCategoryAndSeasons(
                 memberId, mapToCategory(category), mapToSeason(seasons), pageable);
         List<ClothesResponse> clothesResponses = clothesSearchResult.stream()
-                .map(clothes -> new ClothesResponse(clothes.getId(), imageAccessUrl + clothes.getClothesImageUrl()))
+                .map(ClothesResponse::new)
                 .collect(Collectors.toUnmodifiableList());
         return new ClothesResponses(clothesResponses, clothesSearchResult.isLast());
     }
@@ -119,6 +118,7 @@ public class ClothesQueryServiceAdapter implements ClothesQueryServicePort {
     }
 
     @Override
+    @ImageUrlInclusion
     public ClothesResponses getTodayClothes(Long memberId, LocalDate today, Pageable pageable) {
         Month month = Month.fromDate(today);
         Set<Season> seasons = month.getSeasons();
@@ -127,7 +127,7 @@ public class ClothesQueryServiceAdapter implements ClothesQueryServicePort {
         Slice<Clothes> clothesSearchResult = clothesPersistencePort
                 .findByMemberIdAndSeasonsWithCategoriesCount(memberId, seasons, searchCategoryCount, pageable);
         List<ClothesResponse> clothesResponses = clothesSearchResult.stream()
-                .map(clothes -> new ClothesResponse(clothes.getId(), imageAccessUrl + clothes.getClothesImageUrl()))
+                .map(ClothesResponse::new)
                 .collect(Collectors.toUnmodifiableList());
         return new ClothesResponses(clothesResponses, clothesSearchResult.isLast());
     }

@@ -10,9 +10,14 @@ public class MyPostResponse {
     public MyPostResponse() {
     }
 
-    public MyPostResponse(Post post, String imageAccessUrl) {
+    private MyPostResponse(Long id, String postImageUrl) {
+        this.id = id;
+        this.postImageUrl = postImageUrl;
+    }
+
+    public MyPostResponse(Post post) {
         this.id = post.getId();
-        this.postImageUrl = imageAccessUrl + post.getPostImageUrl();
+        this.postImageUrl = post.getPostImageUrl();
     }
 
     public Long getId() {
@@ -21,5 +26,9 @@ public class MyPostResponse {
 
     public String getPostImageUrl() {
         return postImageUrl;
+    }
+
+    public MyPostResponse addImageAccessUrl(String imageAccessUrl) {
+        return new MyPostResponse(id, imageAccessUrl + postImageUrl);
     }
 }

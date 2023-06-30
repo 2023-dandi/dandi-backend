@@ -11,6 +11,9 @@ public class CommentResponse {
     private LocalDate createdAt;
     private String content;
 
+    public CommentResponse() {
+    }
+
     public CommentResponse(Long id, CommentWriterResponse writerResponse, boolean wittenByPostWriter,
                            boolean mine, LocalDate createdAt, String content) {
         this.id = id;
@@ -44,5 +47,11 @@ public class CommentResponse {
 
     public String getContent() {
         return content;
+    }
+
+    public CommentResponse addImageAccessUrl(String imageAccessUrl) {
+        CommentWriterResponse writer = new CommentWriterResponse(this.writer.getId(), this.writer.getNickname(),
+                imageAccessUrl + this.writer.getProfileImageUrl());
+        return new CommentResponse(id, writer, postWriter, mine, createdAt, content);
     }
 }

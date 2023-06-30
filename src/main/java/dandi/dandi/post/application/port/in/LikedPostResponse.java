@@ -15,12 +15,22 @@ public class LikedPostResponse {
     public LikedPostResponse() {
     }
 
-    public LikedPostResponse(Post post, String imageAccessUrl) {
+    private LikedPostResponse(Long id, PostWriterResponse writer, TemperatureResponse temperatures, long feelingIndex,
+                              String postImageUrl, LocalDate createdAt) {
+        this.id = id;
+        this.writer = writer;
+        this.temperatures = temperatures;
+        this.feelingIndex = feelingIndex;
+        this.postImageUrl = postImageUrl;
+        this.createdAt = createdAt;
+    }
+
+    public LikedPostResponse(Post post) {
         this.id = post.getId();
-        this.writer = new PostWriterResponse(post, imageAccessUrl);
+        this.writer = new PostWriterResponse(post);
         this.temperatures = new TemperatureResponse(post.getMinTemperature(), post.getMaxTemperature());
         this.feelingIndex = post.getWeatherFeelingIndex();
-        this.postImageUrl = imageAccessUrl + post.getPostImageUrl();
+        this.postImageUrl = post.getPostImageUrl();
         this.createdAt = post.getCreatedAt();
     }
 
@@ -46,5 +56,16 @@ public class LikedPostResponse {
 
     public LocalDate getCreatedAt() {
         return createdAt;
+    }
+
+    public LikedPostResponse addImageAccessUrl(String imageAccessUrl) {
+        return new LikedPostResponse(
+                id,
+                writer.addImageAccessUrl(imageAccessUrl),
+                temperatures,
+                feelingIndex,
+                imageAccessUrl + postImageUrl,
+                createdAt
+        );
     }
 }

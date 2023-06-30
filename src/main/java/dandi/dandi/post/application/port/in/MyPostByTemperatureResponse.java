@@ -15,13 +15,24 @@ public class MyPostByTemperatureResponse {
     public MyPostByTemperatureResponse() {
     }
 
-    public MyPostByTemperatureResponse(Post post, boolean liked, String imageAccessUrl) {
+    private MyPostByTemperatureResponse(Long id, LocalDate createdAt, TemperatureResponse temperatures,
+                                        Long feelingIndex,
+                                        String postImageUrl, boolean liked) {
+        this.id = id;
+        this.createdAt = createdAt;
+        this.temperatures = temperatures;
+        this.feelingIndex = feelingIndex;
+        this.postImageUrl = postImageUrl;
+        this.liked = liked;
+    }
+
+    public MyPostByTemperatureResponse(Post post, boolean liked) {
         this.id = post.getId();
         this.createdAt = post.getCreatedAt();
         this.feelingIndex = post.getWeatherFeelingIndex();
         this.temperatures = new TemperatureResponse(post.getMinTemperature(), post.getMaxTemperature());
         this.liked = liked;
-        this.postImageUrl = imageAccessUrl + post.getPostImageUrl();
+        this.postImageUrl = post.getPostImageUrl();
     }
 
     public Long getId() {
@@ -46,5 +57,10 @@ public class MyPostByTemperatureResponse {
 
     public boolean isLiked() {
         return liked;
+    }
+
+    public MyPostByTemperatureResponse addImageAccessUrl(String imageAccessUrl) {
+        return new MyPostByTemperatureResponse(
+                id, createdAt, temperatures, feelingIndex, imageAccessUrl + postImageUrl, liked);
     }
 }
