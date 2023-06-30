@@ -1,6 +1,7 @@
 package dandi.dandi.post.application.service;
 
 import dandi.dandi.common.exception.NotFoundException;
+import dandi.dandi.image.aspect.ImageUrlInclusion;
 import dandi.dandi.post.application.port.in.FeedResponse;
 import dandi.dandi.post.application.port.in.LikedPostResponse;
 import dandi.dandi.post.application.port.in.LikedPostResponses;
@@ -19,7 +20,6 @@ import dandi.dandi.post.domain.Temperatures;
 import dandi.dandi.postlike.application.port.out.PostLikePersistencePort;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -31,35 +31,35 @@ public class PostQueryServiceAdapter implements PostQueryServicePort {
 
     private final PostPersistencePort postPersistencePort;
     private final PostLikePersistencePort postLikePersistencePort;
-    private final String imageAccessUrl;
 
     public PostQueryServiceAdapter(PostPersistencePort postPersistencePort,
-                                   PostLikePersistencePort postLikePersistencePort,
-                                   @Value("${cloud.aws.cloud-front.uri}") String imageAccessUrl) {
+                                   PostLikePersistencePort postLikePersistencePort) {
         this.postPersistencePort = postPersistencePort;
         this.postLikePersistencePort = postLikePersistencePort;
-        this.imageAccessUrl = imageAccessUrl;
     }
 
     @Override
+    @ImageUrlInclusion
     public PostDetailResponse getPostDetails(Long memberId, Long postId) {
         Post post = postPersistencePort.findById(postId)
                 .orElseThrow(NotFoundException::post);
         boolean mine = post.isWrittenBy(memberId);
         boolean liked = postLikePersistencePort.existsByPostIdAndMemberId(memberId, postId);
-        return new PostDetailResponse(post, mine, liked, imageAccessUrl);
+        return new PostDetailResponse(post, mine, liked);
     }
 
     @Override
+    @ImageUrlInclusion
     public MyPostResponses getMyPostIdsAndPostImageUrls(Long memberId, Pageable pageable) {
         Slice<Post> posts = postPersistencePort.findByMemberId(memberId, pageable);
         List<MyPostResponse> myPostResponses = posts.stream()
-                .map(post -> new MyPostResponse(post, imageAccessUrl))
+                .map(MyPostResponse::new)
                 .collect(Collectors.toUnmodifiableList());
         return new MyPostResponses(myPostResponses, posts.isLast());
     }
 
     @Override
+    @ImageUrlInclusion
     public FeedResponse getPostsByTemperature(Long memberId, Double minTemperature, Double maxTemperature,
                                               Pageable pageable) {
         Temperatures temperatures = new Temperatures(minTemperature, maxTemperature);
@@ -71,12 +71,13 @@ public class PostQueryServiceAdapter implements PostQueryServicePort {
 
     private FeedResponse convertToFeedResponse(Long memberId, Slice<Post> posts) {
         List<PostResponse> postResponses = posts.stream()
-                .map(post -> new PostResponse(post, post.isLikedBy(memberId), imageAccessUrl))
+                .map(post -> new PostResponse(post, post.isLikedBy(memberId)))
                 .collect(Collectors.toUnmodifiableList());
         return new FeedResponse(postResponses, posts.isLast());
     }
 
     @Override
+    @ImageUrlInclusion
     public MyPostsByTemperatureResponses getMyPostsByTemperature(Long memberId, Double minTemperature,
                                                                  Double maxTemperature, Pageable pageable) {
         Temperatures temperatures = new Temperatures(minTemperature, maxTemperature);
@@ -90,7 +91,7 @@ public class PostQueryServiceAdapter implements PostQueryServicePort {
     private MyPostsByTemperatureResponses convertToMyPostsByTemperatureResponses(Long memberId,
                                                                                  Slice<Post> myPostsByTemperature) {
         List<MyPostByTemperatureResponse> myPostByTemperatureResponses = myPostsByTemperature.stream()
-                .map(post -> new MyPostByTemperatureResponse(post, post.isLikedBy(memberId), imageAccessUrl))
+                .map(post -> new MyPostByTemperatureResponse(post, post.isLikedBy(memberId)))
                 .collect(Collectors.toUnmodifiableList());
         PostWriterResponse postWriterResponse = generatePostWriterResponse(myPostsByTemperature.getContent());
         return new MyPostsByTemperatureResponses(
@@ -102,14 +103,15 @@ public class PostQueryServiceAdapter implements PostQueryServicePort {
             return null;
         }
         Post post = myPostsByTemperature.get(0);
-        return new PostWriterResponse(post, imageAccessUrl);
+        return new PostWriterResponse(post);
     }
 
     @Override
+    @ImageUrlInclusion
     public LikedPostResponses getLikedPost(Long memberId, Pageable pageable) {
         Slice<Post> posts = postPersistencePort.findLikedPosts(memberId, pageable);
         List<LikedPostResponse> likedPostResponses = posts.stream()
-                .map(post -> new LikedPostResponse(post, imageAccessUrl))
+                .map(LikedPostResponse::new)
                 .collect(Collectors.toUnmodifiableList());
         return new LikedPostResponses(likedPostResponses, posts.isLast());
     }
