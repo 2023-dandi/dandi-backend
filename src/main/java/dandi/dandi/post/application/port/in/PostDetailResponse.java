@@ -1,9 +1,10 @@
 package dandi.dandi.post.application.port.in;
 
+import dandi.dandi.image.application.in.ImageResponse;
 import dandi.dandi.post.domain.Post;
 import java.time.LocalDate;
 
-public class PostDetailResponse {
+public class PostDetailResponse implements ImageResponse {
 
     private PostWriterResponse writer;
     private boolean mine;
@@ -16,14 +17,25 @@ public class PostDetailResponse {
     public PostDetailResponse() {
     }
 
-    public PostDetailResponse(Post post, boolean mine, boolean liked, String imageAccessUrl) {
-        this.writer = new PostWriterResponse(post, imageAccessUrl);
+    private PostDetailResponse(PostWriterResponse writer, boolean mine, boolean liked, TemperatureResponse temperatures,
+                               OutfitFeelingResponse outfitFeelings, String postImageUrl, LocalDate createdAt) {
+        this.writer = writer;
+        this.mine = mine;
+        this.liked = liked;
+        this.temperatures = temperatures;
+        this.outfitFeelings = outfitFeelings;
+        this.postImageUrl = postImageUrl;
+        this.createdAt = createdAt;
+    }
+
+    public PostDetailResponse(Post post, boolean mine, boolean liked) {
+        this.writer = new PostWriterResponse(post);
         this.mine = mine;
         this.liked = liked;
         this.temperatures = new TemperatureResponse(post.getMinTemperature(), post.getMaxTemperature());
         this.outfitFeelings =
                 new OutfitFeelingResponse(post.getWeatherFeelingIndex(), post.getAdditionalWeatherFeelingIndices());
-        this.postImageUrl = imageAccessUrl + post.getPostImageUrl();
+        this.postImageUrl = post.getPostImageUrl();
         this.createdAt = post.getCreatedAt();
     }
 
@@ -53,5 +65,12 @@ public class PostDetailResponse {
 
     public LocalDate getCreatedAt() {
         return createdAt;
+    }
+
+    @Override
+    public ImageResponse addImageAccessUrl(String imageAccessUrl) {
+        return new PostDetailResponse(
+                writer.addImageAccessUrl(imageAccessUrl), mine, liked, temperatures, outfitFeelings,
+                imageAccessUrl + postImageUrl, createdAt);
     }
 }
