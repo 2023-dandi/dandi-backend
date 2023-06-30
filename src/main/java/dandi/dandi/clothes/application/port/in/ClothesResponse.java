@@ -1,9 +1,8 @@
 package dandi.dandi.clothes.application.port.in;
 
 import dandi.dandi.clothes.domain.Clothes;
-import dandi.dandi.image.application.in.ImageResponse;
 
-public class ClothesResponse implements ImageResponse {
+public class ClothesResponse {
 
     private Long id;
     private String clothesImageUrl;
@@ -29,8 +28,7 @@ public class ClothesResponse implements ImageResponse {
         return clothesImageUrl;
     }
 
-    @Override
-    public ImageResponse addImageAccessUrl(String imageAccessUrl) {
-        return new ClothesResponse(id, clothesImageUrl);
+    public ClothesResponse addImageAccessUrl(String imageAccessUrl) {
+        return new ClothesResponse(id, imageAccessUrl + clothesImageUrl);
     }
 }

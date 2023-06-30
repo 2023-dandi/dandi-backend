@@ -94,6 +94,7 @@ public class ClothesQueryServiceAdapter implements ClothesQueryServicePort {
     }
 
     @Override
+    @ImageUrlInclusion
     public ClothesResponses getClothes(Long memberId, String category, Set<String> seasons, Pageable pageable) {
         Slice<Clothes> clothesSearchResult = clothesPersistencePort.findByMemberIdAndCategoryAndSeasons(
                 memberId, mapToCategory(category), mapToSeason(seasons), pageable);
@@ -117,6 +118,7 @@ public class ClothesQueryServiceAdapter implements ClothesQueryServicePort {
     }
 
     @Override
+    @ImageUrlInclusion
     public ClothesResponses getTodayClothes(Long memberId, LocalDate today, Pageable pageable) {
         Month month = Month.fromDate(today);
         Set<Season> seasons = month.getSeasons();
