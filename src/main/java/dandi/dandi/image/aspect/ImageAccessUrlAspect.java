@@ -1,6 +1,5 @@
 package dandi.dandi.image.aspect;
 
-import dandi.dandi.advice.InternalServerException;
 import dandi.dandi.image.application.in.ImageResponse;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -19,13 +18,10 @@ public class ImageAccessUrlAspect {
     }
 
     @Around(value = "@annotation(imageUrlInclusion)")
-    public Object appendImageAccessUrl(ProceedingJoinPoint joinPoint, ImageUrlInclusion imageUrlInclusion) {
-        try {
-            Object returnObj = joinPoint.proceed();
-            ImageResponse imageResponse = (ImageResponse) returnObj;
-            return imageResponse.addImageAccessUrl(this.imageAccessUrl);
-        } catch (Throwable e) {
-            throw new InternalServerException("AOP 에러");
-        }
+    public Object appendImageAccessUrl(ProceedingJoinPoint joinPoint, ImageUrlInclusion imageUrlInclusion)
+            throws Throwable {
+        Object returnObj = joinPoint.proceed();
+        ImageResponse imageResponse = (ImageResponse) returnObj;
+        return imageResponse.addImageAccessUrl(this.imageAccessUrl);
     }
 }
