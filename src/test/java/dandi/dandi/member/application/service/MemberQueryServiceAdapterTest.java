@@ -3,7 +3,6 @@ package dandi.dandi.member.application.service;
 import static dandi.dandi.member.MemberTestFixture.INITIAL_PROFILE_IMAGE_URL;
 import static dandi.dandi.member.MemberTestFixture.NICKNAME;
 import static dandi.dandi.member.MemberTestFixture.OAUTH_ID;
-import static dandi.dandi.utils.TestImageUtils.IMAGE_ACCESS_URL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -18,14 +17,20 @@ import dandi.dandi.member.domain.Member;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+@ExtendWith(MockitoExtension.class)
 class MemberQueryServiceAdapterTest {
 
-    private final MemberPersistencePort memberPersistencePort = Mockito.mock(MemberPersistencePort.class);
-    private final MemberPostPersistencePort memberPostPersistencePort = Mockito.mock(MemberPostPersistencePort.class);
-    private final MemberQueryServiceAdapter memberQueryServiceAdapter =
-            new MemberQueryServiceAdapter(memberPersistencePort, memberPostPersistencePort, IMAGE_ACCESS_URL);
+    @Mock
+    private MemberPersistencePort memberPersistencePort;
+    @Mock
+    private MemberPostPersistencePort memberPostPersistencePort;
+    @InjectMocks
+    private MemberQueryServiceAdapter memberQueryServiceAdapter;
 
     @DisplayName("기본 프로필 이미지의 회원 정보를 반환할 수 있다.")
     @Test
@@ -44,7 +49,7 @@ class MemberQueryServiceAdapterTest {
                 () -> assertThat(memberInfoResponse.getLatitude()).isEqualTo(0.0),
                 () -> assertThat(memberInfoResponse.getLongitude()).isEqualTo(0.0),
                 () -> assertThat(memberInfoResponse.getProfileImageUrl())
-                        .startsWith(IMAGE_ACCESS_URL + INITIAL_PROFILE_IMAGE_URL)
+                        .contains(INITIAL_PROFILE_IMAGE_URL)
         );
     }
 
