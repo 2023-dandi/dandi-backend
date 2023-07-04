@@ -7,7 +7,6 @@ import dandi.dandi.comment.application.port.in.CommentWriterResponse;
 import dandi.dandi.comment.application.port.out.CommentPersistencePort;
 import dandi.dandi.comment.domain.Comment;
 import dandi.dandi.common.exception.NotFoundException;
-import dandi.dandi.image.aspect.ImageUrlInclusion;
 import dandi.dandi.post.application.port.out.PostPersistencePort;
 import dandi.dandi.post.domain.Post;
 import java.util.List;
@@ -31,7 +30,6 @@ public class CommentQueryServiceAdapter implements CommentQueryServicePort {
     }
 
     @Override
-    @ImageUrlInclusion
     public CommentResponses getComments(Long memberId, Long postId, Pageable pageable) {
         Post post = postPersistencePort.findById(postId)
                 .orElseThrow(NotFoundException::post);
