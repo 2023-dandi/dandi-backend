@@ -1,7 +1,6 @@
 package dandi.dandi.member.application.service;
 
 import dandi.dandi.auth.exception.UnauthorizedException;
-import dandi.dandi.image.aspect.ImageUrlInclusion;
 import dandi.dandi.member.application.port.in.MemberInfoResponse;
 import dandi.dandi.member.application.port.in.MemberQueryServicePort;
 import dandi.dandi.member.application.port.in.NicknameDuplicationCheckResponse;
@@ -25,7 +24,6 @@ public class MemberQueryServiceAdapter implements MemberQueryServicePort {
     }
 
     @Override
-    @ImageUrlInclusion
     public MemberInfoResponse findMemberInfo(Long memberId) {
         Member member = memberPersistencePort.findById(memberId)
                 .orElseThrow(UnauthorizedException::notExistentMember);
