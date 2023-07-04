@@ -1,5 +1,7 @@
 package dandi.dandi.post.application.port.in;
 
+import static dandi.dandi.common.constant.Constant.IMAGE_ACCESS_URL;
+
 import dandi.dandi.post.domain.Post;
 
 public class PostWriterResponse {
@@ -11,15 +13,9 @@ public class PostWriterResponse {
     public PostWriterResponse() {
     }
 
-    private PostWriterResponse(Long id, String nickname, String profileImageUrl) {
-        this.id = id;
-        this.nickname = nickname;
-        this.profileImageUrl = profileImageUrl;
-    }
-
     public PostWriterResponse(Post post) {
         this.id = post.getWriterId();
-        this.profileImageUrl = post.getWriterProfileImageUrl();
+        this.profileImageUrl = System.getProperty(IMAGE_ACCESS_URL) + post.getWriterProfileImageUrl();
         this.nickname = post.getWriterNickname();
     }
 
@@ -33,9 +29,5 @@ public class PostWriterResponse {
 
     public String getNickname() {
         return nickname;
-    }
-
-    public PostWriterResponse addImageAccessUrl(String imageAccessUrl) {
-        return new PostWriterResponse(id, nickname, imageAccessUrl + profileImageUrl);
     }
 }

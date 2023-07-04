@@ -1,5 +1,7 @@
 package dandi.dandi.post.application.port.in;
 
+import static dandi.dandi.common.constant.Constant.IMAGE_ACCESS_URL;
+
 import dandi.dandi.post.domain.Post;
 import java.time.LocalDate;
 
@@ -16,24 +18,13 @@ public class PostResponse {
     public PostResponse() {
     }
 
-    private PostResponse(Long id, PostWriterResponse writer, boolean liked, TemperatureResponse temperatures,
-                         long feelingIndex, String postImageUrl, LocalDate createdAt) {
-        this.id = id;
-        this.writer = writer;
-        this.liked = liked;
-        this.temperatures = temperatures;
-        this.feelingIndex = feelingIndex;
-        this.postImageUrl = postImageUrl;
-        this.createdAt = createdAt;
-    }
-
     public PostResponse(Post post, boolean liked) {
         this.id = post.getId();
         this.writer = new PostWriterResponse(post);
         this.liked = liked;
         this.temperatures = new TemperatureResponse(post.getMinTemperature(), post.getMaxTemperature());
         this.feelingIndex = post.getWeatherFeelingIndex();
-        this.postImageUrl = post.getPostImageUrl();
+        this.postImageUrl = System.getProperty(IMAGE_ACCESS_URL) + post.getPostImageUrl();
         this.createdAt = post.getCreatedAt();
     }
 
@@ -63,17 +54,5 @@ public class PostResponse {
 
     public LocalDate getCreatedAt() {
         return createdAt;
-    }
-
-    public PostResponse addImageAccessUrl(String imageAccessUrl) {
-        return new PostResponse(
-                id,
-                writer.addImageAccessUrl(imageAccessUrl),
-                liked,
-                temperatures,
-                feelingIndex,
-                imageAccessUrl + postImageUrl,
-                createdAt
-        );
     }
 }

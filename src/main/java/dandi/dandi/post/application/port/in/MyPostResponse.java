@@ -1,5 +1,7 @@
 package dandi.dandi.post.application.port.in;
 
+import static dandi.dandi.common.constant.Constant.IMAGE_ACCESS_URL;
+
 import dandi.dandi.post.domain.Post;
 
 public class MyPostResponse {
@@ -10,14 +12,9 @@ public class MyPostResponse {
     public MyPostResponse() {
     }
 
-    private MyPostResponse(Long id, String postImageUrl) {
-        this.id = id;
-        this.postImageUrl = postImageUrl;
-    }
-
     public MyPostResponse(Post post) {
         this.id = post.getId();
-        this.postImageUrl = post.getPostImageUrl();
+        this.postImageUrl = System.getProperty(IMAGE_ACCESS_URL) + post.getPostImageUrl();
     }
 
     public Long getId() {
@@ -26,9 +23,5 @@ public class MyPostResponse {
 
     public String getPostImageUrl() {
         return postImageUrl;
-    }
-
-    public MyPostResponse addImageAccessUrl(String imageAccessUrl) {
-        return new MyPostResponse(id, imageAccessUrl + postImageUrl);
     }
 }
