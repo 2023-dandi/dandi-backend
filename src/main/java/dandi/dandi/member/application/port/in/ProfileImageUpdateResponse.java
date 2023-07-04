@@ -1,8 +1,8 @@
 package dandi.dandi.member.application.port.in;
 
-import dandi.dandi.image.application.in.ImageResponse;
+import static dandi.dandi.common.constant.Constant.IMAGE_ACCESS_URL;
 
-public class ProfileImageUpdateResponse implements ImageResponse {
+public class ProfileImageUpdateResponse {
 
     private String profileImageUrl;
 
@@ -10,15 +10,10 @@ public class ProfileImageUpdateResponse implements ImageResponse {
     }
 
     public ProfileImageUpdateResponse(String profileImageUrl) {
-        this.profileImageUrl = profileImageUrl;
+        this.profileImageUrl = System.getProperty(IMAGE_ACCESS_URL) + profileImageUrl;
     }
 
     public String getProfileImageUrl() {
         return profileImageUrl;
-    }
-
-    @Override
-    public ImageResponse addImageAccessUrl(String imageAccessUrl) {
-        return new ProfileImageUpdateResponse(imageAccessUrl + profileImageUrl);
     }
 }
