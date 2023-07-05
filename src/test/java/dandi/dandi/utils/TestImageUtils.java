@@ -14,7 +14,7 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 public class TestImageUtils {
 
-    public static final String IMAGE_ACCESS_URL = "https://www.cloud-front.com/";
+    public static final String IMAGE_ACCESS_URL = "www.cloudFront.com/";
     public static final String TEST_IMAGE_RESOURCE_DIR = "/src/test/resources/static/images/";
     public static final String TEST_IMAGE_FILE_NAME = "test_img.jpg";
 
