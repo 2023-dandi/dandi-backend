@@ -9,7 +9,6 @@ import static dandi.dandi.clothes.ClothesFixture.CLOTHES_SEASONS;
 import static dandi.dandi.clothes.domain.Category.TOP;
 import static dandi.dandi.clothes.domain.Season.SUMMER;
 import static dandi.dandi.member.MemberTestFixture.MEMBER_ID;
-import static dandi.dandi.utils.TestImageUtils.IMAGE_ACCESS_URL;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
@@ -27,16 +26,19 @@ import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class ClothesUseCaseServiceAdapterTest {
 
-    private final ClothesPersistencePort clothesPersistencePort = Mockito.mock(ClothesPersistencePort.class);
-    private final ClothesImageService clothesImageService = Mockito.mock(ClothesImageService.class);
-    private final ClothesUseCasePortServiceAdapter clothesUseCaseServiceAdapter =
-            new ClothesUseCasePortServiceAdapter(clothesPersistencePort, clothesImageService, IMAGE_ACCESS_URL);
+    @Mock
+    private ClothesPersistencePort clothesPersistencePort;
+    @Mock
+    private ClothesImageService clothesImageService;
+    @InjectMocks
+    private ClothesUseCasePortServiceAdapter clothesUseCaseServiceAdapter;
 
     @DisplayName("옷을 저장할 수 있다.")
     @Test

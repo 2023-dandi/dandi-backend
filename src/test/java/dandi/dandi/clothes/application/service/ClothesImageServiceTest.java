@@ -1,7 +1,6 @@
 package dandi.dandi.clothes.application.service;
 
 import static dandi.dandi.clothes.ClothesFixture.CLOTHES;
-import static dandi.dandi.utils.TestImageUtils.IMAGE_ACCESS_URL;
 import static dandi.dandi.utils.TestImageUtils.generateTestImgMultipartFile;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -33,7 +32,7 @@ class ClothesImageServiceTest {
             Mockito.mock(UnusedImagePersistencePort.class);
     private final String clothesImageDir = "clothes";
     private final ClothesImageService clothesImageService =
-            new ClothesImageService(imageManager, unusedImagePersistencePort, clothesImageDir, IMAGE_ACCESS_URL);
+            new ClothesImageService(imageManager, unusedImagePersistencePort, clothesImageDir);
 
     @DisplayName("옷 사진을 등록할 수 있다.")
     @Test
@@ -48,7 +47,7 @@ class ClothesImageServiceTest {
                 () -> verify(imageManager).upload(any(), any()),
                 () -> verify(unusedImagePersistencePort).save(anyString()),
                 () -> assertThat(clothesImageRegisterResponse.getClothesImageUrl())
-                        .startsWith(IMAGE_ACCESS_URL + clothesImageDir + "/" + memberId)
+                        .startsWith(clothesImageDir + "/" + memberId)
         );
     }
 

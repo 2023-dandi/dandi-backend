@@ -6,39 +6,28 @@ import dandi.dandi.clothes.application.port.out.persistence.ClothesPersistencePo
 import dandi.dandi.clothes.domain.Clothes;
 import dandi.dandi.common.exception.ForbiddenException;
 import dandi.dandi.common.exception.NotFoundException;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ClothesUseCasePortServiceAdapter implements ClothesUseCasePort {
 
-    private static final int CLOTHES_IMAGE_URL_INDEX = 1;
-
     private final ClothesPersistencePort clothesPersistencePort;
     private final ClothesImageService clothesImageService;
-    private final String imageAccessUrl;
 
     public ClothesUseCasePortServiceAdapter(ClothesPersistencePort clothesPersistencePort,
-                                            ClothesImageService clothesImageService,
-                                            @Value("${cloud.aws.cloud-front.uri}") String imageAccessUrl) {
+                                            ClothesImageService clothesImageService) {
         this.clothesPersistencePort = clothesPersistencePort;
         this.clothesImageService = clothesImageService;
-        this.imageAccessUrl = imageAccessUrl;
     }
 
     @Override
     @Transactional
     public void registerClothes(Long memberId, ClothesRegisterCommand clothesRegisterCommand) {
-        String clothesImageUrl = removeImageAccessUrl(clothesRegisterCommand.getClothesImageUrl());
         Clothes clothes = Clothes.initial(memberId, clothesRegisterCommand.getCategory(),
-                clothesRegisterCommand.getSeasons(), clothesImageUrl);
+                clothesRegisterCommand.getSeasons(), clothesRegisterCommand.getClothesImageUrl());
         clothesPersistencePort.save(clothes);
-        clothesImageService.deleteClothesImageUrlInUnused(clothesImageUrl);
-    }
-
-    private String removeImageAccessUrl(String clothesImageUrl) {
-        return clothesImageUrl.split(imageAccessUrl)[CLOTHES_IMAGE_URL_INDEX];
+        clothesImageService.deleteClothesImageUrlInUnused(clothesRegisterCommand.getClothesImageUrl());
     }
 
     @Override
