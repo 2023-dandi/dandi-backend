@@ -21,15 +21,12 @@ public class PostImageCommandService implements PostImageCommandPort {
     private final ImageManager imageManager;
     private final UnusedImagePersistencePort unusedImagePersistencePort;
     private final String postImageDir;
-    private final String imageAccessUrl;
 
     public PostImageCommandService(ImageManager imageManager, UnusedImagePersistencePort unusedImagePersistencePort,
-                                   @Value("${image.post-dir}") String postImageDir,
-                                   @Value("${cloud.aws.cloud-front.uri}") String imageAccessUrl) {
+                                   @Value("${image.post-dir}") String postImageDir) {
         this.imageManager = imageManager;
         this.unusedImagePersistencePort = unusedImagePersistencePort;
         this.postImageDir = postImageDir;
-        this.imageAccessUrl = imageAccessUrl;
     }
 
     @Override
@@ -38,7 +35,7 @@ public class PostImageCommandService implements PostImageCommandPort {
         String fileKey = generateFileKey(memberId, multipartFile);
         unusedImagePersistencePort.save(fileKey);
         uploadImage(multipartFile, fileKey);
-        return new PostImageRegisterResponse(imageAccessUrl + fileKey);
+        return new PostImageRegisterResponse(fileKey);
     }
 
     private void uploadImage(MultipartFile multipartFile, String fileKey) {

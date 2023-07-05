@@ -1,10 +1,8 @@
 package dandi.dandi.clothes.application.port.in;
 
-import dandi.dandi.image.application.in.ImageResponse;
 import java.util.List;
-import java.util.stream.Collectors;
 
-public class ClothesResponses implements ImageResponse {
+public class ClothesResponses {
 
     private List<ClothesResponse> clothes;
     private boolean lastPage;
@@ -23,13 +21,5 @@ public class ClothesResponses implements ImageResponse {
 
     public boolean isLastPage() {
         return lastPage;
-    }
-
-    @Override
-    public ImageResponse addImageAccessUrl(String imageAccessUrl) {
-        List<ClothesResponse> clothes = this.clothes.stream()
-                .map(clothesResponse -> clothesResponse.addImageAccessUrl(imageAccessUrl))
-                .collect(Collectors.toUnmodifiableList());
-        return new ClothesResponses(clothes, lastPage);
     }
 }

@@ -63,6 +63,10 @@ dependencyManagement {
 	}
 }
 
+test {
+	systemProperty "imageAccessUrl", "www.cloudFront.com/"
+}
+
 tasks.named('test') {
 	useJUnitPlatform()
 }

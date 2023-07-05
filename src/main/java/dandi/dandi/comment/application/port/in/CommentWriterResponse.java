@@ -1,5 +1,7 @@
 package dandi.dandi.comment.application.port.in;
 
+import static dandi.dandi.common.constant.Constant.IMAGE_ACCESS_URL;
+
 import dandi.dandi.member.domain.Member;
 
 public class CommentWriterResponse {
@@ -11,16 +13,10 @@ public class CommentWriterResponse {
     public CommentWriterResponse() {
     }
 
-    public CommentWriterResponse(Long id, String nickname, String profileImageUrl) {
-        this.id = id;
-        this.nickname = nickname;
-        this.profileImageUrl = profileImageUrl;
-    }
-
     public CommentWriterResponse(Member member) {
         this.id = member.getId();
         this.nickname = member.getNickname();
-        this.profileImageUrl = member.getProfileImgUrl();
+        this.profileImageUrl = System.getProperty(IMAGE_ACCESS_URL) + member.getProfileImgUrl();
     }
 
     public Long getId() {

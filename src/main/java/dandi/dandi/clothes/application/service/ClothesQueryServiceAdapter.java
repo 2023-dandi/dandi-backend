@@ -14,7 +14,6 @@ import dandi.dandi.clothes.domain.Month;
 import dandi.dandi.clothes.domain.Season;
 import dandi.dandi.common.exception.ForbiddenException;
 import dandi.dandi.common.exception.NotFoundException;
-import dandi.dandi.image.aspect.ImageUrlInclusion;
 import java.time.LocalDate;
 import java.util.EnumMap;
 import java.util.EnumSet;
@@ -79,7 +78,6 @@ public class ClothesQueryServiceAdapter implements ClothesQueryServicePort {
     }
 
     @Override
-    @ImageUrlInclusion
     public ClothesDetailResponse getSingleClothesDetails(Long memberId, Long clothesId) {
         Clothes clothes = clothesPersistencePort.findById(clothesId)
                 .orElseThrow(NotFoundException::clothes);
@@ -94,7 +92,6 @@ public class ClothesQueryServiceAdapter implements ClothesQueryServicePort {
     }
 
     @Override
-    @ImageUrlInclusion
     public ClothesResponses getClothes(Long memberId, String category, Set<String> seasons, Pageable pageable) {
         Slice<Clothes> clothesSearchResult = clothesPersistencePort.findByMemberIdAndCategoryAndSeasons(
                 memberId, mapToCategory(category), mapToSeason(seasons), pageable);
@@ -118,7 +115,6 @@ public class ClothesQueryServiceAdapter implements ClothesQueryServicePort {
     }
 
     @Override
-    @ImageUrlInclusion
     public ClothesResponses getTodayClothes(Long memberId, LocalDate today, Pageable pageable) {
         Month month = Month.fromDate(today);
         Set<Season> seasons = month.getSeasons();

@@ -7,7 +7,6 @@ import static dandi.dandi.post.PostFixture.MIN_TEMPERATURE;
 import static dandi.dandi.post.PostFixture.OUTFIT_FEELING_INDEX;
 import static dandi.dandi.post.PostFixture.POST;
 import static dandi.dandi.post.PostFixture.POST_IMAGE_FULL_URL;
-import static dandi.dandi.utils.TestImageUtils.IMAGE_ACCESS_URL;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -24,16 +23,19 @@ import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class PostCommandServiceAdapterTest {
 
-    private final PostPersistencePort postPersistencePort = Mockito.mock(PostPersistencePort.class);
-    private final PostImageCommandService postImageCommandService = Mockito.mock(PostImageCommandService.class);
-    private final PostCommandServiceAdapter postService =
-            new PostCommandServiceAdapter(postPersistencePort, postImageCommandService, IMAGE_ACCESS_URL);
+    @Mock
+    private PostPersistencePort postPersistencePort;
+    @Mock
+    private PostImageCommandService postImageCommandService;
+    @InjectMocks
+    private PostCommandServiceAdapter postService;
 
     @DisplayName("게시글을 작성할 수 있다.")
     @Test

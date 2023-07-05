@@ -1,7 +1,6 @@
 package dandi.dandi.post.application.service;
 
 import dandi.dandi.common.exception.NotFoundException;
-import dandi.dandi.image.aspect.ImageUrlInclusion;
 import dandi.dandi.post.application.port.in.FeedResponse;
 import dandi.dandi.post.application.port.in.LikedPostResponse;
 import dandi.dandi.post.application.port.in.LikedPostResponses;
@@ -23,8 +22,10 @@ import java.util.stream.Collectors;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional(readOnly = true)
 public class PostQueryServiceAdapter implements PostQueryServicePort {
 
     private static final int TEMPERATURE_SEARCH_THRESHOLD = 3;
@@ -39,7 +40,6 @@ public class PostQueryServiceAdapter implements PostQueryServicePort {
     }
 
     @Override
-    @ImageUrlInclusion
     public PostDetailResponse getPostDetails(Long memberId, Long postId) {
         Post post = postPersistencePort.findById(postId)
                 .orElseThrow(NotFoundException::post);
@@ -49,7 +49,6 @@ public class PostQueryServiceAdapter implements PostQueryServicePort {
     }
 
     @Override
-    @ImageUrlInclusion
     public MyPostResponses getMyPostIdsAndPostImageUrls(Long memberId, Pageable pageable) {
         Slice<Post> posts = postPersistencePort.findByMemberId(memberId, pageable);
         List<MyPostResponse> myPostResponses = posts.stream()
@@ -59,7 +58,6 @@ public class PostQueryServiceAdapter implements PostQueryServicePort {
     }
 
     @Override
-    @ImageUrlInclusion
     public FeedResponse getPostsByTemperature(Long memberId, Double minTemperature, Double maxTemperature,
                                               Pageable pageable) {
         Temperatures temperatures = new Temperatures(minTemperature, maxTemperature);
@@ -77,7 +75,6 @@ public class PostQueryServiceAdapter implements PostQueryServicePort {
     }
 
     @Override
-    @ImageUrlInclusion
     public MyPostsByTemperatureResponses getMyPostsByTemperature(Long memberId, Double minTemperature,
                                                                  Double maxTemperature, Pageable pageable) {
         Temperatures temperatures = new Temperatures(minTemperature, maxTemperature);
@@ -107,7 +104,6 @@ public class PostQueryServiceAdapter implements PostQueryServicePort {
     }
 
     @Override
-    @ImageUrlInclusion
     public LikedPostResponses getLikedPost(Long memberId, Pageable pageable) {
         Slice<Post> posts = postPersistencePort.findLikedPosts(memberId, pageable);
         List<LikedPostResponse> likedPostResponses = posts.stream()

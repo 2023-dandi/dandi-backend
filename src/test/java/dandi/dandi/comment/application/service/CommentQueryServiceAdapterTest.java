@@ -67,5 +67,4 @@ class CommentQueryServiceAdapterTest {
                 .isInstanceOf(NotFoundException.class)
                 .hasMessage(NotFoundException.post().getMessage());
     }
-
 }

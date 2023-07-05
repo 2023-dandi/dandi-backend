@@ -8,7 +8,7 @@ import static dandi.dandi.post.PostFixture.ADDITIONAL_OUTFIT_FEELING_INDICES;
 import static dandi.dandi.post.PostFixture.MAX_TEMPERATURE;
 import static dandi.dandi.post.PostFixture.MIN_TEMPERATURE;
 import static dandi.dandi.post.PostFixture.OUTFIT_FEELING_INDEX;
-import static dandi.dandi.post.PostFixture.POST_IMAGE_FULL_URL;
+import static dandi.dandi.post.PostFixture.POST_IMAGE_URL;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -99,7 +99,7 @@ public class AcceptanceTest {
     }
 
     protected Long registerPost(String token) {
-        PostRegisterRequest postRegisterRequest = new PostRegisterRequest(POST_IMAGE_FULL_URL,
+        PostRegisterRequest postRegisterRequest = new PostRegisterRequest(POST_IMAGE_URL,
                 new TemperatureRequest(MIN_TEMPERATURE, MAX_TEMPERATURE),
                 new OutfitFeelingRequest(OUTFIT_FEELING_INDEX, ADDITIONAL_OUTFIT_FEELING_INDICES));
         return httpPostWithAuthorization(POST_REGISTER_REQUEST_URI, postRegisterRequest, token)

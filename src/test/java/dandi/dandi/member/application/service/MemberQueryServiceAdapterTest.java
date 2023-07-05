@@ -1,5 +1,6 @@
 package dandi.dandi.member.application.service;
 
+import static dandi.dandi.common.constant.Constant.IMAGE_ACCESS_URL;
 import static dandi.dandi.member.MemberTestFixture.INITIAL_PROFILE_IMAGE_URL;
 import static dandi.dandi.member.MemberTestFixture.NICKNAME;
 import static dandi.dandi.member.MemberTestFixture.OAUTH_ID;
@@ -49,7 +50,7 @@ class MemberQueryServiceAdapterTest {
                 () -> assertThat(memberInfoResponse.getLatitude()).isEqualTo(0.0),
                 () -> assertThat(memberInfoResponse.getLongitude()).isEqualTo(0.0),
                 () -> assertThat(memberInfoResponse.getProfileImageUrl())
-                        .contains(INITIAL_PROFILE_IMAGE_URL)
+                        .isEqualTo(System.getProperty(IMAGE_ACCESS_URL) + INITIAL_PROFILE_IMAGE_URL)
         );
     }
 

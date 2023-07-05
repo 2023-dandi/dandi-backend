@@ -1,7 +1,6 @@
 package dandi.dandi.post.application.service;
 
 import static dandi.dandi.post.PostFixture.POST_IMAGE_DIR;
-import static dandi.dandi.utils.TestImageUtils.IMAGE_ACCESS_URL;
 import static dandi.dandi.utils.TestImageUtils.generateTestImgMultipartFile;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -32,7 +31,7 @@ class PostImageCommandServiceTest {
     private final UnusedImagePersistencePort unusedImagePersistencePort =
             Mockito.mock(UnusedImagePersistencePort.class);
     private final PostImageCommandService postImageCommandService =
-            new PostImageCommandService(imageManager, unusedImagePersistencePort, POST_IMAGE_DIR, IMAGE_ACCESS_URL);
+            new PostImageCommandService(imageManager, unusedImagePersistencePort, POST_IMAGE_DIR);
 
     @DisplayName("게시글 사진을 업로드할 수 있다.")
     @Test
@@ -47,7 +46,7 @@ class PostImageCommandServiceTest {
                 () -> verify(imageManager).upload(anyString(), any(InputStream.class)),
                 () -> verify(unusedImagePersistencePort).save(anyString()),
                 () -> assertThat(postImageRegisterResponse.getPostImageUrl())
-                        .startsWith(IMAGE_ACCESS_URL + POST_IMAGE_DIR)
+                        .startsWith(POST_IMAGE_DIR)
                         .contains(multipartFile.getOriginalFilename())
                         .contains(String.valueOf(memberId))
         );

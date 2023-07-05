@@ -1,10 +1,11 @@
 package dandi.dandi.post.application.port.in;
 
-import dandi.dandi.image.application.in.ImageResponse;
+import static dandi.dandi.common.constant.Constant.IMAGE_ACCESS_URL;
+
 import dandi.dandi.post.domain.Post;
 import java.time.LocalDate;
 
-public class PostDetailResponse implements ImageResponse {
+public class PostDetailResponse {
 
     private PostWriterResponse writer;
     private boolean mine;
@@ -17,17 +18,6 @@ public class PostDetailResponse implements ImageResponse {
     public PostDetailResponse() {
     }
 
-    private PostDetailResponse(PostWriterResponse writer, boolean mine, boolean liked, TemperatureResponse temperatures,
-                               OutfitFeelingResponse outfitFeelings, String postImageUrl, LocalDate createdAt) {
-        this.writer = writer;
-        this.mine = mine;
-        this.liked = liked;
-        this.temperatures = temperatures;
-        this.outfitFeelings = outfitFeelings;
-        this.postImageUrl = postImageUrl;
-        this.createdAt = createdAt;
-    }
-
     public PostDetailResponse(Post post, boolean mine, boolean liked) {
         this.writer = new PostWriterResponse(post);
         this.mine = mine;
@@ -35,7 +25,7 @@ public class PostDetailResponse implements ImageResponse {
         this.temperatures = new TemperatureResponse(post.getMinTemperature(), post.getMaxTemperature());
         this.outfitFeelings =
                 new OutfitFeelingResponse(post.getWeatherFeelingIndex(), post.getAdditionalWeatherFeelingIndices());
-        this.postImageUrl = post.getPostImageUrl();
+        this.postImageUrl = System.getProperty(IMAGE_ACCESS_URL) + post.getPostImageUrl();
         this.createdAt = post.getCreatedAt();
     }
 
@@ -65,12 +55,5 @@ public class PostDetailResponse implements ImageResponse {
 
     public LocalDate getCreatedAt() {
         return createdAt;
-    }
-
-    @Override
-    public ImageResponse addImageAccessUrl(String imageAccessUrl) {
-        return new PostDetailResponse(
-                writer.addImageAccessUrl(imageAccessUrl), mine, liked, temperatures, outfitFeelings,
-                imageAccessUrl + postImageUrl, createdAt);
     }
 }

@@ -10,6 +10,7 @@ import static dandi.dandi.clothes.domain.Month.MAY;
 import static dandi.dandi.clothes.domain.Season.FALL;
 import static dandi.dandi.clothes.domain.Season.SPRING;
 import static dandi.dandi.clothes.domain.Season.SUMMER;
+import static dandi.dandi.common.constant.Constant.IMAGE_ACCESS_URL;
 import static dandi.dandi.member.MemberTestFixture.MEMBER_ID;
 import static dandi.dandi.utils.PaginationUtils.CREATED_AT_DESC_TEST_SIZE_PAGEABLE;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -65,7 +66,8 @@ class ClothesQueryServiceAdapterTest {
 
         assertAll(
                 () -> assertThat(clothesDetailResponse.getId()).isEqualTo(CLOTHES.getId()),
-                () -> assertThat(clothesDetailResponse.getClothesImageUrl()).contains(CLOTHES.getClothesImageUrl())
+                () -> assertThat(clothesDetailResponse.getClothesImageUrl())
+                        .isEqualTo(System.getProperty(IMAGE_ACCESS_URL) + CLOTHES.getClothesImageUrl())
         );
     }
 

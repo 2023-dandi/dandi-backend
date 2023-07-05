@@ -3,7 +3,6 @@ package dandi.dandi.member.application.service;
 import static dandi.dandi.member.MemberTestFixture.INITIAL_PROFILE_IMAGE_URL;
 import static dandi.dandi.member.MemberTestFixture.NICKNAME;
 import static dandi.dandi.member.MemberTestFixture.OAUTH_ID;
-import static dandi.dandi.utils.TestImageUtils.IMAGE_ACCESS_URL;
 import static dandi.dandi.utils.TestImageUtils.TEST_IMAGE_FILE_NAME;
 import static dandi.dandi.utils.TestImageUtils.generateTestImgMultipartFile;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -17,6 +16,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import dandi.dandi.auth.exception.UnauthorizedException;
+import dandi.dandi.common.constant.Constant;
 import dandi.dandi.image.application.out.ImageManager;
 import dandi.dandi.image.exception.ImageUploadFailedException;
 import dandi.dandi.member.application.port.out.MemberPersistencePort;
@@ -39,7 +39,7 @@ class MemberImageServiceTest {
     private final MemberPersistencePort memberPersistencePort = Mockito.mock(MemberPersistencePort.class);
     private final ImageManager imageManager = Mockito.mock(ImageManager.class);
     private final MemberImageService memberImageService = new MemberImageService(memberPersistencePort, imageManager,
-            INITIAL_PROFILE_IMAGE_URL, TEST_PROFILE_BUCKET_IMG_DIR, IMAGE_ACCESS_URL);
+            INITIAL_PROFILE_IMAGE_URL, TEST_PROFILE_BUCKET_IMG_DIR);
 
     @DisplayName("기본 프로필 사진이 아닌 회원의 프로필 사진을 변경하면 기존 사진을 삭제하고 사진을 업로드 한 후, 사진의 식별값을 반환한다.")
     @Test
@@ -54,7 +54,7 @@ class MemberImageServiceTest {
 
         assertAll(
                 () -> assertThat(imgUrl)
-                        .startsWith(IMAGE_ACCESS_URL + TEST_PROFILE_BUCKET_IMG_DIR)
+                        .startsWith(System.getProperty(Constant.IMAGE_ACCESS_URL) + TEST_PROFILE_BUCKET_IMG_DIR)
                         .contains(TEST_IMAGE_FILE_NAME),
                 () -> verify(imageManager).delete(initialProfileImageMember.getProfileImgUrl())
         );

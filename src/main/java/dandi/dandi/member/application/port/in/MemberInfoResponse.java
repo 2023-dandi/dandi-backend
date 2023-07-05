@@ -1,9 +1,10 @@
 package dandi.dandi.member.application.port.in;
 
-import dandi.dandi.image.application.in.ImageResponse;
+import static dandi.dandi.common.constant.Constant.IMAGE_ACCESS_URL;
+
 import dandi.dandi.member.domain.Member;
 
-public class MemberInfoResponse implements ImageResponse {
+public class MemberInfoResponse {
 
     private String nickname;
     private double latitude;
@@ -14,20 +15,11 @@ public class MemberInfoResponse implements ImageResponse {
     public MemberInfoResponse() {
     }
 
-    private MemberInfoResponse(String nickname, double latitude, double longitude, String profileImageUrl,
-                               int postCount) {
-        this.nickname = nickname;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.profileImageUrl = profileImageUrl;
-        this.postCount = postCount;
-    }
-
     public MemberInfoResponse(Member member, int postCount) {
         this.nickname = member.getNickname();
         this.latitude = member.getLatitude();
         this.longitude = member.getLongitude();
-        this.profileImageUrl = member.getProfileImgUrl();
+        this.profileImageUrl = System.getProperty(IMAGE_ACCESS_URL) + member.getProfileImgUrl();
         this.postCount = postCount;
     }
 
@@ -49,10 +41,5 @@ public class MemberInfoResponse implements ImageResponse {
 
     public int getPostCount() {
         return postCount;
-    }
-
-    @Override
-    public ImageResponse addImageAccessUrl(String imageAccessUrl) {
-        return new MemberInfoResponse(nickname, latitude, longitude, imageAccessUrl + profileImageUrl, postCount);
     }
 }

@@ -22,16 +22,13 @@ public class ClothesImageService implements ClothesImageUseCase {
     private final ImageManager imageManager;
     private final UnusedImagePersistencePort unusedImagePersistencePort;
     private final String clothesImageDir;
-    private final String imageAccessUrl;
 
     public ClothesImageService(ImageManager imageManager,
                                UnusedImagePersistencePort unusedImagePersistencePort,
-                               @Value("${image.clothes-dir}") String clothesImageDir,
-                               @Value("${cloud.aws.cloud-front.uri}") String imageAccessUrl) {
+                               @Value("${image.clothes-dir}") String clothesImageDir) {
         this.imageManager = imageManager;
         this.unusedImagePersistencePort = unusedImagePersistencePort;
         this.clothesImageDir = clothesImageDir;
-        this.imageAccessUrl = imageAccessUrl;
     }
 
     @Override
@@ -40,7 +37,7 @@ public class ClothesImageService implements ClothesImageUseCase {
         String fileKey = generateFileKey(memberId, multipartFile);
         unusedImagePersistencePort.save(fileKey);
         uploadImage(multipartFile, fileKey);
-        return new ClothesImageRegisterResponse(imageAccessUrl + fileKey);
+        return new ClothesImageRegisterResponse(fileKey);
     }
 
     private void uploadImage(MultipartFile multipartFile, String fileKey) {

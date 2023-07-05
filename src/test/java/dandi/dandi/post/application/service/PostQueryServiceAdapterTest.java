@@ -1,5 +1,6 @@
 package dandi.dandi.post.application.service;
 
+import static dandi.dandi.common.constant.Constant.IMAGE_ACCESS_URL;
 import static dandi.dandi.member.MemberTestFixture.MEMBER;
 import static dandi.dandi.member.MemberTestFixture.MEMBER_ID;
 import static dandi.dandi.post.PostFixture.POST;
@@ -48,7 +49,7 @@ class PostQueryServiceAdapterTest {
         PostWriterResponse postWriterResponse = postDetailsResponse.getWriter();
         assertAll(
                 () -> assertThat(postWriterResponse.getProfileImageUrl())
-                        .startsWith(MEMBER.getProfileImgUrl()),
+                        .isEqualTo(System.getProperty(IMAGE_ACCESS_URL) + MEMBER.getProfileImgUrl()),
                 () -> assertThat(postWriterResponse.getId())
                         .isEqualTo(POST.getWriterId()),
                 () -> assertThat(postWriterResponse.getNickname())
@@ -56,7 +57,7 @@ class PostQueryServiceAdapterTest {
                 () -> assertThat(postDetailsResponse.isMine()).isEqualTo(expectedMine),
                 () -> assertThat(postDetailsResponse.isLiked()).isTrue(),
                 () -> assertThat(postDetailsResponse.getPostImageUrl())
-                        .isEqualTo(POST.getPostImageUrl()),
+                        .isEqualTo(System.getProperty(IMAGE_ACCESS_URL) + POST.getPostImageUrl()),
                 () -> assertThat(postDetailsResponse.getTemperatures().getMin())
                         .isEqualTo(POST.getMinTemperature()),
                 () -> assertThat(postDetailsResponse.getTemperatures().getMax())

@@ -2,6 +2,7 @@ package dandi.dandi.clothes.acceptance;
 
 import static dandi.dandi.clothes.ClothesFixture.CLOTHES_CATEGORY;
 import static dandi.dandi.clothes.ClothesFixture.CLOTHES_IMAGE_FULL_URL;
+import static dandi.dandi.clothes.ClothesFixture.CLOTHES_IMAGE_URL;
 import static dandi.dandi.clothes.ClothesFixture.CLOTHES_SEASONS;
 import static dandi.dandi.clothes.domain.Category.BOTTOM;
 import static dandi.dandi.clothes.domain.Category.TOP;
@@ -53,7 +54,7 @@ class ClothesAcceptanceTest extends AcceptanceTest {
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value()),
                 () -> assertThat(clothesImageRegisterResponse.getClothesImageUrl())
-                        .startsWith("https://www.cloud-front.com/clothes/")
+                        .startsWith("clothes/").endsWith(".jpg")
         );
     }
 
@@ -166,13 +167,13 @@ class ClothesAcceptanceTest extends AcceptanceTest {
     void getClothes(String category, int expectedSize) {
         String token = getToken();
         httpPostWithAuthorization(CLOTHES_REQUEST_URI, new ClothesRegisterCommand(
-                CLOTHES_CATEGORY, List.of("SPRING", "SUMMER"), CLOTHES_IMAGE_FULL_URL), token);
+                CLOTHES_CATEGORY, List.of("SPRING", "SUMMER"), CLOTHES_IMAGE_URL), token);
         httpPostWithAuthorization(CLOTHES_REQUEST_URI, new ClothesRegisterCommand(
-                CLOTHES_CATEGORY, List.of("SPRING", "FALL"), CLOTHES_IMAGE_FULL_URL), token);
+                CLOTHES_CATEGORY, List.of("SPRING", "FALL"), CLOTHES_IMAGE_URL), token);
         httpPostWithAuthorization(CLOTHES_REQUEST_URI, new ClothesRegisterCommand(
-                CLOTHES_CATEGORY, List.of("FALL", "WINTER"), CLOTHES_IMAGE_FULL_URL), token);
+                CLOTHES_CATEGORY, List.of("FALL", "WINTER"), CLOTHES_IMAGE_URL), token);
         httpPostWithAuthorization(CLOTHES_REQUEST_URI, new ClothesRegisterCommand(
-                "BOTTOM", List.of("SPRING", "SUMMER"), CLOTHES_IMAGE_FULL_URL), token);
+                "BOTTOM", List.of("SPRING", "SUMMER"), CLOTHES_IMAGE_URL), token);
         String queryString = "?category=" + category + "&season=SUMMER&season=SPRING";
 
         ExtractableResponse<Response> response = httpGetWithAuthorization(CLOTHES_REQUEST_URI + queryString, token);
@@ -246,13 +247,13 @@ class ClothesAcceptanceTest extends AcceptanceTest {
 
     private void registerClothes(String token, List<String> seasons) {
         ClothesRegisterCommand clothesRegisterCommand =
-                new ClothesRegisterCommand(CLOTHES_CATEGORY, seasons, CLOTHES_IMAGE_FULL_URL);
+                new ClothesRegisterCommand(CLOTHES_CATEGORY, seasons, CLOTHES_IMAGE_URL);
         httpPostWithAuthorization(CLOTHES_REQUEST_URI, clothesRegisterCommand, token);
     }
 
     private void registerClothes(String token) {
         ClothesRegisterCommand clothesRegisterCommand =
-                new ClothesRegisterCommand(CLOTHES_CATEGORY, CLOTHES_SEASONS, CLOTHES_IMAGE_FULL_URL);
+                new ClothesRegisterCommand(CLOTHES_CATEGORY, CLOTHES_SEASONS, CLOTHES_IMAGE_URL);
         httpPostWithAuthorization(CLOTHES_REQUEST_URI, clothesRegisterCommand, token);
     }
 }
