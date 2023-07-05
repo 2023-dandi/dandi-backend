@@ -363,7 +363,7 @@ class PostAcceptanceTest extends AcceptanceTest {
     }
 
     private void registerPostWithTemperature(String token, Double minTemperature, Double maxTemperature) {
-        PostRegisterRequest postRegisterRequest = new PostRegisterRequest(POST_IMAGE_FULL_URL,
+        PostRegisterRequest postRegisterRequest = new PostRegisterRequest(POST_IMAGE_URL,
                 new TemperatureRequest(minTemperature, maxTemperature),
                 new OutfitFeelingRequest(OUTFIT_FEELING_INDEX, ADDITIONAL_OUTFIT_FEELING_INDICES));
         httpPostWithAuthorization(POST_REGISTER_REQUEST_URI, postRegisterRequest, token)

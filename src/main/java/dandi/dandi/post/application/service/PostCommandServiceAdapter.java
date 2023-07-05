@@ -9,25 +9,19 @@ import dandi.dandi.post.application.port.out.PostPersistencePort;
 import dandi.dandi.post.domain.Post;
 import dandi.dandi.post.domain.Temperatures;
 import dandi.dandi.post.domain.WeatherFeeling;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class PostCommandServiceAdapter implements PostCommandServicePort {
 
-    private static final int POST_IMAGE_URL_INDEX = 1;
-
     private final PostPersistencePort postPersistencePort;
     private final PostImageCommandService postImageCommandService;
-    private final String imageAccessUrl;
 
     public PostCommandServiceAdapter(PostPersistencePort postPersistencePort,
-                                     PostImageCommandService postImageCommandService,
-                                     @Value("${cloud.aws.cloud-front.uri}") String imageAccessUrl) {
+                                     PostImageCommandService postImageCommandService) {
         this.postPersistencePort = postPersistencePort;
         this.postImageCommandService = postImageCommandService;
-        this.imageAccessUrl = imageAccessUrl;
     }
 
     @Override
@@ -37,16 +31,10 @@ public class PostCommandServiceAdapter implements PostCommandServicePort {
                 postRegisterCommand.getMinTemperature(), postRegisterCommand.getMaxTemperature());
         WeatherFeeling weatherFeeling = new WeatherFeeling(
                 postRegisterCommand.getFeelingIndex(), postRegisterCommand.getAdditionalFeelingIndices());
-        String postImageUrl = removeImageAccessUrl(postRegisterCommand.getPostImageUrl());
-
-        Post post = Post.initial(temperatures, postImageUrl, weatherFeeling);
+        Post post = Post.initial(temperatures, postRegisterCommand.getPostImageUrl(), weatherFeeling);
         Long postId = postPersistencePort.save(post, memberId);
-        postImageCommandService.deletePostImageUrlInUnused(postImageUrl);
+        postImageCommandService.deletePostImageUrlInUnused(postRegisterCommand.getPostImageUrl());
         return new PostRegisterResponse(postId);
-    }
-
-    private String removeImageAccessUrl(String postImageUrl) {
-        return postImageUrl.split(imageAccessUrl)[POST_IMAGE_URL_INDEX];
     }
 
     @Override
