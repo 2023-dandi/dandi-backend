@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class CommentReportCommandServiceAdapter implements CommentReportUseCaseServicePort {
 
     private final CommentPersistencePort commentPersistencePort;
@@ -20,7 +21,6 @@ public class CommentReportCommandServiceAdapter implements CommentReportUseCaseS
     }
 
     @Override
-    @Transactional
     public void reportComment(Long memberId, Long commentId) {
         validateCommentExistence(commentId);
         validateAlreadyReported(memberId, commentId);

@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
+@Transactional
 public class MemberImageService implements MemberImageUseCase {
 
     private static final Logger logger = LoggerFactory.getLogger(MemberImageService.class);
@@ -39,7 +40,6 @@ public class MemberImageService implements MemberImageUseCase {
     }
 
     @Override
-    @Transactional
     public ProfileImageUpdateResponse updateProfileImage(Long memberId, MultipartFile profileImage) {
         Member member = memberPersistencePort.findById(memberId)
                 .orElseThrow(UnauthorizedException::notExistentMember);

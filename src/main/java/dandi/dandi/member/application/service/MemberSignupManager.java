@@ -7,6 +7,8 @@ import dandi.dandi.member.domain.NewMemberCreatedEvent;
 import dandi.dandi.member.domain.nicknamegenerator.NicknameGenerator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class MemberSignupManager {
@@ -25,6 +27,7 @@ public class MemberSignupManager {
         this.eventPort = eventPort;
     }
 
+    @Transactional(propagation = Propagation.MANDATORY)
     public Long signup(String oAuthMemberId, String pushNotificationToken) {
         String randomNickname = nicknameGenerator.generate();
         while (memberPersistencePort.existsMemberByNickname(randomNickname)) {
