@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class PostCommandServiceAdapter implements PostCommandServicePort {
 
     private final PostPersistencePort postPersistencePort;
@@ -25,7 +26,6 @@ public class PostCommandServiceAdapter implements PostCommandServicePort {
     }
 
     @Override
-    @Transactional
     public PostRegisterResponse registerPost(Long memberId, PostRegisterCommand postRegisterCommand) {
         Temperatures temperatures = new Temperatures(
                 postRegisterCommand.getMinTemperature(), postRegisterCommand.getMaxTemperature());
@@ -38,7 +38,6 @@ public class PostCommandServiceAdapter implements PostCommandServicePort {
     }
 
     @Override
-    @Transactional
     public void deletePost(Long memberId, Long postId) {
         Post post = postPersistencePort.findById(postId)
                 .orElseThrow(NotFoundException::post);

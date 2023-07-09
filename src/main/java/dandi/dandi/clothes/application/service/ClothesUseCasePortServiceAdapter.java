@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class ClothesUseCasePortServiceAdapter implements ClothesUseCasePort {
 
     private final ClothesPersistencePort clothesPersistencePort;
@@ -22,7 +23,6 @@ public class ClothesUseCasePortServiceAdapter implements ClothesUseCasePort {
     }
 
     @Override
-    @Transactional
     public void registerClothes(Long memberId, ClothesRegisterCommand clothesRegisterCommand) {
         Clothes clothes = Clothes.initial(memberId, clothesRegisterCommand.getCategory(),
                 clothesRegisterCommand.getSeasons(), clothesRegisterCommand.getClothesImageUrl());
@@ -31,7 +31,6 @@ public class ClothesUseCasePortServiceAdapter implements ClothesUseCasePort {
     }
 
     @Override
-    @Transactional
     public void deleteClothes(Long memberId, Long clothesId) {
         Clothes clothes = clothesPersistencePort.findById(clothesId)
                 .orElseThrow(NotFoundException::clothes);

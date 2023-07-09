@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
+@Transactional
 public class ClothesImageService implements ClothesImageUseCase {
 
     private static final String CLOTHES_IMAGE_FILE_KEY_FORMAT = "%s/%s_%s_%s";
@@ -32,7 +33,6 @@ public class ClothesImageService implements ClothesImageUseCase {
     }
 
     @Override
-    @Transactional
     public ClothesImageRegisterResponse uploadClothesImage(Long memberId, MultipartFile multipartFile) {
         String fileKey = generateFileKey(memberId, multipartFile);
         unusedImagePersistencePort.save(fileKey);

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class PushNotificationCommandServiceAdapter implements PushNotificationCommandServicePort {
 
     private final PushNotificationPersistencePort pushNotificationPersistencePort;
@@ -19,7 +20,6 @@ public class PushNotificationCommandServiceAdapter implements PushNotificationCo
         this.pushNotificationPersistencePort = pushNotificationPersistencePort;
     }
 
-    @Transactional
     public void updatePushNotificationTime(Long memberId,
                                            PushNotificationTimeUpdateCommand pushNotificationTimeUpdateCommand) {
         PushNotification pushNotification = findPushNotificationByMemberId(memberId);
@@ -27,7 +27,6 @@ public class PushNotificationCommandServiceAdapter implements PushNotificationCo
         pushNotificationPersistencePort.updatePushNotificationTime(pushNotification.getId(), pushNotificationTime);
     }
 
-    @Transactional
     public void updatePushNotificationAllowance(Long memberId,
                                                 PushNotificationAllowanceUpdateCommand pushNotificationAllowanceUpdateCommand) {
         PushNotification pushNotification = findPushNotificationByMemberId(memberId);

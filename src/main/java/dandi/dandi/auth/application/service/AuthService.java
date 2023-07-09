@@ -21,6 +21,7 @@ import javax.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 @Service
+@Transactional
 public class AuthService implements AuthUseCase {
 
     private final MemberSignupManager memberSignupManager;
@@ -46,7 +47,6 @@ public class AuthService implements AuthUseCase {
     }
 
     @Override
-    @Transactional
     public LoginResponse getToken(LoginCommand loginCommand) {
         String oAuthMemberId = oAuthClientPort.getOAuthMemberId(loginCommand.getIdToken());
         Optional<Member> member = memberPersistencePort.findByOAuthId(oAuthMemberId);
@@ -83,7 +83,6 @@ public class AuthService implements AuthUseCase {
     }
 
     @Override
-    @Transactional
     public TokenResponse refresh(String refreshTokenValue) {
         RefreshToken refreshToken = refreshTokenPersistencePort
                 .findByValue(refreshTokenValue)
@@ -102,7 +101,6 @@ public class AuthService implements AuthUseCase {
     }
 
     @Override
-    @Transactional
     public void logout(Long memberId) {
         refreshTokenPersistencePort.deleteByMemberId(memberId);
     }

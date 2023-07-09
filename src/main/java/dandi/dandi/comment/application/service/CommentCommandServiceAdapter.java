@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class CommentCommandServiceAdapter implements CommentUseCaseServicePort {
 
     private final CommentPersistencePort commentPersistencePort;
@@ -29,7 +30,6 @@ public class CommentCommandServiceAdapter implements CommentUseCaseServicePort {
     }
 
     @Override
-    @Transactional
     public void registerComment(Long memberId, Long postId, CommentRegisterCommand commentRegisterCommand) {
         Comment comment = commentRegisterCommand.toComment();
         Post post = postPersistencePort.findById(postId)
@@ -46,7 +46,6 @@ public class CommentCommandServiceAdapter implements CommentUseCaseServicePort {
     }
 
     @Override
-    @Transactional
     public void deleteComment(Long memberId, Long commentId) {
         Comment comment = commentPersistencePort.findById(commentId)
                 .orElseThrow(NotFoundException::comment);
