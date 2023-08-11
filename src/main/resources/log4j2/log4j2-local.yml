@@ -14,8 +14,8 @@ Configuration:
       level: info
       AppenderRef:
         ref: Console_Appender
-    Logger:
-      name: dandi.dandi
+    AsyncLogger:
+      name: asyncLogger
       additivity: false
       level: debug
       AppenderRef:
