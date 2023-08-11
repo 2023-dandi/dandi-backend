@@ -40,12 +40,19 @@ Configuration:
       level: info
       AppenderRef:
         - ref: RollingFile_Appender
-    Logger:
-      name: dandi.dandi
+    AsyncLogger:
+      name: asyncLogger
       additivity: false
       level: debug
       includeLocation: false
       AppenderRef:
         - ref: RollingFile_Appender
+#    SyncLogger:
+#      name: syncLogger
+#      additivity: false
+#      level: debug
+#      includeLocation: false
+#      AppenderRef:
+#        - ref: RollingFile_Appender
 
 
