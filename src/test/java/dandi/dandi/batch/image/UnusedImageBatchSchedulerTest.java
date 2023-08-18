@@ -26,6 +26,8 @@ class UnusedImageBatchSchedulerTest {
     private JobLauncher jobLauncher;
     @Mock
     private ErrorMessageSender errorMessageSender;
+    @Mock
+    private UnusedImageDeletionBatch unusedImageDeletionBatch;
     @InjectMocks
     private UnusedImageBatchScheduler unusedImageBatchScheduler;
 
