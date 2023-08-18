@@ -92,11 +92,11 @@ public class UnusedImageDeletionBatch {
         try {
             return queryProvider.getObject();
         } catch (Exception e) {
-            throw new BatchException(JOB_NAME);
+            throw BatchException.queryProviderObjectCreationFailed(JOB_NAME);
         }
     }
 
-     private RowMapper<UnusedImage> rowMapper() {
+    private RowMapper<UnusedImage> rowMapper() {
         return (rs, rowNum) -> new UnusedImage(rs.getLong("unused_image_id"), rs.getString("image_url"));
     }
 
