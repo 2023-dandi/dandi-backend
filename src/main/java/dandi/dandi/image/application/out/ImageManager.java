@@ -1,12 +1,16 @@
 package dandi.dandi.image.application.out;
 
-import com.amazonaws.SdkClientException;
-import java.io.IOException;
+import dandi.dandi.image.exception.ImageDeletionFailedException;
+import dandi.dandi.image.exception.ImageUploadFailedException;
+
 import java.io.InputStream;
+import java.util.List;
 
 public interface ImageManager {
 
-    void upload(String fileKey, InputStream inputStream) throws IOException, SdkClientException;
+    void upload(String fileKey, InputStream inputStream) throws ImageUploadFailedException;
 
-    void delete(String fileKey) throws SdkClientException;
+    void delete(String fileKey) throws ImageDeletionFailedException;
+
+    void delete(List<String> filekeys) throws ImageDeletionFailedException;
 }
