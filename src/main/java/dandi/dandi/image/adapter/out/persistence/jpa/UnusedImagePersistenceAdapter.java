@@ -22,4 +22,9 @@ public class UnusedImagePersistenceAdapter implements UnusedImagePersistencePort
     public void delete(String imageUrl) {
         unusedImageRepository.deleteByImageUrl(imageUrl);
     }
+
+    @Override
+    public void deleteAllBatch(Iterable<Long> ids) {
+        unusedImageRepository.deleteAllByIdInBatch(ids);
+    }
 }

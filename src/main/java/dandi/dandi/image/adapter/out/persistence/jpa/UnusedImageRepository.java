@@ -5,4 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface UnusedImageRepository extends JpaRepository<UnusedImageJpaEntity, Long> {
 
     void deleteByImageUrl(String imageUrl);
+
+    void deleteAllByIdInBatch(Iterable<Long> ids);
 }
