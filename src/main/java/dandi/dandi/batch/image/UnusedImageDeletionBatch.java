@@ -1,6 +1,7 @@
 package dandi.dandi.batch.image;
 
 import dandi.dandi.batch.exception.BatchException;
+import dandi.dandi.batch.jobparameter.DateTimeJobParameter;
 import dandi.dandi.image.application.out.ImageManager;
 import dandi.dandi.image.application.out.UnusedImagePersistencePort;
 import dandi.dandi.image.domain.UnusedImage;
@@ -13,6 +14,7 @@ import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
+import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.database.PagingQueryProvider;
@@ -26,6 +28,7 @@ import org.springframework.jdbc.core.RowMapper;
 
 import javax.sql.DataSource;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Configuration
@@ -40,26 +43,37 @@ public class UnusedImageDeletionBatch {
     private final UnusedImagePersistencePort unusedImagePersistencePort;
     private final ImageManager imageManager;
     private final DataSource dataSource;
+    private final DateTimeJobParameter dateTimeJobParameter;
 
-    public UnusedImageDeletionBatch(JobBuilderFactory jobBuilderFactory, StepBuilderFactory stepBuilderFactory, UnusedImagePersistencePort unusedImagePersistencePort, ImageManager imageManager, DataSource dataSource) {
+    public UnusedImageDeletionBatch(JobBuilderFactory jobBuilderFactory, StepBuilderFactory stepBuilderFactory,
+                                    UnusedImagePersistencePort unusedImagePersistencePort, ImageManager imageManager,
+                                    DataSource dataSource, DateTimeJobParameter dateTimeJobParameter) {
         this.jobBuilderFactory = jobBuilderFactory;
         this.stepBuilderFactory = stepBuilderFactory;
         this.unusedImagePersistencePort = unusedImagePersistencePort;
         this.imageManager = imageManager;
         this.dataSource = dataSource;
+        this.dateTimeJobParameter = dateTimeJobParameter;
     }
 
     @Bean
     public Job deleteUnusedImageJob() {
         return jobBuilderFactory.get(JOB_NAME)
-                .start(deleteUnusedImageStep(null))
+                .start(deleteUnusedImageStep())
+                .incrementer(new RunIdIncrementer())
                 .build();
     }
 
     @Bean
     @JobScope
-    public Step deleteUnusedImageStep(@Value("#{jobParameters[dateTime]}") String dateTime) {
-        logger.info("[{}] Unused ImageDeletion Batch", dateTime);
+    public DateTimeJobParameter jobParameter(@Value("#{jobParameters[dateTime]}") String dateTime) {
+        return new DateTimeJobParameter(dateTime);
+    }
+
+    @Bean
+    @JobScope
+    public Step deleteUnusedImageStep() {
+        logger.info("[{}] Unused ImageDeletion Batch", dateTimeJobParameter);
         return stepBuilderFactory.get("unusedImageDeletion")
                 .<UnusedImage, UnusedImage>chunk(CHUCK_SIZE)
                 .reader(unusedImageItemReader())
@@ -73,12 +87,14 @@ public class UnusedImageDeletionBatch {
     @Bean
     @StepScope
     public ItemReader<UnusedImage> unusedImageItemReader() {
+        Map<String, Object> parameters = Map.of("created_at", dateTimeJobParameter.ofMinusDays(1));
         return new JdbcPagingItemReaderBuilder<UnusedImage>()
                 .name("unusedImageItemReader")
                 .dataSource(dataSource)
                 .pageSize(CHUCK_SIZE)
                 .fetchSize(CHUCK_SIZE)
                 .queryProvider(pagingQueryProvider())
+                .parameterValues(parameters)
                 .rowMapper(rowMapper())
                 .build();
     }
@@ -86,8 +102,9 @@ public class UnusedImageDeletionBatch {
     private PagingQueryProvider pagingQueryProvider() {
         SqlPagingQueryProviderFactoryBean queryProvider = new SqlPagingQueryProviderFactoryBean();
         queryProvider.setDataSource(dataSource);
-        queryProvider.setSelectClause("unused_image_id, image_url");
+        queryProvider.setSelectClause("unused_image_id, image_url, created_at");
         queryProvider.setFromClause("from unused_image");
+        queryProvider.setWhereClause("where created_at <= :created_at");
         queryProvider.setSortKey("unused_image_id");
         try {
             return queryProvider.getObject();
@@ -97,7 +114,11 @@ public class UnusedImageDeletionBatch {
     }
 
     private RowMapper<UnusedImage> rowMapper() {
-        return (rs, rowNum) -> new UnusedImage(rs.getLong("unused_image_id"), rs.getString("image_url"));
+        return (rs, rowNum) -> new UnusedImage(
+                rs.getLong("unused_image_id"),
+                rs.getString("image_url"),
+                rs.getDate("created_at").toLocalDate()
+        );
     }
 
     @Bean
