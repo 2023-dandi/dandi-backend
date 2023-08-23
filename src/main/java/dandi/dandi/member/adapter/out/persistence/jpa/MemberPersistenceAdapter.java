@@ -63,7 +63,7 @@ public class MemberPersistenceAdapter implements MemberPersistencePort {
     public void updateLocation(Long memberId, Location location) {
         District district = location.getDistrict();
         memberRepository.updateLocation(memberId, location.getLatitude(), location.getLongitude(),
-                district.getCountry(), district.getCity(), district.getTown());
+                district.getFirst(), district.getSecond(), district.getThird());
     }
 
     @Override
