@@ -9,9 +9,9 @@ public class LocationEntity {
 
     private double latitude;
     private double longitude;
-    private String country;
-    private String city;
-    private String town;
+    private String firstDistrict;
+    private String secondDistrict;
+    private String thirdDistrict;
 
     private LocationEntity() {
     }
@@ -19,12 +19,12 @@ public class LocationEntity {
     public LocationEntity(double latitude, double longitude, District district) {
         this.latitude = latitude;
         this.longitude = longitude;
-        this.country = district.getCountry();
-        this.city = district.getCity();
-        this.town = district.getTown();
+        this.firstDistrict = district.getFirst();
+        this.secondDistrict = district.getSecond();
+        this.thirdDistrict = district.getThird();
     }
 
     public Location toLocation() {
-        return new Location(latitude, longitude, new District(country, city, town));
+        return new Location(latitude, longitude, new District(firstDistrict, secondDistrict, thirdDistrict));
     }
 }
