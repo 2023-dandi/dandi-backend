@@ -4,57 +4,52 @@ import java.util.Objects;
 
 public class District {
 
-    private static final District INITIAL_DISTRICT = new District("대한민국");
+    private static final District INITIAL_DISTRICT = new District("서울특별시");
 
-    private final String country;
-    private final String city;
-    private final String town;
+    private final String first;
+    private final String second;
+    private final String third;
 
-    public District(String country, String city, String town) {
-        this.country = country;
-        this.city = city;
-        this.town = town;
+    public District(String first, String second, String third) {
+        this.first = first;
+        this.second = second;
+        this.third = third;
     }
 
-    public District(String country, String city) {
-        this(country, city, null);
+    public District(String first, String second) {
+        this(first, second, null);
     }
 
-    public District(String country) {
-        this(country, null, null);
+    public District(String first) {
+        this(first, null, null);
     }
 
     public static District getInitialDistrict() {
         return INITIAL_DISTRICT;
     }
 
-    public String getCountry() {
-        return country;
+    public String getFirst() {
+        return first;
     }
 
-    public String getCity() {
-        return city;
+    public String getSecond() {
+        return second;
     }
 
-    public String getTown() {
-        return town;
+    public String getThird() {
+        return third;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof District)) {
-            return false;
-        }
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         District district = (District) o;
-        return Objects.equals(country, district.country) && Objects.equals(city, district.city)
-                && Objects.equals(town, district.town);
+        return Objects.equals(first, district.first) && Objects.equals(second, district.second) && Objects.equals(third, district.third);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(country, city, town);
+        return Objects.hash(first, second, third);
     }
 }
