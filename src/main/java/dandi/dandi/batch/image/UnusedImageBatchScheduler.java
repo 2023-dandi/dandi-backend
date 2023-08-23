@@ -32,7 +32,7 @@ public class UnusedImageBatchScheduler {
         this.errorMessageSender = errorMessageSender;
     }
 
-    @Scheduled(cron = "0 0 4 * * *")
+    @Scheduled(cron = "0 0 4 * * SUN")
     public void runUnusedImageDeletionBatch() {
         String today = LocalDateTime.now().toString();
         JobParameter dateJobParameter = new JobParameter(today);
