@@ -2,6 +2,7 @@ package dandi.dandi.weather.domain;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Objects;
 
 public class Weather {
 
@@ -137,5 +138,18 @@ public class Weather {
 
     public double getWindSpeed() {
         return windSpeed;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Weather weather = (Weather) o;
+        return weatherLocationId == weather.weatherLocationId && Double.compare(temperature, weather.temperature) == 0 && humidity == weather.humidity && precipitationPossibility == weather.precipitationPossibility && Double.compare(precipitationAmount, weather.precipitationAmount) == 0 && Double.compare(windSpeed, weather.windSpeed) == 0 && Objects.equals(date, weather.date) && Objects.equals(time, weather.time) && sky == weather.sky && precipitationType == weather.precipitationType && windDirection == weather.windDirection;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(weatherLocationId, date, time, temperature, sky, humidity, precipitationType, precipitationPossibility, precipitationAmount, windDirection, windSpeed);
     }
 }
