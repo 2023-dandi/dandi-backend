@@ -1,4 +1,6 @@
-package dandi.dandi.weather.adapter.out.kma;
+package dandi.dandi.weather.adapter.out.kma.code;
+
+import dandi.dandi.weather.adapter.out.kma.exception.KmaException;
 
 import java.util.Arrays;
 
@@ -32,7 +34,7 @@ public enum KmaResponseCode {
         return Arrays.stream(values())
                 .filter(kmaResponseCode -> kmaResponseCode.value.equals(value))
                 .findFirst()
-                .orElseThrow();
+                .orElseThrow(KmaException::precipitationTypeCode);
     }
 
     public boolean isSuccessful() {
