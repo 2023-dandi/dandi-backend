@@ -41,7 +41,7 @@ public class WeatherJpaEntity {
     }
 
     public Weather toWeather() {
-        return new Weather.WeatherBuilder(date, time, weatherLocationId)
+        return new Weather.WeatherBuilder(date, time)
                 .temperature(temperature)
                 .sky(sky)
                 .humidity(humidity)

@@ -17,7 +17,7 @@ class WindDirectionExtractorTest {
     @DisplayName("기상청의 풍향 값을 8방위 값을 WeatherBuilder에 설정한다..")
     @Test
     void setValue_WindDirection() {
-        Weather.WeatherBuilder weatherBuilder = new Weather.WeatherBuilder(LocalDate.MIN, LocalTime.MIN, 1L);
+        Weather.WeatherBuilder weatherBuilder = new Weather.WeatherBuilder(LocalDate.MIN, LocalTime.MIN);
 
         windDirectionExtractor.setValue(weatherBuilder, "339");
 
