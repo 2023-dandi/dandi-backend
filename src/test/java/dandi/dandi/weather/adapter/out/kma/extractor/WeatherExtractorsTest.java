@@ -30,7 +30,7 @@ class WeatherExtractorsTest {
         long weatherLocationId = 1L;
         List<WeatherItem> weatherItems = generateWeatherItems();
 
-        List<Weather> actual = weatherExtractors.extract(weatherItems, weatherLocationId);
+        List<Weather> actual = weatherExtractors.extract(weatherItems);
 
         assertThat(actual).isEqualTo(generateExpectedWeathers());
     }
@@ -64,7 +64,7 @@ class WeatherExtractorsTest {
 
     private List<Weather> generateExpectedWeathers() {
         return List.of(
-                new Weather.WeatherBuilder(LocalDate.of(2023, 8, 25), LocalTime.of(5, 0), 1L)
+                new Weather.WeatherBuilder(LocalDate.of(2023, 8, 25), LocalTime.of(5, 0))
                         .temperature(15.0)
                         .precipitationPossibility(60)
                         .precipitationType(RAIN)
@@ -74,7 +74,7 @@ class WeatherExtractorsTest {
                         .windSpeed(2.0)
                         .sky(CLOUDY)
                         .build(),
-                new Weather.WeatherBuilder(LocalDate.of(2023, 8, 25), LocalTime.of(6, 0), 1L)
+                new Weather.WeatherBuilder(LocalDate.of(2023, 8, 25), LocalTime.of(6, 0))
                         .temperature(16.0)
                         .precipitationPossibility(50)
                         .precipitationType(RAIN)

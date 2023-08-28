@@ -22,11 +22,11 @@ public class WeatherExtractors {
         this.extractors = extractors;
     }
 
-    public List<Weather> extract(List<WeatherItem> items, Long weatherLocationId) {
+    public List<Weather> extract(List<WeatherItem> items) {
         Map<FsctDateTimeKey, List<WeatherItem>> weatherItems = classifyByFsctDateTime(items);
         return weatherItems.entrySet()
                 .stream()
-                .map(weatherItem -> generateWeather(weatherItem, weatherLocationId))
+                .map(this::generateWeather)
                 .collect(Collectors.toUnmodifiableList());
     }
 
@@ -40,10 +40,10 @@ public class WeatherExtractors {
         return weatherItems;
     }
 
-    private Weather generateWeather(Map.Entry<FsctDateTimeKey, List<WeatherItem>> weatherItems, Long weatherLocationId) {
+    private Weather generateWeather(Map.Entry<FsctDateTimeKey, List<WeatherItem>> weatherItems) {
         LocalDate date = LocalDate.parse(weatherItems.getKey().fsctDate, KMA_DATE_FORMATTER);
         LocalTime time = LocalTime.parse(weatherItems.getKey().fsctTime, KMA_TIME_FORMATTER);
-        Weather.WeatherBuilder weatherBuilder = new Weather.WeatherBuilder(date, time, weatherLocationId);
+        Weather.WeatherBuilder weatherBuilder = new Weather.WeatherBuilder(date, time);
         for (WeatherItem item : weatherItems.getValue()) {
             WeatherExtractor extractor = findExtractor(item.getCategory());
             extractor.setValue(weatherBuilder, item.getFcstValue());

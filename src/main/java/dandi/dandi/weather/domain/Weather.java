@@ -6,7 +6,6 @@ import java.util.Objects;
 
 public class Weather {
 
-    private final long weatherLocationId;
     private final LocalDate date;
     private final LocalTime time;
     private final double temperature;
@@ -19,7 +18,6 @@ public class Weather {
     private final double windSpeed; // m/s
 
     public Weather(WeatherBuilder builder) {
-        this.weatherLocationId = builder.weatherLocationId;
         this.date = builder.date;
         this.time = builder.time;
         this.temperature = builder.temperature;
@@ -33,7 +31,6 @@ public class Weather {
     }
 
     public static class WeatherBuilder {
-        private long weatherLocationId;
         private LocalDate date;
         private LocalTime time;
         private double temperature;
@@ -45,10 +42,9 @@ public class Weather {
         private WindDirection windDirection;
         private double windSpeed;
 
-        public WeatherBuilder(LocalDate date, LocalTime time, long weatherLocationId) {
+        public WeatherBuilder(LocalDate date, LocalTime time) {
             this.date = date;
             this.time = time;
-            this.weatherLocationId = weatherLocationId;
         }
 
         public WeatherBuilder temperature(double temperature) {
@@ -96,10 +92,6 @@ public class Weather {
         }
     }
 
-    public long getWeatherLocationId() {
-        return weatherLocationId;
-    }
-
     public LocalDate getDate() {
         return date;
     }
@@ -145,11 +137,11 @@ public class Weather {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Weather weather = (Weather) o;
-        return weatherLocationId == weather.weatherLocationId && Double.compare(temperature, weather.temperature) == 0 && humidity == weather.humidity && precipitationPossibility == weather.precipitationPossibility && Double.compare(precipitationAmount, weather.precipitationAmount) == 0 && Double.compare(windSpeed, weather.windSpeed) == 0 && Objects.equals(date, weather.date) && Objects.equals(time, weather.time) && sky == weather.sky && precipitationType == weather.precipitationType && windDirection == weather.windDirection;
+        return Double.compare(temperature, weather.temperature) == 0 && humidity == weather.humidity && precipitationPossibility == weather.precipitationPossibility && Double.compare(precipitationAmount, weather.precipitationAmount) == 0 && Double.compare(windSpeed, weather.windSpeed) == 0 && Objects.equals(date, weather.date) && Objects.equals(time, weather.time) && sky == weather.sky && precipitationType == weather.precipitationType && windDirection == weather.windDirection;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(weatherLocationId, date, time, temperature, sky, humidity, precipitationType, precipitationPossibility, precipitationAmount, windDirection, windSpeed);
+        return Objects.hash(date, time, temperature, sky, humidity, precipitationType, precipitationPossibility, precipitationAmount, windDirection, windSpeed);
     }
 }
