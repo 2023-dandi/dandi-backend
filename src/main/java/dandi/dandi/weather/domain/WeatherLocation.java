@@ -9,6 +9,16 @@ public class WeatherLocation {
     private String secondDistrict;
     private String thirdDistrict;
 
+    public WeatherLocation(Long id, double latitude, double longitude,
+                           String firstDistrict, String secondDistrict, String thirdDistrict) {
+        this.id = id;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.firstDistrict = firstDistrict;
+        this.secondDistrict = secondDistrict;
+        this.thirdDistrict = thirdDistrict;
+    }
+
     public Long getId() {
         return id;
     }
