@@ -20,11 +20,10 @@ import static dandi.dandi.weather.domain.PrecipitationType.RAIN;
 import static dandi.dandi.weather.domain.Sky.CLOUDY;
 import static dandi.dandi.weather.domain.WindDirection.SE;
 
-@Configuration
 public class WeatherBatchTestConfig {
 
     @Bean
-    public WeatherRequester kmaWeatherRequester() {
+    public WeatherRequester mockWeatherRequester() {
         return new WeatherRequester() {
 
             private int requestCount = 0;
