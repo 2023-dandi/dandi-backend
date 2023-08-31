@@ -46,7 +46,8 @@ public class WeatherBatch {
 
     public WeatherBatch(JobBuilderFactory jobBuilderFactory, StepBuilderFactory stepBuilderFactory,
                         DataSource dataSource, WeatherRequester weatherRequester,
-                        @Qualifier(value = "weatherJobDateTimeParameter") DateTimeJobParameter dateTimeJobParameter, WeatherPersistencePort weatherPersistencePort) {
+                        @Qualifier(value = "weatherBatchJobDateTimeParameter") DateTimeJobParameter dateTimeJobParameter,
+                        WeatherPersistencePort weatherPersistencePort) {
         this.jobBuilderFactory = jobBuilderFactory;
         this.stepBuilderFactory = stepBuilderFactory;
         this.dataSource = dataSource;
@@ -55,9 +56,9 @@ public class WeatherBatch {
         this.weatherPersistencePort = weatherPersistencePort;
     }
 
-    @Bean(name = "weatherJobDateTimeParameter")
+    @Bean
     @JobScope
-    public DateTimeJobParameter jobParameter(@Value("#{jobParameters[dateTime]}") String dateTime) {
+    public DateTimeJobParameter weatherBatchJobDateTimeParameter(@Value("#{jobParameters[dateTime]}") String dateTime) {
         return new DateTimeJobParameter(dateTime);
     }
 

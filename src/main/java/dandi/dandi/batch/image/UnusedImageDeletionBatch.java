@@ -21,6 +21,7 @@ import org.springframework.batch.item.database.PagingQueryProvider;
 import org.springframework.batch.item.database.builder.JdbcPagingItemReaderBuilder;
 import org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean;
 import org.springframework.batch.item.support.builder.CompositeItemWriterBuilder;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -47,7 +48,8 @@ public class UnusedImageDeletionBatch {
 
     public UnusedImageDeletionBatch(JobBuilderFactory jobBuilderFactory, StepBuilderFactory stepBuilderFactory,
                                     UnusedImagePersistencePort unusedImagePersistencePort, ImageManager imageManager,
-                                    DataSource dataSource, DateTimeJobParameter dateTimeJobParameter) {
+                                    DataSource dataSource,
+                                    @Qualifier("unusedImageDeletionDateTimeJobParameter") DateTimeJobParameter dateTimeJobParameter) {
         this.jobBuilderFactory = jobBuilderFactory;
         this.stepBuilderFactory = stepBuilderFactory;
         this.unusedImagePersistencePort = unusedImagePersistencePort;
@@ -66,7 +68,7 @@ public class UnusedImageDeletionBatch {
 
     @Bean
     @JobScope
-    public DateTimeJobParameter jobParameter(@Value("#{jobParameters[dateTime]}") String dateTime) {
+    public DateTimeJobParameter unusedImageDeletionDateTimeJobParameter(@Value("#{jobParameters[dateTime]}") String dateTime) {
         return new DateTimeJobParameter(dateTime);
     }
 
