@@ -40,6 +40,30 @@ public class WeatherJpaEntity {
     protected WeatherJpaEntity() {
     }
 
+    public WeatherJpaEntity(Long id, long weatherLocationId, LocalDate date, LocalTime time, double temperature,
+                            Sky sky, int humidity, PrecipitationType precipitationType, int precipitationPossibility,
+                            double precipitationAmount, WindDirection windDirection, double windSpeed) {
+        this.id = id;
+        this.weatherLocationId = weatherLocationId;
+        this.date = date;
+        this.time = time;
+        this.temperature = temperature;
+        this.sky = sky;
+        this.humidity = humidity;
+        this.precipitationType = precipitationType;
+        this.precipitationPossibility = precipitationPossibility;
+        this.precipitationAmount = precipitationAmount;
+        this.windDirection = windDirection;
+        this.windSpeed = windSpeed;
+    }
+
+    public static WeatherJpaEntity ofWeather(Weather weather, long weatherLocationId) {
+        return new WeatherJpaEntity(null, weatherLocationId,
+                weather.getDate(), weather.getTime(), weather.getTemperature(), weather.getSky(),
+                weather.getHumidity(), weather.getPrecipitationType(), weather.getPrecipitationPossibility(),
+                weather.getPrecipitationAmount(), weather.getWindDirection(), weather.getWindSpeed());
+    }
+
     public Weather toWeather() {
         return new Weather.WeatherBuilder(date, time)
                 .temperature(temperature)
