@@ -26,6 +26,7 @@ public class WeatherExtractors {
         return weatherItems.entrySet()
                 .stream()
                 .map(this::generateWeather)
+                .sorted()
                 .collect(Collectors.toUnmodifiableList());
     }
 

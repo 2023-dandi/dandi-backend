@@ -31,7 +31,7 @@ class WeatherExtractorsTest {
 
         List<Weather> actual = weatherExtractors.extract(weatherItems);
 
-        assertThat(actual).containsAll(generateExpectedWeathers());
+        assertThat(actual).isEqualTo(generateExpectedWeathers());
     }
 
     private List<WeatherItem> generateWeatherItems() {
