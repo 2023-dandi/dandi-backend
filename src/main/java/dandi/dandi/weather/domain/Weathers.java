@@ -11,4 +11,12 @@ public class Weathers {
         this.weatherLocationId = weatherLocationId;
         this.values = values;
     }
+
+    public long getWeatherLocationId() {
+        return weatherLocationId;
+    }
+
+    public List<Weather> getValues() {
+        return values;
+    }
 }
