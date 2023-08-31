@@ -1,7 +1,7 @@
 package dandi.dandi.weather.adapter.out.kma.extractor;
 
 import dandi.dandi.weather.adapter.out.kma.dto.WeatherItem;
-import dandi.dandi.weather.adapter.out.kma.exception.KmaException;
+import dandi.dandi.weather.application.port.out.WeatherRequestFatalException;
 import dandi.dandi.weather.domain.Weather;
 import org.springframework.stereotype.Component;
 
@@ -55,7 +55,7 @@ public class WeatherExtractors {
         return extractors.stream()
                 .filter(weatherExtractor -> weatherExtractor.hasCategoryCode(category))
                 .findFirst()
-                .orElseThrow(KmaException::categoryCode);
+                .orElseThrow(() -> new WeatherRequestFatalException("기상청 응답 카테고리 코드를 변환할 수 없습니다."));
     }
 
     static class FsctDateTimeKey {

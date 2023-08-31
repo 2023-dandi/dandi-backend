@@ -1,6 +1,6 @@
 package dandi.dandi.weather.adapter.out.kma.code;
 
-import dandi.dandi.weather.adapter.out.kma.exception.KmaException;
+import dandi.dandi.weather.application.port.out.WeatherRequestFatalException;
 import dandi.dandi.weather.domain.PrecipitationType;
 
 import java.util.Arrays;
@@ -26,7 +26,7 @@ public enum KmaPrecipitationType {
         return Arrays.stream(values())
                 .filter(kmaPrecipitationType -> kmaPrecipitationType.code == code)
                 .findAny()
-                .orElseThrow(KmaException::precipitationTypeCode);
+                .orElseThrow(() -> new WeatherRequestFatalException("기상청 강수 형태 코드를 변환할 수 없습니다."));
     }
 
     public PrecipitationType getPrecipitationType() {

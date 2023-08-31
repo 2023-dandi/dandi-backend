@@ -1,6 +1,6 @@
 package dandi.dandi.weather.adapter.out.kma.code;
 
-import dandi.dandi.weather.adapter.out.kma.exception.KmaException;
+import dandi.dandi.weather.application.port.out.WeatherRequestFatalException;
 
 import java.util.Arrays;
 
@@ -34,7 +34,7 @@ public enum KmaResponseCode {
         return Arrays.stream(values())
                 .filter(kmaResponseCode -> kmaResponseCode.value.equals(value))
                 .findFirst()
-                .orElseThrow(KmaException::precipitationTypeCode);
+                .orElseThrow(() -> new WeatherRequestFatalException("기상청 응답 코드를 변환할 수 없습니다."));
     }
 
     public boolean isSuccessful() {

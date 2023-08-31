@@ -1,6 +1,6 @@
 package dandi.dandi.weather.adapter.out.kma.code;
 
-import dandi.dandi.weather.adapter.out.kma.exception.KmaException;
+import dandi.dandi.weather.application.port.out.WeatherRequestFatalException;
 import dandi.dandi.weather.domain.WindDirection;
 
 import java.util.Arrays;
@@ -38,7 +38,7 @@ public enum KmaWindDirection {
         return Arrays.stream(values())
                 .filter(kmaWindDirection -> kmaWindDirection.code == code)
                 .findFirst()
-                .orElseThrow(KmaException::windDirectionCode);
+                .orElseThrow(() -> new WeatherRequestFatalException("기상청 풍향을 변환할 수 없습니다."));
     }
 
     public WindDirection getWindDirection() {
