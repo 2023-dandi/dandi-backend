@@ -3,7 +3,7 @@ package dandi.dandi.weather.domain;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class Weather {
+public class Weather implements Comparable<Weather> {
 
     private final LocalDateTime dateTime;
     private final double temperature;
@@ -89,6 +89,16 @@ public class Weather {
 
     public LocalDateTime getDateTime() {
         return dateTime;
+    }
+
+    @Override
+    public int compareTo(Weather another) {
+        if (dateTime.isBefore(another.dateTime)) {
+            return -1;
+        } else if (dateTime.isAfter(another.dateTime)) {
+            return 1;
+        }
+        return 0;
     }
 
     public double getTemperature() {
