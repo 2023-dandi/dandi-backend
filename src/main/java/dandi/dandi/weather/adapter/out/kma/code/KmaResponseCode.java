@@ -1,4 +1,6 @@
-package dandi.dandi.weather.adapter.out.kma;
+package dandi.dandi.weather.adapter.out.kma.code;
+
+import dandi.dandi.weather.application.port.out.WeatherRequestFatalException;
 
 import java.util.Arrays;
 
@@ -32,7 +34,7 @@ public enum KmaResponseCode {
         return Arrays.stream(values())
                 .filter(kmaResponseCode -> kmaResponseCode.value.equals(value))
                 .findFirst()
-                .orElseThrow();
+                .orElseThrow(() -> new WeatherRequestFatalException("기상청 응답 코드를 변환할 수 없습니다."));
     }
 
     public boolean isSuccessful() {
@@ -41,6 +43,12 @@ public enum KmaResponseCode {
 
     public boolean isErrorAssociatedWithLocation() {
         return this == NO_DATA_ERROR;
+    }
+
+    public boolean isTemporaryExternalServerError() {
+        return this == SERVICE_TIME_OUT || this == DB_ERROR || this == HTTP_ERROR ||
+                this == SERVICE_ACCESS_DENIED_ERROR || this == TEMPORARILY_DISABLE_THE_SERVICE_KEY_ERROR ||
+                this == SERVICE_KEY_IS_NOT_REGISTERED_ERROR;
     }
 
     public boolean isRetryable() {

@@ -16,6 +16,10 @@ public class DateTimeJobParameter {
         return localDateTime.minusDays(days).toLocalDate();
     }
 
+    public LocalDateTime getLocalDateTime() {
+        return localDateTime;
+    }
+
     @Override
     public String toString() {
         return localDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));

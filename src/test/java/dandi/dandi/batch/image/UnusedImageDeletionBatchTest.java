@@ -1,6 +1,10 @@
 package dandi.dandi.batch.image;
 
+import dandi.dandi.config.JpaAuditingConfig;
+import dandi.dandi.config.LocalStackConfig;
+import dandi.dandi.image.adapter.out.AwsS3ImageManager;
 import dandi.dandi.image.adapter.out.persistence.jpa.UnusedImageJpaEntity;
+import dandi.dandi.image.adapter.out.persistence.jpa.UnusedImagePersistenceAdapter;
 import dandi.dandi.image.adapter.out.persistence.jpa.UnusedImageRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,11 +18,11 @@ import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.batch.test.context.SpringBatchTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Map;
 
@@ -27,10 +31,13 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 @RunWith(SpringRunner.class)
 @SpringBatchTest
-@Configuration
 @EnableAutoConfiguration
 @EnableBatchProcessing
-@SpringBootTest
+@EnableJpaRepositories(basePackageClasses = UnusedImageRepository.class)
+@EntityScan(basePackageClasses = UnusedImageJpaEntity.class)
+@SpringBootTest(classes = {UnusedImageDeletionBatch.class, AwsS3ImageManager.class, LocalStackConfig.class,
+        UnusedImagePersistenceAdapter.class, JpaAuditingConfig.class},
+        properties = "cloud.aws.s3.bucket-name=test-bucket")
 class UnusedImageDeletionBatchTest {
 
     @Autowired

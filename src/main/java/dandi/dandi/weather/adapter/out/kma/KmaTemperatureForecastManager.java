@@ -2,6 +2,7 @@ package dandi.dandi.weather.adapter.out.kma;
 
 import dandi.dandi.member.domain.District;
 import dandi.dandi.member.domain.Location;
+import dandi.dandi.weather.adapter.out.kma.code.KmaResponseCode;
 import dandi.dandi.weather.adapter.out.kma.dto.Forecast;
 import dandi.dandi.weather.adapter.out.kma.dto.WeatherItem;
 import dandi.dandi.weather.adapter.out.kma.dto.WeatherRequest;
