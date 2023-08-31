@@ -134,6 +134,7 @@ public class WeatherBatch {
     @Bean
     @StepScope
     public ItemWriter<Weathers> weatherItemWriter() {
+        dateTimeJobParameter.getLocalDateTime();
         return items -> {
             List<Weathers> weathers = items.stream()
                     .map(item -> (Weathers) item)

@@ -8,11 +8,8 @@ import dandi.dandi.weather.domain.Weather;
 import dandi.dandi.weather.domain.WeatherLocation;
 import dandi.dandi.weather.domain.Weathers;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,7 +52,7 @@ public class WeatherBatchTestConfig {
     private List<Weather> generateWeathers() {
         List<Weather> weathers = new ArrayList<>();
         for (int i = 0; i < 24; i++) {
-            Weather weather = new Weather.WeatherBuilder(LocalDate.of(2023, 8, 25), LocalTime.of(5, 0))
+            Weather weather = new Weather.WeatherBuilder(LocalDateTime.of(2023, 8, 25, 5, 0))
                     .temperature(15.0)
                     .precipitationPossibility(60)
                     .precipitationType(RAIN)
