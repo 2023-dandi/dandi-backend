@@ -6,8 +6,7 @@ import dandi.dandi.weather.domain.Weather;
 import dandi.dandi.weather.domain.WindDirection;
 
 import javax.persistence.*;
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "weather")
@@ -19,8 +18,7 @@ public class WeatherJpaEntity {
     private Long id;
 
     private long weatherLocationId;
-    private LocalDate date;
-    private LocalTime time;
+    private LocalDateTime dateTime;
     private double temperature;
 
     @Enumerated(value = EnumType.STRING)
@@ -36,17 +34,17 @@ public class WeatherJpaEntity {
     @Enumerated(value = EnumType.STRING)
     private WindDirection windDirection;
     private double windSpeed;
+    private LocalDateTime forecastedAt;
 
     protected WeatherJpaEntity() {
     }
 
-    public WeatherJpaEntity(Long id, long weatherLocationId, LocalDate date, LocalTime time, double temperature,
-                            Sky sky, int humidity, PrecipitationType precipitationType, int precipitationPossibility,
-                            double precipitationAmount, WindDirection windDirection, double windSpeed) {
+    private WeatherJpaEntity(Long id, long weatherLocationId, LocalDateTime dateTime, double temperature,
+                             Sky sky, int humidity, PrecipitationType precipitationType, int precipitationPossibility,
+                             double precipitationAmount, WindDirection windDirection, double windSpeed,
+                             LocalDateTime forecastedAt) {
         this.id = id;
         this.weatherLocationId = weatherLocationId;
-        this.date = date;
-        this.time = time;
         this.temperature = temperature;
         this.sky = sky;
         this.humidity = humidity;
@@ -55,17 +53,18 @@ public class WeatherJpaEntity {
         this.precipitationAmount = precipitationAmount;
         this.windDirection = windDirection;
         this.windSpeed = windSpeed;
+        this.forecastedAt = forecastedAt;
     }
 
     public static WeatherJpaEntity ofWeather(Weather weather, long weatherLocationId) {
-        return new WeatherJpaEntity(null, weatherLocationId,
-                weather.getDate(), weather.getTime(), weather.getTemperature(), weather.getSky(),
-                weather.getHumidity(), weather.getPrecipitationType(), weather.getPrecipitationPossibility(),
-                weather.getPrecipitationAmount(), weather.getWindDirection(), weather.getWindSpeed());
+        return new WeatherJpaEntity(null, weatherLocationId, weather.getDateTime(), weather.getTemperature(),
+                weather.getSky(), weather.getHumidity(), weather.getPrecipitationType(),
+                weather.getPrecipitationPossibility(), weather.getPrecipitationAmount(), weather.getWindDirection(),
+                weather.getWindSpeed(), weather.getForecastedAt());
     }
 
     public Weather toWeather() {
-        return new Weather.WeatherBuilder(date, time)
+        return new Weather.WeatherBuilder(dateTime)
                 .temperature(temperature)
                 .sky(sky)
                 .humidity(humidity)
@@ -74,6 +73,7 @@ public class WeatherJpaEntity {
                 .precipitationAmount(precipitationAmount)
                 .windDirection(windDirection)
                 .windSpeed(windSpeed)
+                .forecastedAt(forecastedAt)
                 .build();
     }
 }

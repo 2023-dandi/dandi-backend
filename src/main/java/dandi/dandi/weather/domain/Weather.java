@@ -1,13 +1,11 @@
 package dandi.dandi.weather.domain;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class Weather {
+public class Weather implements Comparable<Weather> {
 
-    private final LocalDate date;
-    private final LocalTime time;
+    private final LocalDateTime dateTime;
     private final double temperature;
     private final Sky sky;
     private final int humidity;
@@ -16,10 +14,10 @@ public class Weather {
     private final double precipitationAmount;
     private final WindDirection windDirection;
     private final double windSpeed; // m/s
+    private final LocalDateTime forecastedAt;
 
     public Weather(WeatherBuilder builder) {
-        this.date = builder.date;
-        this.time = builder.time;
+        this.dateTime = builder.dateTime;
         this.temperature = builder.temperature;
         this.sky = builder.sky;
         this.humidity = builder.humidity;
@@ -28,11 +26,11 @@ public class Weather {
         this.precipitationAmount = builder.precipitationAmount;
         this.windDirection = builder.windDirection;
         this.windSpeed = builder.windSpeed;
+        this.forecastedAt = builder.forecastedAt;
     }
 
     public static class WeatherBuilder {
-        private LocalDate date;
-        private LocalTime time;
+        private LocalDateTime dateTime;
         private double temperature;
         private Sky sky;
         private int humidity;
@@ -41,10 +39,10 @@ public class Weather {
         private double precipitationAmount;
         private WindDirection windDirection;
         private double windSpeed;
+        private LocalDateTime forecastedAt;
 
-        public WeatherBuilder(LocalDate date, LocalTime time) {
-            this.date = date;
-            this.time = time;
+        public WeatherBuilder(LocalDateTime dateTime) {
+            this.dateTime = dateTime;
         }
 
         public WeatherBuilder temperature(double temperature) {
@@ -87,17 +85,28 @@ public class Weather {
             return this;
         }
 
+        public WeatherBuilder forecastedAt(LocalDateTime forecastedAt) {
+            this.forecastedAt = forecastedAt;
+            return this;
+        }
+
         public Weather build() {
             return new Weather(this);
         }
     }
 
-    public LocalDate getDate() {
-        return date;
+    public LocalDateTime getDateTime() {
+        return dateTime;
     }
 
-    public LocalTime getTime() {
-        return time;
+    @Override
+    public int compareTo(Weather another) {
+        if (dateTime.isBefore(another.dateTime)) {
+            return -1;
+        } else if (dateTime.isAfter(another.dateTime)) {
+            return 1;
+        }
+        return 0;
     }
 
     public double getTemperature() {
@@ -132,16 +141,26 @@ public class Weather {
         return windSpeed;
     }
 
+    public LocalDateTime getForecastedAt() {
+        return forecastedAt;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Weather weather = (Weather) o;
-        return Double.compare(temperature, weather.temperature) == 0 && humidity == weather.humidity && precipitationPossibility == weather.precipitationPossibility && Double.compare(precipitationAmount, weather.precipitationAmount) == 0 && Double.compare(windSpeed, weather.windSpeed) == 0 && Objects.equals(date, weather.date) && Objects.equals(time, weather.time) && sky == weather.sky && precipitationType == weather.precipitationType && windDirection == weather.windDirection;
+        return Double.compare(temperature, weather.temperature) == 0 && humidity == weather.humidity &&
+                precipitationPossibility == weather.precipitationPossibility &&
+                Double.compare(precipitationAmount, weather.precipitationAmount) == 0 &&
+                Double.compare(windSpeed, weather.windSpeed) == 0 &&
+                Objects.equals(dateTime, weather.dateTime) && sky == weather.sky &&
+                precipitationType == weather.precipitationType && windDirection == weather.windDirection;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(date, time, temperature, sky, humidity, precipitationType, precipitationPossibility, precipitationAmount, windDirection, windSpeed);
+        return Objects.hash(dateTime, temperature, sky, humidity, precipitationType,
+                precipitationPossibility, precipitationAmount, windDirection, windSpeed);
     }
 }

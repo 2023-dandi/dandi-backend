@@ -33,4 +33,9 @@ public class WeatherPersistenceAdapter implements WeatherPersistencePort {
                 .map(weather -> WeatherJpaEntity.ofWeather(weather, weatherLocationId))
                 .collect(Collectors.toUnmodifiableList());
     }
+
+    @Override
+    public void deleteByLocationIds(List<Long> locationIds) {
+        weatherRepository.deleteAllByWeatherLocationIds(locationIds);
+    }
 }

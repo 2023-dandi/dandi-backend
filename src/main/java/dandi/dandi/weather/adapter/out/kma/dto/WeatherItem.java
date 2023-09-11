@@ -1,5 +1,12 @@
 package dandi.dandi.weather.adapter.out.kma.dto;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+
+import static dandi.dandi.weather.adapter.out.kma.KmaConstant.KMA_DATE_FORMATTER;
+import static dandi.dandi.weather.adapter.out.kma.KmaConstant.KMA_TIME_FORMATTER;
+
 public class WeatherItem {
 
     private String baseDate;
@@ -56,5 +63,17 @@ public class WeatherItem {
 
     public String getNy() {
         return ny;
+    }
+
+    public LocalDateTime getDateTime() {
+        LocalDate date = LocalDate.parse(fcstDate, KMA_DATE_FORMATTER);
+        LocalTime time = LocalTime.parse(fcstTime, KMA_TIME_FORMATTER);
+        return LocalDateTime.of(date, time);
+    }
+
+    public LocalDateTime getForecastedAt() {
+        LocalDate date = LocalDate.parse(baseDate, KMA_DATE_FORMATTER);
+        LocalTime time = LocalTime.parse(baseTime, KMA_TIME_FORMATTER);
+        return LocalDateTime.of(date, time);
     }
 }

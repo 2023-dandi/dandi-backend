@@ -4,8 +4,7 @@ import dandi.dandi.weather.adapter.out.kma.dto.WeatherItem;
 import dandi.dandi.weather.domain.Weather;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static dandi.dandi.weather.adapter.out.kma.code.CategoryCode.*;
@@ -64,7 +63,7 @@ class WeatherExtractorsTest {
 
     private List<Weather> generateExpectedWeathers() {
         return List.of(
-                new Weather.WeatherBuilder(LocalDate.of(2023, 8, 25), LocalTime.of(5, 0))
+                new Weather.WeatherBuilder(LocalDateTime.of(2023, 8, 25, 5, 0))
                         .temperature(15.0)
                         .precipitationPossibility(60)
                         .precipitationType(RAIN)
@@ -74,7 +73,7 @@ class WeatherExtractorsTest {
                         .windSpeed(2.0)
                         .sky(CLOUDY)
                         .build(),
-                new Weather.WeatherBuilder(LocalDate.of(2023, 8, 25), LocalTime.of(6, 0))
+                new Weather.WeatherBuilder(LocalDateTime.of(2023, 8, 25, 6, 0))
                         .temperature(16.0)
                         .precipitationPossibility(50)
                         .precipitationType(RAIN)
