@@ -20,6 +20,8 @@ import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.database.PagingQueryProvider;
 import org.springframework.batch.item.database.builder.JdbcPagingItemReaderBuilder;
 import org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean;
+import org.springframework.batch.item.support.CompositeItemWriter;
+import org.springframework.batch.item.support.builder.CompositeItemWriterBuilder;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -78,7 +80,7 @@ public class WeatherBatch {
                 .<WeatherLocation, Weathers>chunk(CHUCK_SIZE)
                 .reader(weatherLocationItemReader())
                 .processor(weatherItemProcessor())
-                .writer(weatherItemWriter())
+                .writer(itemWriters())
                 .faultTolerant()
                 .noRetry(WeatherRequestFatalException.class)
                 .retry(WeatherRequestRetryableException.class)
@@ -133,8 +135,27 @@ public class WeatherBatch {
 
     @Bean
     @StepScope
+    public ItemWriter<Weathers> itemWriters() {
+        return new CompositeItemWriterBuilder<Weathers>()
+                .delegates(previousWeatherItemDeletionWriter(), weatherItemWriter())
+                .build();
+
+    }
+
+    @Bean
+    @StepScope
+    public ItemWriter<Weathers> previousWeatherItemDeletionWriter() {
+        return items -> {
+            List<Long> locationIds = items.stream()
+                .map(Weathers::getWeatherLocationId)
+                .collect(Collectors.toUnmodifiableList());
+            weatherPersistencePort.deleteByLocationIds(locationIds);
+        };
+    }
+
+    @Bean
+    @StepScope
     public ItemWriter<Weathers> weatherItemWriter() {
-        dateTimeJobParameter.getLocalDateTime();
         return items -> {
             List<Weathers> weathers = items.stream()
                     .map(item -> (Weathers) item)
