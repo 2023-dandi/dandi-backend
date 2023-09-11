@@ -42,6 +42,7 @@ public class WeatherExtractors {
     private Weather generateWeather(Map.Entry<LocalDateTime, List<WeatherItem>> weatherItems) {
         Weather.WeatherBuilder weatherBuilder = new Weather.WeatherBuilder(weatherItems.getKey());
         for (WeatherItem item : weatherItems.getValue()) {
+            weatherBuilder.forecastedAt(item.getForecastedAt());
             WeatherExtractor extractor = findExtractor(item.getCategory());
             extractor.setValue(weatherBuilder, item.getFcstValue());
         }

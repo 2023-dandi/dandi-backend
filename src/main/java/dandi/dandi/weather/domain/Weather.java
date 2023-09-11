@@ -14,6 +14,7 @@ public class Weather implements Comparable<Weather> {
     private final double precipitationAmount;
     private final WindDirection windDirection;
     private final double windSpeed; // m/s
+    private final LocalDateTime forecastedAt;
 
     public Weather(WeatherBuilder builder) {
         this.dateTime = builder.dateTime;
@@ -25,6 +26,7 @@ public class Weather implements Comparable<Weather> {
         this.precipitationAmount = builder.precipitationAmount;
         this.windDirection = builder.windDirection;
         this.windSpeed = builder.windSpeed;
+        this.forecastedAt = builder.forecastedAt;
     }
 
     public static class WeatherBuilder {
@@ -37,6 +39,7 @@ public class Weather implements Comparable<Weather> {
         private double precipitationAmount;
         private WindDirection windDirection;
         private double windSpeed;
+        private LocalDateTime forecastedAt;
 
         public WeatherBuilder(LocalDateTime dateTime) {
             this.dateTime = dateTime;
@@ -79,6 +82,11 @@ public class Weather implements Comparable<Weather> {
 
         public WeatherBuilder windSpeed(double windSpeed) {
             this.windSpeed = windSpeed;
+            return this;
+        }
+
+        public WeatherBuilder forecastedAt(LocalDateTime forecastedAt) {
+            this.forecastedAt = forecastedAt;
             return this;
         }
 
@@ -131,6 +139,10 @@ public class Weather implements Comparable<Weather> {
 
     public double getWindSpeed() {
         return windSpeed;
+    }
+
+    public LocalDateTime getForecastedAt() {
+        return forecastedAt;
     }
 
     @Override

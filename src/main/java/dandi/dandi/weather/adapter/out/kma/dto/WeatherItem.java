@@ -70,4 +70,10 @@ public class WeatherItem {
         LocalTime time = LocalTime.parse(fcstTime, KMA_TIME_FORMATTER);
         return LocalDateTime.of(date, time);
     }
+
+    public LocalDateTime getForecastedAt() {
+        LocalDate date = LocalDate.parse(baseDate, KMA_DATE_FORMATTER);
+        LocalTime time = LocalTime.parse(baseTime, KMA_TIME_FORMATTER);
+        return LocalDateTime.of(date, time);
+    }
 }
