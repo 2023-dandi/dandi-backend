@@ -31,7 +31,7 @@ public class DatabaseCleaner implements InitializingBean {
     public void afterPropertiesSet() {
         try (Connection connection = dataSource.getConnection()) {
             DatabaseMetaData databaseMetaData = connection.getMetaData();
-            ResultSet rs = databaseMetaData.getTables(null, null, "%", new String[]{"TABLE"});
+            ResultSet rs = databaseMetaData.getTables("test", null, "%", new String[]{"TABLE"});
             while (rs.next()) {
                 addExceptSysConfigTable(rs);
             }
