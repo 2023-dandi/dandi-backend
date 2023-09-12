@@ -143,7 +143,7 @@ class KmaWeatherRequesterTest {
                 generateWeatherItem(firstFsctTime, TMP.name(), "15"),
                 generateWeatherItem(firstFsctTime, POP.name(), "60"),
                 generateWeatherItem(firstFsctTime, PTY.name(), "1"),
-                generateWeatherItem(firstFsctTime, PCP.name(), "1.0mm"),
+                generateWeatherItem(firstFsctTime, PCP.name(), "강수없음"),
                 generateWeatherItem(firstFsctTime, REH.name(), "70"),
                 generateWeatherItem(firstFsctTime, VEC.name(), "165"),
                 generateWeatherItem(firstFsctTime, WSD.name(), "2.0"),
@@ -169,7 +169,7 @@ class KmaWeatherRequesterTest {
                         .temperature(15.0)
                         .precipitationPossibility(60)
                         .precipitationType(RAIN)
-                        .precipitationAmount(1.0)
+                        .precipitationAmount(0.0)
                         .humidity(70)
                         .windDirection(SE)
                         .windSpeed(2.0)

@@ -18,7 +18,7 @@ public enum KmaWindDirection {
     S(8, WindDirection.S),
     SSW(9, WindDirection.SW),
     SW(10, WindDirection.SE),
-    WSW(1, WindDirection.SW),
+    WSW(11, WindDirection.SW),
     W(12, WindDirection.W),
     WNW(13, WindDirection.NW),
     NW(14, WindDirection.NW),
@@ -38,7 +38,7 @@ public enum KmaWindDirection {
         return Arrays.stream(values())
                 .filter(kmaWindDirection -> kmaWindDirection.code == code)
                 .findFirst()
-                .orElseThrow(() -> new WeatherRequestFatalException("기상청 풍향을 변환할 수 없습니다."));
+                .orElseThrow(() -> new WeatherRequestFatalException("기상청 풍향을 변환할 수 없습니다.(" + value+ ")"));
     }
 
     public WindDirection getWindDirection() {
