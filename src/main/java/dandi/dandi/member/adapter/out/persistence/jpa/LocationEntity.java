@@ -25,6 +25,6 @@ public class LocationEntity {
     }
 
     public Location toLocation() {
-        return new Location(latitude, longitude, new District(firstDistrict, secondDistrict, thirdDistrict));
+        return Location.of(latitude, longitude, new District(firstDistrict, secondDistrict, thirdDistrict));
     }
 }

@@ -125,7 +125,7 @@ class MemberPersistenceAdapterTest extends PersistenceAdapterTest {
         Member member = Member.initial(OAUTH_ID, "nickname", INITIAL_PROFILE_IMAGE_URL);
         Member saved = memberPersistenceAdapter.save(member);
         District district = new District("country", "city", "town");
-        Location location = new Location(20.0, 10.0, district);
+        Location location = Location.of(20.0, 10.0, district);
 
         memberPersistenceAdapter.updateLocation(saved.getId(), location);
 
@@ -177,7 +177,7 @@ class MemberPersistenceAdapterTest extends PersistenceAdapterTest {
     @DisplayName("회원의 위치 정보를 찾을 수 있다.")
     @Test
     void findLocationById() {
-        Location location = new Location(10.0, 12.0, DISTRICT);
+        Location location = Location.of(10.0, 12.0, DISTRICT);
         Member member = memberPersistenceAdapter.save(
                 new Member(null, OAUTH_ID, NICKNAME, location, INITIAL_PROFILE_IMAGE_URL));
 

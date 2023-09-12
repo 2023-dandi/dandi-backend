@@ -38,7 +38,7 @@ public class MemberUseCaseServiceAdapter implements MemberUseCaseServicePort {
     @Override
     public void updateLocation(Long memberId, LocationUpdateCommand locationUpdateCommand) {
         Member member = findMember(memberId);
-        Location location = new Location(locationUpdateCommand.getLatitude(), locationUpdateCommand.getLongitude(),
+        Location location = Location.of(locationUpdateCommand.getLatitude(), locationUpdateCommand.getLongitude(),
                 districtParser.parse(locationUpdateCommand.getDistrict()));
         memberPersistencePort.updateLocation(member.getId(), location);
     }

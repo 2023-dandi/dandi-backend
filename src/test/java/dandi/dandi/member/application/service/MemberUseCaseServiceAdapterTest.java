@@ -68,6 +68,6 @@ class MemberUseCaseServiceAdapterTest {
 
         memberService.updateLocation(MEMBER.getId(), locationUpdateCommand);
 
-        verify(memberPersistencePort).updateLocation(MEMBER.getId(), new Location(latitude, longitude, DISTRICT));
+        verify(memberPersistencePort).updateLocation(MEMBER.getId(), Location.of(latitude, longitude, DISTRICT));
     }
 }
