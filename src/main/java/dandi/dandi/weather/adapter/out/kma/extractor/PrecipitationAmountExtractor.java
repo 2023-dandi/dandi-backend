@@ -8,6 +8,7 @@ import static dandi.dandi.weather.adapter.out.kma.code.CategoryCode.PCP;
 @Component
 public class PrecipitationAmountExtractor implements WeatherExtractor {
 
+    private static final String PRECIPITATION_AMOUNT_ZERO = "강수없음";
     private static final String PRECIPITATION_AMOUNT_UNIT = "mm";
 
     @Override
@@ -17,8 +18,12 @@ public class PrecipitationAmountExtractor implements WeatherExtractor {
 
     @Override
     public void setValue(Weather.WeatherBuilder weatherBuilder, String value) {
-        double precipitationAmount = generatePrecipitationAmount(value);
-        weatherBuilder.precipitationAmount(precipitationAmount);
+        if (value.equals(PRECIPITATION_AMOUNT_ZERO)) {
+            weatherBuilder.precipitationAmount(0.0);
+        } else {
+            double precipitationAmount = generatePrecipitationAmount(value);
+            weatherBuilder.precipitationAmount(precipitationAmount);
+        }
     }
 
     private double generatePrecipitationAmount(String value) {
