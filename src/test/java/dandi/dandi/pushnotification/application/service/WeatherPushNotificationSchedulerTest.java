@@ -87,7 +87,7 @@ class WeatherPushNotificationSchedulerTest {
         when(pushNotificationPersistencePort.findAllowedPushNotification(thirdPageable))
                 .thenReturn(new SliceImpl<>(List.of(pushNotification), thirdPageable, false));
         when(memberPersistencePort.findLocationById(any()))
-                .thenReturn(Optional.of(new Location(10.0, 20.0, DISTRICT)));
+                .thenReturn(Optional.of(Location.of(10.0, 20.0, DISTRICT)));
         WeatherForecastResult weatherForecastResult = WeatherForecastResult.ofSuccess(10, 15);
         when(weatherForecastInfoManager.getForecasts(any(), any()))
                 .thenReturn(weatherForecastResult);
@@ -108,7 +108,7 @@ class WeatherPushNotificationSchedulerTest {
         when(pushNotificationPersistencePort.findAllowedPushNotification(pageable))
                 .thenReturn(new SliceImpl<>(List.of(pushNotification), pageable, false));
         when(memberPersistencePort.findLocationById(pushNotification.getMemberId()))
-                .thenReturn(Optional.of(new Location(10.0, 20.0, DISTRICT)));
+                .thenReturn(Optional.of(Location.of(10.0, 20.0, DISTRICT)));
         WeatherForecastResult nonRetryableFailureResult = WeatherForecastResult.ofFailure("UNKNOWN_ERROR", false);
         when(weatherForecastInfoManager.getForecasts(any(), any()))
                 .thenReturn(nonRetryableFailureResult);
@@ -128,7 +128,7 @@ class WeatherPushNotificationSchedulerTest {
         when(pushNotificationPersistencePort.findAllowedPushNotification(firstPageable))
                 .thenReturn(new SliceImpl<>(generateTenPushNotificationsOfTenMembers(), firstPageable, false));
         when(memberPersistencePort.findLocationById(any()))
-                .thenReturn(Optional.of(new Location(10.0, 20.0, DISTRICT)));
+                .thenReturn(Optional.of(Location.of(10.0, 20.0, DISTRICT)));
         mockWeatherForecastInfoManager();
 
         weatherPushNotificationScheduler.sendPushWeatherNotification();
