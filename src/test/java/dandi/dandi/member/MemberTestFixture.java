@@ -16,10 +16,10 @@ public class MemberTestFixture {
     public static final District DISTRICT = new District("서울특별시", "동작구");
 
     public static final Member MEMBER = new Member(
-            MEMBER_ID, OAUTH_ID, NICKNAME, new Location(0.0, 0.0, DISTRICT), INITIAL_PROFILE_IMAGE_URL);
+            MEMBER_ID, OAUTH_ID, NICKNAME, Location.of(0.0, 0.0, DISTRICT), INITIAL_PROFILE_IMAGE_URL);
     public static final Member MEMBER2 = new Member(
-            2L, "oAuthId2", "nickname2", new Location(0.0, 0.0, DISTRICT), INITIAL_PROFILE_IMAGE_URL);
+            2L, "oAuthId2", "nickname2", Location.of(0.0, 0.0, DISTRICT), INITIAL_PROFILE_IMAGE_URL);
     public static final MemberEntity MEMBER_JPA_ENTITY = MemberEntity.fromMember(new Member(
-            MEMBER_ID, OAUTH_ID, NICKNAME, new Location(0.0, 0.0, DISTRICT), INITIAL_PROFILE_IMAGE_URL));
+            MEMBER_ID, OAUTH_ID, NICKNAME, Location.of(0.0, 0.0, DISTRICT), INITIAL_PROFILE_IMAGE_URL));
 
 }

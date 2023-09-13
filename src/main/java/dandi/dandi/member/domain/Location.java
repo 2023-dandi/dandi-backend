@@ -4,16 +4,18 @@ import java.util.Objects;
 
 public class Location {
 
-    private static final Location INITIAL_LOCATION = new Location(0.0, 0.0, District.getInitialDistrict());
+    private static final Location INITIAL_LOCATION = Location.of(0.0, 0.0, District.getInitialDistrict());
 
-    private final double latitude;
-    private final double longitude;
+    private final Coordinate coordinate;
     private final District district;
 
-    public Location(double latitude, double longitude, District district) {
-        this.latitude = latitude;
-        this.longitude = longitude;
+    private Location(Coordinate coordinate, District district) {
+        this.coordinate = coordinate;
         this.district = district;
+    }
+
+    public static Location of(double latitude, double longitude, District district) {
+        return new Location(new Coordinate(latitude, longitude), district);
     }
 
     public static Location initial() {
@@ -21,11 +23,11 @@ public class Location {
     }
 
     public double getLatitude() {
-        return latitude;
+        return coordinate.getLatitude();
     }
 
     public double getLongitude() {
-        return longitude;
+        return coordinate.getLongitude();
     }
 
     public District getDistrict() {
@@ -34,19 +36,14 @@ public class Location {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof Location)) {
-            return false;
-        }
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         Location location = (Location) o;
-        return Double.compare(location.latitude, latitude) == 0
-                && Double.compare(location.longitude, longitude) == 0;
+        return Objects.equals(coordinate, location.coordinate) && Objects.equals(district, location.district);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(latitude, longitude);
+        return Objects.hash(coordinate, district);
     }
 }
