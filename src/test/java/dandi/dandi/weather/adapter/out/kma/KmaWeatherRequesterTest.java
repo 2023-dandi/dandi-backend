@@ -27,18 +27,17 @@ class KmaWeatherRequesterTest {
 
     private static final Long WEATHER_LOCATION_ID = 1L;
     private static final LocalDateTime LOCAL_DATE_TIME = LocalDateTime.of(2023, 8, 31, 15, 0);
-    private static final WeatherLocation WEATHER_LOCATION = new WeatherLocation(WEATHER_LOCATION_ID, 37.56356944444444, 126.98000833333333, "서울특별시", "동작구", "상도동");
+    private static final WeatherLocation WEATHER_LOCATION = new WeatherLocation(WEATHER_LOCATION_ID, 60, 127);
 
     private final KmaWeatherApiCaller weatherApiCaller = mock(KmaWeatherApiCaller.class);
     private final String kmaServiceKey = "SERVICE_KEY";
     private final KmaBaseTimeConvertor kmaBaseTimeConvertor = new KmaBaseTimeConvertor();
-    private final KmaCoordinateConvertor kmaCoordinateConvertor = new KmaCoordinateConvertor();
     private final WeatherExtractors weatherExtractors = new WeatherExtractors(List.of(
             new DoNothingExtractor(), new PrecipitationAmountExtractor(), new PrecipitationTypeExtractor(),
             new SkyTypeExtractor(), new WindSpeedExtractor(), new HumidityExtractor(), new WindDirectionExtractor(),
             new PrecipitationPossibilityExtractor(), new TemperatureExtractor()));
     private final KmaWeatherRequester kmaWeatherRequester = new KmaWeatherRequester(weatherApiCaller, kmaServiceKey,
-            kmaBaseTimeConvertor, kmaCoordinateConvertor, weatherExtractors);
+            kmaBaseTimeConvertor, weatherExtractors);
 
     @DisplayName("날씨 정보를 받아올 수 있다.")
     @Test
@@ -116,7 +115,7 @@ class KmaWeatherRequesterTest {
 
         assertThatThrownBy(() -> kmaWeatherRequester.getWeathers(LOCAL_DATE_TIME, WEATHER_LOCATION))
                 .isInstanceOf(WeatherRequestFatalException.class)
-                .hasMessage("위치에 대한 날씨 정보가 존재하지 않습니다.(37.563569444444440, 126.980008333333330)");
+                .hasMessage("위치에 대한 날씨 정보가 존재하지 않습니다.(60, 127)");
     }
 
     @DisplayName("날씨 데이터 캐시를 비울 수 있다.")

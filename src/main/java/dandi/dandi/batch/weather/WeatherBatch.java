@@ -20,7 +20,6 @@ import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.database.PagingQueryProvider;
 import org.springframework.batch.item.database.builder.JdbcPagingItemReaderBuilder;
 import org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean;
-import org.springframework.batch.item.support.CompositeItemWriter;
 import org.springframework.batch.item.support.builder.CompositeItemWriterBuilder;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -105,7 +104,7 @@ public class WeatherBatch {
     private PagingQueryProvider pagingQueryProvider() {
         SqlPagingQueryProviderFactoryBean queryProvider = new SqlPagingQueryProviderFactoryBean();
         queryProvider.setDataSource(dataSource);
-        queryProvider.setSelectClause("weather_location_id, latitude, longitude, first_district, second_district, third_district");
+        queryProvider.setSelectClause("weather_location_id, x, y");
         queryProvider.setFromClause("from weather_location");
         queryProvider.setSortKey("weather_location_id");
         try {
@@ -118,11 +117,8 @@ public class WeatherBatch {
     private RowMapper<WeatherLocation> rowMapper() {
         return (rs, rowNum) -> new WeatherLocation(
                 rs.getLong("weather_location_id"),
-                rs.getDouble("latitude"),
-                rs.getDouble("longitude"),
-                rs.getString("first_district"),
-                rs.getString("second_district"),
-                rs.getString("third_district")
+                rs.getInt("x"),
+                rs.getInt("y")
         );
     }
 

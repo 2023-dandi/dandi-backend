@@ -28,7 +28,7 @@ public class WeatherBatchTestConfig {
             @Override
             public Weathers getWeathers(LocalDateTime now, WeatherLocation location) throws WeatherRequestException {
                 if (now.getYear() == 2020) {
-                    throw WeatherRequestFatalException.noData(location.getLatitude(), location.getLongitude());
+                    throw WeatherRequestFatalException.noData(location.getX(), location.getY());
                 } else if (now.getYear() == 2021) {
                     if (requestCount < 1) {
                         requestCount++;

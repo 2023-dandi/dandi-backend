@@ -78,7 +78,7 @@ class WeatherBatchTest {
 			Map.of("dateTime", new JobParameter(now.toString()), "backOffPeriod", new JobParameter(1L)));
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		entityManager.getTransaction().begin();
-		entityManager.persist(new WeatherLocationJpaEntity(null, 110, 100, "서울특별시", null, null));
+		entityManager.persist(new WeatherLocationJpaEntity(110, 100));
 		entityManager.getTransaction().commit();
 
 		JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParameters);
@@ -92,14 +92,12 @@ class WeatherBatchTest {
 	@DisplayName("날씨 위치에 기반한 날씨 정보를 받아오는 도중 WeatherRequestRetryableException이 발생하면 재시도 한다.")
 	@Test
 	void weatherBatchJob_RetryableException_Success() throws Exception {
-		LocalDateTime now = LocalDateTime.now();
-		LocalDateTime dateTime = LocalDateTime.of(
-			2021, now.getMonth(), now.getDayOfMonth(), now.getHour(), now.getMinute(), now.getSecond());
+		LocalDateTime dateTime = LocalDateTime.of(2021, 9, 13, 15, 0);
 		JobParameters jobParameters = new JobParameters(
 			Map.of("dateTime", new JobParameter(dateTime.toString()), "backOffPeriod", new JobParameter(1L)));
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		entityManager.getTransaction().begin();
-		entityManager.persist(new WeatherLocationJpaEntity(null, 110, 100, "서울특별시", null, null));
+		entityManager.persist(new WeatherLocationJpaEntity(110, 100));
 		entityManager.getTransaction().commit();
 
 		JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParameters);
@@ -113,14 +111,12 @@ class WeatherBatchTest {
 	@DisplayName("날씨 위치에 기반한 날씨 정보를 받아오는 도중 WeatherRequestRetryableException이 발생하고 1회의 재시도도 실패하면 재시도 하지 않는다.")
 	@Test
 	void weatherBatchJob_RetryableException_Failed() throws Exception {
-		LocalDateTime now = LocalDateTime.now();
-		LocalDateTime dateTime = LocalDateTime.of(
-			2022, now.getMonth(), now.getDayOfMonth(), now.getHour(), now.getMinute(), now.getSecond());
+		LocalDateTime dateTime = LocalDateTime.of(2022, 9, 13, 15, 0);
 		JobParameters jobParameters = new JobParameters(
 			Map.of("dateTime", new JobParameter(dateTime.toString()), "backOffPeriod", new JobParameter(1L)));
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		entityManager.getTransaction().begin();
-		entityManager.persist(new WeatherLocationJpaEntity(null, 110, 100, "서울특별시", null, null));
+		entityManager.persist(new WeatherLocationJpaEntity(110, 100));
 		entityManager.getTransaction().commit();
 
 		JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParameters);
@@ -134,14 +130,12 @@ class WeatherBatchTest {
 	@DisplayName("날씨 위치에 기반한 날씨 정보를 받아오는 도중 WeatherRequestFatalException이 발생하고 실패한다.")
 	@Test
 	void weatherBatchJob_FatalException_Failed() throws Exception {
-		LocalDateTime now = LocalDateTime.now();
-		LocalDateTime dateTime = LocalDateTime.of(
-			2020, now.getMonth(), now.getDayOfMonth(), now.getHour(), now.getMinute(), now.getSecond());
+		LocalDateTime dateTime = LocalDateTime.of(2020, 9, 13, 15, 0);
 		JobParameters jobParameters = new JobParameters(
 			Map.of("dateTime", new JobParameter(dateTime.toString()), "backOffPeriod", new JobParameter(1L)));
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		entityManager.getTransaction().begin();
-		entityManager.persist(new WeatherLocationJpaEntity(null, 110, 100, "서울특별시", null, null));
+		entityManager.persist(new WeatherLocationJpaEntity(110, 100));
 		entityManager.getTransaction().commit();
 
 		JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParameters);

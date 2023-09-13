@@ -33,39 +33,34 @@ public class KmaWeatherRequester implements WeatherRequester {
     private final KmaWeatherApiCaller weatherApiCaller;
     private final String kmaServiceKey;
     private final KmaBaseTimeConvertor kmaBaseTimeConvertor;
-    private final KmaCoordinateConvertor kmaCoordinateConvertor;
     private final WeatherExtractors weatherExtractors;
-    private final Map<Coordinate, Weathers> cache = new ConcurrentHashMap<>();
+    private final Map<WeatherLocation, Weathers> cache = new ConcurrentHashMap<>();
 
     public KmaWeatherRequester(KmaWeatherApiCaller weatherApiCaller,
                                @Value("${weather.kma.service-key}") String kmaServiceKey,
                                KmaBaseTimeConvertor kmaBaseTimeConvertor,
-                               KmaCoordinateConvertor kmaCoordinateConvertor,
                                WeatherExtractors weatherExtractors) {
         this.weatherApiCaller = weatherApiCaller;
         this.kmaServiceKey = kmaServiceKey;
         this.kmaBaseTimeConvertor = kmaBaseTimeConvertor;
-        this.kmaCoordinateConvertor = kmaCoordinateConvertor;
         this.weatherExtractors = weatherExtractors;
     }
 
-    @Override
     public Weathers getWeathers(LocalDateTime now, WeatherLocation location) throws WeatherRequestException {
-        Coordinate coordinate = kmaCoordinateConvertor.convert(location.getLatitude(), location.getLongitude());
-        if (cache.containsKey(coordinate)) {
-            return cache.get(coordinate);
+        if (cache.containsKey(location)) {
+            return cache.get(location);
         }
-        Weathers weathers = requestWeather(now, location, coordinate);
-        cache.put(coordinate, weathers);
+        Weathers weathers = requestWeather(now, location);
+        cache.put(location, weathers);
         return weathers;
     }
 
-    private Weathers requestWeather(LocalDateTime now, WeatherLocation location, Coordinate coordinate) {
+    private Weathers requestWeather(LocalDateTime now, WeatherLocation location) {
         LocalTime convertedBaseTime = kmaBaseTimeConvertor.convert(now.toLocalTime());
         String baseTime = convertedBaseTime.format(KMA_TIME_FORMATTER);
         String baseDate = now.format(KMA_DATE_FORMATTER);
         WeatherRequest weatherRequest = new WeatherRequest(
-                kmaServiceKey, DATE_TYPE, baseDate, baseTime, ROW_NUM, coordinate.getNx(), coordinate.getNy());
+                kmaServiceKey, DATE_TYPE, baseDate, baseTime, ROW_NUM, location.getX(), location.getY());
         WeatherResponses weatherResponses = weatherApiCaller.getWeathers(weatherRequest);
         KmaResponseCode kmaResponseCode = extractResponseCode(weatherResponses);
         if (!kmaResponseCode.isSuccessful()) {
@@ -76,7 +71,7 @@ public class KmaWeatherRequester implements WeatherRequester {
 
     private void raiseException(KmaResponseCode kmaResponseCode, WeatherLocation location) {
         if (kmaResponseCode.isErrorAssociatedWithLocation()) {
-            throw WeatherRequestFatalException.noData(location.getLatitude(), location.getLongitude());
+            throw WeatherRequestFatalException.noData(location.getX(), location.getY());
         } else if (kmaResponseCode.isTemporaryExternalServerError()) {
             throw new WeatherRequestRetryableException(kmaResponseCode.name());
         }
@@ -103,7 +98,6 @@ public class KmaWeatherRequester implements WeatherRequester {
         }
     }
 
-    @Override
     public void finish() {
         cache.clear();
     }
