@@ -9,6 +9,7 @@ import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -25,14 +26,18 @@ public class WeatherBatchExecutor {
     private final JobLauncher jobLauncher;
     private final WeatherBatch weatherBatch;
     private final ErrorMessageSender errorMessageSender;
+    private final String executionKey;
 
-    public WeatherBatchExecutor(JobLauncher jobLauncher, WeatherBatch weatherBatch, ErrorMessageSender errorMessageSender) {
+    public WeatherBatchExecutor(JobLauncher jobLauncher, WeatherBatch weatherBatch,
+                                ErrorMessageSender errorMessageSender, @Value("${weather.batch.key}") String executionKey) {
         this.jobLauncher = jobLauncher;
         this.weatherBatch = weatherBatch;
         this.errorMessageSender = errorMessageSender;
+        this.executionKey = executionKey;
     }
 
-    public void runWeatherBatch() {
+    public void runWeatherBatch(WeatherBatchRequest weatherBatchRequest) {
+        validateExecutionKey(weatherBatchRequest);
         String now = LocalDateTime.now().toString();
         JobParameters jobParameters = new JobParameters(
                 Map.of(
@@ -47,6 +52,12 @@ public class WeatherBatchExecutor {
                  JobInstanceAlreadyCompleteException | JobParametersInvalidException e) {
             errorMessageSender.sendMessage(now + " Weather Batch Failed");
             logger.info("Weather Batch Failed \r\n {}", e.getMessage());
+        }
+    }
+
+    private void validateExecutionKey(WeatherBatchRequest weatherBatchRequest) {
+        if (!weatherBatchRequest.getKey().equals(executionKey)) {
+            throw new BatchException("날씨 Batch 실행 Key가 올바르지 않습니다.");
         }
     }
 
