@@ -48,7 +48,7 @@ public class WeatherBatchExecutor {
         LocalDateTime baseDateTime = LocalDateTime.of(now.toLocalDate(), baseTime);
         JobParameters jobParameters = new JobParameters(
                 Map.of(
-                        "dateTime", new JobParameter(baseDateTime.toString()),
+                        "baseDateTime", new JobParameter(baseDateTime.toString()),
                         "backOffPeriod", new JobParameter(FIVE_MINUTES)
                 )
         );

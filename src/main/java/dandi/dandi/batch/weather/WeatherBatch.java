@@ -47,7 +47,7 @@ public class WeatherBatch {
 
     public WeatherBatch(JobBuilderFactory jobBuilderFactory, StepBuilderFactory stepBuilderFactory,
                         DataSource dataSource, WeatherRequester weatherRequester,
-                        @Qualifier(value = "weatherBatchJobDateTimeParameter") DateTimeJobParameter dateTimeJobParameter,
+                        @Qualifier(value = "weatherBatchJobBaseDateTimeParameter") DateTimeJobParameter dateTimeJobParameter,
                         WeatherPersistencePort weatherPersistencePort) {
         this.jobBuilderFactory = jobBuilderFactory;
         this.stepBuilderFactory = stepBuilderFactory;
@@ -59,8 +59,9 @@ public class WeatherBatch {
 
     @Bean
     @JobScope
-    public DateTimeJobParameter weatherBatchJobDateTimeParameter(@Value("#{jobParameters[dateTime]}") String dateTime) {
-        return new DateTimeJobParameter(dateTime);
+    public DateTimeJobParameter weatherBatchJobBaseDateTimeParameter(@Value("#{jobParameters[baseDateTime]}")
+                                                                     String baseDateTime) {
+        return new DateTimeJobParameter(baseDateTime);
     }
 
     @Bean(JOB_NAME)
@@ -143,8 +144,8 @@ public class WeatherBatch {
     public ItemWriter<Weathers> previousWeatherItemDeletionWriter() {
         return items -> {
             List<Long> locationIds = items.stream()
-                .map(Weathers::getWeatherLocationId)
-                .collect(Collectors.toUnmodifiableList());
+                    .map(Weathers::getWeatherLocationId)
+                    .collect(Collectors.toUnmodifiableList());
             weatherPersistencePort.deleteByLocationIds(locationIds);
         };
     }

@@ -75,7 +75,7 @@ class WeatherBatchTest {
 				WeatherJpaEntity.ofWeather(secondWeather, weatherLocationId)));
 		LocalDateTime now = LocalDateTime.now().plusDays(1);
 		JobParameters jobParameters = new JobParameters(
-			Map.of("dateTime", new JobParameter(now.toString()), "backOffPeriod", new JobParameter(1L)));
+			Map.of("baseDateTime", new JobParameter(now.toString()), "backOffPeriod", new JobParameter(1L)));
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		entityManager.getTransaction().begin();
 		entityManager.persist(new WeatherLocationJpaEntity(110, 100));
@@ -94,7 +94,7 @@ class WeatherBatchTest {
 	void weatherBatchJob_RetryableException_Success() throws Exception {
 		LocalDateTime dateTime = LocalDateTime.of(2021, 9, 13, 15, 0);
 		JobParameters jobParameters = new JobParameters(
-			Map.of("dateTime", new JobParameter(dateTime.toString()), "backOffPeriod", new JobParameter(1L)));
+			Map.of("baseDateTime", new JobParameter(dateTime.toString()), "backOffPeriod", new JobParameter(1L)));
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		entityManager.getTransaction().begin();
 		entityManager.persist(new WeatherLocationJpaEntity(110, 100));
@@ -113,7 +113,7 @@ class WeatherBatchTest {
 	void weatherBatchJob_RetryableException_Failed() throws Exception {
 		LocalDateTime dateTime = LocalDateTime.of(2022, 9, 13, 15, 0);
 		JobParameters jobParameters = new JobParameters(
-			Map.of("dateTime", new JobParameter(dateTime.toString()), "backOffPeriod", new JobParameter(1L)));
+			Map.of("baseDateTime", new JobParameter(dateTime.toString()), "backOffPeriod", new JobParameter(1L)));
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		entityManager.getTransaction().begin();
 		entityManager.persist(new WeatherLocationJpaEntity(110, 100));
@@ -132,7 +132,7 @@ class WeatherBatchTest {
 	void weatherBatchJob_FatalException_Failed() throws Exception {
 		LocalDateTime dateTime = LocalDateTime.of(2020, 9, 13, 15, 0);
 		JobParameters jobParameters = new JobParameters(
-			Map.of("dateTime", new JobParameter(dateTime.toString()), "backOffPeriod", new JobParameter(1L)));
+			Map.of("baseDateTime", new JobParameter(dateTime.toString()), "backOffPeriod", new JobParameter(1L)));
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		entityManager.getTransaction().begin();
 		entityManager.persist(new WeatherLocationJpaEntity(110, 100));
