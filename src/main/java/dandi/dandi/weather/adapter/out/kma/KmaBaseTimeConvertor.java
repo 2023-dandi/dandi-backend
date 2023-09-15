@@ -1,5 +1,6 @@
 package dandi.dandi.weather.adapter.out.kma;
 
+import dandi.dandi.weather.application.port.out.BaseTimeConvertor;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalTime;
@@ -7,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class KmaBaseTimeConvertor {
+public class KmaBaseTimeConvertor implements BaseTimeConvertor {
 
     private static final List<LocalTime> BASE_TIMES;
 
