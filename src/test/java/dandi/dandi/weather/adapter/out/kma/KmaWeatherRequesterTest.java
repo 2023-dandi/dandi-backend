@@ -13,6 +13,8 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static dandi.dandi.weather.adapter.out.kma.KmaConstant.KMA_DATE_FORMATTER;
+import static dandi.dandi.weather.adapter.out.kma.KmaConstant.KMA_TIME_FORMATTER;
 import static dandi.dandi.weather.adapter.out.kma.code.CategoryCode.*;
 import static dandi.dandi.weather.domain.PrecipitationType.RAIN;
 import static dandi.dandi.weather.domain.Sky.CLOUDY;
@@ -26,30 +28,31 @@ import static org.mockito.Mockito.*;
 class KmaWeatherRequesterTest {
 
     private static final Long WEATHER_LOCATION_ID = 1L;
-    private static final LocalDateTime LOCAL_DATE_TIME = LocalDateTime.of(2023, 8, 31, 15, 0);
+    private static final LocalDateTime BASE_DATE_TIME = LocalDateTime.of(2023, 8, 31, 14, 0);
+    private static final String BASE_TIME = BASE_DATE_TIME.format(KMA_TIME_FORMATTER);
+    private static final String BASE_DATE = BASE_DATE_TIME.format(KMA_DATE_FORMATTER);
     private static final WeatherLocation WEATHER_LOCATION = new WeatherLocation(WEATHER_LOCATION_ID, 60, 127);
 
     private final KmaWeatherApiCaller weatherApiCaller = mock(KmaWeatherApiCaller.class);
     private final String kmaServiceKey = "SERVICE_KEY";
-    private final KmaBaseTimeConvertor kmaBaseTimeConvertor = new KmaBaseTimeConvertor();
     private final WeatherExtractors weatherExtractors = new WeatherExtractors(List.of(
             new DoNothingExtractor(), new PrecipitationAmountExtractor(), new PrecipitationTypeExtractor(),
             new SkyTypeExtractor(), new WindSpeedExtractor(), new HumidityExtractor(), new WindDirectionExtractor(),
             new PrecipitationPossibilityExtractor(), new TemperatureExtractor()));
-    private final KmaWeatherRequester kmaWeatherRequester = new KmaWeatherRequester(weatherApiCaller, kmaServiceKey,
-            kmaBaseTimeConvertor, weatherExtractors);
+    private final KmaWeatherRequester kmaWeatherRequester =
+            new KmaWeatherRequester(weatherApiCaller, kmaServiceKey, weatherExtractors);
 
     @DisplayName("날씨 정보를 받아올 수 있다.")
     @Test
     void getWeather() {
-        WeatherRequest weatherRequest = new WeatherRequest(kmaServiceKey, "JSON", "20230831", "1400", 900, 60, 127);
+        WeatherRequest weatherRequest = new WeatherRequest(kmaServiceKey, "JSON", BASE_DATE, BASE_TIME, 900, 60, 127);
         WeatherResponseHeader header = new WeatherResponseHeader("00", "NORMAL_SERVICE");
         WeatherResponseBody body = new WeatherResponseBody("JSON", generateWeatherItems(), 900, 0, 900);
         WeatherResponses weatherResponses = new WeatherResponses(new WeatherResponse(header, body));
         when(weatherApiCaller.getWeathers(weatherRequest))
                 .thenReturn(weatherResponses);
 
-        Weathers weathers = kmaWeatherRequester.getWeathers(LOCAL_DATE_TIME, WEATHER_LOCATION);
+        Weathers weathers = kmaWeatherRequester.getWeathers(BASE_DATE_TIME, WEATHER_LOCATION);
 
         assertAll(
                 () -> assertThat(weathers.getWeatherLocationId()).isEqualTo(WEATHER_LOCATION_ID),
@@ -62,13 +65,13 @@ class KmaWeatherRequesterTest {
     void getWeather_CacheHit() {
         WeatherResponseHeader header = new WeatherResponseHeader("00", "NORMAL_SERVICE");
         WeatherResponseBody body = new WeatherResponseBody("JSON", generateWeatherItems(), 900, 0, 900);
-        WeatherRequest weatherRequest = new WeatherRequest(kmaServiceKey, "JSON", "20230831", "1400", 900, 60, 127);
+        WeatherRequest weatherRequest = new WeatherRequest(kmaServiceKey, "JSON", BASE_DATE, BASE_TIME, 900, 60, 127);
         WeatherResponses weatherResponses = new WeatherResponses(new WeatherResponse(header, body));
         when(weatherApiCaller.getWeathers(weatherRequest))
                 .thenReturn(weatherResponses);
-        kmaWeatherRequester.getWeathers(LOCAL_DATE_TIME, WEATHER_LOCATION);
+        kmaWeatherRequester.getWeathers(BASE_DATE_TIME, WEATHER_LOCATION);
 
-        kmaWeatherRequester.getWeathers(LOCAL_DATE_TIME, WEATHER_LOCATION);
+        kmaWeatherRequester.getWeathers(BASE_DATE_TIME, WEATHER_LOCATION);
 
         verify(weatherApiCaller, only()).getWeathers(weatherRequest);
     }
@@ -78,12 +81,12 @@ class KmaWeatherRequesterTest {
     void getWeather_RetryableException() {
         WeatherResponseHeader header = new WeatherResponseHeader("04", "HTTP_ERROR");
         WeatherResponseBody body = null;
-        WeatherRequest weatherRequest = new WeatherRequest(kmaServiceKey, "JSON", "20230831", "1400", 900, 60, 127);
+        WeatherRequest weatherRequest = new WeatherRequest(kmaServiceKey, "JSON", BASE_DATE, BASE_TIME, 900, 60, 127);
         WeatherResponses weatherResponses = new WeatherResponses(new WeatherResponse(header, body));
         when(weatherApiCaller.getWeathers(weatherRequest))
                 .thenReturn(weatherResponses);
 
-        assertThatThrownBy(() -> kmaWeatherRequester.getWeathers(LOCAL_DATE_TIME, WEATHER_LOCATION))
+        assertThatThrownBy(() -> kmaWeatherRequester.getWeathers(BASE_DATE_TIME, WEATHER_LOCATION))
                 .isInstanceOf(WeatherRequestRetryableException.class)
                 .hasMessage("HTTP_ERROR");
     }
@@ -93,12 +96,12 @@ class KmaWeatherRequesterTest {
     void getWeather_FatalException() {
         WeatherResponseHeader header = new WeatherResponseHeader("10", "INVALID_REQUEST_PARAMETER_ERROR");
         WeatherResponseBody body = null;
-        WeatherRequest weatherRequest = new WeatherRequest(kmaServiceKey, "JSON", "20230831", "1400", 900, 60, 127);
+        WeatherRequest weatherRequest = new WeatherRequest(kmaServiceKey, "JSON", BASE_DATE, BASE_TIME, 900, 60, 127);
         WeatherResponses weatherResponses = new WeatherResponses(new WeatherResponse(header, body));
         when(weatherApiCaller.getWeathers(weatherRequest))
                 .thenReturn(weatherResponses);
 
-        assertThatThrownBy(() -> kmaWeatherRequester.getWeathers(LOCAL_DATE_TIME, WEATHER_LOCATION))
+        assertThatThrownBy(() -> kmaWeatherRequester.getWeathers(BASE_DATE_TIME, WEATHER_LOCATION))
                 .isInstanceOf(WeatherRequestFatalException.class)
                 .hasMessage("INVALID_REQUEST_PARAMETER_ERROR");
     }
@@ -108,12 +111,12 @@ class KmaWeatherRequesterTest {
     void getWeather_FatalException_NoData() {
         WeatherResponseHeader header = new WeatherResponseHeader("03", "NO_DATA_ERROR");
         WeatherResponseBody body = null;
-        WeatherRequest weatherRequest = new WeatherRequest(kmaServiceKey, "JSON", "20230831", "1400", 900, 60, 127);
+        WeatherRequest weatherRequest = new WeatherRequest(kmaServiceKey, "JSON", BASE_DATE, BASE_TIME, 900, 60, 127);
         WeatherResponses weatherResponses = new WeatherResponses(new WeatherResponse(header, body));
         when(weatherApiCaller.getWeathers(weatherRequest))
                 .thenReturn(weatherResponses);
 
-        assertThatThrownBy(() -> kmaWeatherRequester.getWeathers(LOCAL_DATE_TIME, WEATHER_LOCATION))
+        assertThatThrownBy(() -> kmaWeatherRequester.getWeathers(BASE_DATE_TIME, WEATHER_LOCATION))
                 .isInstanceOf(WeatherRequestFatalException.class)
                 .hasMessage("위치에 대한 날씨 정보가 존재하지 않습니다.(60, 127)");
     }
@@ -123,15 +126,15 @@ class KmaWeatherRequesterTest {
     void finish() {
         WeatherResponseHeader header = new WeatherResponseHeader("00", "NORMAL_SERVICE");
         WeatherResponseBody body = new WeatherResponseBody("JSON", generateWeatherItems(), 900, 0, 900);
-        WeatherRequest weatherRequest = new WeatherRequest(kmaServiceKey, "JSON", "20230831", "1400", 900, 60, 127);
+        WeatherRequest weatherRequest = new WeatherRequest(kmaServiceKey, "JSON", BASE_DATE, BASE_TIME, 900, 60, 127);
         WeatherResponses weatherResponses = new WeatherResponses(new WeatherResponse(header, body));
         when(weatherApiCaller.getWeathers(weatherRequest))
                 .thenReturn(weatherResponses);
-        kmaWeatherRequester.getWeathers(LOCAL_DATE_TIME, WEATHER_LOCATION);
+        kmaWeatherRequester.getWeathers(BASE_DATE_TIME, WEATHER_LOCATION);
 
         kmaWeatherRequester.finish();
 
-        kmaWeatherRequester.getWeathers(LOCAL_DATE_TIME, WEATHER_LOCATION);
+        kmaWeatherRequester.getWeathers(BASE_DATE_TIME, WEATHER_LOCATION);
         verify(weatherApiCaller, times(2)).getWeathers(weatherRequest);
     }
 
