@@ -24,6 +24,7 @@ public class WeatherBatchExecutor {
 
     private static final Logger logger = LoggerFactory.getLogger("asyncLogger");
     private static final long FIVE_MINUTES = 5000000L;
+    private static final long chuckSize = 1000L;
 
     private final JobLauncher jobLauncher;
     private final WeatherBatch weatherBatch;
@@ -49,7 +50,8 @@ public class WeatherBatchExecutor {
         JobParameters jobParameters = new JobParameters(
                 Map.of(
                         "baseDateTime", new JobParameter(baseDateTime.toString()),
-                        "backOffPeriod", new JobParameter(FIVE_MINUTES)
+                        "backOffPeriod", new JobParameter(FIVE_MINUTES),
+                        "chunkSize", new JobParameter(chuckSize)
                 )
         );
         try {
