@@ -2,6 +2,7 @@ package dandi.dandi.batch.weather;
 
 import dandi.dandi.batch.exception.BatchException;
 import dandi.dandi.errormessage.application.port.out.ErrorMessageSender;
+import dandi.dandi.weather.application.port.out.BaseTimeConvertor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.*;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Map;
 
 import static org.springframework.batch.core.ExitStatus.FAILED;
@@ -26,28 +28,33 @@ public class WeatherBatchExecutor {
     private final JobLauncher jobLauncher;
     private final WeatherBatch weatherBatch;
     private final ErrorMessageSender errorMessageSender;
+    private final BaseTimeConvertor baseTimeConvertor;
     private final String executionKey;
 
     public WeatherBatchExecutor(JobLauncher jobLauncher, WeatherBatch weatherBatch,
-                                ErrorMessageSender errorMessageSender, @Value("${weather.batch.key}") String executionKey) {
+                                ErrorMessageSender errorMessageSender, BaseTimeConvertor baseTimeConvertor,
+                                @Value("${weather.batch.key}") String executionKey) {
         this.jobLauncher = jobLauncher;
         this.weatherBatch = weatherBatch;
         this.errorMessageSender = errorMessageSender;
+        this.baseTimeConvertor = baseTimeConvertor;
         this.executionKey = executionKey;
     }
 
     public void runWeatherBatch(WeatherBatchRequest weatherBatchRequest) {
         validateExecutionKey(weatherBatchRequest);
-        String now = LocalDateTime.now().toString();
+        LocalDateTime now = LocalDateTime.now();
+        LocalTime baseTime = baseTimeConvertor.convert(now.toLocalTime());
+        LocalDateTime baseDateTime = LocalDateTime.of(now.toLocalDate(), baseTime);
         JobParameters jobParameters = new JobParameters(
                 Map.of(
-                        "dateTime", new JobParameter(now),
+                        "dateTime", new JobParameter(baseDateTime.toString()),
                         "backOffPeriod", new JobParameter(FIVE_MINUTES)
                 )
         );
         try {
             JobExecution jobExecution = jobLauncher.run(weatherBatch.weatherBatch(), jobParameters);
-            handleFailureIfFailed(now, jobExecution.getExitStatus());
+            handleFailureIfFailed(baseDateTime.toString(), jobExecution.getExitStatus());
         } catch (BatchException | JobExecutionAlreadyRunningException | JobRestartException |
                  JobInstanceAlreadyCompleteException | JobParametersInvalidException e) {
             errorMessageSender.sendMessage(now + " Weather Batch Failed");
