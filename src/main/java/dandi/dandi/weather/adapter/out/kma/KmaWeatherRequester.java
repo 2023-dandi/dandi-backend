@@ -32,35 +32,31 @@ public class KmaWeatherRequester implements WeatherRequester {
 
     private final KmaWeatherApiCaller weatherApiCaller;
     private final String kmaServiceKey;
-    private final KmaBaseTimeConvertor kmaBaseTimeConvertor;
     private final WeatherExtractors weatherExtractors;
     private final Map<WeatherLocation, Weathers> cache = new ConcurrentHashMap<>();
 
     public KmaWeatherRequester(KmaWeatherApiCaller weatherApiCaller,
                                @Value("${weather.kma.service-key}") String kmaServiceKey,
-                               KmaBaseTimeConvertor kmaBaseTimeConvertor,
                                WeatherExtractors weatherExtractors) {
         this.weatherApiCaller = weatherApiCaller;
         this.kmaServiceKey = kmaServiceKey;
-        this.kmaBaseTimeConvertor = kmaBaseTimeConvertor;
         this.weatherExtractors = weatherExtractors;
     }
 
-    public Weathers getWeathers(LocalDateTime now, WeatherLocation location) throws WeatherRequestException {
+    public Weathers getWeathers(LocalDateTime baseDateTime, WeatherLocation location) throws WeatherRequestException {
         if (cache.containsKey(location)) {
             return cache.get(location);
         }
-        Weathers weathers = requestWeather(now, location);
+        Weathers weathers = requestWeather(baseDateTime, location);
         cache.put(location, weathers);
         return weathers;
     }
 
-    private Weathers requestWeather(LocalDateTime now, WeatherLocation location) {
-        LocalTime convertedBaseTime = kmaBaseTimeConvertor.convert(now.toLocalTime());
-        String baseTime = convertedBaseTime.format(KMA_TIME_FORMATTER);
-        String baseDate = now.format(KMA_DATE_FORMATTER);
+    private Weathers requestWeather(LocalDateTime baseDateTime, WeatherLocation location) {
+        String date = baseDateTime.format(KMA_DATE_FORMATTER);
+        String time = baseDateTime.format(KMA_TIME_FORMATTER);
         WeatherRequest weatherRequest = new WeatherRequest(
-                kmaServiceKey, DATE_TYPE, baseDate, baseTime, ROW_NUM, location.getX(), location.getY());
+                kmaServiceKey, DATE_TYPE, date, time, ROW_NUM, location.getX(), location.getY());
         WeatherResponses weatherResponses = weatherApiCaller.getWeathers(weatherRequest);
         KmaResponseCode kmaResponseCode = extractResponseCode(weatherResponses);
         if (!kmaResponseCode.isSuccessful()) {

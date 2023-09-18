@@ -36,7 +36,6 @@ import java.util.stream.Collectors;
 public class WeatherBatch {
 
     private static final String JOB_NAME = "weatherBatchJob";
-    private static final int CHUCK_SIZE = 1000;
 
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
@@ -47,7 +46,7 @@ public class WeatherBatch {
 
     public WeatherBatch(JobBuilderFactory jobBuilderFactory, StepBuilderFactory stepBuilderFactory,
                         DataSource dataSource, WeatherRequester weatherRequester,
-                        @Qualifier(value = "weatherBatchJobDateTimeParameter") DateTimeJobParameter dateTimeJobParameter,
+                        @Qualifier(value = "weatherBatchJobBaseDateTimeParameter") DateTimeJobParameter dateTimeJobParameter,
                         WeatherPersistencePort weatherPersistencePort) {
         this.jobBuilderFactory = jobBuilderFactory;
         this.stepBuilderFactory = stepBuilderFactory;
@@ -59,25 +58,27 @@ public class WeatherBatch {
 
     @Bean
     @JobScope
-    public DateTimeJobParameter weatherBatchJobDateTimeParameter(@Value("#{jobParameters[dateTime]}") String dateTime) {
-        return new DateTimeJobParameter(dateTime);
+    public DateTimeJobParameter weatherBatchJobBaseDateTimeParameter(@Value("#{jobParameters[baseDateTime]}")
+                                                                     String baseDateTime) {
+        return new DateTimeJobParameter(baseDateTime);
     }
 
     @Bean(JOB_NAME)
     public Job weatherBatch() {
         return jobBuilderFactory.get(JOB_NAME)
-                .start(weatherBatchStep(null))
+                .start(weatherBatchStep(null, null))
                 .build();
     }
 
     @Bean
     @JobScope
-    public Step weatherBatchStep(@Value("#{jobParameters[backOffPeriod]}") Long backOffPeriod) {
+    public Step weatherBatchStep(@Value("#{jobParameters[backOffPeriod]}") Long backOffPeriod,
+                                 @Value("#{jobParameters[chunkSize]}") Long chunkSize) {
         FixedBackOffPolicy fixedBackOffPolicy = new FixedBackOffPolicy();
         fixedBackOffPolicy.setBackOffPeriod(backOffPeriod);
         return stepBuilderFactory.get("weatherInsertion")
-                .<WeatherLocation, Weathers>chunk(CHUCK_SIZE)
-                .reader(weatherLocationItemReader())
+                .<WeatherLocation, Weathers>chunk(chunkSize.intValue())
+                .reader(weatherLocationItemReader(null))
                 .processor(weatherItemProcessor())
                 .writer(itemWriters())
                 .faultTolerant()
@@ -90,12 +91,12 @@ public class WeatherBatch {
 
     @Bean
     @StepScope
-    public ItemReader<WeatherLocation> weatherLocationItemReader() {
+    public ItemReader<WeatherLocation> weatherLocationItemReader(@Value("#{jobParameters[chunkSize]}") Long chunkSize) {
         return new JdbcPagingItemReaderBuilder<WeatherLocation>()
                 .name("unusedImageItemReader")
                 .dataSource(dataSource)
-                .pageSize(CHUCK_SIZE)
-                .fetchSize(CHUCK_SIZE)
+                .pageSize(chunkSize.intValue())
+                .fetchSize(chunkSize.intValue())
                 .queryProvider(pagingQueryProvider())
                 .rowMapper(rowMapper())
                 .build();
@@ -143,8 +144,8 @@ public class WeatherBatch {
     public ItemWriter<Weathers> previousWeatherItemDeletionWriter() {
         return items -> {
             List<Long> locationIds = items.stream()
-                .map(Weathers::getWeatherLocationId)
-                .collect(Collectors.toUnmodifiableList());
+                    .map(Weathers::getWeatherLocationId)
+                    .collect(Collectors.toUnmodifiableList());
             weatherPersistencePort.deleteByLocationIds(locationIds);
         };
     }
