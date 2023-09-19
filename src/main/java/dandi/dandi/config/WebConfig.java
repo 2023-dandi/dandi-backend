@@ -34,6 +34,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/auth/login/oauth/apple")
                 .excludePathPatterns("/auth/refresh")
                 .excludePathPatterns("/exhibition/**")
+                .excludePathPatterns("/batch/weather")
                 .excludePathPatterns(SWAGGER_REQUEST_URIS);
     }
 }
