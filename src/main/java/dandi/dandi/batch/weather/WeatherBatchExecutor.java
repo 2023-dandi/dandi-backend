@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Map;
 
+import static org.springframework.batch.core.ExitStatus.COMPLETED;
 import static org.springframework.batch.core.ExitStatus.FAILED;
 
 @Component
@@ -55,6 +56,7 @@ public class WeatherBatchExecutor {
                 )
         );
         try {
+            logger.info("{" + LocalDateTime.now() + "} WeatherBatch Start");
             JobExecution jobExecution = jobLauncher.run(weatherBatch.weatherBatch(), jobParameters);
             handleFailureIfFailed(baseDateTime.toString(), jobExecution.getExitStatus());
         } catch (JobExecutionAlreadyRunningException | JobRestartException |
@@ -71,6 +73,9 @@ public class WeatherBatchExecutor {
     }
 
     private void handleFailureIfFailed(String now, ExitStatus exitStatus) {
+        if (exitStatus.getExitCode().equals(COMPLETED.getExitCode())) {
+            logger.info("{" + LocalDateTime.now() + "} WeatherBatch Complete");
+        }
         if (exitStatus.getExitCode().equals(FAILED.getExitCode())) {
             errorMessageSender.sendMessage(now + " Weather Batch Failed");
             logger.info("Weather Batch Failed \r\n {}", exitStatus.getExitDescription());
