@@ -57,9 +57,9 @@ public class WeatherBatchExecutor {
         try {
             JobExecution jobExecution = jobLauncher.run(weatherBatch.weatherBatch(), jobParameters);
             handleFailureIfFailed(baseDateTime.toString(), jobExecution.getExitStatus());
-        } catch (BatchException | JobExecutionAlreadyRunningException | JobRestartException |
-                 JobInstanceAlreadyCompleteException | JobParametersInvalidException e) {
-            errorMessageSender.sendMessage(now + " Weather Batch Failed");
+        } catch (JobExecutionAlreadyRunningException | JobRestartException |
+                 JobInstanceAlreadyCompleteException | JobParametersInvalidException | RuntimeException e) {
+            errorMessageSender.sendMessage(now + " Weather Batch Failed \r\n" + e.getMessage());
             logger.info("Weather Batch Failed \r\n {}", e.getMessage());
         }
     }
