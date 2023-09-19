@@ -121,23 +121,6 @@ class KmaWeatherRequesterTest {
                 .hasMessage("위치에 대한 날씨 정보가 존재하지 않습니다.(60, 127)");
     }
 
-    @DisplayName("날씨 데이터 캐시를 비울 수 있다.")
-    @Test
-    void finish() {
-        WeatherResponseHeader header = new WeatherResponseHeader("00", "NORMAL_SERVICE");
-        WeatherResponseBody body = new WeatherResponseBody("JSON", generateWeatherItems(), 900, 0, 900);
-        WeatherRequest weatherRequest = new WeatherRequest(kmaServiceKey, "JSON", BASE_DATE, BASE_TIME, 900, 60, 127);
-        WeatherResponses weatherResponses = new WeatherResponses(new WeatherResponse(header, body));
-        when(weatherApiCaller.getWeathers(weatherRequest))
-                .thenReturn(weatherResponses);
-        kmaWeatherRequester.getWeathers(BASE_DATE_TIME, WEATHER_LOCATION);
-
-        kmaWeatherRequester.finish();
-
-        kmaWeatherRequester.getWeathers(BASE_DATE_TIME, WEATHER_LOCATION);
-        verify(weatherApiCaller, times(2)).getWeathers(weatherRequest);
-    }
-
     private WeatherItems generateWeatherItems() {
         String firstFsctTime = "0500";
         String secondFsctTime = "0600";

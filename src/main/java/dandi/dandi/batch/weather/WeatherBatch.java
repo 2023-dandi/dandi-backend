@@ -126,7 +126,6 @@ public class WeatherBatch {
     @Bean
     @StepScope
     public ItemProcessor<WeatherLocation, Weathers> weatherItemProcessor() {
-        weatherRequester.finish();
         return weatherLocation -> weatherRequester.getWeathers(dateTimeJobParameter.getLocalDateTime(), weatherLocation);
     }
 

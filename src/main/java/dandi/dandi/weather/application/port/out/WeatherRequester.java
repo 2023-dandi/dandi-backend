@@ -8,6 +8,4 @@ import java.time.LocalDateTime;
 public interface WeatherRequester {
 
     Weathers getWeathers(LocalDateTime baseDateTime, WeatherLocation location) throws WeatherRequestException;
-
-    void finish();
 }
