@@ -42,10 +42,6 @@ public class WeatherBatchTestConfig {
                 List<Weather> weathers = generateWeathers();
                 return new Weathers(1L, weathers);
             }
-
-            @Override
-            public void finish() {
-            }
         };
     }
 
