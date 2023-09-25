@@ -12,6 +12,6 @@ public class KmaWeatherFeignConfiguration {
     @Bean
     Decoder kmaDecoder(ObjectFactory<HttpMessageConverters> messageConverters,
                              ObjectProvider<HttpMessageConverterCustomizer> customizers) {
-        return new XmlToJsonDecoder(messageConverters, customizers);
+        return new KmaFeignDecoder(messageConverters, customizers);
     }
 }

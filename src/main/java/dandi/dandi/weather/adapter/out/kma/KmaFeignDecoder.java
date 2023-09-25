@@ -20,17 +20,17 @@ import java.io.Reader;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 
-public class XmlToJsonDecoder implements Decoder {
+public class KmaFeignDecoder implements Decoder {
 
-    private static final Logger logger = LoggerFactory.getLogger(XmlToJsonDecoder.class);
+    private static final Logger logger = LoggerFactory.getLogger(KmaFeignDecoder.class);
     private static final String CONTENT_TYPE = "content-type";
     private static final String TEXT_XML = "text/xml";
     private static final String TEXT_XML_EXCEPTION_MESSAGE_FORMAT = "공공 데이터 포털 에러 XML 응답\r\n%s";
 
     private final Decoder delegate;
 
-    public XmlToJsonDecoder(ObjectFactory<HttpMessageConverters> messageConverters,
-                            ObjectProvider<HttpMessageConverterCustomizer> customizers) {
+    public KmaFeignDecoder(ObjectFactory<HttpMessageConverters> messageConverters,
+                           ObjectProvider<HttpMessageConverterCustomizer> customizers) {
         delegate = new OptionalDecoder(new ResponseEntityDecoder(
                 new SpringDecoder(messageConverters, customizers)));
     }
