@@ -1,9 +1,6 @@
 package dandi.dandi.weather.adapter.out.kma;
 
-import dandi.dandi.weather.adapter.out.kma.dto.WeatherResponse;
-import dandi.dandi.weather.adapter.out.kma.dto.WeatherResponseHeader;
-import dandi.dandi.weather.adapter.out.kma.dto.WeatherResponses;
-import dandi.dandi.weather.application.port.out.WeatherRequestFatalException;
+import dandi.dandi.weather.application.port.out.WeatherRequestRetryableException;
 import feign.FeignException;
 import feign.Response;
 import feign.Util;
@@ -28,9 +25,7 @@ public class XmlToJsonDecoder implements Decoder {
     private static final Logger logger = LoggerFactory.getLogger(XmlToJsonDecoder.class);
     private static final String CONTENT_TYPE = "content-type";
     private static final String TEXT_XML = "text/xml";
-    private static final String HTTP_ROUTING_ERROR = "HTTP ROUTING ERROR";
-    private static final WeatherResponses HTTP_ROUTING_ERROR_WEATHER_RESPONSES = new WeatherResponses(
-            new WeatherResponse(new WeatherResponseHeader("100", "HTTP_ROUTING_ERROR"), null));
+    private static final String TEXT_XML_EXCEPTION_MESSAGE_FORMAT = "공공 데이터 포털 에러 XML 응답\r\n%s";
 
     private final Decoder delegate;
 
@@ -43,20 +38,18 @@ public class XmlToJsonDecoder implements Decoder {
     @Override
     public Object decode(Response response, Type type) throws IOException, FeignException {
         if (hasXmlResponseBody(response)) {
-            return decodeXmlResponseBody(response);
+            String xmlContent = decodeXmlResponseBody(response);
+            String exceptionMessage = String.format(TEXT_XML_EXCEPTION_MESSAGE_FORMAT, xmlContent);
+            logger.info(exceptionMessage);
+            throw new WeatherRequestRetryableException(exceptionMessage);
         }
         return delegate.decode(response, type);
     }
 
-    private WeatherResponses decodeXmlResponseBody(Response response) throws IOException {
+    private String decodeXmlResponseBody(Response response) throws IOException {
         Response.Body body = response.body();
         Reader bodyReader = body.asReader(StandardCharsets.UTF_8);
-        String xmlContent = Util.toString(bodyReader);
-        logger.info("공공 데이터 포털 실패 xml 응답\r\n{}", xmlContent);
-        if (!xmlContent.contains(HTTP_ROUTING_ERROR)) {
-            throw new WeatherRequestFatalException("Unable To Decode XML Response\r\n" + xmlContent);
-        }
-        return HTTP_ROUTING_ERROR_WEATHER_RESPONSES;
+        return Util.toString(bodyReader);
     }
 
     private boolean hasXmlResponseBody(Response response) {
