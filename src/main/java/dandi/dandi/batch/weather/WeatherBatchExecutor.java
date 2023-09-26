@@ -62,8 +62,9 @@ public class WeatherBatchExecutor {
             handleFailureIfFailed(baseDateTime.toString(), jobExecution.getExitStatus());
         } catch (JobExecutionAlreadyRunningException | JobRestartException | IOException |
                  JobInstanceAlreadyCompleteException | JobParametersInvalidException | RuntimeException e) {
-            errorMessageSender.sendMessage(now + " Weather Batch Failed \r\n" + e.getMessage());
-            logger.error("Weather Batch Failed \r\n {}", e.getMessage());
+            String exceptionMessage = "Weather Batch Failed \r\n" + e.getMessage();
+            errorMessageSender.sendMessage(now + exceptionMessage);
+            logger.error(exceptionMessage);
         }
     }
 
