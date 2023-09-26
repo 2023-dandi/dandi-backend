@@ -1,4 +1,4 @@
-package dandi.dandi.batch.weather.application.runner;
+package dandi.dandi.weatherbatch.application.runner;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.*;
 import static org.junit.jupiter.api.Assertions.*;

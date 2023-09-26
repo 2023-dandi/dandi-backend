@@ -1,8 +1,7 @@
-package dandi.dandi.batch.weather.adapter.in;
+package dandi.dandi.weatherbatch.adapter.in;
 
-import dandi.dandi.batch.weather.application.port.in.WeatherBatchExecutorPort;
-import dandi.dandi.batch.weather.application.service.WeatherBatchExecutor;
-import dandi.dandi.batch.weather.application.port.in.WeatherBatchRequest;
+import dandi.dandi.weatherbatch.application.port.in.WeatherBatchExecutorPort;
+import dandi.dandi.weatherbatch.application.port.in.WeatherBatchRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

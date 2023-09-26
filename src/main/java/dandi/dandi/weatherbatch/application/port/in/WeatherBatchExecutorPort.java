@@ -1,4 +1,4 @@
-package dandi.dandi.batch.weather.application.port.in;
+package dandi.dandi.weatherbatch.application.port.in;
 
 public interface WeatherBatchExecutorPort {
 
