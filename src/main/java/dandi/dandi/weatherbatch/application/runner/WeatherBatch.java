@@ -1,7 +1,7 @@
 package dandi.dandi.weatherbatch.application.runner;
 
-import dandi.dandi.batch.exception.BatchException;
-import dandi.dandi.batch.jobparameter.DateTimeJobParameter;
+import dandi.dandi.batchcommons.exception.BatchException;
+import dandi.dandi.batchcommons.jobparameter.DateTimeJobParameter;
 import dandi.dandi.weather.application.port.out.WeatherPersistencePort;
 import dandi.dandi.weather.application.port.out.WeatherRequestFatalException;
 import dandi.dandi.weather.application.port.out.WeatherRequestRetryableException;

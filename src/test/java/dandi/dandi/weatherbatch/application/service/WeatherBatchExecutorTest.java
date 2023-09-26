@@ -1,11 +1,10 @@
 package dandi.dandi.weatherbatch.application.service;
 
-import dandi.dandi.batch.exception.BatchException;
+import dandi.dandi.batchcommons.exception.BatchException;
 import dandi.dandi.weatherbatch.application.port.in.WeatherBatchRequest;
 import dandi.dandi.weatherbatch.application.runner.WeatherBatch;
 import dandi.dandi.errormessage.application.port.out.ErrorMessageSender;
 import dandi.dandi.weather.application.port.out.BaseTimeConvertor;
-import dandi.dandi.weatherbatch.application.service.WeatherBatchExecutor;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

@@ -1,4 +1,4 @@
-package dandi.dandi.batch.exception;
+package dandi.dandi.batchcommons.exception;
 
 public class BatchException extends RuntimeException {
 

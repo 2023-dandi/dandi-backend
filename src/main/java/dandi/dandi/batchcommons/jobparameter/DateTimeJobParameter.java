@@ -1,4 +1,4 @@
-package dandi.dandi.batch.jobparameter;
+package dandi.dandi.batchcommons.jobparameter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

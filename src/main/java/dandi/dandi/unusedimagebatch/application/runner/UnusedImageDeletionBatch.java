@@ -1,7 +1,7 @@
 package dandi.dandi.unusedimagebatch.application.runner;
 
-import dandi.dandi.batch.exception.BatchException;
-import dandi.dandi.batch.jobparameter.DateTimeJobParameter;
+import dandi.dandi.batchcommons.exception.BatchException;
+import dandi.dandi.batchcommons.jobparameter.DateTimeJobParameter;
 import dandi.dandi.image.application.out.ImageManager;
 import dandi.dandi.image.application.out.UnusedImagePersistencePort;
 import dandi.dandi.image.domain.UnusedImage;

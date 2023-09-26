@@ -1,6 +1,6 @@
 package dandi.dandi.weatherbatch.application.service;
 
-import dandi.dandi.batch.exception.BatchException;
+import dandi.dandi.batchcommons.exception.BatchException;
 import dandi.dandi.weatherbatch.application.port.in.WeatherBatchExecutorPort;
 import dandi.dandi.weatherbatch.application.runner.WeatherBatch;
 import dandi.dandi.weatherbatch.application.port.in.WeatherBatchRequest;

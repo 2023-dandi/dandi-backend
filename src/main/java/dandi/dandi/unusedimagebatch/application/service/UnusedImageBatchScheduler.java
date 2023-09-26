@@ -1,6 +1,6 @@
 package dandi.dandi.unusedimagebatch.application.service;
 
-import dandi.dandi.batch.exception.BatchException;
+import dandi.dandi.batchcommons.exception.BatchException;
 import dandi.dandi.unusedimagebatch.application.runner.UnusedImageDeletionBatch;
 import dandi.dandi.errormessage.application.port.out.ErrorMessageSender;
 import org.slf4j.Logger;
