@@ -17,7 +17,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
-@Profile({"local", "dev"})
+@Profile({"local"})
 public class KmaLocationParser implements InitializingBean {
 
     private static final String WEATHER_LOCATION_INSERT_QUERY = "INSERT INTO WEATHER_LOCATION (x, y) VALUES %s;";
@@ -43,7 +43,7 @@ public class KmaLocationParser implements InitializingBean {
     }
 
     public String generateWeatherLocationInsertQuery() {
-        try (BufferedReader br = Files.newBufferedReader(Paths.get("src/main/resources/weather_location.csv"))) {
+        try (BufferedReader br = Files.newBufferedReader(Paths.get("src/main/resources/dandi-backend-config/weather_location.csv"))) {
             return String.format(WEATHER_LOCATION_INSERT_QUERY, generateValuesQuery(br));
         } catch (IOException e) {
             throw new InternalServerException("기상청 위치 파일 데이터, 객체 변환 실패");
