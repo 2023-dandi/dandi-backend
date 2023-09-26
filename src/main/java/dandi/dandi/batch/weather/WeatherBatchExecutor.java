@@ -13,6 +13,7 @@ import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Map;
@@ -59,6 +60,8 @@ public class WeatherBatchExecutor {
             logger.info("{" + LocalDateTime.now() + "} WeatherBatch Start");
             JobExecution jobExecution = jobLauncher.run(weatherBatch.weatherBatch(), jobParameters);
             handleFailureIfFailed(baseDateTime.toString(), jobExecution.getExitStatus());
+        } catch (IOException e) {
+            errorMessageSender.sendMessage("IOException 발생\r\n" + e.getMessage());
         } catch (JobExecutionAlreadyRunningException | JobRestartException |
                  JobInstanceAlreadyCompleteException | JobParametersInvalidException | RuntimeException e) {
             errorMessageSender.sendMessage(now + " Weather Batch Failed \r\n" + e.getMessage());
