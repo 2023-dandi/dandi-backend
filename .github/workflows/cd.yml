@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - dev
-      - infra/395-cd-variable-update
 
 env:
   AWS_REGION: ap-northeast-2
