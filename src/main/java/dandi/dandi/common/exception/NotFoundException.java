@@ -27,4 +27,8 @@ public class NotFoundException extends RuntimeException {
     public static NotFoundException member() {
         return new NotFoundException("사용자");
     }
+
+    public static NotFoundException chunkSize(String name) {
+        return new NotFoundException("Chunk Size(" + name + ")");
+    }
 }
