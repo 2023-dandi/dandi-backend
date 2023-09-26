@@ -19,4 +19,9 @@ public class ChunkSizePersistenceAdapter implements ChunkSizePersistencePort {
                 .orElseThrow(() -> NotFoundException.chunkSize(name))
                 .getValue();
     }
+
+    @Override
+    public void updateChunkSizeByName(String name, int chunkSize) throws NotFoundException {
+        chunkSizeRepository.updateChunkSizeByName(name, chunkSize);
+    }
 }
