@@ -50,7 +50,12 @@ class UnusedImageDeletionBatchTest {
     @Test
     void deleteUnusedImageJob_Yesterday() throws Exception {
         LocalDateTime now = LocalDateTime.now().plusDays(1);
-        JobParameters jobParameters = new JobParameters(Map.of("dateTime", new JobParameter(now.toString())));
+        JobParameters jobParameters = new JobParameters(
+                Map.of(
+                        "dateTime", new JobParameter(now.toString()),
+                        "chunkSize", new JobParameter(100L)
+                )
+        );
         for (int i = 1; i <= 20; i++) {
             String fileKey = String.valueOf(i);
             unusedImageRepository.save(new UnusedImageJpaEntity(fileKey));
@@ -68,7 +73,12 @@ class UnusedImageDeletionBatchTest {
     @Test
     void deleteUnusedImageJob_Today() throws Exception {
         LocalDateTime now = LocalDateTime.now();
-        JobParameters jobParameters = new JobParameters(Map.of("dateTime", new JobParameter(now.toString())));
+        JobParameters jobParameters = new JobParameters(
+                Map.of(
+                        "dateTime", new JobParameter(now.toString()),
+                        "chunkSize", new JobParameter(100L)
+                )
+        );
         for (int i = 1; i <= 20; i++) {
             String fileKey = String.valueOf(i);
             unusedImageRepository.save(new UnusedImageJpaEntity(fileKey));
