@@ -1,10 +1,12 @@
 package dandi.dandi.weatherbatch.application.service;
 
+import dandi.dandi.batchcommons.application.port.out.ChunkSizePersistencePort;
 import dandi.dandi.batchcommons.exception.BatchException;
-import dandi.dandi.weatherbatch.application.port.in.WeatherBatchRequest;
-import dandi.dandi.weatherbatch.application.runner.WeatherBatch;
 import dandi.dandi.errormessage.application.port.out.ErrorMessageSender;
 import dandi.dandi.weather.application.port.out.BaseTimeConvertor;
+import dandi.dandi.weatherbatch.application.port.in.WeatherBatchRequest;
+import dandi.dandi.weatherbatch.application.runner.WeatherBatch;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -26,13 +28,20 @@ import static org.mockito.Mockito.when;
 
 class WeatherBatchExecutorTest {
 
+    private final ChunkSizePersistencePort chunkSizePersistencePort = Mockito.mock(ChunkSizePersistencePort.class);
     private final JobLauncher jobLauncher = Mockito.mock(JobLauncher.class);
     private final WeatherBatch weatherBatch = Mockito.mock(WeatherBatch.class);
     private final ErrorMessageSender errorMessageSender = Mockito.mock(ErrorMessageSender.class);
     private final BaseTimeConvertor baseTimeConvertor = Mockito.mock(BaseTimeConvertor.class);
     private final String weatherBatchExecutionKey = "key";
-    private final WeatherBatchExecutor weatherBatchExecutor = new WeatherBatchExecutor(
+    private final WeatherBatchExecutor weatherBatchExecutor = new WeatherBatchExecutor(chunkSizePersistencePort,
             jobLauncher, weatherBatch, errorMessageSender, baseTimeConvertor, weatherBatchExecutionKey);
+
+    @BeforeEach
+    void setUp() {
+        when(chunkSizePersistencePort.findChunkSizeByName("weatherBatch"))
+                .thenReturn(100);
+    }
 
     @DisplayName("올바르지 않은 Batch key로 날씨 Batch 작업을 실행하려 하면 예외를 발생시킨다.")
     @Test
