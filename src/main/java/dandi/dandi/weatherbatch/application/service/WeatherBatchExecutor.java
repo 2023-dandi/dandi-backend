@@ -78,7 +78,7 @@ public class WeatherBatchExecutor implements WeatherBatchExecutorPort {
     }
 
     private void validateExecutionKey(WeatherBatchRequest weatherBatchRequest) {
-        if (!weatherBatchRequest.getKey().equals(batchAdminKey)) {
+        if (!weatherBatchRequest.getBatchAdminKey().equals(batchAdminKey)) {
             throw new BatchException("날씨 Batch 실행 Key가 올바르지 않습니다.");
         }
     }

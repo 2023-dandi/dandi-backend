@@ -2,16 +2,16 @@ package dandi.dandi.weatherbatch.application.port.in;
 
 public class WeatherBatchRequest {
 
-    private String key;
+    private String batchAdminKey;
 
     public WeatherBatchRequest() {
     }
 
-    public WeatherBatchRequest(String key) {
-        this.key = key;
+    public WeatherBatchRequest(String batchAdminKey) {
+        this.batchAdminKey = batchAdminKey;
     }
 
-    public String getKey() {
-        return key;
+    public String getBatchAdminKey() {
+        return batchAdminKey;
     }
 }
