@@ -14,6 +14,7 @@ import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -40,7 +41,7 @@ public class WeatherBatchExecutor implements WeatherBatchExecutorPort {
 
     public WeatherBatchExecutor(ChunkSizePersistencePort chunkSizePersistencePort, JobLauncher jobLauncher,
                                 WeatherBatch weatherBatch, ErrorMessageSender errorMessageSender,
-                                BaseTimeConvertor baseTimeConvertor, String executionKey) {
+                                BaseTimeConvertor baseTimeConvertor, @Value("${weather.batch.key}") String executionKey) {
         this.chunkSizePersistencePort = chunkSizePersistencePort;
         this.jobLauncher = jobLauncher;
         this.weatherBatch = weatherBatch;
