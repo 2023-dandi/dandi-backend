@@ -1,5 +1,6 @@
 package dandi.dandi.unusedimagebatch.application.service;
 
+import dandi.dandi.batchcommons.application.port.out.ChunkSizePersistencePort;
 import dandi.dandi.batchcommons.exception.BatchException;
 import dandi.dandi.errormessage.application.port.out.ErrorMessageSender;
 import dandi.dandi.unusedimagebatch.application.runner.UnusedImageDeletionBatch;
@@ -24,6 +25,8 @@ import static org.mockito.Mockito.when;
 class UnusedImageBatchSchedulerTest {
 
     @Mock
+    private ChunkSizePersistencePort chunkSizePersistencePort;
+    @Mock
     private JobLauncher jobLauncher;
     @Mock
     private ErrorMessageSender errorMessageSender;
@@ -36,6 +39,8 @@ class UnusedImageBatchSchedulerTest {
     @DisplayName("미사용 이미지 삭제 Batch에 실패하면 관리자에게 메시지를 전송한다.")
     void runUnusedImageDeletionBatch_Failure() throws JobInstanceAlreadyCompleteException, JobRestartException,
             JobExecutionAlreadyRunningException, JobParametersInvalidException {
+        when(chunkSizePersistencePort.findChunkSizeByName("unusedImageDeletion"))
+                .thenReturn(100);
         when(jobLauncher.run(any(), any()))
                 .thenThrow(BatchException.class);
 

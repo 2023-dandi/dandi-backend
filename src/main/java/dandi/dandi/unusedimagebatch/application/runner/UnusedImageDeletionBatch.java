@@ -37,7 +37,6 @@ public class UnusedImageDeletionBatch {
 
     private static final Logger logger = LoggerFactory.getLogger("asyncLogger");
     private static final String JOB_NAME = "unusedImageDeletion";
-    private static final int CHUCK_SIZE = 100;
 
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
@@ -61,7 +60,7 @@ public class UnusedImageDeletionBatch {
     @Bean
     public Job deleteUnusedImageJob() {
         return jobBuilderFactory.get(JOB_NAME)
-                .start(deleteUnusedImageStep())
+                .start(deleteUnusedImageStep(null))
                 .incrementer(new RunIdIncrementer())
                 .build();
     }
@@ -74,11 +73,11 @@ public class UnusedImageDeletionBatch {
 
     @Bean
     @JobScope
-    public Step deleteUnusedImageStep() {
+    public Step deleteUnusedImageStep(@Value("#{jobParameters[chunkSize]}") Long chunkSize) {
         logger.info("[{}] Unused ImageDeletion Batch", dateTimeJobParameter);
         return stepBuilderFactory.get("unusedImageDeletion")
-                .<UnusedImage, UnusedImage>chunk(CHUCK_SIZE)
-                .reader(unusedImageItemReader())
+                .<UnusedImage, UnusedImage>chunk(chunkSize.intValue())
+                .reader(unusedImageItemReader(null))
                 .writer(unusedImageItemWriter())
                 .faultTolerant()
                 .retry(ImageDeletionFailedException.class)
@@ -88,13 +87,13 @@ public class UnusedImageDeletionBatch {
 
     @Bean
     @StepScope
-    public ItemReader<UnusedImage> unusedImageItemReader() {
+    public ItemReader<UnusedImage> unusedImageItemReader(@Value("#{jobParameters[chunkSize]}") Long chunkSize) {
         Map<String, Object> parameters = Map.of("created_at", dateTimeJobParameter.ofMinusDays(1));
         return new JdbcPagingItemReaderBuilder<UnusedImage>()
                 .name("unusedImageItemReader")
                 .dataSource(dataSource)
-                .pageSize(CHUCK_SIZE)
-                .fetchSize(CHUCK_SIZE)
+                .pageSize(chunkSize.intValue())
+                .fetchSize(chunkSize.intValue())
                 .queryProvider(pagingQueryProvider())
                 .parameterValues(parameters)
                 .rowMapper(rowMapper())

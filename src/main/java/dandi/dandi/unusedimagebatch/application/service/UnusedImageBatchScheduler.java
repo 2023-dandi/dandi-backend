@@ -1,8 +1,9 @@
 package dandi.dandi.unusedimagebatch.application.service;
 
+import dandi.dandi.batchcommons.application.port.out.ChunkSizePersistencePort;
 import dandi.dandi.batchcommons.exception.BatchException;
-import dandi.dandi.unusedimagebatch.application.runner.UnusedImageDeletionBatch;
 import dandi.dandi.errormessage.application.port.out.ErrorMessageSender;
+import dandi.dandi.unusedimagebatch.application.runner.UnusedImageDeletionBatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.JobParameter;
@@ -22,12 +23,17 @@ import java.util.Map;
 public class UnusedImageBatchScheduler {
 
     private static final Logger logger = LoggerFactory.getLogger("asyncLogger");
+    private static final String BATCH_NAME = "unusedImageDeletion";
 
+    private final ChunkSizePersistencePort chunkSizePersistencePort;
     private final JobLauncher jobLauncher;
     private final UnusedImageDeletionBatch unusedImageDeletionBatch;
     private final ErrorMessageSender errorMessageSender;
 
-    public UnusedImageBatchScheduler(JobLauncher jobLauncher, UnusedImageDeletionBatch unusedImageDeletionBatch, ErrorMessageSender errorMessageSender) {
+    public UnusedImageBatchScheduler(ChunkSizePersistencePort chunkSizePersistencePort, JobLauncher jobLauncher,
+                                     UnusedImageDeletionBatch unusedImageDeletionBatch,
+                                     ErrorMessageSender errorMessageSender) {
+        this.chunkSizePersistencePort = chunkSizePersistencePort;
         this.jobLauncher = jobLauncher;
         this.unusedImageDeletionBatch = unusedImageDeletionBatch;
         this.errorMessageSender = errorMessageSender;
@@ -35,9 +41,14 @@ public class UnusedImageBatchScheduler {
 
     @Scheduled(cron = "0 0 4 * * SUN")
     public void runUnusedImageDeletionBatch() {
+        long chunkSize = chunkSizePersistencePort.findChunkSizeByName(BATCH_NAME);
         String today = LocalDateTime.now().toString();
-        JobParameter dateJobParameter = new JobParameter(today);
-        JobParameters jobParameters = new JobParameters(Map.of("dateTime", dateJobParameter));
+        JobParameters jobParameters = new JobParameters(
+                Map.of(
+                        "dateTime", new JobParameter(today),
+                        "chunkSize", new JobParameter(chunkSize)
+                )
+        );
         try {
             jobLauncher.run(unusedImageDeletionBatch.deleteUnusedImageJob(), jobParameters);
         } catch (BatchException | JobExecutionAlreadyRunningException | JobRestartException |
