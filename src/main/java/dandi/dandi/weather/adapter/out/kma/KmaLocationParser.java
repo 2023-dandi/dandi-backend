@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 @Profile({"local"})
 public class KmaLocationParser implements InitializingBean {
 
-    private static final String WEATHER_LOCATION_INSERT_QUERY = "INSERT INTO WEATHER_LOCATION (x, y) VALUES %s;";
+    private static final String WEATHER_LOCATION_INSERT_QUERY = "INSERT INTO weather_location (x, y) VALUES %s;";
     private static final int NX_INDEX = 5;
     private static final int NY_INDEX = 6;
     private static final String LOCATION_DELIMITER = ",";
