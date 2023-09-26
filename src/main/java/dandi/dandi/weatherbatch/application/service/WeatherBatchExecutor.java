@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Map;
+import java.util.Objects;
 
 import static org.springframework.batch.core.ExitStatus.COMPLETED;
 import static org.springframework.batch.core.ExitStatus.FAILED;
@@ -53,7 +54,7 @@ public class WeatherBatchExecutor implements WeatherBatchExecutorPort {
 
     @Override
     public void runWeatherBatch(WeatherBatchRequest weatherBatchRequest) {
-        long chunkSize = chunkSizePersistencePort.findChunkSizeByName(BATCH_NAME);
+        long chunkSize = findChunkSizeIfRequestIsNull(weatherBatchRequest);
         validateExecutionKey(weatherBatchRequest);
         LocalDateTime now = LocalDateTime.now();
         LocalTime baseTime = baseTimeConvertor.convert(now.toLocalTime());
@@ -75,6 +76,17 @@ public class WeatherBatchExecutor implements WeatherBatchExecutorPort {
             errorMessageSender.sendMessage(now + exceptionMessage);
             logger.error(exceptionMessage);
         }
+    }
+
+    private int findChunkSizeIfRequestIsNull(WeatherBatchRequest weatherBatchRequest) {
+        Integer chunkSize = weatherBatchRequest.getChunkSize();
+        if (Objects.isNull(chunkSize)) {
+            return chunkSizePersistencePort.findChunkSizeByName(BATCH_NAME);
+        }
+        if (chunkSize < 1) {
+            throw new IllegalArgumentException("Batch Size는 1이상이어야 합니다.");
+        }
+        return chunkSize;
     }
 
     private void validateExecutionKey(WeatherBatchRequest weatherBatchRequest) {

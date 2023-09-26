@@ -28,6 +28,8 @@ import static org.mockito.Mockito.when;
 
 class WeatherBatchExecutorTest {
 
+    private static final String JOB_NAME = "weatherBatch";
+
     private final ChunkSizePersistencePort chunkSizePersistencePort = Mockito.mock(ChunkSizePersistencePort.class);
     private final JobLauncher jobLauncher = Mockito.mock(JobLauncher.class);
     private final WeatherBatch weatherBatch = Mockito.mock(WeatherBatch.class);
@@ -39,15 +41,36 @@ class WeatherBatchExecutorTest {
 
     @BeforeEach
     void setUp() {
-        when(chunkSizePersistencePort.findChunkSizeByName("weatherBatch"))
+        when(chunkSizePersistencePort.findChunkSizeByName(JOB_NAME))
                 .thenReturn(100);
+    }
+
+    @DisplayName("WeatherBatchRequest의 chunkSize가 null이라면 DB에서 chunkSize를 조회한다.")
+    @Test
+    void runWeatherBatch_FindChunkSizeInDBIfRequestChunkSizeIsNull() {
+        when(baseTimeConvertor.convert(any()))
+                .thenReturn(LocalTime.of(2, 0));
+        WeatherBatchRequest weatherBatchRequest = new WeatherBatchRequest(batchAdminKey, null);
+
+        weatherBatchExecutor.runWeatherBatch(weatherBatchRequest);
+
+        verify(chunkSizePersistencePort).findChunkSizeByName(JOB_NAME);
+    }
+
+    @DisplayName("WeatherBatchRequest의 chunkSize가 1보다 작다면 예외를 발생시킨다.")
+    @Test
+    void runWeatherBatch_InvalidChunkSizeException() {
+        WeatherBatchRequest weatherBatchRequest = new WeatherBatchRequest(batchAdminKey, 0);
+
+        assertThatThrownBy(() -> weatherBatchExecutor.runWeatherBatch(weatherBatchRequest))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("올바르지 않은 Batch key로 날씨 Batch 작업을 실행하려 하면 예외를 발생시킨다.")
     @Test
     void runWeatherBatch_InvalidExecutionKey() {
         String invalidExecutionKey = "invalidExecutionKey";
-        WeatherBatchRequest weatherBatchRequest = new WeatherBatchRequest(invalidExecutionKey);
+        WeatherBatchRequest weatherBatchRequest = new WeatherBatchRequest(invalidExecutionKey, 100);
 
         assertThatThrownBy(() -> weatherBatchExecutor.runWeatherBatch(weatherBatchRequest))
                 .isInstanceOf(BatchException.class)
@@ -62,7 +85,7 @@ class WeatherBatchExecutorTest {
                 .thenThrow(BatchException.class);
         when(baseTimeConvertor.convert(any()))
                 .thenReturn(LocalTime.of(2, 0));
-        WeatherBatchRequest weatherBatchRequest = new WeatherBatchRequest(batchAdminKey);
+        WeatherBatchRequest weatherBatchRequest = new WeatherBatchRequest(batchAdminKey, 100);
 
         weatherBatchExecutor.runWeatherBatch(weatherBatchRequest);
 
@@ -80,7 +103,7 @@ class WeatherBatchExecutorTest {
                 .thenReturn(ExitStatus.FAILED);
         when(baseTimeConvertor.convert(any()))
                 .thenReturn(LocalTime.of(2, 0));
-        WeatherBatchRequest weatherBatchRequest = new WeatherBatchRequest(batchAdminKey);
+        WeatherBatchRequest weatherBatchRequest = new WeatherBatchRequest(batchAdminKey, 100);
 
         weatherBatchExecutor.runWeatherBatch(weatherBatchRequest);
 
