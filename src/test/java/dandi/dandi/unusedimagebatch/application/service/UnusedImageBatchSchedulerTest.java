@@ -1,7 +1,8 @@
-package dandi.dandi.batch.image;
+package dandi.dandi.unusedimagebatch.application.service;
 
 import dandi.dandi.batch.exception.BatchException;
 import dandi.dandi.errormessage.application.port.out.ErrorMessageSender;
+import dandi.dandi.unusedimagebatch.application.runner.UnusedImageDeletionBatch;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

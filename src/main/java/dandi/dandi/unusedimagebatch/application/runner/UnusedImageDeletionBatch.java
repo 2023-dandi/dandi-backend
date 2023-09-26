@@ -1,4 +1,4 @@
-package dandi.dandi.batch.image;
+package dandi.dandi.unusedimagebatch.application.runner;
 
 import dandi.dandi.batch.exception.BatchException;
 import dandi.dandi.batch.jobparameter.DateTimeJobParameter;
