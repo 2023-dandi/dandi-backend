@@ -9,16 +9,16 @@ import org.springframework.stereotype.Component;
 public class WeatherBatchScheduler {
 
     private final WeatherBatchExecutor weatherBatchExecutor;
-    private final String executionKey;
+    private final String batchAdminKey;
 
     public WeatherBatchScheduler(WeatherBatchExecutor weatherBatchExecutor,
-                                 @Value("${weather.batch.key}") String executionKey) {
+                                 @Value("${spring.batch.admin-key}") String batchAdminKey) {
         this.weatherBatchExecutor = weatherBatchExecutor;
-        this.executionKey = executionKey;
+        this.batchAdminKey = batchAdminKey;
     }
 
     @Scheduled(cron = "0 10 2/3 * * *")
     public void runWeatherBatch() {
-        weatherBatchExecutor.runWeatherBatch(new WeatherBatchRequest(executionKey));
+        weatherBatchExecutor.runWeatherBatch(new WeatherBatchRequest(batchAdminKey));
     }
 }

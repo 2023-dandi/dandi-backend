@@ -33,9 +33,9 @@ class WeatherBatchExecutorTest {
     private final WeatherBatch weatherBatch = Mockito.mock(WeatherBatch.class);
     private final ErrorMessageSender errorMessageSender = Mockito.mock(ErrorMessageSender.class);
     private final BaseTimeConvertor baseTimeConvertor = Mockito.mock(BaseTimeConvertor.class);
-    private final String weatherBatchExecutionKey = "key";
+    private final String batchAdminKey = "key";
     private final WeatherBatchExecutor weatherBatchExecutor = new WeatherBatchExecutor(chunkSizePersistencePort,
-            jobLauncher, weatherBatch, errorMessageSender, baseTimeConvertor, weatherBatchExecutionKey);
+            jobLauncher, weatherBatch, errorMessageSender, baseTimeConvertor, batchAdminKey);
 
     @BeforeEach
     void setUp() {
@@ -62,7 +62,7 @@ class WeatherBatchExecutorTest {
                 .thenThrow(BatchException.class);
         when(baseTimeConvertor.convert(any()))
                 .thenReturn(LocalTime.of(2, 0));
-        WeatherBatchRequest weatherBatchRequest = new WeatherBatchRequest(weatherBatchExecutionKey);
+        WeatherBatchRequest weatherBatchRequest = new WeatherBatchRequest(batchAdminKey);
 
         weatherBatchExecutor.runWeatherBatch(weatherBatchRequest);
 
@@ -80,7 +80,7 @@ class WeatherBatchExecutorTest {
                 .thenReturn(ExitStatus.FAILED);
         when(baseTimeConvertor.convert(any()))
                 .thenReturn(LocalTime.of(2, 0));
-        WeatherBatchRequest weatherBatchRequest = new WeatherBatchRequest(weatherBatchExecutionKey);
+        WeatherBatchRequest weatherBatchRequest = new WeatherBatchRequest(batchAdminKey);
 
         weatherBatchExecutor.runWeatherBatch(weatherBatchRequest);
 

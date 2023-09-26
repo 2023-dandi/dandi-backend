@@ -37,17 +37,18 @@ public class WeatherBatchExecutor implements WeatherBatchExecutorPort {
     private final WeatherBatch weatherBatch;
     private final ErrorMessageSender errorMessageSender;
     private final BaseTimeConvertor baseTimeConvertor;
-    private final String executionKey;
+    private final String batchAdminKey;
 
     public WeatherBatchExecutor(ChunkSizePersistencePort chunkSizePersistencePort, JobLauncher jobLauncher,
                                 WeatherBatch weatherBatch, ErrorMessageSender errorMessageSender,
-                                BaseTimeConvertor baseTimeConvertor, @Value("${weather.batch.key}") String executionKey) {
+                                BaseTimeConvertor baseTimeConvertor,
+                                @Value("${spring.batch.admin-key}") String batchAdminKey) {
         this.chunkSizePersistencePort = chunkSizePersistencePort;
         this.jobLauncher = jobLauncher;
         this.weatherBatch = weatherBatch;
         this.errorMessageSender = errorMessageSender;
         this.baseTimeConvertor = baseTimeConvertor;
-        this.executionKey = executionKey;
+        this.batchAdminKey = batchAdminKey;
     }
 
     @Override
@@ -77,7 +78,7 @@ public class WeatherBatchExecutor implements WeatherBatchExecutorPort {
     }
 
     private void validateExecutionKey(WeatherBatchRequest weatherBatchRequest) {
-        if (!weatherBatchRequest.getKey().equals(executionKey)) {
+        if (!weatherBatchRequest.getKey().equals(batchAdminKey)) {
             throw new BatchException("날씨 Batch 실행 Key가 올바르지 않습니다.");
         }
     }
