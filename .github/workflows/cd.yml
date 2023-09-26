@@ -4,11 +4,12 @@ on:
   push:
     branches:
       - dev
+      - infra/395-cd-variable-update
 
 env:
   AWS_REGION: ap-northeast-2
-  S3_BUCKET_NAME: dandi-jar
-  CODE_DEPLOY_APPLICATION_NAME: dandi-continuous-deployment
+  S3_BUCKET_NAME: dandi-cd
+  CODE_DEPLOY_APPLICATION_NAME: dandi-code-deploy
   CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: dandi-dev
 
 permissions:
