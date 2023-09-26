@@ -16,10 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import static dandi.dandi.weather.adapter.out.kma.KmaConstant.KMA_DATE_FORMATTER;
 import static dandi.dandi.weather.adapter.out.kma.KmaConstant.KMA_TIME_FORMATTER;
@@ -33,7 +30,6 @@ public class KmaWeatherRequester implements WeatherRequester {
     private final KmaWeatherApiCaller weatherApiCaller;
     private final String kmaServiceKey;
     private final WeatherExtractors weatherExtractors;
-    private final Map<WeatherLocation, Weathers> cache = new ConcurrentHashMap<>();
 
     public KmaWeatherRequester(KmaWeatherApiCaller weatherApiCaller,
                                @Value("${weather.kma.service-key}") String kmaServiceKey,
@@ -44,15 +40,6 @@ public class KmaWeatherRequester implements WeatherRequester {
     }
 
     public Weathers getWeathers(LocalDateTime baseDateTime, WeatherLocation location) throws WeatherRequestException {
-        if (cache.containsKey(location)) {
-            return cache.get(location);
-        }
-        Weathers weathers = requestWeather(baseDateTime, location);
-        cache.put(location, weathers);
-        return weathers;
-    }
-
-    private Weathers requestWeather(LocalDateTime baseDateTime, WeatherLocation location) {
         String date = baseDateTime.format(KMA_DATE_FORMATTER);
         String time = baseDateTime.format(KMA_TIME_FORMATTER);
         WeatherRequest weatherRequest = new WeatherRequest(
@@ -92,9 +79,5 @@ public class KmaWeatherRequester implements WeatherRequester {
         } catch (RuntimeException exception) {
             throw new WeatherRequestFatalException(exception.getMessage());
         }
-    }
-
-    public void finish() {
-        cache.clear();
     }
 }

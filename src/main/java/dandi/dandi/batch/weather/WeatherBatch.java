@@ -29,6 +29,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.retry.backoff.FixedBackOffPolicy;
 
 import javax.sql.DataSource;
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -64,7 +65,7 @@ public class WeatherBatch {
     }
 
     @Bean(JOB_NAME)
-    public Job weatherBatch() {
+    public Job weatherBatch() throws IOException {
         return jobBuilderFactory.get(JOB_NAME)
                 .start(weatherBatchStep(null, null))
                 .build();
@@ -126,7 +127,6 @@ public class WeatherBatch {
     @Bean
     @StepScope
     public ItemProcessor<WeatherLocation, Weathers> weatherItemProcessor() {
-        weatherRequester.finish();
         return weatherLocation -> weatherRequester.getWeathers(dateTimeJobParameter.getLocalDateTime(), weatherLocation);
     }
 

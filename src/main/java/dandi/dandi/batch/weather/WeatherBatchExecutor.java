@@ -13,10 +13,12 @@ import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Map;
 
+import static org.springframework.batch.core.ExitStatus.COMPLETED;
 import static org.springframework.batch.core.ExitStatus.FAILED;
 
 @Component
@@ -55,12 +57,14 @@ public class WeatherBatchExecutor {
                 )
         );
         try {
+            logger.info("{" + LocalDateTime.now() + "} WeatherBatch Start");
             JobExecution jobExecution = jobLauncher.run(weatherBatch.weatherBatch(), jobParameters);
             handleFailureIfFailed(baseDateTime.toString(), jobExecution.getExitStatus());
-        } catch (BatchException | JobExecutionAlreadyRunningException | JobRestartException |
-                 JobInstanceAlreadyCompleteException | JobParametersInvalidException e) {
-            errorMessageSender.sendMessage(now + " Weather Batch Failed");
-            logger.info("Weather Batch Failed \r\n {}", e.getMessage());
+        } catch (JobExecutionAlreadyRunningException | JobRestartException | IOException |
+                 JobInstanceAlreadyCompleteException | JobParametersInvalidException | RuntimeException e) {
+            String exceptionMessage = "Weather Batch Failed \r\n" + e.getMessage();
+            errorMessageSender.sendMessage(now + exceptionMessage);
+            logger.error(exceptionMessage);
         }
     }
 
@@ -71,6 +75,9 @@ public class WeatherBatchExecutor {
     }
 
     private void handleFailureIfFailed(String now, ExitStatus exitStatus) {
+        if (exitStatus.getExitCode().equals(COMPLETED.getExitCode())) {
+            logger.info("{" + LocalDateTime.now() + "} WeatherBatch Complete");
+        }
         if (exitStatus.getExitCode().equals(FAILED.getExitCode())) {
             errorMessageSender.sendMessage(now + " Weather Batch Failed");
             logger.info("Weather Batch Failed \r\n {}", exitStatus.getExitDescription());

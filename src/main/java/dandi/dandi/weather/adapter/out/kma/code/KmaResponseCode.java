@@ -1,6 +1,7 @@
 package dandi.dandi.weather.adapter.out.kma.code;
 
 import dandi.dandi.weather.application.port.out.WeatherRequestFatalException;
+import org.apache.http.protocol.HTTP;
 
 import java.util.Arrays;
 
@@ -22,7 +23,8 @@ public enum KmaResponseCode {
     DEADLINE_HAS_EXPIRED_ERROR("31"),
     UNREGISTERED_IP_ERROR("32"),
     UNSIGNED_CALL_ERROR("33"),
-    UNKNOWN_ERROR("99");
+    UNKNOWN_ERROR("99"),
+    ;
 
     private final String value;
 
