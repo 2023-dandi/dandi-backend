@@ -1,6 +1,8 @@
-package dandi.dandi.batch.weather;
+package dandi.dandi.batch.weather.application.service;
 
 import dandi.dandi.batch.exception.BatchException;
+import dandi.dandi.batch.weather.application.port.in.WeatherBatchRequest;
+import dandi.dandi.batch.weather.application.runner.WeatherBatch;
 import dandi.dandi.errormessage.application.port.out.ErrorMessageSender;
 import dandi.dandi.weather.application.port.out.BaseTimeConvertor;
 import org.junit.jupiter.api.DisplayName;

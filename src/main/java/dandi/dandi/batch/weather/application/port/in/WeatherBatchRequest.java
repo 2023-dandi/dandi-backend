@@ -1,4 +1,4 @@
-package dandi.dandi.batch.weather;
+package dandi.dandi.batch.weather.application.port.in;
 
 public class WeatherBatchRequest {
 

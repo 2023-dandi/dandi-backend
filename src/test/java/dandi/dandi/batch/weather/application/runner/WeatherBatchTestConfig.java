@@ -1,4 +1,4 @@
-package dandi.dandi.batch.weather;
+package dandi.dandi.batch.weather.application.runner;
 
 import dandi.dandi.weather.application.port.out.WeatherRequestException;
 import dandi.dandi.weather.application.port.out.WeatherRequestFatalException;

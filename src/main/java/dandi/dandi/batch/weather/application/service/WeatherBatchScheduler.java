@@ -1,5 +1,6 @@
-package dandi.dandi.batch.weather;
+package dandi.dandi.batch.weather.application.service;
 
+import dandi.dandi.batch.weather.application.port.in.WeatherBatchRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;

@@ -1,4 +1,4 @@
-package dandi.dandi.batch.weather;
+package dandi.dandi.batch.weather.application.runner;
 
 import dandi.dandi.batch.exception.BatchException;
 import dandi.dandi.batch.jobparameter.DateTimeJobParameter;

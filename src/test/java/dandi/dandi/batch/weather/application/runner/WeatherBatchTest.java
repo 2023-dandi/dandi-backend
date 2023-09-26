@@ -1,9 +1,8 @@
-package dandi.dandi.batch.weather;
+package dandi.dandi.batch.weather.application.runner;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
