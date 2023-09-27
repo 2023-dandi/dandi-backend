@@ -2,8 +2,6 @@ package dandi.dandi.weather.adapter.out.kma.code;
 
 import java.util.Arrays;
 
-import javax.annotation.Nullable;
-
 import dandi.dandi.weather.application.port.out.WeatherRequestFatalException;
 
 public enum KmaResponseCode {
@@ -25,6 +23,7 @@ public enum KmaResponseCode {
 	UNREGISTERED_IP_ERROR("32"),
 	UNSIGNED_CALL_ERROR("33"),
 	UNKNOWN_ERROR("99"),
+	HTTP_ROUTING_ERROR("100")
 	;
 
 	private final String value;
@@ -40,7 +39,6 @@ public enum KmaResponseCode {
 			.orElseThrow(() -> new WeatherRequestFatalException("기상청 응답 코드를 변환할 수 없습니다."));
 	}
 
-	@Nullable
 	public static KmaResponseCode findByNameContainedInValueOrElseNull(String value) {
 		return Arrays.stream(values())
 			.filter(kmaResponseCode -> value.contains(kmaResponseCode.name()))
@@ -59,7 +57,7 @@ public enum KmaResponseCode {
 	public boolean isTemporaryExternalServerError() {
 		return this == SERVICE_TIME_OUT || this == DB_ERROR || this == HTTP_ERROR ||
 			this == SERVICE_ACCESS_DENIED_ERROR || this == TEMPORARILY_DISABLE_THE_SERVICE_KEY_ERROR ||
-			this == SERVICE_KEY_IS_NOT_REGISTERED_ERROR;
+			this == SERVICE_KEY_IS_NOT_REGISTERED_ERROR || this == HTTP_ROUTING_ERROR;
 	}
 
 	public boolean isRetryable() {
