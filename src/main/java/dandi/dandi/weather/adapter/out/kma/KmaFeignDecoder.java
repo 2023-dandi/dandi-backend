@@ -5,6 +5,7 @@ import java.io.Reader;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,8 +16,11 @@ import org.springframework.cloud.openfeign.support.HttpMessageConverterCustomize
 import org.springframework.cloud.openfeign.support.ResponseEntityDecoder;
 import org.springframework.cloud.openfeign.support.SpringDecoder;
 
+import dandi.dandi.weather.adapter.out.kma.code.KmaResponseCode;
+import dandi.dandi.weather.adapter.out.kma.dto.WeatherResponse;
+import dandi.dandi.weather.adapter.out.kma.dto.WeatherResponseHeader;
+import dandi.dandi.weather.adapter.out.kma.dto.WeatherResponses;
 import dandi.dandi.weather.application.port.out.WeatherRequestFatalException;
-import dandi.dandi.weather.application.port.out.WeatherRequestRetryableException;
 import feign.FeignException;
 import feign.Response;
 import feign.Util;
@@ -28,9 +32,7 @@ public class KmaFeignDecoder implements Decoder {
 	private static final Logger logger = LoggerFactory.getLogger(KmaFeignDecoder.class);
 	private static final String CONTENT_TYPE = "content-type";
 	private static final String TEXT_XML = "text/xml";
-	private static final String HTTP_ROUTING_ERROR = "HTTP ROUTING ERROR";
 	private static final String TEXT_XML_EXCEPTION_MESSAGE_FORMAT = "공공 데이터 포털 에러 XML 응답\r\n%s";
-	private static final String SERVICE_KEY_IS_NOT_REGISTERED_ERROR = "SERVICE_KEY_IS_NOT_REGISTERED_ERROR";
 
 	private final Decoder delegate;
 
@@ -44,16 +46,19 @@ public class KmaFeignDecoder implements Decoder {
 	public Object decode(Response response, Type type) throws IOException, FeignException {
 		if (hasTextXmlContentType(response)) {
 			String xmlContent = decodeXmlResponseBody(response);
-			handleXmlResponse(xmlContent);
+			return decodeXmlResponse(xmlContent);
 		}
 		return delegate.decode(response, type);
 	}
 
-	private void handleXmlResponse(String xmlContent) {
-		String exceptionMessage = String.format(TEXT_XML_EXCEPTION_MESSAGE_FORMAT, xmlContent);
-		if (xmlContent.contains(HTTP_ROUTING_ERROR) || xmlContent.contains(SERVICE_KEY_IS_NOT_REGISTERED_ERROR)) {
-			throw new WeatherRequestRetryableException(exceptionMessage);
+	private WeatherResponses decodeXmlResponse(String xmlContent) {
+		KmaResponseCode kmaResponseCode = KmaResponseCode.findByNameContainedInValueOrElseNull(xmlContent);
+		if (Objects.nonNull(kmaResponseCode)) {
+			WeatherResponseHeader weatherResponseHeader =
+				new WeatherResponseHeader(kmaResponseCode.getResultCode(), kmaResponseCode.getErrorMessage());
+			return new WeatherResponses(new WeatherResponse(weatherResponseHeader, null));
 		}
+		String exceptionMessage = String.format(TEXT_XML_EXCEPTION_MESSAGE_FORMAT, xmlContent);
 		logger.info(exceptionMessage);
 		throw new WeatherRequestFatalException(exceptionMessage);
 	}
