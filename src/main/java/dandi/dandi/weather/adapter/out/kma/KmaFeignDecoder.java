@@ -30,6 +30,7 @@ public class KmaFeignDecoder implements Decoder {
 	private static final String TEXT_XML = "text/xml";
 	private static final String HTTP_ROUTING_ERROR = "HTTP ROUTING ERROR";
 	private static final String TEXT_XML_EXCEPTION_MESSAGE_FORMAT = "공공 데이터 포털 에러 XML 응답\r\n%s";
+	private static final String SERVICE_KEY_IS_NOT_REGISTERED_ERROR = "SERVICE_KEY_IS_NOT_REGISTERED_ERROR";
 
 	private final Decoder delegate;
 
@@ -50,7 +51,7 @@ public class KmaFeignDecoder implements Decoder {
 
 	private void handleXmlResponse(String xmlContent) {
 		String exceptionMessage = String.format(TEXT_XML_EXCEPTION_MESSAGE_FORMAT, xmlContent);
-		if (xmlContent.contains(HTTP_ROUTING_ERROR)) {
+		if (xmlContent.contains(HTTP_ROUTING_ERROR) || xmlContent.contains(SERVICE_KEY_IS_NOT_REGISTERED_ERROR)) {
 			throw new WeatherRequestRetryableException(exceptionMessage);
 		}
 		logger.info(exceptionMessage);
