@@ -2,13 +2,10 @@ package dandi.dandi.weather.adapter.out.kma;
 
 import java.util.List;
 
+import dandi.dandi.weather.adapter.out.kma.code.DataPortalResponse;
 import dandi.dandi.weather.adapter.out.kma.dto.WeatherItem;
 
 public class DataPortalErrorWeatherResponse implements WeatherResponsesI {
-
-	private static final List<String> RETRYABLE_DATA_PORTAL_ERROR_MESSAGES = List.of(
-		"HTTP ROUTING ERROR"
-	);
 
 	private final boolean retryable;
 	private final String responseBody;
@@ -19,8 +16,8 @@ public class DataPortalErrorWeatherResponse implements WeatherResponsesI {
 	}
 
 	public static DataPortalErrorWeatherResponse fromXmlContent(String xmlResponseBody) {
-		boolean retryable = RETRYABLE_DATA_PORTAL_ERROR_MESSAGES.stream()
-			.anyMatch(xmlResponseBody::contains);
+		boolean retryable = DataPortalResponse.fromResponseBody(xmlResponseBody)
+			.isRetryable();
 		return new DataPortalErrorWeatherResponse(retryable, xmlResponseBody);
 	}
 
@@ -31,7 +28,7 @@ public class DataPortalErrorWeatherResponse implements WeatherResponsesI {
 
 	@Override
 	public boolean isRetryableError() {
-		return true;
+		return retryable;
 	}
 
 	@Override
