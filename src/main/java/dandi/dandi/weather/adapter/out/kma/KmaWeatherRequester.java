@@ -42,14 +42,14 @@ public class KmaWeatherRequester implements WeatherRequester {
         String time = baseDateTime.format(KMA_TIME_FORMATTER);
         WeatherRequest weatherRequest = new WeatherRequest(
                 kmaServiceKey, DATE_TYPE, date, time, ROW_NUM, location.getX(), location.getY());
-        WeatherResponsesI weatherResponses = weatherApiCaller.getWeathers(weatherRequest);
+        WeatherResponses weatherResponses = weatherApiCaller.getWeathers(weatherRequest);
         if (!weatherResponses.isSuccessful()) {
             raiseException(weatherResponses, location);
         }
         return convertToWeathers(location.getId(), weatherResponses);
     }
 
-    private void raiseException(WeatherResponsesI weatherResponses, WeatherLocation location) {
+    private void raiseException(WeatherResponses weatherResponses, WeatherLocation location) {
         if (weatherResponses.isNoDataLocationError()) {
             throw WeatherRequestFatalException.noData(location.getX(), location.getY());
         } else if (weatherResponses.isRetryableError()) {
@@ -58,7 +58,7 @@ public class KmaWeatherRequester implements WeatherRequester {
         throw new WeatherRequestFatalException(weatherResponses.getResultMessage());
     }
 
-    private Weathers convertToWeathers(long weatherLocationId, WeatherResponsesI weatherResponses) {
+    private Weathers convertToWeathers(long weatherLocationId, WeatherResponses weatherResponses) {
         List<WeatherItem> weatherItems = weatherResponses.getWeatherItems();
         try {
             List<Weather> weathers = weatherExtractors.extract(weatherItems);

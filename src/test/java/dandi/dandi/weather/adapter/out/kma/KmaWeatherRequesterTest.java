@@ -48,9 +48,9 @@ class KmaWeatherRequesterTest {
         WeatherRequest weatherRequest = new WeatherRequest(kmaServiceKey, "JSON", BASE_DATE, BASE_TIME, 900, 60, 127);
         WeatherResponseHeader header = new WeatherResponseHeader("00", "NORMAL_SERVICE");
         WeatherResponseBody body = new WeatherResponseBody("JSON", generateWeatherItems(), 900, 0, 900);
-        WeatherResponses weatherResponses = new WeatherResponses(new WeatherResponse(header, body));
+        KmaWeatherResponses kmaWeatherResponses = new KmaWeatherResponses(new WeatherResponse(header, body));
         when(weatherApiCaller.getWeathers(weatherRequest))
-                .thenReturn(weatherResponses);
+                .thenReturn(kmaWeatherResponses);
 
         Weathers weathers = kmaWeatherRequester.getWeathers(BASE_DATE_TIME, WEATHER_LOCATION);
 
@@ -66,9 +66,9 @@ class KmaWeatherRequesterTest {
         WeatherResponseHeader header = new WeatherResponseHeader("04", "HTTP_ERROR");
         WeatherResponseBody body = null;
         WeatherRequest weatherRequest = new WeatherRequest(kmaServiceKey, "JSON", BASE_DATE, BASE_TIME, 900, 60, 127);
-        WeatherResponses weatherResponses = new WeatherResponses(new WeatherResponse(header, body));
+        KmaWeatherResponses kmaWeatherResponses = new KmaWeatherResponses(new WeatherResponse(header, body));
         when(weatherApiCaller.getWeathers(weatherRequest))
-                .thenReturn(weatherResponses);
+                .thenReturn(kmaWeatherResponses);
 
         assertThatThrownBy(() -> kmaWeatherRequester.getWeathers(BASE_DATE_TIME, WEATHER_LOCATION))
                 .isInstanceOf(WeatherRequestRetryableException.class)
@@ -81,9 +81,9 @@ class KmaWeatherRequesterTest {
         WeatherResponseHeader header = new WeatherResponseHeader("10", "INVALID_REQUEST_PARAMETER_ERROR");
         WeatherResponseBody body = null;
         WeatherRequest weatherRequest = new WeatherRequest(kmaServiceKey, "JSON", BASE_DATE, BASE_TIME, 900, 60, 127);
-        WeatherResponses weatherResponses = new WeatherResponses(new WeatherResponse(header, body));
+        KmaWeatherResponses kmaWeatherResponses = new KmaWeatherResponses(new WeatherResponse(header, body));
         when(weatherApiCaller.getWeathers(weatherRequest))
-                .thenReturn(weatherResponses);
+                .thenReturn(kmaWeatherResponses);
 
         assertThatThrownBy(() -> kmaWeatherRequester.getWeathers(BASE_DATE_TIME, WEATHER_LOCATION))
                 .isInstanceOf(WeatherRequestFatalException.class)
@@ -96,9 +96,9 @@ class KmaWeatherRequesterTest {
         WeatherResponseHeader header = new WeatherResponseHeader("03", "NO_DATA_ERROR");
         WeatherResponseBody body = null;
         WeatherRequest weatherRequest = new WeatherRequest(kmaServiceKey, "JSON", BASE_DATE, BASE_TIME, 900, 60, 127);
-        WeatherResponses weatherResponses = new WeatherResponses(new WeatherResponse(header, body));
+        KmaWeatherResponses kmaWeatherResponses = new KmaWeatherResponses(new WeatherResponse(header, body));
         when(weatherApiCaller.getWeathers(weatherRequest))
-                .thenReturn(weatherResponses);
+                .thenReturn(kmaWeatherResponses);
 
         assertThatThrownBy(() -> kmaWeatherRequester.getWeathers(BASE_DATE_TIME, WEATHER_LOCATION))
                 .isInstanceOf(WeatherRequestFatalException.class)

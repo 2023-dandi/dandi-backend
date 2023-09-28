@@ -1,7 +1,7 @@
 package dandi.dandi.weather.adapter.out.kma;
 
 import dandi.dandi.weather.adapter.out.kma.dto.WeatherRequest;
-import dandi.dandi.weather.adapter.out.kma.dto.WeatherResponses;
+
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.SpringQueryMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,5 +11,5 @@ import org.springframework.web.bind.annotation.GetMapping;
 public interface KmaWeatherApiCaller {
 
     @GetMapping
-    WeatherResponsesI getWeathers(@SpringQueryMap(encoded = true) WeatherRequest weatherRequest);
+    WeatherResponses getWeathers(@SpringQueryMap(encoded = true) WeatherRequest weatherRequest);
 }

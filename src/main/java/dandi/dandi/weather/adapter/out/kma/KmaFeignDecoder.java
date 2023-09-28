@@ -19,7 +19,7 @@ import org.springframework.cloud.openfeign.support.SpringDecoder;
 import dandi.dandi.weather.adapter.out.kma.code.KmaResponseCode;
 import dandi.dandi.weather.adapter.out.kma.dto.WeatherResponse;
 import dandi.dandi.weather.adapter.out.kma.dto.WeatherResponseHeader;
-import dandi.dandi.weather.adapter.out.kma.dto.WeatherResponses;
+import dandi.dandi.weather.adapter.out.kma.dto.KmaWeatherResponses;
 import feign.FeignException;
 import feign.Response;
 import feign.Util;
@@ -47,15 +47,15 @@ public class KmaFeignDecoder implements Decoder {
 			String xmlContent = decodeXmlResponseBody(response);
 			return decodeXmlResponse(xmlContent);
 		}
-		return delegate.decode(response, WeatherResponses.class);
+		return delegate.decode(response, KmaWeatherResponses.class);
 	}
 
-	private WeatherResponsesI decodeXmlResponse(String xmlContent) {
+	private WeatherResponses decodeXmlResponse(String xmlContent) {
 		KmaResponseCode kmaResponseCode = KmaResponseCode.findByNameContainedInValueOrElseNull(xmlContent);
 		if (Objects.nonNull(kmaResponseCode)) {
 			WeatherResponseHeader weatherResponseHeader =
 				new WeatherResponseHeader(kmaResponseCode.getResultCode(), kmaResponseCode.getErrorMessage());
-			return new WeatherResponses(new WeatherResponse(weatherResponseHeader, null));
+			return new KmaWeatherResponses(new WeatherResponse(weatherResponseHeader, null));
 		}
 		String exceptionMessage = String.format(TEXT_XML_EXCEPTION_MESSAGE_FORMAT, xmlContent);
 		logger.info(exceptionMessage);

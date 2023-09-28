@@ -4,7 +4,7 @@ import java.util.List;
 
 import dandi.dandi.weather.adapter.out.kma.dto.WeatherItem;
 
-public interface WeatherResponsesI {
+public interface WeatherResponses {
 
 	boolean isSuccessful();
 

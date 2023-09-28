@@ -2,16 +2,16 @@ package dandi.dandi.weather.adapter.out.kma.dto;
 
 import java.util.List;
 
-import dandi.dandi.weather.adapter.out.kma.WeatherResponsesI;
+import dandi.dandi.weather.adapter.out.kma.WeatherResponses;
 
-public class WeatherResponses implements WeatherResponsesI {
+public class KmaWeatherResponses implements WeatherResponses {
 
     private WeatherResponse response;
 
-    public WeatherResponses() {
+    public KmaWeatherResponses() {
     }
 
-    public WeatherResponses(WeatherResponse response) {
+    public KmaWeatherResponses(WeatherResponse response) {
         this.response = response;
     }
 

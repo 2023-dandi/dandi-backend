@@ -5,7 +5,7 @@ import java.util.List;
 import dandi.dandi.weather.adapter.out.kma.code.DataPortalResponse;
 import dandi.dandi.weather.adapter.out.kma.dto.WeatherItem;
 
-public class DataPortalErrorWeatherResponse implements WeatherResponsesI {
+public class DataPortalErrorWeatherResponse implements WeatherResponses {
 
 	private final boolean retryable;
 	private final String responseBody;
