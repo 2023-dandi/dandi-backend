@@ -1,9 +1,15 @@
 package dandi.dandi.weather.adapter.out.kma;
 
-import dandi.dandi.weather.adapter.out.kma.code.KmaResponseCode;
+import static dandi.dandi.weather.adapter.out.kma.KmaConstant.*;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
 import dandi.dandi.weather.adapter.out.kma.dto.WeatherItem;
 import dandi.dandi.weather.adapter.out.kma.dto.WeatherRequest;
-import dandi.dandi.weather.adapter.out.kma.dto.WeatherResponses;
 import dandi.dandi.weather.adapter.out.kma.extractor.WeatherExtractors;
 import dandi.dandi.weather.application.port.out.WeatherRequestException;
 import dandi.dandi.weather.application.port.out.WeatherRequestFatalException;
@@ -12,14 +18,6 @@ import dandi.dandi.weather.application.port.out.WeatherRequester;
 import dandi.dandi.weather.domain.Weather;
 import dandi.dandi.weather.domain.WeatherLocation;
 import dandi.dandi.weather.domain.Weathers;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-
-import java.time.LocalDateTime;
-import java.util.List;
-
-import static dandi.dandi.weather.adapter.out.kma.KmaConstant.KMA_DATE_FORMATTER;
-import static dandi.dandi.weather.adapter.out.kma.KmaConstant.KMA_TIME_FORMATTER;
 
 @Component
 public class KmaWeatherRequester implements WeatherRequester {
@@ -44,35 +42,24 @@ public class KmaWeatherRequester implements WeatherRequester {
         String time = baseDateTime.format(KMA_TIME_FORMATTER);
         WeatherRequest weatherRequest = new WeatherRequest(
                 kmaServiceKey, DATE_TYPE, date, time, ROW_NUM, location.getX(), location.getY());
-        WeatherResponses weatherResponses = weatherApiCaller.getWeathers(weatherRequest);
-        KmaResponseCode kmaResponseCode = extractResponseCode(weatherResponses);
-        if (!kmaResponseCode.isSuccessful()) {
-            raiseException(kmaResponseCode, location);
+        WeatherResponsesI weatherResponses = weatherApiCaller.getWeathers(weatherRequest);
+        if (!weatherResponses.isSuccessful()) {
+            raiseException(weatherResponses, location);
         }
         return convertToWeathers(location.getId(), weatherResponses);
     }
 
-    private void raiseException(KmaResponseCode kmaResponseCode, WeatherLocation location) {
-        if (kmaResponseCode.isErrorAssociatedWithLocation()) {
+    private void raiseException(WeatherResponsesI weatherResponses, WeatherLocation location) {
+        if (weatherResponses.isNoDataLocationError()) {
             throw WeatherRequestFatalException.noData(location.getX(), location.getY());
-        } else if (kmaResponseCode.isTemporaryExternalServerError()) {
-            throw new WeatherRequestRetryableException(kmaResponseCode.name());
+        } else if (weatherResponses.isRetryableError()) {
+            throw new WeatherRequestRetryableException(weatherResponses.getResultMessage());
         }
-        throw new WeatherRequestFatalException(kmaResponseCode.name());
+        throw new WeatherRequestFatalException(weatherResponses.getResultMessage());
     }
 
-    private KmaResponseCode extractResponseCode(WeatherResponses weatherResponses) {
-        String resultCode = weatherResponses.getResponse()
-                .getHeader()
-                .getResultCode();
-        return KmaResponseCode.from(resultCode);
-    }
-
-    private Weathers convertToWeathers(long weatherLocationId, WeatherResponses weatherResponses) {
-        List<WeatherItem> weatherItems = weatherResponses.getResponse()
-                .getBody()
-                .getItems()
-                .getItem();
+    private Weathers convertToWeathers(long weatherLocationId, WeatherResponsesI weatherResponses) {
+        List<WeatherItem> weatherItems = weatherResponses.getWeatherItems();
         try {
             List<Weather> weathers = weatherExtractors.extract(weatherItems);
             return new Weathers(weatherLocationId, weathers);
