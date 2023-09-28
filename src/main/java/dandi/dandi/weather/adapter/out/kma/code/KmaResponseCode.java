@@ -23,7 +23,6 @@ public enum KmaResponseCode {
 	UNREGISTERED_IP_ERROR("UNREGISTERED_IP_ERROR", "32"),
 	UNSIGNED_CALL_ERROR("UNSIGNED_CALL_ERROR", "33"),
 	UNKNOWN_ERROR("UNKNOWN_ERROR", "99"),
-	HTTP_ROUTING_ERROR("HTTP ROUTING ERROR", "100")
 	;
 
 	private final String errorMessage;
@@ -62,12 +61,6 @@ public enum KmaResponseCode {
 
 	public boolean isErrorAssociatedWithLocation() {
 		return this == NO_DATA_ERROR;
-	}
-
-	public boolean isTemporaryExternalServerError() {
-		return this == SERVICE_TIME_OUT || this == DB_ERROR || this == HTTP_ERROR ||
-			this == SERVICE_ACCESS_DENIED_ERROR || this == TEMPORARILY_DISABLE_THE_SERVICE_KEY_ERROR ||
-			this == SERVICE_KEY_IS_NOT_REGISTERED_ERROR || this == HTTP_ROUTING_ERROR;
 	}
 
 	public boolean isRetryable() {
