@@ -20,7 +20,6 @@ import dandi.dandi.weather.adapter.out.kma.code.KmaResponseCode;
 import dandi.dandi.weather.adapter.out.kma.dto.WeatherResponse;
 import dandi.dandi.weather.adapter.out.kma.dto.WeatherResponseHeader;
 import dandi.dandi.weather.adapter.out.kma.dto.WeatherResponses;
-import dandi.dandi.weather.application.port.out.WeatherRequestFatalException;
 import feign.FeignException;
 import feign.Response;
 import feign.Util;
@@ -48,10 +47,10 @@ public class KmaFeignDecoder implements Decoder {
 			String xmlContent = decodeXmlResponseBody(response);
 			return decodeXmlResponse(xmlContent);
 		}
-		return delegate.decode(response, type);
+		return delegate.decode(response, WeatherResponses.class);
 	}
 
-	private WeatherResponses decodeXmlResponse(String xmlContent) {
+	private WeatherResponsesI decodeXmlResponse(String xmlContent) {
 		KmaResponseCode kmaResponseCode = KmaResponseCode.findByNameContainedInValueOrElseNull(xmlContent);
 		if (Objects.nonNull(kmaResponseCode)) {
 			WeatherResponseHeader weatherResponseHeader =
@@ -60,7 +59,7 @@ public class KmaFeignDecoder implements Decoder {
 		}
 		String exceptionMessage = String.format(TEXT_XML_EXCEPTION_MESSAGE_FORMAT, xmlContent);
 		logger.info(exceptionMessage);
-		throw new WeatherRequestFatalException(exceptionMessage);
+		return DataPortalErrorWeatherResponse.fromXmlContent(xmlContent);
 	}
 
 	private String decodeXmlResponseBody(Response response) throws IOException {
