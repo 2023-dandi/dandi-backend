@@ -72,7 +72,7 @@ class KmaWeatherRequesterTest {
 
         assertThatThrownBy(() -> kmaWeatherRequester.getWeathers(BASE_DATE_TIME, WEATHER_LOCATION))
                 .isInstanceOf(WeatherRequestRetryableException.class)
-                .hasMessage("기상청 응답 값:HTTP_ERROR");
+                .hasMessage("기상청 응답 값 (04:HTTP_ERROR)");
     }
 
     @DisplayName("날씨 요청의 응답으로 재시도 할 수 없는 응답 코드를 받는다면 FatalException을 발생시킨다.")
@@ -87,7 +87,7 @@ class KmaWeatherRequesterTest {
 
         assertThatThrownBy(() -> kmaWeatherRequester.getWeathers(BASE_DATE_TIME, WEATHER_LOCATION))
                 .isInstanceOf(WeatherRequestFatalException.class)
-                .hasMessage("기상청 응답 값10:INVALID_REQUEST_PARAMETER_ERROR");
+                .hasMessage("기상청 응답 값 (10:INVALID_REQUEST_PARAMETER_ERROR)");
     }
 
     @Test

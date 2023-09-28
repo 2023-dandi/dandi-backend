@@ -4,7 +4,7 @@ import dandi.dandi.weather.adapter.out.kma.code.KmaResponseCode;
 
 public class WeatherResponseHeader {
 
-    private static final String RESULT_MESSAGE_FORMAT = "기상청 응답 값 %s:%s";
+    private static final String RESULT_MESSAGE_FORMAT = "기상청 응답 값 (%s:%s)";
 
     private String resultCode;
     private String resultMsg;
