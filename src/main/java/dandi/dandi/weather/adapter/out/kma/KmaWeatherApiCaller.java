@@ -11,5 +11,5 @@ import org.springframework.web.bind.annotation.GetMapping;
 public interface KmaWeatherApiCaller {
 
     @GetMapping
-    WeatherResponses getWeathers(@SpringQueryMap(encoded = true) WeatherRequest weatherRequest);
+    WeatherResponsesI getWeathers(@SpringQueryMap(encoded = true) WeatherRequest weatherRequest);
 }
