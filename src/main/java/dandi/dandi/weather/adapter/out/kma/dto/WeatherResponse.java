@@ -20,4 +20,20 @@ public class WeatherResponse {
     public WeatherResponseBody getBody() {
         return body;
     }
+
+    public boolean isSuccessful() {
+        return header.isSuccessful();
+    }
+
+    public boolean isRetryableError() {
+        return header.isRetryableError();
+    }
+
+    public boolean isNoDataLocationError() {
+        return header.isNoDataLocationError();
+    }
+
+    public String getResultMessage() {
+        return header.getResultMessage();
+    }
 }

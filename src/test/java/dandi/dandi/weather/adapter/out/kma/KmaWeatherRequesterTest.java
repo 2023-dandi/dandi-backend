@@ -48,9 +48,9 @@ class KmaWeatherRequesterTest {
         WeatherRequest weatherRequest = new WeatherRequest(kmaServiceKey, "JSON", BASE_DATE, BASE_TIME, 900, 60, 127);
         WeatherResponseHeader header = new WeatherResponseHeader("00", "NORMAL_SERVICE");
         WeatherResponseBody body = new WeatherResponseBody("JSON", generateWeatherItems(), 900, 0, 900);
-        WeatherResponses weatherResponses = new WeatherResponses(new WeatherResponse(header, body));
+        KmaWeatherResponses kmaWeatherResponses = new KmaWeatherResponses(new WeatherResponse(header, body));
         when(weatherApiCaller.getWeathers(weatherRequest))
-                .thenReturn(weatherResponses);
+                .thenReturn(kmaWeatherResponses);
 
         Weathers weathers = kmaWeatherRequester.getWeathers(BASE_DATE_TIME, WEATHER_LOCATION);
 
@@ -66,13 +66,13 @@ class KmaWeatherRequesterTest {
         WeatherResponseHeader header = new WeatherResponseHeader("04", "HTTP_ERROR");
         WeatherResponseBody body = null;
         WeatherRequest weatherRequest = new WeatherRequest(kmaServiceKey, "JSON", BASE_DATE, BASE_TIME, 900, 60, 127);
-        WeatherResponses weatherResponses = new WeatherResponses(new WeatherResponse(header, body));
+        KmaWeatherResponses kmaWeatherResponses = new KmaWeatherResponses(new WeatherResponse(header, body));
         when(weatherApiCaller.getWeathers(weatherRequest))
-                .thenReturn(weatherResponses);
+                .thenReturn(kmaWeatherResponses);
 
         assertThatThrownBy(() -> kmaWeatherRequester.getWeathers(BASE_DATE_TIME, WEATHER_LOCATION))
                 .isInstanceOf(WeatherRequestRetryableException.class)
-                .hasMessage("HTTP_ERROR");
+                .hasMessage("기상청 응답 값 (04:HTTP_ERROR)");
     }
 
     @DisplayName("날씨 요청의 응답으로 재시도 할 수 없는 응답 코드를 받는다면 FatalException을 발생시킨다.")
@@ -81,13 +81,13 @@ class KmaWeatherRequesterTest {
         WeatherResponseHeader header = new WeatherResponseHeader("10", "INVALID_REQUEST_PARAMETER_ERROR");
         WeatherResponseBody body = null;
         WeatherRequest weatherRequest = new WeatherRequest(kmaServiceKey, "JSON", BASE_DATE, BASE_TIME, 900, 60, 127);
-        WeatherResponses weatherResponses = new WeatherResponses(new WeatherResponse(header, body));
+        KmaWeatherResponses kmaWeatherResponses = new KmaWeatherResponses(new WeatherResponse(header, body));
         when(weatherApiCaller.getWeathers(weatherRequest))
-                .thenReturn(weatherResponses);
+                .thenReturn(kmaWeatherResponses);
 
         assertThatThrownBy(() -> kmaWeatherRequester.getWeathers(BASE_DATE_TIME, WEATHER_LOCATION))
                 .isInstanceOf(WeatherRequestFatalException.class)
-                .hasMessage("INVALID_REQUEST_PARAMETER_ERROR");
+                .hasMessage("기상청 응답 값 (10:INVALID_REQUEST_PARAMETER_ERROR)");
     }
 
     @Test
@@ -96,9 +96,9 @@ class KmaWeatherRequesterTest {
         WeatherResponseHeader header = new WeatherResponseHeader("03", "NO_DATA_ERROR");
         WeatherResponseBody body = null;
         WeatherRequest weatherRequest = new WeatherRequest(kmaServiceKey, "JSON", BASE_DATE, BASE_TIME, 900, 60, 127);
-        WeatherResponses weatherResponses = new WeatherResponses(new WeatherResponse(header, body));
+        KmaWeatherResponses kmaWeatherResponses = new KmaWeatherResponses(new WeatherResponse(header, body));
         when(weatherApiCaller.getWeathers(weatherRequest))
-                .thenReturn(weatherResponses);
+                .thenReturn(kmaWeatherResponses);
 
         assertThatThrownBy(() -> kmaWeatherRequester.getWeathers(BASE_DATE_TIME, WEATHER_LOCATION))
                 .isInstanceOf(WeatherRequestFatalException.class)
