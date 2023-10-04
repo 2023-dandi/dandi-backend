@@ -23,7 +23,7 @@ public class DataPortalErrorWeatherResponse implements WeatherResponses {
 
 	@Override
 	public boolean isSuccessful() {
-		return retryable;
+		return false;
 	}
 
 	@Override
