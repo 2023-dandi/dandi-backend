@@ -30,7 +30,7 @@ import static org.springframework.batch.core.ExitStatus.FAILED;
 public class WeatherBatchExecutor implements WeatherBatchExecutorPort {
 
     private static final Logger logger = LoggerFactory.getLogger("asyncLogger");
-    private static final long FIVE_MINUTES = 5000000L;
+    private static final long FIVE_SECONDS = 5000L;
     private static final String BATCH_NAME = "weatherBatch";
 
     private final ChunkSizePersistencePort chunkSizePersistencePort;
@@ -62,7 +62,7 @@ public class WeatherBatchExecutor implements WeatherBatchExecutorPort {
         JobParameters jobParameters = new JobParameters(
                 Map.of(
                         "baseDateTime", new JobParameter(baseDateTime.toString()),
-                        "backOffPeriod", new JobParameter(FIVE_MINUTES),
+                        "backOffPeriod", new JobParameter(FIVE_SECONDS),
                         "chunkSize", new JobParameter(chunkSize)
                 )
         );
