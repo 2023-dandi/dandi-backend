@@ -2,7 +2,7 @@ package dandi.dandi.weatherbatch.application.service;
 
 import dandi.dandi.batchcommons.application.port.out.ChunkSizePersistencePort;
 import dandi.dandi.batchcommons.exception.BatchException;
-import dandi.dandi.errormessage.application.port.out.ErrorMessageSender;
+import dandi.dandi.errormessage.application.port.out.RemoteAdminMessageSender;
 import dandi.dandi.weather.application.port.out.BaseTimeConvertor;
 import dandi.dandi.weatherbatch.application.port.in.WeatherBatchExecutorPort;
 import dandi.dandi.weatherbatch.application.port.in.WeatherBatchRequest;
@@ -36,18 +36,18 @@ public class WeatherBatchExecutor implements WeatherBatchExecutorPort {
     private final ChunkSizePersistencePort chunkSizePersistencePort;
     private final JobLauncher jobLauncher;
     private final WeatherBatch weatherBatch;
-    private final ErrorMessageSender errorMessageSender;
+    private final RemoteAdminMessageSender remoteAdminMessageSender;
     private final BaseTimeConvertor baseTimeConvertor;
     private final String batchAdminKey;
 
     public WeatherBatchExecutor(ChunkSizePersistencePort chunkSizePersistencePort, JobLauncher jobLauncher,
-                                WeatherBatch weatherBatch, ErrorMessageSender errorMessageSender,
+                                WeatherBatch weatherBatch, RemoteAdminMessageSender remoteAdminMessageSender,
                                 BaseTimeConvertor baseTimeConvertor,
                                 @Value("${spring.batch.admin-key}") String batchAdminKey) {
         this.chunkSizePersistencePort = chunkSizePersistencePort;
         this.jobLauncher = jobLauncher;
         this.weatherBatch = weatherBatch;
-        this.errorMessageSender = errorMessageSender;
+        this.remoteAdminMessageSender = remoteAdminMessageSender;
         this.baseTimeConvertor = baseTimeConvertor;
         this.batchAdminKey = batchAdminKey;
     }
@@ -73,7 +73,7 @@ public class WeatherBatchExecutor implements WeatherBatchExecutorPort {
         } catch (JobExecutionAlreadyRunningException | JobRestartException | IOException |
                  JobInstanceAlreadyCompleteException | JobParametersInvalidException | RuntimeException e) {
             String exceptionMessage = "Weather Batch Failed \r\n" + e.getMessage();
-            errorMessageSender.sendMessage(now + exceptionMessage);
+            remoteAdminMessageSender.sendMessage(now + exceptionMessage);
             logger.error(exceptionMessage);
         }
     }
@@ -98,9 +98,10 @@ public class WeatherBatchExecutor implements WeatherBatchExecutorPort {
     private void handleFailureIfFailed(String now, ExitStatus exitStatus) {
         if (exitStatus.getExitCode().equals(COMPLETED.getExitCode())) {
             logger.info("{" + LocalDateTime.now() + "} WeatherBatch Complete");
+            remoteAdminMessageSender.sendMessage(now + "Weather Batch Complete");
         }
         if (exitStatus.getExitCode().equals(FAILED.getExitCode())) {
-            errorMessageSender.sendMessage(now + " Weather Batch Failed");
+            remoteAdminMessageSender.sendMessage(now + " Weather Batch Failed");
             logger.info("Weather Batch Failed \r\n {}", exitStatus.getExitDescription());
         }
     }

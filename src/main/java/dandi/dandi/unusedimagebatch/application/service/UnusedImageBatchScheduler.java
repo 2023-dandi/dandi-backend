@@ -2,7 +2,7 @@ package dandi.dandi.unusedimagebatch.application.service;
 
 import dandi.dandi.batchcommons.application.port.out.ChunkSizePersistencePort;
 import dandi.dandi.batchcommons.exception.BatchException;
-import dandi.dandi.errormessage.application.port.out.ErrorMessageSender;
+import dandi.dandi.errormessage.application.port.out.RemoteAdminMessageSender;
 import dandi.dandi.unusedimagebatch.application.runner.UnusedImageDeletionBatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,15 +28,15 @@ public class UnusedImageBatchScheduler {
     private final ChunkSizePersistencePort chunkSizePersistencePort;
     private final JobLauncher jobLauncher;
     private final UnusedImageDeletionBatch unusedImageDeletionBatch;
-    private final ErrorMessageSender errorMessageSender;
+    private final RemoteAdminMessageSender remoteAdminMessageSender;
 
     public UnusedImageBatchScheduler(ChunkSizePersistencePort chunkSizePersistencePort, JobLauncher jobLauncher,
                                      UnusedImageDeletionBatch unusedImageDeletionBatch,
-                                     ErrorMessageSender errorMessageSender) {
+                                     RemoteAdminMessageSender remoteAdminMessageSender) {
         this.chunkSizePersistencePort = chunkSizePersistencePort;
         this.jobLauncher = jobLauncher;
         this.unusedImageDeletionBatch = unusedImageDeletionBatch;
-        this.errorMessageSender = errorMessageSender;
+        this.remoteAdminMessageSender = remoteAdminMessageSender;
     }
 
     @Scheduled(cron = "0 0 4 * * SUN")
@@ -53,7 +53,7 @@ public class UnusedImageBatchScheduler {
             jobLauncher.run(unusedImageDeletionBatch.deleteUnusedImageJob(), jobParameters);
         } catch (BatchException | JobExecutionAlreadyRunningException | JobRestartException |
                  JobInstanceAlreadyCompleteException | JobParametersInvalidException e) {
-            errorMessageSender.sendMessage(today + " Unused Image Deletion Batch failed");
+            remoteAdminMessageSender.sendMessage(today + " Unused Image Deletion Batch failed");
             logger.info("Unused Image Deletion Batch failed \r\n {}", e.getMessage());
         }
     }
