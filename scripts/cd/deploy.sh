@@ -7,7 +7,7 @@ CURRENT_TIME=$(date +%c)
 cp $ORIGINAL_JAR_FILE $ROOT_PATH
 
 cd $ROOT_PATH
-nohup java -jar -Dspring.profiles.active=dev -DimageAccessUrl=https://d288bcoosdr1l2.cloudfront.net/ -DLog4jContextSelector=org.apache.logging.log4j.core.async.AsyncLoggerContextSelector -Dlog4j2.enable.threadlocals=true -Dlog4j2.enable.direct.encoders=true *.jar /dev/null 2> /dev/null < /dev/null &
+nohup java -jar -Dspring.profiles.active=dev -Duser.timezone=Asia/Seoul -DimageAccessUrl=https://d288bcoosdr1l2.cloudfront.net/ -DLog4jContextSelector=org.apache.logging.log4j.core.async.AsyncLoggerContextSelector -Dlog4j2.enable.threadlocals=true -Dlog4j2.enable.direct.encoders=true *.jar /dev/null 2> /dev/null < /dev/null &
 echo "$CURRENT_TIME > jar 파일 실행" >>$DEPLOY_LOG
 
 EXECUTED_PROCESS_PID=$(lsof -t -i tcp:8080)
