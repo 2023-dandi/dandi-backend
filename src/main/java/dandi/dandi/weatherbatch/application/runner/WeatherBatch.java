@@ -8,6 +8,7 @@ import dandi.dandi.weather.application.port.out.WeatherRequestRetryableException
 import dandi.dandi.weather.application.port.out.WeatherRequester;
 import dandi.dandi.weather.domain.WeatherLocation;
 import dandi.dandi.weather.domain.Weathers;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
@@ -26,11 +27,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.retry.RetryPolicy;
 import org.springframework.retry.backoff.FixedBackOffPolicy;
+import org.springframework.retry.policy.SimpleRetryPolicy;
 
 import javax.sql.DataSource;
 import java.io.IOException;
+import java.net.SocketException;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Configuration
@@ -83,11 +88,17 @@ public class WeatherBatch {
                 .processor(weatherItemProcessor())
                 .writer(itemWriters())
                 .faultTolerant()
-                .noRetry(WeatherRequestFatalException.class)
-                .retry(WeatherRequestRetryableException.class)
-                .retryLimit(2)
+                .retryPolicy(retryPolicy())
                 .backOffPolicy(fixedBackOffPolicy)
                 .build();
+    }
+
+    private RetryPolicy retryPolicy() {
+        Map<Class<? extends Throwable>, Boolean> retryableExceptions = Map.of(
+                WeatherRequestRetryableException.class, true,
+                SocketException.class, true,
+                WeatherRequestFatalException.class, false);
+        return new SimpleRetryPolicy(3, retryableExceptions);
     }
 
     @Bean
