@@ -2,7 +2,7 @@ package dandi.dandi.unusedimagebatch.application.service;
 
 import dandi.dandi.batchcommons.application.port.out.ChunkSizePersistencePort;
 import dandi.dandi.batchcommons.exception.BatchException;
-import dandi.dandi.errormessage.application.port.out.ErrorMessageSender;
+import dandi.dandi.errormessage.application.port.out.RemoteAdminMessageSender;
 import dandi.dandi.unusedimagebatch.application.runner.UnusedImageDeletionBatch;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,7 +29,7 @@ class UnusedImageBatchSchedulerTest {
     @Mock
     private JobLauncher jobLauncher;
     @Mock
-    private ErrorMessageSender errorMessageSender;
+    private RemoteAdminMessageSender remoteAdminMessageSender;
     @Mock
     private UnusedImageDeletionBatch unusedImageDeletionBatch;
     @InjectMocks
@@ -46,6 +46,6 @@ class UnusedImageBatchSchedulerTest {
 
         unusedImageBatchScheduler.runUnusedImageDeletionBatch();
 
-        verify(errorMessageSender).sendMessage(anyString());
+        verify(remoteAdminMessageSender).sendMessage(anyString());
     }
 }

@@ -1,16 +1,16 @@
 package dandi.dandi.errormessage.adapter;
 
-import dandi.dandi.errormessage.application.port.out.ErrorMessageSender;
+import dandi.dandi.errormessage.application.port.out.RemoteAdminMessageSender;
 import net.gpedro.integrations.slack.SlackApi;
 import net.gpedro.integrations.slack.SlackMessage;
 import org.springframework.stereotype.Component;
 
 @Component
-public class SlackErrorMessageSender implements ErrorMessageSender {
+public class SlackRemoteAdminMessageSender implements RemoteAdminMessageSender {
 
     private final SlackApi slackApi;
 
-    public SlackErrorMessageSender(SlackApi slackApi) {
+    public SlackRemoteAdminMessageSender(SlackApi slackApi) {
         this.slackApi = slackApi;
     }
 

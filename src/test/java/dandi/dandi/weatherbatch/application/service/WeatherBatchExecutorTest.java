@@ -2,7 +2,7 @@ package dandi.dandi.weatherbatch.application.service;
 
 import dandi.dandi.batchcommons.application.port.out.ChunkSizePersistencePort;
 import dandi.dandi.batchcommons.exception.BatchException;
-import dandi.dandi.errormessage.application.port.out.ErrorMessageSender;
+import dandi.dandi.errormessage.application.port.out.RemoteAdminMessageSender;
 import dandi.dandi.weather.application.port.out.BaseTimeConvertor;
 import dandi.dandi.weatherbatch.application.port.in.WeatherBatchRequest;
 import dandi.dandi.weatherbatch.application.runner.WeatherBatch;
@@ -33,11 +33,11 @@ class WeatherBatchExecutorTest {
     private final ChunkSizePersistencePort chunkSizePersistencePort = Mockito.mock(ChunkSizePersistencePort.class);
     private final JobLauncher jobLauncher = Mockito.mock(JobLauncher.class);
     private final WeatherBatch weatherBatch = Mockito.mock(WeatherBatch.class);
-    private final ErrorMessageSender errorMessageSender = Mockito.mock(ErrorMessageSender.class);
+    private final RemoteAdminMessageSender remoteAdminMessageSender = Mockito.mock(RemoteAdminMessageSender.class);
     private final BaseTimeConvertor baseTimeConvertor = Mockito.mock(BaseTimeConvertor.class);
     private final String batchAdminKey = "key";
     private final WeatherBatchExecutor weatherBatchExecutor = new WeatherBatchExecutor(chunkSizePersistencePort,
-            jobLauncher, weatherBatch, errorMessageSender, baseTimeConvertor, batchAdminKey);
+            jobLauncher, weatherBatch, remoteAdminMessageSender, baseTimeConvertor, batchAdminKey);
 
     @BeforeEach
     void setUp() {
@@ -89,7 +89,7 @@ class WeatherBatchExecutorTest {
 
         weatherBatchExecutor.runWeatherBatch(weatherBatchRequest);
 
-        verify(errorMessageSender).sendMessage(anyString());
+        verify(remoteAdminMessageSender).sendMessage(anyString());
     }
 
     @DisplayName("날씨 Batch가 실패로 종료되면 관리자에게 메시지를 전송한다.")
@@ -107,6 +107,6 @@ class WeatherBatchExecutorTest {
 
         weatherBatchExecutor.runWeatherBatch(weatherBatchRequest);
 
-        verify(errorMessageSender).sendMessage(anyString());
+        verify(remoteAdminMessageSender).sendMessage(anyString());
     }
 }
