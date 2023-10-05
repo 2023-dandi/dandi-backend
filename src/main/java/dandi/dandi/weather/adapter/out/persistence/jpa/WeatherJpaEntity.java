@@ -45,6 +45,7 @@ public class WeatherJpaEntity {
                              LocalDateTime forecastedAt) {
         this.id = id;
         this.weatherLocationId = weatherLocationId;
+        this.dateTime = dateTime;
         this.temperature = temperature;
         this.sky = sky;
         this.humidity = humidity;
