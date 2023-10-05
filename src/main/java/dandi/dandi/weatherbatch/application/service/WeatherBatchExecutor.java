@@ -98,6 +98,7 @@ public class WeatherBatchExecutor implements WeatherBatchExecutorPort {
     private void handleFailureIfFailed(String now, ExitStatus exitStatus) {
         if (exitStatus.getExitCode().equals(COMPLETED.getExitCode())) {
             logger.info("{" + LocalDateTime.now() + "} WeatherBatch Complete");
+            remoteAdminMessageSender.sendMessage(now + "Weather Batch Complete");
         }
         if (exitStatus.getExitCode().equals(FAILED.getExitCode())) {
             remoteAdminMessageSender.sendMessage(now + " Weather Batch Failed");
