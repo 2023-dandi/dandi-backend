@@ -52,7 +52,7 @@ class WeatherBatchExecutorTest {
                 .thenReturn(LocalTime.of(2, 0));
         WeatherBatchRequest weatherBatchRequest = new WeatherBatchRequest(batchAdminKey, null);
 
-        weatherBatchExecutor.runWeatherBatch(weatherBatchRequest);
+        weatherBatchExecutor.run(weatherBatchRequest);
 
         verify(chunkSizePersistencePort).findChunkSizeByName(JOB_NAME);
     }
@@ -62,7 +62,7 @@ class WeatherBatchExecutorTest {
     void runWeatherBatch_InvalidChunkSizeException() {
         WeatherBatchRequest weatherBatchRequest = new WeatherBatchRequest(batchAdminKey, 0);
 
-        assertThatThrownBy(() -> weatherBatchExecutor.runWeatherBatch(weatherBatchRequest))
+        assertThatThrownBy(() -> weatherBatchExecutor.run(weatherBatchRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -72,7 +72,7 @@ class WeatherBatchExecutorTest {
         String invalidExecutionKey = "invalidExecutionKey";
         WeatherBatchRequest weatherBatchRequest = new WeatherBatchRequest(invalidExecutionKey, 100);
 
-        assertThatThrownBy(() -> weatherBatchExecutor.runWeatherBatch(weatherBatchRequest))
+        assertThatThrownBy(() -> weatherBatchExecutor.run(weatherBatchRequest))
                 .isInstanceOf(BatchException.class)
                 .hasMessage("날씨 Batch 실행 Key가 올바르지 않습니다.");
     }
@@ -87,7 +87,7 @@ class WeatherBatchExecutorTest {
                 .thenReturn(LocalTime.of(2, 0));
         WeatherBatchRequest weatherBatchRequest = new WeatherBatchRequest(batchAdminKey, 100);
 
-        weatherBatchExecutor.runWeatherBatch(weatherBatchRequest);
+        weatherBatchExecutor.run(weatherBatchRequest);
 
         verify(remoteAdminMessageSender).sendMessage(anyString());
     }
@@ -105,7 +105,7 @@ class WeatherBatchExecutorTest {
                 .thenReturn(LocalTime.of(2, 0));
         WeatherBatchRequest weatherBatchRequest = new WeatherBatchRequest(batchAdminKey, 100);
 
-        weatherBatchExecutor.runWeatherBatch(weatherBatchRequest);
+        weatherBatchExecutor.run(weatherBatchRequest);
 
         verify(remoteAdminMessageSender).sendMessage(anyString());
     }
