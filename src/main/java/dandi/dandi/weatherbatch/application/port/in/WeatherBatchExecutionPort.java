@@ -1,6 +1,6 @@
 package dandi.dandi.weatherbatch.application.port.in;
 
-public interface WeatherBatchExecutorPort {
+public interface WeatherBatchExecutionPort {
 
     void runWeatherBatch(WeatherBatchRequest weatherBatchRequest);
 }

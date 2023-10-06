@@ -4,7 +4,6 @@ import dandi.dandi.batchcommons.application.port.out.ChunkSizePersistencePort;
 import dandi.dandi.batchcommons.exception.BatchException;
 import dandi.dandi.errormessage.application.port.out.RemoteAdminMessageSender;
 import dandi.dandi.weather.application.port.out.BaseTimeConvertor;
-import dandi.dandi.weatherbatch.application.port.in.WeatherBatchExecutorPort;
 import dandi.dandi.weatherbatch.application.port.in.WeatherBatchRequest;
 import dandi.dandi.weatherbatch.application.runner.WeatherBatch;
 import org.slf4j.Logger;
@@ -27,7 +26,7 @@ import static org.springframework.batch.core.ExitStatus.COMPLETED;
 import static org.springframework.batch.core.ExitStatus.FAILED;
 
 @Component
-public class WeatherBatchExecutor implements WeatherBatchExecutorPort {
+public class WeatherBatchExecutor {
 
     private static final Logger logger = LoggerFactory.getLogger("asyncLogger");
     private static final long FIVE_SECONDS = 5000L;
@@ -52,8 +51,7 @@ public class WeatherBatchExecutor implements WeatherBatchExecutorPort {
         this.batchAdminKey = batchAdminKey;
     }
 
-    @Override
-    public void runWeatherBatch(WeatherBatchRequest weatherBatchRequest) {
+    public void run(WeatherBatchRequest weatherBatchRequest) {
         long chunkSize = findChunkSizeIfRequestIsNull(weatherBatchRequest);
         validateExecutionKey(weatherBatchRequest);
         LocalDateTime now = LocalDateTime.now();

@@ -19,6 +19,6 @@ public class WeatherBatchScheduler {
 
     @Scheduled(cron = "0 10 2/3 * * *")
     public void runWeatherBatch() {
-        weatherBatchExecutor.runWeatherBatch(new WeatherBatchRequest(batchAdminKey, null));
+        weatherBatchExecutor.run(new WeatherBatchRequest(batchAdminKey, null));
     }
 }

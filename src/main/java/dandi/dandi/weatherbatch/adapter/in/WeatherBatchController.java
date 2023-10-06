@@ -1,6 +1,6 @@
 package dandi.dandi.weatherbatch.adapter.in;
 
-import dandi.dandi.weatherbatch.application.port.in.WeatherBatchExecutorPort;
+import dandi.dandi.weatherbatch.application.port.in.WeatherBatchExecutionPort;
 import dandi.dandi.weatherbatch.application.port.in.WeatherBatchRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,15 +10,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class WeatherBatchController {
 
-    private final WeatherBatchExecutorPort weatherBatchExecutorPort;
+    private final WeatherBatchExecutionPort weatherBatchExecutionPort;
 
-    public WeatherBatchController(WeatherBatchExecutorPort weatherBatchExecutorPort) {
-        this.weatherBatchExecutorPort = weatherBatchExecutorPort;
+    public WeatherBatchController(WeatherBatchExecutionPort weatherBatchExecutionPort) {
+        this.weatherBatchExecutionPort = weatherBatchExecutionPort;
     }
 
     @PostMapping("/batch/weather")
     public ResponseEntity<Void> runWeatherBatch(@RequestBody WeatherBatchRequest weatherBatchRequest) {
-        weatherBatchExecutorPort.runWeatherBatch(weatherBatchRequest);
+        weatherBatchExecutionPort.runWeatherBatch(weatherBatchRequest);
         return ResponseEntity.noContent().build();
     }
 }
