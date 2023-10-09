@@ -10,9 +10,7 @@ import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Component
 public class WeatherPersistenceAdapter implements WeatherPersistencePort {
@@ -48,20 +46,18 @@ public class WeatherPersistenceAdapter implements WeatherPersistencePort {
     }
 
     private MapSqlParameterSource generateMapSqlParameterSource(long weatherLocationId, Weather weather) {
-        Map<String, Object> values = new HashMap<>(Map.of(
-                "date_time", weather.getDateTime(),
-                "forecasted_at", weather.getForecastedAt(),
-                "humidity", weather.getHumidity(),
-                "precipitation_amount", weather.getPrecipitationAmount(),
-                "precipitation_possibility", weather.getPrecipitationPossibility(),
-                "precipitation_type", weather.getPrecipitationType().name(),
-                "sky", weather.getSky().name(),
-                "temperature", weather.getTemperature(),
-                "wind_direction", weather.getWindDirection().name(),
-                "wind_speed", weather.getWindSpeed()));
-        values.put("weather_location_id", weatherLocationId);
         return new MapSqlParameterSource()
-                .addValues(values);
+                .addValue("date_time", weather.getDateTime())
+                .addValue("forecasted_at", weather.getForecastedAt())
+                .addValue("humidity", weather.getHumidity())
+                .addValue("precipitation_amount", weather.getPrecipitationAmount())
+                .addValue("precipitation_possibility", weather.getPrecipitationPossibility())
+                .addValue("precipitation_type", weather.getPrecipitationType().name())
+                .addValue("sky", weather.getSky().name())
+                .addValue("temperature", weather.getTemperature())
+                .addValue("wind_direction", weather.getWindDirection().name())
+                .addValue("wind_speed", weather.getWindSpeed())
+                .addValue("weather_location_id", weatherLocationId);
     }
 
     @Override
