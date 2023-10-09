@@ -45,7 +45,7 @@ class KmaWeatherRequesterTest {
     @DisplayName("날씨 정보를 받아올 수 있다.")
     @Test
     void getWeather() {
-        WeatherRequest weatherRequest = new WeatherRequest(kmaServiceKey, "JSON", BASE_DATE, BASE_TIME, 900, 60, 127);
+        WeatherRequest weatherRequest = new WeatherRequest(kmaServiceKey, "JSON", BASE_DATE, BASE_TIME, 1500, 60, 127);
         WeatherResponseHeader header = new WeatherResponseHeader("00", "NORMAL_SERVICE");
         WeatherResponseBody body = new WeatherResponseBody("JSON", generateWeatherItems(), 900, 0, 900);
         KmaWeatherResponses kmaWeatherResponses = new KmaWeatherResponses(new WeatherResponse(header, body));
@@ -65,7 +65,7 @@ class KmaWeatherRequesterTest {
     void getWeather_RetryableException() {
         WeatherResponseHeader header = new WeatherResponseHeader("04", "HTTP_ERROR");
         WeatherResponseBody body = null;
-        WeatherRequest weatherRequest = new WeatherRequest(kmaServiceKey, "JSON", BASE_DATE, BASE_TIME, 900, 60, 127);
+        WeatherRequest weatherRequest = new WeatherRequest(kmaServiceKey, "JSON", BASE_DATE, BASE_TIME, 1500, 60, 127);
         KmaWeatherResponses kmaWeatherResponses = new KmaWeatherResponses(new WeatherResponse(header, body));
         when(weatherApiCaller.getWeathers(weatherRequest))
                 .thenReturn(kmaWeatherResponses);
@@ -80,7 +80,7 @@ class KmaWeatherRequesterTest {
     void getWeather_FatalException() {
         WeatherResponseHeader header = new WeatherResponseHeader("10", "INVALID_REQUEST_PARAMETER_ERROR");
         WeatherResponseBody body = null;
-        WeatherRequest weatherRequest = new WeatherRequest(kmaServiceKey, "JSON", BASE_DATE, BASE_TIME, 900, 60, 127);
+        WeatherRequest weatherRequest = new WeatherRequest(kmaServiceKey, "JSON", BASE_DATE, BASE_TIME, 1500, 60, 127);
         KmaWeatherResponses kmaWeatherResponses = new KmaWeatherResponses(new WeatherResponse(header, body));
         when(weatherApiCaller.getWeathers(weatherRequest))
                 .thenReturn(kmaWeatherResponses);
@@ -95,7 +95,7 @@ class KmaWeatherRequesterTest {
     void getWeather_FatalException_NoData() {
         WeatherResponseHeader header = new WeatherResponseHeader("03", "NO_DATA_ERROR");
         WeatherResponseBody body = null;
-        WeatherRequest weatherRequest = new WeatherRequest(kmaServiceKey, "JSON", BASE_DATE, BASE_TIME, 900, 60, 127);
+        WeatherRequest weatherRequest = new WeatherRequest(kmaServiceKey, "JSON", BASE_DATE, BASE_TIME, 1500, 60, 127);
         KmaWeatherResponses kmaWeatherResponses = new KmaWeatherResponses(new WeatherResponse(header, body));
         when(weatherApiCaller.getWeathers(weatherRequest))
                 .thenReturn(kmaWeatherResponses);

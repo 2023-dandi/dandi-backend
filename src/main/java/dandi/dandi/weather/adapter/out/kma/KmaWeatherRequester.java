@@ -26,7 +26,7 @@ public class KmaWeatherRequester implements WeatherRequester {
 
     private static final String CONNECTION_RESET = "Connection reset";
     private static final String DATE_TYPE = "JSON";
-    private static final int ROW_NUM = 900;
+    private static final int ROW_NUM = 1500;
 
     private final KmaWeatherApiCaller weatherApiCaller;
     private final String kmaServiceKey;
