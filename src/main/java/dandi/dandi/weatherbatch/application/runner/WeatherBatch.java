@@ -168,7 +168,7 @@ public class WeatherBatch {
             List<Weathers> weathers = items.stream()
                     .map(item -> (Weathers) item)
                     .collect(Collectors.toUnmodifiableList());
-            weatherPersistencePort.save(weathers);
+            weatherPersistencePort.saveInBatch(weathers);
         };
     }
 }

@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface WeatherPersistencePort {
 
-    void save(List<Weathers> weathers);
+    void saveInBatch(List<Weathers> weathers);
 
     void deleteByLocationIds(List<Long> locationIds);
 }
