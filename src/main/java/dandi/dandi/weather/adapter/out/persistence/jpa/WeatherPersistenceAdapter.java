@@ -21,7 +21,7 @@ public class WeatherPersistenceAdapter implements WeatherPersistencePort {
     public WeatherPersistenceAdapter(WeatherRepository weatherRepository, DataSource dataSource) {
         this.weatherRepository = weatherRepository;
         simpleJdbcInsert = new SimpleJdbcInsert(dataSource)
-                .withTableName("WEATHER")
+                .withTableName("weather")
                 .usingGeneratedKeyColumns("weather_id");
     }
 
