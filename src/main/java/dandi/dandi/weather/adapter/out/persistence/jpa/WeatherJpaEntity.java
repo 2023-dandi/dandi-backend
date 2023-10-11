@@ -12,13 +12,8 @@ import java.time.LocalDateTime;
 @Table(name = "weather")
 public class WeatherJpaEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "weather_id")
-    private Long id;
-
-    private long weatherLocationId;
-    private LocalDateTime dateTime;
+    @EmbeddedId
+    LocationAndDateTime locationAndDateTime;
     private double temperature;
 
     @Enumerated(value = EnumType.STRING)
@@ -39,13 +34,11 @@ public class WeatherJpaEntity {
     protected WeatherJpaEntity() {
     }
 
-    private WeatherJpaEntity(Long id, long weatherLocationId, LocalDateTime dateTime, double temperature,
+    private WeatherJpaEntity(LocationAndDateTime locationAndDateTime, double temperature,
                              Sky sky, int humidity, PrecipitationType precipitationType, int precipitationPossibility,
                              double precipitationAmount, WindDirection windDirection, double windSpeed,
                              LocalDateTime forecastedAt) {
-        this.id = id;
-        this.weatherLocationId = weatherLocationId;
-        this.dateTime = dateTime;
+        this.locationAndDateTime = locationAndDateTime;
         this.temperature = temperature;
         this.sky = sky;
         this.humidity = humidity;
@@ -58,14 +51,14 @@ public class WeatherJpaEntity {
     }
 
     public static WeatherJpaEntity ofWeather(Weather weather, long weatherLocationId) {
-        return new WeatherJpaEntity(null, weatherLocationId, weather.getDateTime(), weather.getTemperature(),
+        return new WeatherJpaEntity(new LocationAndDateTime(weatherLocationId, weather.getDateTime()), weather.getTemperature(),
                 weather.getSky(), weather.getHumidity(), weather.getPrecipitationType(),
                 weather.getPrecipitationPossibility(), weather.getPrecipitationAmount(), weather.getWindDirection(),
                 weather.getWindSpeed(), weather.getForecastedAt());
     }
 
     public Weather toWeather() {
-        return new Weather.WeatherBuilder(dateTime)
+        return new Weather.WeatherBuilder(locationAndDateTime.getDateTime())
                 .temperature(temperature)
                 .sky(sky)
                 .humidity(humidity)

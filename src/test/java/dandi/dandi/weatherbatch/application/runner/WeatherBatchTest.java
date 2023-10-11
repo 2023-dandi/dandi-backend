@@ -1,17 +1,12 @@
 package dandi.dandi.weatherbatch.application.runner;
 
-import static org.assertj.core.api.AssertionsForInterfaceTypes.*;
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-
+import dandi.dandi.common.DatabaseCleaner;
+import dandi.dandi.weather.adapter.out.persistence.jpa.WeatherJpaEntity;
+import dandi.dandi.weather.adapter.out.persistence.jpa.WeatherLocationJpaEntity;
+import dandi.dandi.weather.adapter.out.persistence.jpa.WeatherPersistenceAdapter;
+import dandi.dandi.weather.adapter.out.persistence.jpa.WeatherRepository;
 import dandi.dandi.weather.domain.Weather;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -29,11 +24,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import dandi.dandi.common.DatabaseCleaner;
-import dandi.dandi.weather.adapter.out.persistence.jpa.WeatherJpaEntity;
-import dandi.dandi.weather.adapter.out.persistence.jpa.WeatherLocationJpaEntity;
-import dandi.dandi.weather.adapter.out.persistence.jpa.WeatherPersistenceAdapter;
-import dandi.dandi.weather.adapter.out.persistence.jpa.WeatherRepository;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @RunWith(SpringRunner.class)
 @SpringBatchTest
@@ -57,7 +55,7 @@ class WeatherBatchTest {
 	@Autowired
 	private DatabaseCleaner databaseCleaner;
 
-	@AfterEach
+	@BeforeEach
 	void clearDatabase() {
 		databaseCleaner.truncate();
 		databaseCleaner.initializeAutoIncrement();
