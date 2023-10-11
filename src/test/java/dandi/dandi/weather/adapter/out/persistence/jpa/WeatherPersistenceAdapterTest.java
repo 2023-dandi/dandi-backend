@@ -1,5 +1,6 @@
 package dandi.dandi.weather.adapter.out.persistence.jpa;
 
+import dandi.dandi.common.PersistenceAdapterTest;
 import dandi.dandi.weather.domain.Weather;
 import dandi.dandi.weather.domain.Weathers;
 import org.junit.jupiter.api.Test;
@@ -16,7 +17,7 @@ import static dandi.dandi.weather.domain.WindDirection.SE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-class WeatherPersistenceAdapterTest {
+class WeatherPersistenceAdapterTest extends PersistenceAdapterTest {
 
     @Autowired
     private WeatherRepository weatherRepository;
@@ -27,7 +28,7 @@ class WeatherPersistenceAdapterTest {
     @Test
     void saveInBatch() {
         List<Weather> weatherItems = generateWeathers();
-        List<Weathers> weathers = List.of(new Weathers(1L, weatherItems), new Weathers(3L, weatherItems), new Weathers(3L, weatherItems));
+        List<Weathers> weathers = List.of(new Weathers(1L, weatherItems), new Weathers(2L, weatherItems), new Weathers(3L, weatherItems));
 
         weatherPersistenceAdapter.saveInBatch(weathers);
 
