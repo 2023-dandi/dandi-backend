@@ -5,9 +5,9 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface WeatherRepository extends JpaRepository<WeatherJpaEntity, Long> {
+public interface WeatherRepository extends JpaRepository<WeatherJpaEntity, LocationAndDateTime> {
 
 	@Modifying
-	@Query("DELETE FROM WeatherJpaEntity w WHERE w.weatherLocationId IN :ids")
+	@Query("DELETE FROM WeatherJpaEntity w WHERE w.locationAndDateTime.weatherLocationId IN :ids")
 	void deleteAllByWeatherLocationIds(@Param("ids") Iterable<Long> ids);
 }

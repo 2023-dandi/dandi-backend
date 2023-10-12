@@ -23,19 +23,19 @@ public class WeatherBatchTestConfig {
     public WeatherRequester mockWeatherRequester() {
         return new WeatherRequester() {
 
-            private int requestCount = 0;
+            private int requestCount = 1;
 
             @Override
             public Weathers getWeathers(LocalDateTime now, WeatherLocation location) throws WeatherRequestException {
                 if (now.getYear() == 2020) {
                     throw WeatherRequestFatalException.noData(location.getX(), location.getY());
                 } else if (now.getYear() == 2021) {
-                    if (requestCount < 1) {
+                    if (requestCount < 2) {
                         requestCount++;
                         throw new WeatherRequestRetryableException("DB_ERROR");
                     }
                     List<Weather> weathers = generateWeathers();
-                    return new Weathers(1L, weathers);
+                    return new Weathers(requestCount, weathers);
                 } else if (now.getYear() == 2022) {
                     throw new WeatherRequestRetryableException("DB_ERROR");
                 }
@@ -48,7 +48,7 @@ public class WeatherBatchTestConfig {
     private List<Weather> generateWeathers() {
         List<Weather> weathers = new ArrayList<>();
         for (int i = 0; i < 24; i++) {
-            Weather weather = new Weather.WeatherBuilder(LocalDateTime.of(2023, 8, 25, 5, 0))
+            Weather weather = new Weather.WeatherBuilder(LocalDateTime.of(2023, 8, 25, i, 0))
                     .temperature(15.0)
                     .precipitationPossibility(60)
                     .precipitationType(RAIN)
