@@ -1,23 +1,16 @@
 package dandi.dandi.weatherbatch.application.runner;
 
 import dandi.dandi.batchcommons.jobparameter.DateTimeJobParameter;
-import dandi.dandi.weather.application.port.out.WeatherPersistencePort;
 import dandi.dandi.weather.application.port.out.WeatherRequestFatalException;
 import dandi.dandi.weather.application.port.out.WeatherRequestRetryableException;
-import dandi.dandi.weather.application.port.out.WeatherRequester;
 import dandi.dandi.weather.domain.WeatherLocation;
-import dandi.dandi.weather.domain.Weathers;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
-import org.springframework.batch.core.configuration.annotation.StepScope;
-import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
-import org.springframework.batch.item.support.builder.CompositeItemWriterBuilder;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,9 +20,7 @@ import org.springframework.retry.policy.SimpleRetryPolicy;
 
 import java.io.IOException;
 import java.net.SocketException;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Configuration
 public class WeatherBatch {
@@ -38,18 +29,10 @@ public class WeatherBatch {
 
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
-    private final WeatherRequester weatherRequester;
-    private final DateTimeJobParameter dateTimeJobParameter;
-    private final WeatherPersistencePort weatherPersistencePort;
 
-    public WeatherBatch(JobBuilderFactory jobBuilderFactory, StepBuilderFactory stepBuilderFactory,
-                        WeatherRequester weatherRequester, WeatherPersistencePort weatherPersistencePort,
-                        @Qualifier(value = "weatherBatchJobBaseDateTimeParameter") DateTimeJobParameter dateTimeJobParameter) {
+    public WeatherBatch(JobBuilderFactory jobBuilderFactory, StepBuilderFactory stepBuilderFactory) {
         this.jobBuilderFactory = jobBuilderFactory;
         this.stepBuilderFactory = stepBuilderFactory;
-        this.weatherRequester = weatherRequester;
-        this.weatherPersistencePort = weatherPersistencePort;
-        this.dateTimeJobParameter = dateTimeJobParameter;
     }
 
     @Bean
@@ -62,7 +45,7 @@ public class WeatherBatch {
     @Bean(WEATHER_BATCH_JOB_NAME)
     public Job weatherBatch() throws IOException {
         return jobBuilderFactory.get(WEATHER_BATCH_JOB_NAME)
-                .start(weatherBatchStep(null, null, null))
+                .start(weatherBatchStep(null, null, null, null))
                 .build();
     }
 
@@ -70,13 +53,14 @@ public class WeatherBatch {
     @JobScope
     public Step weatherBatchStep(@Value("#{jobParameters[backOffPeriod]}") Long backOffPeriod,
                                  @Value("#{jobParameters[chunkSize]}") Long chunkSize,
-                                 ItemReader<WeatherLocation> weatherLocationItemReader) {
+                                 ItemReader<WeatherLocation> weatherLocationItemReader,
+                                 ItemWriter<WeatherLocation> weatherLocationItemWriter) {
         FixedBackOffPolicy fixedBackOffPolicy = new FixedBackOffPolicy();
         fixedBackOffPolicy.setBackOffPeriod(backOffPeriod);
         return stepBuilderFactory.get("weatherInsertion")
-                .<WeatherLocation, Weathers>chunk(chunkSize.intValue())
+                .<WeatherLocation, WeatherLocation>chunk(chunkSize.intValue())
                 .reader(weatherLocationItemReader)
-                .writer(itemWriters())
+                .writer(weatherLocationItemWriter)
                 .faultTolerant()
                 .retryPolicy(retryPolicy())
                 .backOffPolicy(fixedBackOffPolicy)
@@ -89,42 +73,5 @@ public class WeatherBatch {
                 SocketException.class, true,
                 WeatherRequestFatalException.class, false);
         return new SimpleRetryPolicy(3, retryableExceptions);
-    }
-
-    @Bean
-    @StepScope
-    public ItemProcessor<WeatherLocation, Weathers> weatherItemProcessor() {
-        return weatherLocation -> weatherRequester.getWeathers(dateTimeJobParameter.getLocalDateTime(), weatherLocation);
-    }
-
-    @Bean
-    @StepScope
-    public ItemWriter<Weathers> itemWriters() {
-        return new CompositeItemWriterBuilder<Weathers>()
-                .delegates(previousWeatherItemDeletionWriter(), weatherItemWriter())
-                .build();
-
-    }
-
-    @Bean
-    @StepScope
-    public ItemWriter<Weathers> previousWeatherItemDeletionWriter() {
-        return items -> {
-            List<Long> locationIds = items.stream()
-                    .map(Weathers::getWeatherLocationId)
-                    .collect(Collectors.toUnmodifiableList());
-            weatherPersistencePort.deleteByLocationIds(locationIds);
-        };
-    }
-
-    @Bean
-    @StepScope
-    public ItemWriter<Weathers> weatherItemWriter() {
-        return items -> {
-            List<Weathers> weathers = items.stream()
-                    .map(item -> (Weathers) item)
-                    .collect(Collectors.toUnmodifiableList());
-            weatherPersistencePort.saveInBatch(weathers);
-        };
     }
 }
