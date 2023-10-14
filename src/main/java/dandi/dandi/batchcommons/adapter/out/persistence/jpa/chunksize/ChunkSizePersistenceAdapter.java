@@ -1,4 +1,4 @@
-package dandi.dandi.batchcommons.adapter.out.persistence.jpa;
+package dandi.dandi.batchcommons.adapter.out.persistence.jpa.chunksize;
 
 import dandi.dandi.batchcommons.application.port.out.ChunkSizePersistencePort;
 import dandi.dandi.common.exception.NotFoundException;

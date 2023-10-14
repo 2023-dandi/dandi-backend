@@ -1,4 +1,4 @@
-package dandi.dandi.batchcommons.adapter.out.persistence.jpa;
+package dandi.dandi.batchcommons.adapter.out.persistence.jpa.chunksize;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.annotation.Profile;
