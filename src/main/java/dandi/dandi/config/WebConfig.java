@@ -2,11 +2,12 @@ package dandi.dandi.config;
 
 import dandi.dandi.auth.adapter.in.web.support.AuthInterceptor;
 import dandi.dandi.auth.adapter.in.web.support.AuthenticationArgumentResolver;
-import java.util.List;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.util.List;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
@@ -35,8 +36,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/auth/login/oauth/apple")
                 .excludePathPatterns("/auth/refresh")
                 .excludePathPatterns("/exhibition/**")
-                .excludePathPatterns("/batch/weather")
-                .excludePathPatterns("/batch/chunkSize")
+                .excludePathPatterns("/batch/**")
                 .excludePathPatterns(SWAGGER_REQUEST_URIS);
     }
 }
