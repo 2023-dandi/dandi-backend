@@ -11,6 +11,6 @@ public interface BatchThreadSizeRepository extends JpaRepository<BatchThreadSize
     Optional<BatchThreadSizeJpaEntity> findByName(String name);
 
     @Modifying
-    @Query("UPDATE BatchThreadSizeJpaEntity bts SET bts.value = :chunkSize WHERE bts.name = :name")
-    void updateChunkSizeByName(String name, int batchThreadSize);
+    @Query("UPDATE BatchThreadSizeJpaEntity bts SET bts.value = :batchThreadSize WHERE bts.name = :name")
+    void updateBatchThreadSizeByName(String name, int batchThreadSize);
 }

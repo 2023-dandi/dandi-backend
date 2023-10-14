@@ -14,14 +14,14 @@ public class BatchThreadSizePersistenceAdapter implements BatchThreadSizePersist
     }
 
     @Override
-    public int findChunkSizeByName(String name) {
+    public int findBatchThreadSizeByName(String name) {
         return batchThreadSizeRepository.findByName(name)
                 .orElseThrow(() -> NotFoundException.batchThreadSize(name))
                 .getValue();
     }
 
     @Override
-    public void updateChunkSizeByName(String name, int batchThreadSize) throws NotFoundException {
-        batchThreadSizeRepository.updateChunkSizeByName(name, batchThreadSize);
+    public void updateBatchThreadSizeByName(String name, int batchThreadSize) throws NotFoundException {
+        batchThreadSizeRepository.updateBatchThreadSizeByName(name, batchThreadSize);
     }
 }

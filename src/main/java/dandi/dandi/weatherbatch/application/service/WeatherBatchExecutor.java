@@ -1,5 +1,6 @@
 package dandi.dandi.weatherbatch.application.service;
 
+import dandi.dandi.batchcommons.application.port.out.BatchThreadSizePersistencePort;
 import dandi.dandi.batchcommons.application.port.out.ChunkSizePersistencePort;
 import dandi.dandi.batchcommons.exception.BatchException;
 import dandi.dandi.errormessage.application.port.out.RemoteAdminMessageSender;
@@ -33,18 +34,20 @@ public class WeatherBatchExecutor {
     private static final String BATCH_NAME = "weatherBatch";
 
     private final ChunkSizePersistencePort chunkSizePersistencePort;
+    private final BatchThreadSizePersistencePort batchThreadSizePersistencePort;
     private final JobLauncher jobLauncher;
     private final WeatherBatch weatherBatch;
     private final RemoteAdminMessageSender remoteAdminMessageSender;
     private final BaseTimeConvertor baseTimeConvertor;
     private final String batchAdminKey;
 
-    public WeatherBatchExecutor(ChunkSizePersistencePort chunkSizePersistencePort, JobLauncher jobLauncher,
-                                WeatherBatch weatherBatch, RemoteAdminMessageSender remoteAdminMessageSender,
-                                BaseTimeConvertor baseTimeConvertor,
+    public WeatherBatchExecutor(JobLauncher jobLauncher, ChunkSizePersistencePort chunkSizePersistencePort,
+                                BatchThreadSizePersistencePort batchThreadSizePersistencePort, WeatherBatch weatherBatch,
+                                RemoteAdminMessageSender remoteAdminMessageSender, BaseTimeConvertor baseTimeConvertor,
                                 @Value("${spring.batch.admin-key}") String batchAdminKey) {
-        this.chunkSizePersistencePort = chunkSizePersistencePort;
         this.jobLauncher = jobLauncher;
+        this.chunkSizePersistencePort = chunkSizePersistencePort;
+        this.batchThreadSizePersistencePort = batchThreadSizePersistencePort;
         this.weatherBatch = weatherBatch;
         this.remoteAdminMessageSender = remoteAdminMessageSender;
         this.baseTimeConvertor = baseTimeConvertor;
@@ -92,7 +95,7 @@ public class WeatherBatchExecutor {
     private int findWeatherApiThreadSizeIfRequestIsNull(WeatherBatchRequest weatherBatchRequest) {
         Integer weatherApiThreadSize = weatherBatchRequest.getWeatherApiThreadSize();
         if (Objects.isNull(weatherApiThreadSize)) {
-            return chunkSizePersistencePort.findChunkSizeByName(BATCH_NAME);
+            return batchThreadSizePersistencePort.findBatchThreadSizeByName(BATCH_NAME);
         }
         if (weatherApiThreadSize < 1) {
             throw new IllegalArgumentException("날씨 API 스레드 풀 개수는 1 이상이어야 합니다.");

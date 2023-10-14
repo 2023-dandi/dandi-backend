@@ -26,7 +26,7 @@ public class BatchThreadSizeService implements BatchThreadSizeUseCase {
     public void updateBatchThreadSizeByName(BatchThreadSizeUpdateCommand command) {
         validateBatchAdminKey(command.getBatchAdminKey());
         validateChunkSize(command.getBatchThreadSize());
-        batchThreadSizePersistencePort.updateChunkSizeByName(command.getName(), command.getBatchThreadSize());
+        batchThreadSizePersistencePort.updateBatchThreadSizeByName(command.getName(), command.getBatchThreadSize());
     }
 
     private void validateChunkSize(Integer batchThreadSize) {
