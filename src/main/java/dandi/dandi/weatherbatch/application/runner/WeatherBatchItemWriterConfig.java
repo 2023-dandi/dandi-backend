@@ -17,10 +17,7 @@ import org.springframework.context.annotation.Configuration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 @Configuration
@@ -40,31 +37,38 @@ public class WeatherBatchItemWriterConfig {
         LocalDateTime baseDateTime = dateTimeJobParameter.getLocalDateTime();
         ExecutorService executor = Executors.newFixedThreadPool(weatherApiThreadSize.intValue());
         return items -> {
-            List<Weathers> weathers = requestWeatherApi(items, baseDateTime, executor, weatherRequester);
+            List<Weathers> weathers = requestWeatherApi(items, baseDateTime, weatherApiThreadSize.intValue(), executor, weatherRequester);
             deletePreviousWeathers(items);
             weatherPersistencePort.saveInBatch(weathers);
         };
     }
 
     private List<Weathers> requestWeatherApi(List<? extends WeatherLocation> weatherLocations, LocalDateTime baseDateTime,
-                                             ExecutorService executor, WeatherRequester weatherRequester) {
+                                             int threadSize, ExecutorService executor, WeatherRequester weatherRequester) {
         List<CompletableFuture<Weathers>> weathersFutures = new ArrayList<>();
+        List<Weathers> weathers = new ArrayList<>();
+
         for (WeatherLocation weatherLocation : weatherLocations) {
             CompletableFuture<Weathers> weatherFuture = CompletableFuture.supplyAsync(
                     () -> weatherRequester.getWeathers(baseDateTime, weatherLocation), executor);
             weathersFutures.add(weatherFuture);
+
+            if (weathersFutures.size() == threadSize) {
+                weathersFutures.forEach(weathersFuture -> weathers.add(getFutureValue(weathersFuture)));
+                weathersFutures.clear();
+            }
         }
-        return weathersFutures.stream()
-                .map(weatherFuture -> {
-                    try {
-                        return weatherFuture.get();
-                    } catch (InterruptedException e) {
-                        throw new WeatherRequestFatalException("(날씨 API Thread InterruptedException)" + e.getMessage());
-                    } catch (ExecutionException e) {
-                        throw handleExecutionException(e);
-                    }
-                })
-                .collect(Collectors.toUnmodifiableList());
+        return weathers;
+    }
+
+    private Weathers getFutureValue(Future<Weathers> weathersFuture) {
+        try {
+            return weathersFuture.get();
+        } catch (InterruptedException e) {
+            throw new WeatherRequestFatalException("(날씨 API Thread InterruptedException)" + e.getMessage());
+        } catch (ExecutionException e) {
+            throw handleExecutionException(e);
+        }
     }
 
     private RuntimeException handleExecutionException(ExecutionException e) {
