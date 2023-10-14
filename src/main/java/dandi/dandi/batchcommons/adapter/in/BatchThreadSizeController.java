@@ -15,7 +15,7 @@ public class BatchThreadSizeController {
         this.batchThreadSizeUseCase = batchThreadSizeUseCase;
     }
 
-    @PatchMapping("/batch/chunkSize")
+    @PatchMapping("/batch/weatherApiThreadPoolSize")
     public ResponseEntity<Void> updateChunkSizeByName(BatchThreadSizeUpdateCommand command) {
         batchThreadSizeUseCase.updateBatchThreadSizeByName(command);
         return ResponseEntity.noContent().build();
