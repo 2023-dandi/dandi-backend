@@ -1,4 +1,4 @@
-package dandi.dandi.batchcommons.adapter.out.persistence.jpa;
+package dandi.dandi.batchcommons.adapter.out.persistence.jpa.chunksize;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.Optional;
 
-public interface ChunkSizeRepository extends JpaRepository<ChunkSizeJpaEntity, Long> {
+public interface ChunkSizeRepository extends JpaRepository<ChunkSizeJpaEntity, String> {
 
     Optional<ChunkSizeJpaEntity> findByName(String name);
 

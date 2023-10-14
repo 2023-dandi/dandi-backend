@@ -31,4 +31,8 @@ public class NotFoundException extends RuntimeException {
     public static NotFoundException chunkSize(String name) {
         return new NotFoundException("Chunk Size(" + name + ")");
     }
+
+    public static NotFoundException batchThreadSize(String name) {
+        return new NotFoundException("Batch Thread Size(" + name + ")");
+    }
 }

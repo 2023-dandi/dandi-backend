@@ -1,5 +1,8 @@
 package dandi.dandi.batchcommons.adapter.out.persistence.jpa;
 
+import dandi.dandi.batchcommons.adapter.out.persistence.jpa.chunksize.ChunkSizeJpaEntity;
+import dandi.dandi.batchcommons.adapter.out.persistence.jpa.chunksize.ChunkSizePersistenceAdapter;
+import dandi.dandi.batchcommons.adapter.out.persistence.jpa.chunksize.ChunkSizeRepository;
 import dandi.dandi.common.PersistenceAdapterTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
