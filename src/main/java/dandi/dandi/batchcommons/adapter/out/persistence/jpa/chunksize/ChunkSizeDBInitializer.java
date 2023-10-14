@@ -17,7 +17,7 @@ public class ChunkSizeDBInitializer implements InitializingBean {
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         ChunkSizeJpaEntity weatherBatchChunkSize = new ChunkSizeJpaEntity("weatherBatch", 300);
         ChunkSizeJpaEntity unusedImageDeletionBatchChunkSize = new ChunkSizeJpaEntity("unusedImageDeletion", 100);
         chunkSizeRepository.saveAll(List.of(weatherBatchChunkSize, unusedImageDeletionBatchChunkSize));
