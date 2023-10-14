@@ -9,6 +9,7 @@ import dandi.dandi.weather.domain.Weathers;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -33,9 +34,10 @@ public class WeatherBatchItemWriterConfig {
     @Bean
     @StepScope
     public ItemWriter<WeatherLocation> weatherItemWriter(WeatherRequester weatherRequester,
+                                                         @Value("#{jobParameters[weatherApiThreadSize]}") Long weatherApiThreadSize,
                                                          @Qualifier(value = "weatherBatchJobBaseDateTimeParameter") DateTimeJobParameter dateTimeJobParameter) {
         LocalDateTime baseDateTime = dateTimeJobParameter.getLocalDateTime();
-        ExecutorService executor = Executors.newFixedThreadPool(3);
+        ExecutorService executor = Executors.newFixedThreadPool(weatherApiThreadSize.intValue());
         return items -> {
             List<Weathers> weathers = requestWeatherApi(items, baseDateTime, executor, weatherRequester);
             deletePreviousWeathers(items);

@@ -53,6 +53,7 @@ public class WeatherBatchExecutor {
 
     public void run(WeatherBatchRequest weatherBatchRequest) {
         long chunkSize = findChunkSizeIfRequestIsNull(weatherBatchRequest);
+        long weatherApiThreadSize = findWeatherApiThreadSizeIfRequestIsNull(weatherBatchRequest);
         validateExecutionKey(weatherBatchRequest);
         LocalDateTime now = LocalDateTime.now();
         LocalTime baseTime = baseTimeConvertor.convert(now.toLocalTime());
@@ -61,7 +62,8 @@ public class WeatherBatchExecutor {
                 Map.of(
                         "baseDateTime", new JobParameter(baseDateTime.toString()),
                         "backOffPeriod", new JobParameter(FIVE_SECONDS),
-                        "chunkSize", new JobParameter(chunkSize)
+                        "chunkSize", new JobParameter(chunkSize),
+                        "weatherApiThreadSize", new JobParameter(weatherApiThreadSize)
                 )
         );
         try {
@@ -85,6 +87,17 @@ public class WeatherBatchExecutor {
             throw new IllegalArgumentException("Batch Size는 1이상이어야 합니다.");
         }
         return chunkSize;
+    }
+
+    private int findWeatherApiThreadSizeIfRequestIsNull(WeatherBatchRequest weatherBatchRequest) {
+        Integer weatherApiThreadSize = weatherBatchRequest.getWeatherApiThreadSize();
+        if (Objects.isNull(weatherApiThreadSize)) {
+            return chunkSizePersistencePort.findChunkSizeByName(BATCH_NAME);
+        }
+        if (weatherApiThreadSize < 1) {
+            throw new IllegalArgumentException("날씨 API 스레드 풀 개수는 1 이상이어야 합니다.");
+        }
+        return weatherApiThreadSize;
     }
 
     private void validateExecutionKey(WeatherBatchRequest weatherBatchRequest) {
