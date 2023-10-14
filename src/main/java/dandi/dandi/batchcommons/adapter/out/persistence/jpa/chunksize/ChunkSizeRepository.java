@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.Optional;
 
-public interface ChunkSizeRepository extends JpaRepository<ChunkSizeJpaEntity, Long> {
+public interface ChunkSizeRepository extends JpaRepository<ChunkSizeJpaEntity, String> {
 
     Optional<ChunkSizeJpaEntity> findByName(String name);
 

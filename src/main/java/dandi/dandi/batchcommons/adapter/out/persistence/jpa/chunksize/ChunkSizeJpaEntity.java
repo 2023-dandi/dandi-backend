@@ -1,16 +1,14 @@
 package dandi.dandi.batchcommons.adapter.out.persistence.jpa.chunksize;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
 @Table(name = "chunk_size")
 public class ChunkSizeJpaEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "chunk_size_id")
-    private Long id;
-
     private String name;
     private Integer value;
 
