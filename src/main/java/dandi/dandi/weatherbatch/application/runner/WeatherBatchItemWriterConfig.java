@@ -3,6 +3,7 @@ package dandi.dandi.weatherbatch.application.runner;
 import dandi.dandi.batchcommons.jobparameter.DateTimeJobParameter;
 import dandi.dandi.weather.application.port.out.WeatherPersistencePort;
 import dandi.dandi.weather.application.port.out.WeatherRequestFatalException;
+import dandi.dandi.weather.application.port.out.WeatherRequestRetryableException;
 import dandi.dandi.weather.application.port.out.WeatherRequester;
 import dandi.dandi.weather.domain.WeatherLocation;
 import dandi.dandi.weather.domain.Weathers;
@@ -60,10 +61,19 @@ public class WeatherBatchItemWriterConfig {
                     } catch (InterruptedException e) {
                         throw new WeatherRequestFatalException("(날씨 API Thread InterruptedException)" + e.getMessage());
                     } catch (ExecutionException e) {
-                        throw new RuntimeException(e);
+                        throw handleExecutionException(e);
                     }
                 })
                 .collect(Collectors.toUnmodifiableList());
+    }
+
+    private RuntimeException handleExecutionException(ExecutionException e) {
+        if (e.getCause() instanceof WeatherRequestRetryableException) {
+            return new WeatherRequestRetryableException(e.getCause().getMessage());
+        } else if (e.getCause() instanceof WeatherRequestFatalException) {
+            return new WeatherRequestFatalException(e.getCause().getMessage());
+        }
+        return new RuntimeException(e);
     }
 
     private void deletePreviousWeathers(List<? extends WeatherLocation> items) {
