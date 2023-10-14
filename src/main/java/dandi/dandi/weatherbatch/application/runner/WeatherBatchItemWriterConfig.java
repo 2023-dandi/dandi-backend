@@ -55,16 +55,18 @@ public class WeatherBatchItemWriterConfig {
             weathersFutures.add(weatherFuture);
         }
         return weathersFutures.stream()
-                .map(weatherFuture -> {
-                    try {
-                        return weatherFuture.get();
-                    } catch (InterruptedException e) {
-                        throw new WeatherRequestFatalException("(날씨 API Thread InterruptedException)" + e.getMessage());
-                    } catch (ExecutionException e) {
-                        throw handleExecutionException(e);
-                    }
-                })
+                .map(this::getFutureValue)
                 .collect(Collectors.toUnmodifiableList());
+    }
+
+    private Weathers getFutureValue(CompletableFuture<Weathers> weathersFuture) {
+        try {
+            return weathersFuture.get();
+        } catch (InterruptedException e) {
+            throw new WeatherRequestFatalException("(날씨 API Thread InterruptedException)" + e.getMessage());
+        } catch (ExecutionException e) {
+            throw handleExecutionException(e);
+        }
     }
 
     private RuntimeException handleExecutionException(ExecutionException e) {
