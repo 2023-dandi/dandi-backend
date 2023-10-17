@@ -1,6 +1,7 @@
 package dandi.dandi.postlike.application.port.out;
 
 import dandi.dandi.postlike.domain.PostLike;
+
 import java.util.Optional;
 
 public interface PostLikePersistencePort {
@@ -9,7 +10,7 @@ public interface PostLikePersistencePort {
 
     void save(PostLike postLike);
 
-    void deleteById(Long id);
+    void deleteByPostIdAndMemberId(Long postId, Long memberId);
 
     boolean existsByPostIdAndMemberId(Long memberId, Long postId);
 }

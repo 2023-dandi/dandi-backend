@@ -1,18 +1,19 @@
 package dandi.dandi.postlike.adapter.out.persistence.jpa;
 
-import static dandi.dandi.member.MemberTestFixture.MEMBER_ID;
-import static dandi.dandi.post.PostFixture.POST_ID;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatCode;
-import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
-
 import dandi.dandi.common.PersistenceAdapterTest;
 import dandi.dandi.postlike.domain.PostLike;
-import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Optional;
+
+import static dandi.dandi.member.MemberTestFixture.MEMBER_ID;
+import static dandi.dandi.post.PostFixture.POST_ID;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatCode;
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 class PostLikePersistenceAdapterTest extends PersistenceAdapterTest {
 
@@ -45,11 +46,9 @@ class PostLikePersistenceAdapterTest extends PersistenceAdapterTest {
     void deleteById() {
         PostLike postLike = PostLike.initial(MEMBER_ID, POST_ID);
         postLikePersistenceAdapter.save(postLike);
-        Long postLikeId = postLikePersistenceAdapter.findByMemberIdAndPostId(MEMBER_ID, POST_ID)
-                .get()
-                .getId();
+        PostLike savedPostLike = postLikePersistenceAdapter.findByMemberIdAndPostId(MEMBER_ID, POST_ID).get();
 
-        postLikePersistenceAdapter.deleteById(postLikeId);
+        postLikePersistenceAdapter.deleteByPostIdAndMemberId(savedPostLike.getPostId(), savedPostLike.getMemberId());
 
         Optional<PostLike> foundAfterDeletion = postLikePersistenceAdapter.findByMemberIdAndPostId(MEMBER_ID, POST_ID);
         assertThat(foundAfterDeletion).isEmpty();
