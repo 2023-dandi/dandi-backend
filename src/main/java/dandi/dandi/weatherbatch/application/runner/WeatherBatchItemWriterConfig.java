@@ -34,13 +34,18 @@ public class WeatherBatchItemWriterConfig {
 
     @Bean
     @StepScope
+    public ExecutorService weatherApiThreadPool(@Value("#{jobParameters[weatherApiThreadSize]}") Long weatherApiThreadSize) {
+        return Executors.newFixedThreadPool(weatherApiThreadSize.intValue());
+    }
+
+    @Bean
+    @StepScope
     public ItemWriter<WeatherLocation> weatherItemWriter(WeatherRequester weatherRequester,
-                                                         @Value("#{jobParameters[weatherApiThreadSize]}") Long weatherApiThreadSize,
+                                                         ExecutorService weatherApiThreadPool,
                                                          @Qualifier(value = "weatherBatchJobBaseDateTimeParameter") DateTimeJobParameter dateTimeJobParameter) {
         LocalDateTime baseDateTime = dateTimeJobParameter.getLocalDateTime();
-        ExecutorService executor = Executors.newFixedThreadPool(weatherApiThreadSize.intValue());
         return items -> {
-            List<Weathers> weathers = requestWeatherApi(items, baseDateTime, executor, weatherRequester);
+            List<Weathers> weathers = requestWeatherApi(items, baseDateTime, weatherApiThreadPool, weatherRequester);
             deletePreviousWeathers(items);
             weatherPersistencePort.saveInBatch(weathers);
         };
