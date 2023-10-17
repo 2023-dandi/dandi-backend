@@ -4,23 +4,17 @@ import dandi.dandi.member.domain.Member;
 import dandi.dandi.post.domain.Post;
 import dandi.dandi.post.domain.Temperatures;
 import dandi.dandi.post.domain.WeatherFeeling;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "post")
@@ -66,7 +60,7 @@ public class PostJpaEntity {
                 additionalFeelingIndexJpaEntity -> additionalFeelingIndexJpaEntity.setPostJpaEntity(this));
     }
 
-    public static PostJpaEntity fromPostAndMemberId(Post post, Long memberId) {
+    public static PostJpaEntity initial(Post post, Long memberId) {
         List<AdditionalFeelingIndexJpaEntity> additionalFeelingIndices = post.getAdditionalWeatherFeelingIndices()
                 .stream()
                 .map(AdditionalFeelingIndexJpaEntity::new)

@@ -8,13 +8,14 @@ import dandi.dandi.post.domain.Post;
 import dandi.dandi.post.domain.TemperatureSearchCondition;
 import dandi.dandi.postlike.adapter.out.persistence.jpa.PostLikeJpaEntity;
 import dandi.dandi.postlike.adapter.out.persistence.jpa.PostLikeRepository;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Component
@@ -33,7 +34,7 @@ public class PostPersistenceAdapter implements PostPersistencePort {
 
     @Override
     public Long save(Post post, Long memberId) {
-        PostJpaEntity postJpaEntity = PostJpaEntity.fromPostAndMemberId(post, memberId);
+        PostJpaEntity postJpaEntity = PostJpaEntity.initial(post, memberId);
         return postRepository.save(postJpaEntity)
                 .getId();
     }
