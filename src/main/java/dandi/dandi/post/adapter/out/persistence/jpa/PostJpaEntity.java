@@ -4,6 +4,7 @@ import dandi.dandi.member.domain.Member;
 import dandi.dandi.post.domain.Post;
 import dandi.dandi.post.domain.Temperatures;
 import dandi.dandi.post.domain.WeatherFeeling;
+import dandi.dandi.postlike.adapter.out.persistence.jpa.PostLikeJpaEntity;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
@@ -44,11 +45,15 @@ public class PostJpaEntity {
     @BatchSize(size = 10)
     private List<AdditionalFeelingIndexJpaEntity> additionalFeelingIndicesJpaEntities = new ArrayList<>();
 
+    @OneToMany(mappedBy = "postLikeKey.postJpaEntity")
+    private List<PostLikeJpaEntity> postLikeJpaEntities = new ArrayList<>();
+
     protected PostJpaEntity() {
     }
 
     public PostJpaEntity(Long id, Long memberId, Double minTemperature, Double maxTemperature, String postImageUrl,
-                         Long feelingIndex, List<AdditionalFeelingIndexJpaEntity> additionalFeelingIndicesJpaEntities) {
+                         Long feelingIndex, List<AdditionalFeelingIndexJpaEntity> additionalFeelingIndicesJpaEntities,
+                         List<PostLikeJpaEntity> postLikeJpaEntities) {
         this.id = id;
         this.memberId = memberId;
         this.minTemperature = minTemperature;
@@ -58,6 +63,7 @@ public class PostJpaEntity {
         this.additionalFeelingIndicesJpaEntities = additionalFeelingIndicesJpaEntities;
         additionalFeelingIndicesJpaEntities.forEach(
                 additionalFeelingIndexJpaEntity -> additionalFeelingIndexJpaEntity.setPostJpaEntity(this));
+        this.postLikeJpaEntities = postLikeJpaEntities;
     }
 
     public static PostJpaEntity initial(Post post, Long memberId) {
@@ -72,7 +78,8 @@ public class PostJpaEntity {
                 post.getMaxTemperature(),
                 post.getPostImageUrl(),
                 post.getWeatherFeelingIndex(),
-                additionalFeelingIndices
+                additionalFeelingIndices,
+                null
         );
     }
 
@@ -84,18 +91,32 @@ public class PostJpaEntity {
         return memberId;
     }
 
-    public Post toPost(Member member, List<Long> likingMemberIds) {
-        List<Long> additionalFeelingIndices = additionalFeelingIndicesJpaEntities.stream()
-                .map(AdditionalFeelingIndexJpaEntity::getValue)
-                .collect(Collectors.toUnmodifiableList());
+    public List<PostLikeJpaEntity> getPostLikeJpaEntities() {
+        return postLikeJpaEntities;
+    }
+
+    public Post toPost(Member postWriter) {
         return new Post(
                 id,
-                member,
+                postWriter,
                 new Temperatures(minTemperature, maxTemperature),
                 postImageUrl,
-                new WeatherFeeling(feelingIndex, additionalFeelingIndices),
+                new WeatherFeeling(feelingIndex, getAdditionalFeelingIndices()),
                 createdAt.toLocalDate(),
-                likingMemberIds
+                getLikingMemberIds()
         );
+    }
+
+    private List<Long> getAdditionalFeelingIndices() {
+        return additionalFeelingIndicesJpaEntities.stream()
+                .map(AdditionalFeelingIndexJpaEntity::getValue)
+                .collect(Collectors.toUnmodifiableList());
+    }
+
+    private List<Long> getLikingMemberIds() {
+        return getPostLikeJpaEntities()
+                .stream()
+                .map(PostLikeJpaEntity::getMemberId)
+                .collect(Collectors.toUnmodifiableList());
     }
 }

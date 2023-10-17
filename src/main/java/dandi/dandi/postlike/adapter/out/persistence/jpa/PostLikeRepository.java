@@ -9,13 +9,13 @@ import java.util.Optional;
 
 public interface PostLikeRepository extends JpaRepository<PostLikeJpaEntity, Long> {
 
-    @Query("SELECT pl FROM PostLikeJpaEntity pl WHERE pl.postLikeKey.postId = :postId AND pl.postLikeKey.memberId = :memberId")
+    @Query("SELECT pl FROM PostLikeJpaEntity pl WHERE pl.postLikeKey.postJpaEntity.id = :postId AND pl.postLikeKey.memberId = :memberId")
     Optional<PostLikeJpaEntity> findByMemberIdAndPostId(Long memberId, Long postId);
 
-    @Query("SELECT pl FROM PostLikeJpaEntity pl WHERE pl.postLikeKey.postId = :postId")
+    @Query("SELECT pl FROM PostLikeJpaEntity pl WHERE pl.postLikeKey.postJpaEntity.id = :postId")
     List<PostLikeJpaEntity> findByPostId(Long postId);
 
     @Modifying
-    @Query("DELETE PostLikeJpaEntity pl WHERE pl.postLikeKey.postId = :postId AND pl.postLikeKey.memberId = :memberId")
+    @Query("DELETE PostLikeJpaEntity pl WHERE pl.postLikeKey.postJpaEntity.id = :postId AND pl.postLikeKey.memberId = :memberId")
     void deleteByPostIdAndMemberId(Long postId, Long memberId);
 }

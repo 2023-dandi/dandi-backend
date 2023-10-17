@@ -1,11 +1,9 @@
 package dandi.dandi.postlike.adapter.out.persistence.jpa;
 
+import dandi.dandi.post.adapter.out.persistence.jpa.PostJpaEntity;
 import dandi.dandi.postlike.domain.PostLike;
 
-import javax.persistence.Embeddable;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -23,39 +21,32 @@ public class PostLikeJpaEntity {
         this.postLikeKey = postLikeKey;
     }
 
-    public static PostLikeJpaEntity of(Long postId, Long memberId) {
-        return new PostLikeJpaEntity(new PostLikePrimaryKey(postId, memberId));
+    public static PostLikeJpaEntity of(PostJpaEntity post, Long memberId) {
+        return new PostLikeJpaEntity(new PostLikePrimaryKey(post, memberId));
     }
 
     public Long getMemberId() {
-        return postLikeKey.getMemberId();
+        return postLikeKey.memberId;
     }
 
     public PostLike toPostLike() {
-        return new PostLike(postLikeKey.getMemberId(), postLikeKey.getPostId());
+        return new PostLike(postLikeKey.memberId, postLikeKey.postJpaEntity.getId());
     }
 
     @Embeddable
     static class PostLikePrimaryKey implements Serializable {
 
-
-        private Long postId;
+        @ManyToOne
+        @JoinColumn(name = "post_id")
+        private PostJpaEntity postJpaEntity;
         private Long memberId;
 
         protected PostLikePrimaryKey() {
         }
 
-        private PostLikePrimaryKey(Long postId, Long memberId) {
-            this.postId = postId;
+        private PostLikePrimaryKey(PostJpaEntity postJpaEntity, Long memberId) {
+            this.postJpaEntity = postJpaEntity;
             this.memberId = memberId;
-        }
-
-        public Long getPostId() {
-            return postId;
-        }
-
-        public Long getMemberId() {
-            return memberId;
         }
 
         @Override
@@ -63,12 +54,12 @@ public class PostLikeJpaEntity {
             if (this == o) return true;
             if (!(o instanceof PostLikePrimaryKey)) return false;
             PostLikePrimaryKey that = (PostLikePrimaryKey) o;
-            return Objects.equals(postId, that.postId) && Objects.equals(memberId, that.memberId);
+            return Objects.equals(postJpaEntity.getId(), that.postJpaEntity.getId()) && Objects.equals(memberId, that.memberId);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(postId, memberId);
+            return Objects.hash(postJpaEntity.getId(), memberId);
         }
     }
 }
