@@ -2,8 +2,9 @@ package dandi.dandi.postlike.adapter.out.persistence.jpa;
 
 import dandi.dandi.postlike.application.port.out.PostLikePersistencePort;
 import dandi.dandi.postlike.domain.PostLike;
-import java.util.Optional;
 import org.springframework.stereotype.Component;
+
+import java.util.Optional;
 
 @Component
 public class PostLikePersistenceAdapter implements PostLikePersistencePort {
@@ -22,17 +23,18 @@ public class PostLikePersistenceAdapter implements PostLikePersistencePort {
 
     @Override
     public void save(PostLike postLike) {
-        PostLikeJpaEntity postLikeJpaEntity = PostLikeJpaEntity.fromPostLike(postLike);
+        PostLikeJpaEntity postLikeJpaEntity = PostLikeJpaEntity.of(postLike.getPostId(), postLike.getMemberId());
         postLikeRepository.save(postLikeJpaEntity);
     }
 
     @Override
-    public void deleteById(Long id) {
-        postLikeRepository.deleteById(id);
+    public void deleteByPostIdAndMemberId(Long postId, Long memberId) {
+        postLikeRepository.deleteByPostIdAndMemberId(postId, memberId);
     }
 
     @Override
     public boolean existsByPostIdAndMemberId(Long memberId, Long postId) {
-        return postLikeRepository.existsByMemberIdAndPostId(memberId, postId);
+        return postLikeRepository.findByMemberIdAndPostId(memberId, postId)
+                .isPresent();
     }
 }

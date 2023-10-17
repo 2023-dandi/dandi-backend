@@ -32,7 +32,7 @@ public class PostLikeCommandServiceAdapter implements PostLikeCommandServicePort
                 .orElseThrow(NotFoundException::post);
         postLikePersistencePort.findByMemberIdAndPostId(memberId, postId)
                 .ifPresentOrElse(
-                        pl -> postLikePersistencePort.deleteById(pl.getId()),
+                        postLike -> postLikePersistencePort.deleteByPostIdAndMemberId(postId, memberId),
                         () -> registerNewPostLike(memberId, post)
                 );
     }

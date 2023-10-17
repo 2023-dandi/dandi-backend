@@ -1,51 +1,12 @@
 package dandi.dandi.post.acceptance;
 
-import static dandi.dandi.common.HttpMethodFixture.httpDeleteWithAuthorization;
-import static dandi.dandi.common.HttpMethodFixture.httpGetWithAuthorization;
-import static dandi.dandi.common.HttpMethodFixture.httpGetWithAuthorizationAndPagination;
-import static dandi.dandi.common.HttpMethodFixture.httpPatchWithAuthorization;
-import static dandi.dandi.common.HttpMethodFixture.httpPostWithAuthorization;
-import static dandi.dandi.common.HttpMethodFixture.httpPostWithAuthorizationAndImgFile;
-import static dandi.dandi.common.HttpResponseExtractor.extractExceptionMessage;
-import static dandi.dandi.common.RequestURI.FEED_REQUEST_URI;
-import static dandi.dandi.common.RequestURI.LIKED_POST_REQUEST_URI;
-import static dandi.dandi.common.RequestURI.MEMBER_DEFAULT_PROFILE_IMAGE;
-import static dandi.dandi.common.RequestURI.MY_POST_BY_TEMPERATURE_REQUEST_URI;
-import static dandi.dandi.common.RequestURI.MY_POST_REQUEST_URI;
-import static dandi.dandi.common.RequestURI.POST_DETAILS_REQUEST_URI;
-import static dandi.dandi.common.RequestURI.POST_IMAGE_REGISTER_REQUEST_URI;
-import static dandi.dandi.common.RequestURI.POST_REGISTER_REQUEST_URI;
-import static dandi.dandi.post.PostFixture.ADDITIONAL_OUTFIT_FEELING_INDICES;
-import static dandi.dandi.post.PostFixture.MAX_TEMPERATURE;
-import static dandi.dandi.post.PostFixture.MIN_TEMPERATURE;
-import static dandi.dandi.post.PostFixture.OUTFIT_FEELING_INDEX;
-import static dandi.dandi.post.PostFixture.POST_IMAGE_FULL_URL;
-import static dandi.dandi.post.PostFixture.POST_IMAGE_URL;
-import static dandi.dandi.utils.TestImageUtils.IMAGE_ACCESS_URL;
-import static dandi.dandi.utils.TestImageUtils.generateTestImgFile;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
-
 import dandi.dandi.common.AcceptanceTest;
 import dandi.dandi.post.adapter.in.web.dto.OutfitFeelingRequest;
 import dandi.dandi.post.adapter.in.web.dto.PostRegisterRequest;
 import dandi.dandi.post.adapter.in.web.dto.TemperatureRequest;
-import dandi.dandi.post.application.port.in.FeedResponse;
-import dandi.dandi.post.application.port.in.LikedPostResponse;
-import dandi.dandi.post.application.port.in.LikedPostResponses;
-import dandi.dandi.post.application.port.in.MyPostResponse;
-import dandi.dandi.post.application.port.in.MyPostResponses;
-import dandi.dandi.post.application.port.in.MyPostsByTemperatureResponses;
-import dandi.dandi.post.application.port.in.PostDetailResponse;
-import dandi.dandi.post.application.port.in.PostImageRegisterResponse;
-import dandi.dandi.post.application.port.in.PostRegisterResponse;
-import dandi.dandi.post.application.port.in.PostResponse;
-import dandi.dandi.post.application.port.in.PostWriterResponse;
+import dandi.dandi.post.application.port.in.*;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import java.io.File;
-import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -53,6 +14,19 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
+
+import java.io.File;
+import java.util.List;
+
+import static dandi.dandi.common.HttpMethodFixture.*;
+import static dandi.dandi.common.HttpResponseExtractor.extractExceptionMessage;
+import static dandi.dandi.common.RequestURI.*;
+import static dandi.dandi.post.PostFixture.*;
+import static dandi.dandi.utils.TestImageUtils.IMAGE_ACCESS_URL;
+import static dandi.dandi.utils.TestImageUtils.generateTestImgFile;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class PostAcceptanceTest extends AcceptanceTest {
 
@@ -345,7 +319,8 @@ class PostAcceptanceTest extends AcceptanceTest {
         httpPatchWithAuthorization("/posts/" + secondPostId + "/likes", anotherToken);
         httpPatchWithAuthorization("/posts/" + firstPostId + "/likes", anotherToken);
 
-        ExtractableResponse<Response> response = httpGetWithAuthorization(LIKED_POST_REQUEST_URI, anotherToken);
+        ExtractableResponse<Response> response =
+                httpGetWithAuthorizationAndPagination(LIKED_POST_REQUEST_URI, anotherToken, 10, 0, "createdAt", Direction.DESC);
 
         List<LikedPostResponse> posts = response.jsonPath()
                 .getObject(".", LikedPostResponses.class)
@@ -353,12 +328,11 @@ class PostAcceptanceTest extends AcceptanceTest {
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
                 () -> assertThat(posts).hasSize(2),
-                () -> assertThat(posts.get(0).getId()).isEqualTo(2L),
-                () -> assertThat(posts.get(1).getId()).isEqualTo(1L),
+                () -> assertThat(posts.get(0).getId()).isEqualTo(secondPostId),
+                () -> assertThat(posts.get(1).getId()).isEqualTo(firstPostId),
                 () -> assertThat(posts.get(0).getPostImageUrl()).isEqualTo(POST_IMAGE_FULL_URL),
                 () -> assertThat(posts.get(0).getWriter().getProfileImageUrl())
                         .isEqualTo(IMAGE_ACCESS_URL + MEMBER_DEFAULT_PROFILE_IMAGE)
-
         );
     }
 

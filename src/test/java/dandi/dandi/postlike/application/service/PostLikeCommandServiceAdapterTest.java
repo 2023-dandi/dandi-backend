@@ -1,28 +1,27 @@
 package dandi.dandi.postlike.application.service;
 
-import static dandi.dandi.member.MemberTestFixture.MEMBER_ID;
-import static dandi.dandi.post.PostFixture.POST;
-import static dandi.dandi.post.PostFixture.POST_ID;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import dandi.dandi.common.exception.NotFoundException;
 import dandi.dandi.event.application.port.out.EventPort;
 import dandi.dandi.post.application.port.out.PostPersistencePort;
 import dandi.dandi.postlike.application.port.out.PostLikePersistencePort;
 import dandi.dandi.postlike.domain.PostLike;
 import dandi.dandi.postlike.domain.PostLikedEvent;
-import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Optional;
+
+import static dandi.dandi.member.MemberTestFixture.MEMBER_ID;
+import static dandi.dandi.post.PostFixture.POST;
+import static dandi.dandi.post.PostFixture.POST_ID;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class PostLikeCommandServiceAdapterTest {
@@ -77,13 +76,13 @@ class PostLikeCommandServiceAdapterTest {
     void reversePostLike_PostLikeDeletion() {
         when(postPersistencePort.findById(POST_ID))
                 .thenReturn(Optional.of(POST));
-        PostLike postLike = new PostLike(1L, MEMBER_ID, POST_ID);
+        PostLike postLike = new PostLike(MEMBER_ID, POST_ID);
         when(postLikePersistencePort.findByMemberIdAndPostId(MEMBER_ID, POST_ID))
                 .thenReturn(Optional.of(postLike));
 
         postLikeCommandServiceAdapter.reverseLike(MEMBER_ID, POST_ID);
 
-        verify(postLikePersistencePort).deleteById(postLike.getId());
+        verify(postLikePersistencePort).deleteByPostIdAndMemberId(POST_ID, MEMBER_ID);
     }
 
     @DisplayName("존재하지 않는 게시글에 좋아요를 reverse 하려고 하면 예외를 발생시킨다.")
