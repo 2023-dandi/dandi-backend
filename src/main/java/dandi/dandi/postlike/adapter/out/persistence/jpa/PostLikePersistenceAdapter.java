@@ -30,7 +30,7 @@ public class PostLikePersistenceAdapter implements PostLikePersistencePort {
     public void save(PostLike postLike) {
         PostJpaEntity postJpaEntity = postRepository.findById(postLike.getPostId())
                 .orElseThrow(() -> InternalServerException.uncheckPostExistenceBeforePostLikeSave(postLike.getPostId()));
-        PostLikeJpaEntity postLikeJpaEntity = PostLikeJpaEntity.of(postJpaEntity, postJpaEntity.getMemberId());
+        PostLikeJpaEntity postLikeJpaEntity = PostLikeJpaEntity.of(postJpaEntity, postLike.getMemberId());
         postLikeRepository.save(postLikeJpaEntity);
     }
 

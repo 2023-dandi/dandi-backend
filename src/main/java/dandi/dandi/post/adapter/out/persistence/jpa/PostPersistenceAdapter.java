@@ -6,7 +6,6 @@ import dandi.dandi.member.domain.Member;
 import dandi.dandi.post.application.port.out.PostPersistencePort;
 import dandi.dandi.post.domain.Post;
 import dandi.dandi.post.domain.TemperatureSearchCondition;
-import dandi.dandi.postlike.adapter.out.persistence.jpa.PostLikeJpaEntity;
 import dandi.dandi.postlike.adapter.out.persistence.jpa.PostLikeRepository;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -95,7 +94,7 @@ public class PostPersistenceAdapter implements PostPersistencePort {
 
         Member member = findMemberFromOnlyMemberWritingPosts(myPostsByTemperature.getContent());
         List<Post> posts = myPostsByTemperature.stream()
-                .map(postJpaEntity -> postJpaEntity.toPost(member, findPostLikingMemberIds(postJpaEntity)))
+                .map(postJpaEntity -> postJpaEntity.toPost(member))
                 .collect(Collectors.toUnmodifiableList());
         return new SliceImpl<>(posts, pageable, myPostsByTemperature.hasNext());
     }
@@ -104,26 +103,18 @@ public class PostPersistenceAdapter implements PostPersistencePort {
         if (posts.isEmpty()) {
             return null;
         }
-        return findMember(posts.get(0));
+        return findPostWriter(posts.get(0));
     }
 
-    private Member findMember(PostJpaEntity postJpaEntity) {
+    private Member findPostWriter(PostJpaEntity postJpaEntity) {
         return memberRepository.findById(postJpaEntity.getMemberId())
                 .orElseThrow(() -> InternalServerException.withdrawnMemberPost(postJpaEntity.getMemberId()))
                 .toMember();
     }
 
     private Post toPost(PostJpaEntity postJpaEntity) {
-        Member member = findMember(postJpaEntity);
-        List<Long> postLikingMemberIds = findPostLikingMemberIds(postJpaEntity);
-        return postJpaEntity.toPost(member, postLikingMemberIds);
-    }
-
-    private List<Long> findPostLikingMemberIds(PostJpaEntity postJpaEntity) {
-        return postLikeRepository.findByPostId(postJpaEntity.getId())
-                .stream()
-                .map(PostLikeJpaEntity::getMemberId)
-                .collect(Collectors.toUnmodifiableList());
+        Member postWriter = findPostWriter(postJpaEntity);
+        return postJpaEntity.toPost(postWriter);
     }
 
     @Override
