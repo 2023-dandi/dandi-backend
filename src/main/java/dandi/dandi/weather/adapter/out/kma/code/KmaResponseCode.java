@@ -1,8 +1,9 @@
 package dandi.dandi.weather.adapter.out.kma.code;
 
-import java.util.Arrays;
-
 import dandi.dandi.weather.application.port.out.WeatherRequestFatalException;
+
+import java.util.Arrays;
+import java.util.Optional;
 
 public enum KmaResponseCode {
 
@@ -40,11 +41,10 @@ public enum KmaResponseCode {
 			.orElseThrow(() -> new WeatherRequestFatalException("기상청 응답 코드를 변환할 수 없습니다."));
 	}
 
-	public static KmaResponseCode findByNameContainedInValueOrElseNull(String value) {
+	public static Optional<KmaResponseCode> findByNameContainedInValueOrElseNull(String value) {
 		return Arrays.stream(values())
-			.filter(kmaResponseCode -> value.contains(kmaResponseCode.errorMessage))
-			.findFirst()
-			.orElse(null);
+				.filter(kmaResponseCode -> value.contains(kmaResponseCode.errorMessage))
+				.findFirst();
 	}
 
 	public String getResultCode() {
