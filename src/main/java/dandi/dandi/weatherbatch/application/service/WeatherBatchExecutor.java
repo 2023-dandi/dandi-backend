@@ -4,7 +4,7 @@ import dandi.dandi.batchcommons.application.port.out.BatchThreadSizePersistenceP
 import dandi.dandi.batchcommons.application.port.out.ChunkSizePersistencePort;
 import dandi.dandi.batchcommons.exception.BatchException;
 import dandi.dandi.errormessage.application.port.out.RemoteAdminMessageSender;
-import dandi.dandi.weather.application.port.out.BaseTimeConvertor;
+import dandi.dandi.weather.application.port.out.BaseDateTimeConvertor;
 import dandi.dandi.weatherbatch.application.port.in.WeatherBatchRequest;
 import dandi.dandi.weatherbatch.application.runner.WeatherBatch;
 import org.slf4j.Logger;
@@ -19,7 +19,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.Map;
 import java.util.Objects;
 
@@ -38,19 +37,19 @@ public class WeatherBatchExecutor {
     private final JobLauncher jobLauncher;
     private final WeatherBatch weatherBatch;
     private final RemoteAdminMessageSender remoteAdminMessageSender;
-    private final BaseTimeConvertor baseTimeConvertor;
+    private final BaseDateTimeConvertor baseDateTimeConvertor;
     private final String batchAdminKey;
 
     public WeatherBatchExecutor(JobLauncher jobLauncher, ChunkSizePersistencePort chunkSizePersistencePort,
                                 BatchThreadSizePersistencePort batchThreadSizePersistencePort, WeatherBatch weatherBatch,
-                                RemoteAdminMessageSender remoteAdminMessageSender, BaseTimeConvertor baseTimeConvertor,
+                                RemoteAdminMessageSender remoteAdminMessageSender, BaseDateTimeConvertor baseDateTimeConvertor,
                                 @Value("${spring.batch.admin-key}") String batchAdminKey) {
         this.jobLauncher = jobLauncher;
         this.chunkSizePersistencePort = chunkSizePersistencePort;
         this.batchThreadSizePersistencePort = batchThreadSizePersistencePort;
         this.weatherBatch = weatherBatch;
         this.remoteAdminMessageSender = remoteAdminMessageSender;
-        this.baseTimeConvertor = baseTimeConvertor;
+        this.baseDateTimeConvertor = baseDateTimeConvertor;
         this.batchAdminKey = batchAdminKey;
     }
 
@@ -59,8 +58,7 @@ public class WeatherBatchExecutor {
         long weatherApiThreadSize = findWeatherApiThreadSizeIfRequestIsNull(weatherBatchRequest);
         validateExecutionKey(weatherBatchRequest);
         LocalDateTime now = LocalDateTime.now();
-        LocalTime baseTime = baseTimeConvertor.convert(now.toLocalTime());
-        LocalDateTime baseDateTime = LocalDateTime.of(now.toLocalDate(), baseTime);
+        LocalDateTime baseDateTime = baseDateTimeConvertor.convert(now);
         JobParameters jobParameters = new JobParameters(
                 Map.of(
                         "baseDateTime", new JobParameter(baseDateTime.toString()),
