@@ -4,7 +4,7 @@ import dandi.dandi.batchcommons.application.port.out.BatchThreadSizePersistenceP
 import dandi.dandi.batchcommons.application.port.out.ChunkSizePersistencePort;
 import dandi.dandi.batchcommons.exception.BatchException;
 import dandi.dandi.errormessage.application.port.out.RemoteAdminMessageSender;
-import dandi.dandi.weather.application.port.out.BaseTimeConvertor;
+import dandi.dandi.weather.application.port.out.BaseDateTimeConvertor;
 import dandi.dandi.weatherbatch.application.port.in.WeatherBatchRequest;
 import dandi.dandi.weatherbatch.application.runner.WeatherBatch;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,7 +19,7 @@ import org.springframework.batch.core.repository.JobExecutionAlreadyRunningExcep
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -30,6 +30,7 @@ import static org.mockito.Mockito.when;
 class WeatherBatchExecutorTest {
 
     private static final String JOB_NAME = "weatherBatch";
+    private static final LocalDateTime BASE_DATE_TIME = LocalDateTime.of(2023, 10, 10, 2, 0);
 
     private final ChunkSizePersistencePort chunkSizePersistencePort = Mockito.mock(ChunkSizePersistencePort.class);
     private final BatchThreadSizePersistencePort batchThreadSizePersistencePort =
@@ -37,11 +38,11 @@ class WeatherBatchExecutorTest {
     private final JobLauncher jobLauncher = Mockito.mock(JobLauncher.class);
     private final WeatherBatch weatherBatch = Mockito.mock(WeatherBatch.class);
     private final RemoteAdminMessageSender remoteAdminMessageSender = Mockito.mock(RemoteAdminMessageSender.class);
-    private final BaseTimeConvertor baseTimeConvertor = Mockito.mock(BaseTimeConvertor.class);
+    private final BaseDateTimeConvertor baseDateTimeConvertor = Mockito.mock(BaseDateTimeConvertor.class);
     private final String batchAdminKey = "key";
     private final WeatherBatchExecutor weatherBatchExecutor = new WeatherBatchExecutor(
             jobLauncher, chunkSizePersistencePort, batchThreadSizePersistencePort,
-            weatherBatch, remoteAdminMessageSender, baseTimeConvertor, batchAdminKey);
+            weatherBatch, remoteAdminMessageSender, baseDateTimeConvertor, batchAdminKey);
 
     @BeforeEach
     void setUp() {
@@ -52,8 +53,8 @@ class WeatherBatchExecutorTest {
     @DisplayName("WeatherBatchRequest의 chunkSize가 null이라면 DB에서 chunkSize를 조회한다.")
     @Test
     void runWeatherBatch_FindChunkSizeInDBIfRequestChunkSizeIsNull() {
-        when(baseTimeConvertor.convert(any()))
-                .thenReturn(LocalTime.of(2, 0));
+        when(baseDateTimeConvertor.convert(any()))
+                .thenReturn(BASE_DATE_TIME);
         WeatherBatchRequest weatherBatchRequest = new WeatherBatchRequest(batchAdminKey, null, 10);
 
         weatherBatchExecutor.run(weatherBatchRequest);
@@ -73,8 +74,8 @@ class WeatherBatchExecutorTest {
     @DisplayName("WeatherBatchRequest의 batchThreadSize가 null이라면 DB에서 batchThreadSize를 조회한다.")
     @Test
     void runWeatherBatch_FindBatchThreadSizeInDBIfRequestBatchThreadSizeIsNull() {
-        when(baseTimeConvertor.convert(any()))
-                .thenReturn(LocalTime.of(2, 0));
+        when(baseDateTimeConvertor.convert(any()))
+                .thenReturn(BASE_DATE_TIME);
         WeatherBatchRequest weatherBatchRequest = new WeatherBatchRequest(batchAdminKey, 10, null);
 
         weatherBatchExecutor.run(weatherBatchRequest);
@@ -108,8 +109,8 @@ class WeatherBatchExecutorTest {
             JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
         when(jobLauncher.run(any(), any()))
                 .thenThrow(BatchException.class);
-        when(baseTimeConvertor.convert(any()))
-                .thenReturn(LocalTime.of(2, 0));
+        when(baseDateTimeConvertor.convert(any()))
+                .thenReturn(BASE_DATE_TIME);
         WeatherBatchRequest weatherBatchRequest = new WeatherBatchRequest(batchAdminKey, 100, 10);
 
         weatherBatchExecutor.run(weatherBatchRequest);
@@ -126,8 +127,8 @@ class WeatherBatchExecutorTest {
                 .thenReturn(jobExecution);
         when(jobExecution.getExitStatus())
                 .thenReturn(ExitStatus.FAILED);
-        when(baseTimeConvertor.convert(any()))
-                .thenReturn(LocalTime.of(2, 0));
+        when(baseDateTimeConvertor.convert(any()))
+                .thenReturn(BASE_DATE_TIME);
         WeatherBatchRequest weatherBatchRequest = new WeatherBatchRequest(batchAdminKey, 100, 10);
 
         weatherBatchExecutor.run(weatherBatchRequest);
