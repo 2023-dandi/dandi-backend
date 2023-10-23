@@ -69,7 +69,7 @@ public class WeatherBatchExecutor {
                 )
         );
         try {
-            logger.info("{" + LocalDateTime.now() + "} WeatherBatch Start");
+            logger.info("{} : WeatherBatch Start", now);
             JobExecution jobExecution = jobLauncher.run(weatherBatch.weatherBatch(), jobParameters);
             String batchResultMessage = String.format(BATCH_ADMIN_MESSAGE, jobExecution);
             remoteAdminMessageSender.sendMessage(batchResultMessage);
