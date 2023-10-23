@@ -9,7 +9,10 @@ import dandi.dandi.weatherbatch.application.port.in.WeatherBatchRequest;
 import dandi.dandi.weatherbatch.application.runner.WeatherBatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.batch.core.*;
+import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.JobParameter;
+import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.JobParametersInvalidException;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
@@ -22,15 +25,13 @@ import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Objects;
 
-import static org.springframework.batch.core.ExitStatus.COMPLETED;
-import static org.springframework.batch.core.ExitStatus.FAILED;
-
 @Component
 public class WeatherBatchExecutor {
 
     private static final Logger logger = LoggerFactory.getLogger("asyncLogger");
     private static final long FIVE_SECONDS = 5000L;
     private static final String BATCH_NAME = "weatherBatch";
+    private static final String BATCH_ADMIN_MESSAGE = "날씨 Batch 결과 \r\n %s";
 
     private final ChunkSizePersistencePort chunkSizePersistencePort;
     private final BatchThreadSizePersistencePort batchThreadSizePersistencePort;
@@ -70,7 +71,8 @@ public class WeatherBatchExecutor {
         try {
             logger.info("{" + LocalDateTime.now() + "} WeatherBatch Start");
             JobExecution jobExecution = jobLauncher.run(weatherBatch.weatherBatch(), jobParameters);
-            handleFailureIfFailed(baseDateTime.toString(), jobExecution.getExitStatus());
+            String batchResultMessage = String.format(BATCH_ADMIN_MESSAGE, jobExecution);
+            remoteAdminMessageSender.sendMessage(batchResultMessage);
         } catch (JobExecutionAlreadyRunningException | JobRestartException | IOException |
                  JobInstanceAlreadyCompleteException | JobParametersInvalidException | RuntimeException e) {
             String exceptionMessage = "Weather Batch Failed \r\n" + e.getMessage();
@@ -104,17 +106,6 @@ public class WeatherBatchExecutor {
     private void validateExecutionKey(WeatherBatchRequest weatherBatchRequest) {
         if (!weatherBatchRequest.getBatchAdminKey().equals(batchAdminKey)) {
             throw new BatchException("날씨 Batch 실행 Key가 올바르지 않습니다.");
-        }
-    }
-
-    private void handleFailureIfFailed(String now, ExitStatus exitStatus) {
-        if (exitStatus.getExitCode().equals(COMPLETED.getExitCode())) {
-            logger.info("{" + LocalDateTime.now() + "} WeatherBatch Complete");
-            remoteAdminMessageSender.sendMessage(now + "Weather Batch Complete");
-        }
-        if (exitStatus.getExitCode().equals(FAILED.getExitCode())) {
-            remoteAdminMessageSender.sendMessage(now + " Weather Batch Failed");
-            logger.info("Weather Batch Failed \r\n {}", exitStatus.getExitDescription());
         }
     }
 }
