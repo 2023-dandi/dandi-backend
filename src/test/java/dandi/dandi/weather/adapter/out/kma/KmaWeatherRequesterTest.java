@@ -9,7 +9,11 @@ import dandi.dandi.weather.domain.WeatherLocation;
 import dandi.dandi.weather.domain.Weathers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.Mockito;
 
+import java.net.SocketTimeoutException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -23,7 +27,8 @@ import static dandi.dandi.weather.domain.WindDirection.SE;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class KmaWeatherRequesterTest {
 
@@ -73,6 +78,22 @@ class KmaWeatherRequesterTest {
         assertThatThrownBy(() -> kmaWeatherRequester.getWeathers(BASE_DATE_TIME, WEATHER_LOCATION))
                 .isInstanceOf(WeatherRequestRetryableException.class)
                 .hasMessage("기상청 응답 값 (04:HTTP_ERROR)");
+    }
+
+    @DisplayName("날씨 요청 중 timeout이 발생한다면 RetryableException을 발생시킨다.")
+    @ParameterizedTest
+    @ValueSource(strings = {"Read timed out", "connect timed out"})
+    void getWeather_Timeout_RetryableException(String timeoutMessage) {
+        WeatherRequest weatherRequest = new WeatherRequest(kmaServiceKey, "JSON", BASE_DATE, BASE_TIME, 1500, 60, 127);
+        RuntimeException mockedRuntimeException = Mockito.mock(RuntimeException.class);
+        when(weatherApiCaller.getWeathers(weatherRequest))
+                .thenThrow(mockedRuntimeException);
+        when(mockedRuntimeException.getCause())
+                .thenReturn(new SocketTimeoutException(timeoutMessage));
+
+        assertThatThrownBy(() -> kmaWeatherRequester.getWeathers(BASE_DATE_TIME, WEATHER_LOCATION))
+                .isInstanceOf(WeatherRequestRetryableException.class)
+                .hasMessage(timeoutMessage);
     }
 
     @DisplayName("날씨 요청의 응답으로 재시도 할 수 없는 응답 코드를 받는다면 FatalException을 발생시킨다.")

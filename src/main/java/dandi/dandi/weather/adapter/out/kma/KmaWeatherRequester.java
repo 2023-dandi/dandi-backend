@@ -13,7 +13,7 @@ import dandi.dandi.weather.domain.Weathers;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -24,7 +24,8 @@ import static dandi.dandi.weather.adapter.out.kma.KmaConstant.KMA_TIME_FORMATTER
 @Component
 public class KmaWeatherRequester implements WeatherRequester {
 
-    private static final String CONNECTION_RESET = "Connection reset";
+    private static final String READ_TIME_OUT = "Read timed out";
+    private static final String CONNECTION_TIME_OUT = "connect timed out";
     private static final String DATE_TYPE = "JSON";
     private static final int ROW_NUM = 1500;
 
@@ -56,17 +57,21 @@ public class KmaWeatherRequester implements WeatherRequester {
         try {
             return weatherApiCaller.getWeathers(weatherRequest);
         } catch (RuntimeException e) {
-            if (isSocketExceptionWithConnectionReset(e)) {
-                throw new WeatherRequestRetryableException(CONNECTION_RESET);
+            if (isTimeoutException(e)) {
+                throw new WeatherRequestRetryableException(e.getCause().getMessage());
             }
             throw new WeatherRequestFatalException(e.getMessage());
         }
     }
 
-    private boolean isSocketExceptionWithConnectionReset(RuntimeException e) {
-        Throwable cause = e.getCause().getCause().getCause().getCause();
-        return Objects.nonNull(cause) && cause.getClass().equals(SocketException.class) &&
-                cause.getMessage().contains(CONNECTION_RESET);
+    private boolean isTimeoutException(RuntimeException e) {
+        Throwable cause = e.getCause();
+        return Objects.nonNull(cause) &&
+                cause.getClass().equals(SocketTimeoutException.class) && hasTimeoutMessage(cause);
+    }
+
+    private boolean hasTimeoutMessage(Throwable cause) {
+        return cause.getMessage().equals(READ_TIME_OUT) || cause.getMessage().equals(CONNECTION_TIME_OUT);
     }
 
     private void raiseException(WeatherResponses weatherResponses, WeatherLocation location) {
