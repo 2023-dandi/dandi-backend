@@ -1,17 +1,5 @@
 package dandi.dandi.post.adapter.out.persistence.jpa;
 
-import static dandi.dandi.member.MemberTestFixture.INITIAL_PROFILE_IMAGE_URL;
-import static dandi.dandi.member.MemberTestFixture.MEMBER_ID;
-import static dandi.dandi.member.MemberTestFixture.NICKNAME;
-import static dandi.dandi.member.MemberTestFixture.OAUTH_ID;
-import static dandi.dandi.post.PostFixture.POST_IMAGE_URL;
-import static dandi.dandi.post.PostFixture.TEMPERATURES;
-import static dandi.dandi.post.PostFixture.WEATHER_FEELING;
-import static dandi.dandi.utils.PaginationUtils.CREATED_AT_DESC_TEST_SIZE_PAGEABLE;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatCode;
-import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
-
 import dandi.dandi.common.PersistenceAdapterTest;
 import dandi.dandi.member.application.port.out.MemberBlockPersistencePort;
 import dandi.dandi.member.application.port.out.MemberPersistencePort;
@@ -22,17 +10,25 @@ import dandi.dandi.post.domain.Temperatures;
 import dandi.dandi.post.domain.WeatherFeeling;
 import dandi.dandi.postlike.adapter.out.persistence.jpa.PostLikePersistenceAdapter;
 import dandi.dandi.postlike.domain.PostLike;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Slice;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import static dandi.dandi.member.MemberTestFixture.*;
+import static dandi.dandi.post.PostFixture.*;
+import static dandi.dandi.utils.PaginationUtils.CREATED_AT_DESC_TEST_SIZE_PAGEABLE;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatCode;
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class PostPersistenceAdapterTest extends PersistenceAdapterTest {
 
@@ -69,6 +65,7 @@ class PostPersistenceAdapterTest extends PersistenceAdapterTest {
         Long memberId = saveMember(NICKNAME);
         Post post = Post.initial(TEMPERATURES, POST_IMAGE_URL, WEATHER_FEELING);
         Long savedPostId = postPersistenceAdapter.save(post, memberId);
+        entityManager.clear();
 
         Optional<Post> actual = postPersistenceAdapter.findById(savedPostId);
 
@@ -81,6 +78,7 @@ class PostPersistenceAdapterTest extends PersistenceAdapterTest {
         Long memberId = saveMember(NICKNAME);
         Post post = Post.initial(TEMPERATURES, POST_IMAGE_URL, new WeatherFeeling(1L, new ArrayList<>()));
         Long savedPostId = postPersistenceAdapter.save(post, memberId);
+        entityManager.clear();
 
         Optional<Post> actual = postPersistenceAdapter.findById(savedPostId);
 
@@ -93,6 +91,7 @@ class PostPersistenceAdapterTest extends PersistenceAdapterTest {
     void existsById(Long postId, boolean expected) {
         Post post = Post.initial(TEMPERATURES, POST_IMAGE_URL, WEATHER_FEELING);
         postPersistenceAdapter.save(post, MEMBER_ID);
+        entityManager.clear();
 
         boolean actual = postPersistenceAdapter.existsById(postId);
 
@@ -104,6 +103,7 @@ class PostPersistenceAdapterTest extends PersistenceAdapterTest {
     void deleteById() {
         Post post = Post.initial(TEMPERATURES, POST_IMAGE_URL, WEATHER_FEELING);
         Long savedPostId = postPersistenceAdapter.save(post, MEMBER_ID);
+        entityManager.clear();
 
         postPersistenceAdapter.deleteById(savedPostId);
 
@@ -120,6 +120,7 @@ class PostPersistenceAdapterTest extends PersistenceAdapterTest {
         for (int i = 0; i < postSaveCount; i++) {
             postPersistenceAdapter.save(post, memberId);
         }
+        entityManager.clear();
 
         Slice<Post> actual = postPersistenceAdapter.findByMemberId(memberId, CREATED_AT_DESC_TEST_SIZE_PAGEABLE);
 
@@ -149,9 +150,9 @@ class PostPersistenceAdapterTest extends PersistenceAdapterTest {
         postReportPersistenceAdapter.savePostReportOf(firstMemberId, savedSecondPostId);
         memberBlockPersistencePort.saveMemberBlockOf(thirdMemberId, firstMemberId);
         memberBlockPersistencePort.saveMemberBlockOf(firstMemberId, fourthMemberId);
-
         TemperatureSearchCondition temperatureSearchCondition =
                 new TemperatureSearchCondition(9.0, 12.0, 19.0, 21.0);
+        entityManager.clear();
 
         Slice<Post> actual = postPersistenceAdapter.findByTemperature(
                 firstMemberId, temperatureSearchCondition, CREATED_AT_DESC_TEST_SIZE_PAGEABLE);
@@ -179,6 +180,7 @@ class PostPersistenceAdapterTest extends PersistenceAdapterTest {
         TemperatureSearchCondition temperatureSearchCondition = new TemperatureSearchCondition(
                 minTemperatureMinSearchCondition, minTemperatureMaxSearchCondition,
                 maxTemperatureMinSearchCondition, maxTemperatureMaxSearchCondition);
+        entityManager.clear();
 
         Slice<Post> actual = postPersistenceAdapter.findByTemperature(
                 firstMemberId, temperatureSearchCondition, CREATED_AT_DESC_TEST_SIZE_PAGEABLE);
@@ -202,6 +204,7 @@ class PostPersistenceAdapterTest extends PersistenceAdapterTest {
         postPersistenceAdapter.save(fourthPost, firstMemberId);
         TemperatureSearchCondition temperatureSearchCondition =
                 new TemperatureSearchCondition(9.0, 12.0, 19.0, 21.0);
+        entityManager.clear();
 
         Slice<Post> actual = postPersistenceAdapter.findByMemberIdAndTemperature(
                 memberId, temperatureSearchCondition, CREATED_AT_DESC_TEST_SIZE_PAGEABLE);
@@ -225,6 +228,8 @@ class PostPersistenceAdapterTest extends PersistenceAdapterTest {
         postPersistenceAdapter.save(thirdPost, firstMemberId);
         postLikePersistenceAdapter.save(PostLike.initial(secondMemberId, savedFirstPostId));
         postLikePersistenceAdapter.save(PostLike.initial(secondMemberId, savedSecondPostId));
+        entityManager.flush();
+        entityManager.clear();
 
         Slice<Post> likedPosts = postPersistenceAdapter.findLikedPosts(secondMemberId,
                 CREATED_AT_DESC_TEST_SIZE_PAGEABLE);

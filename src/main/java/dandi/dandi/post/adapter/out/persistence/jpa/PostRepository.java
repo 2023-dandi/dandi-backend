@@ -35,7 +35,7 @@ public interface PostRepository extends JpaRepository<PostJpaEntity, Long> {
                                                       Pageable pageable);
 
     @Query("SELECT p from PostJpaEntity p "
-            + "inner join PostLikeJpaEntity pl on p.id = pl.postLikeKey.postId "
+            + "inner join PostLikeJpaEntity pl on p.id = pl.postLikeKey.postJpaEntity.id "
             + "where pl.postLikeKey.memberId = :memberId")
     Slice<PostJpaEntity> findLikedPostsByMemberId(Long memberId, Pageable pageable);
 

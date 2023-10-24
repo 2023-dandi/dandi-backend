@@ -18,11 +18,6 @@ public class InternalServerException extends RuntimeException {
         return new InternalServerException(exceptionMessage);
     }
 
-    public static InternalServerException withdrawnMemberComment(Long memberId) {
-        String exceptionMessage = String.format("탈퇴한 회원(memberId : %d)의 댓글 조회되었습니다.", memberId);
-        return new InternalServerException(exceptionMessage);
-    }
-
     public static InternalServerException notificationCommentNotFound(Long commentId) {
         String exceptionMessage = String.format("알림에 해당하는 댓글(commentId : %d)이 존재하지 않습니다.", commentId);
         return new InternalServerException(exceptionMessage);
@@ -42,8 +37,8 @@ public class InternalServerException extends RuntimeException {
         return new InternalServerException(exceptionMessage);
     }
 
-    public static InternalServerException withdrawnMemberPushNotification(Long memberId) {
-        String exceptionMessage = String.format("탈퇴한 회원(memberId : %d)의 푸시 알림이 조회되었습니다.", memberId);
+    public static InternalServerException uncheckPostExistenceBeforePostLikeSave(Long postId) {
+        String exceptionMessage = String.format("게시글 좋아요 저장 전에 게시글(%d) NotFound 확인되지 않았습니다.", postId);
         return new InternalServerException(exceptionMessage);
     }
 }

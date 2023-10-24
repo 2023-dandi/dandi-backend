@@ -1,5 +1,8 @@
 package dandi.dandi.postlike.adapter.out.persistence.jpa;
 
+import dandi.dandi.advice.InternalServerException;
+import dandi.dandi.post.adapter.out.persistence.jpa.PostJpaEntity;
+import dandi.dandi.post.adapter.out.persistence.jpa.PostRepository;
 import dandi.dandi.postlike.application.port.out.PostLikePersistencePort;
 import dandi.dandi.postlike.domain.PostLike;
 import org.springframework.stereotype.Component;
@@ -10,9 +13,11 @@ import java.util.Optional;
 public class PostLikePersistenceAdapter implements PostLikePersistencePort {
 
     private final PostLikeRepository postLikeRepository;
+    private final PostRepository postRepository;
 
-    public PostLikePersistenceAdapter(PostLikeRepository postLikeRepository) {
+    public PostLikePersistenceAdapter(PostLikeRepository postLikeRepository, PostRepository postRepository) {
         this.postLikeRepository = postLikeRepository;
+        this.postRepository = postRepository;
     }
 
     @Override
@@ -23,7 +28,9 @@ public class PostLikePersistenceAdapter implements PostLikePersistencePort {
 
     @Override
     public void save(PostLike postLike) {
-        PostLikeJpaEntity postLikeJpaEntity = PostLikeJpaEntity.of(postLike.getPostId(), postLike.getMemberId());
+        PostJpaEntity postJpaEntity = postRepository.findById(postLike.getPostId())
+                .orElseThrow(() -> InternalServerException.uncheckPostExistenceBeforePostLikeSave(postLike.getPostId()));
+        PostLikeJpaEntity postLikeJpaEntity = PostLikeJpaEntity.of(postJpaEntity, postLike.getMemberId());
         postLikeRepository.save(postLikeJpaEntity);
     }
 
