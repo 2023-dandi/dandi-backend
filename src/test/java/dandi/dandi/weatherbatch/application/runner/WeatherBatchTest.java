@@ -40,7 +40,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 @EnableJpaRepositories(basePackageClasses = {WeatherRepository.class})
 @EntityScan(basePackageClasses = {WeatherJpaEntity.class, WeatherLocationJpaEntity.class})
 @SpringBootTest(classes = {WeatherBatch.class, WeatherPersistenceAdapter.class, WeatherBatchTestConfig.class,
-        WeatherBatchItemReaderConfig.class, WeatherBatchItemWriterConfig.class, DatabaseCleaner.class})
+        WeatherBatchItemReaderConfig.class, WeatherBatchItemWriterConfig.class, WeatherBatchItemProcessorConfig.class,
+        DatabaseCleaner.class})
 class WeatherBatchTest {
 
     @Autowired
