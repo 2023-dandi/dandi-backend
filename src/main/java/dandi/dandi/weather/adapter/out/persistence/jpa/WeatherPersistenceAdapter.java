@@ -26,11 +26,11 @@ public class WeatherPersistenceAdapter implements WeatherPersistencePort {
     }
 
     @Override
-    public void saveInBatch(List<Weathers> weathers) {
+    public void saveInBatch(List<? extends Weathers> weathers) {
         simpleJdbcInsert.executeBatch(generateSqlParameterSources(weathers));
     }
 
-    private SqlParameterSource[] generateSqlParameterSources(List<Weathers> weathers) {
+    private SqlParameterSource[] generateSqlParameterSources(List<? extends Weathers> weathers) {
         return weathers.stream()
                 .map(this::generate)
                 .flatMap(Arrays::stream)
