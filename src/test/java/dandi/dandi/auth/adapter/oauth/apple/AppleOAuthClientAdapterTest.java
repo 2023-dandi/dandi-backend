@@ -1,27 +1,28 @@
 package dandi.dandi.auth.adapter.oauth.apple;
 
+import dandi.dandi.auth.adapter.out.jwt.JwtParser;
+import dandi.dandi.auth.adapter.out.oauth.apple.AppleJwtClaimValidator;
+import dandi.dandi.auth.adapter.out.oauth.apple.AppleOAuthClientAdapter;
+import dandi.dandi.auth.adapter.out.oauth.apple.AppleOAuthPublicKeyGenerator;
+import dandi.dandi.auth.adapter.out.oauth.apple.client.AppleApiCaller;
+import dandi.dandi.auth.adapter.out.oauth.apple.dto.ApplePublicKeys;
+import dandi.dandi.auth.exception.UnauthorizedException;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+
+import java.security.PublicKey;
+import java.util.Map;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
-import dandi.dandi.auth.adapter.out.jwt.JwtParser;
-import dandi.dandi.auth.adapter.out.oauth.apple.AppleApiCaller;
-import dandi.dandi.auth.adapter.out.oauth.apple.AppleJwtClaimValidator;
-import dandi.dandi.auth.adapter.out.oauth.apple.AppleOAuthClientPort;
-import dandi.dandi.auth.adapter.out.oauth.apple.AppleOAuthPublicKeyGenerator;
-import dandi.dandi.auth.adapter.out.oauth.apple.dto.ApplePublicKeys;
-import dandi.dandi.auth.exception.UnauthorizedException;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import java.security.PublicKey;
-import java.util.Map;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-
-class AppleOAuthClientPortTest {
+class AppleOAuthClientAdapterTest {
 
     private static final String ANY_TOKEN = "anyToken";
 
@@ -31,8 +32,8 @@ class AppleOAuthClientPortTest {
             AppleOAuthPublicKeyGenerator.class);
     private final AppleJwtClaimValidator appleJwtClaimValidator = Mockito.mock(AppleJwtClaimValidator.class);
 
-    private final AppleOAuthClientPort appleOAuthClient =
-            new AppleOAuthClientPort(jwtParser, appleApiCaller, oAuthPublicKeyGenerator, appleJwtClaimValidator);
+    private final AppleOAuthClientAdapter appleOAuthClient =
+            new AppleOAuthClientAdapter(jwtParser, appleApiCaller, oAuthPublicKeyGenerator, appleJwtClaimValidator);
 
     @DisplayName("토큰을 받아 사용자 식별 값을 반환할 수 있다.")
     @Test

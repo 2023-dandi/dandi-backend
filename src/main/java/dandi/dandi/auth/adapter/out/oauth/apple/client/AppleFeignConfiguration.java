@@ -1,4 +1,4 @@
-package dandi.dandi.auth.adapter.out.oauth.apple;
+package dandi.dandi.auth.adapter.out.oauth.apple.client;
 
 import feign.Retryer;
 import org.springframework.context.annotation.Bean;

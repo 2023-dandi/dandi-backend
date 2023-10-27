@@ -1,5 +1,6 @@
 package dandi.dandi.weather.adapter.out.kma;
 
+import dandi.dandi.weather.adapter.out.kma.client.KmaWeatherApiCaller;
 import dandi.dandi.weather.adapter.out.kma.dto.*;
 import dandi.dandi.weather.adapter.out.kma.extractor.*;
 import dandi.dandi.weather.application.port.out.WeatherRequestFatalException;

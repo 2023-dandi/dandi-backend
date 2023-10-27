@@ -1,4 +1,4 @@
-package dandi.dandi.auth.adapter.out.oauth.apple;
+package dandi.dandi.auth.adapter.out.oauth.apple.client;
 
 import dandi.dandi.auth.adapter.out.oauth.apple.dto.ApplePublicKeys;
 import org.springframework.cloud.openfeign.FeignClient;

@@ -1,4 +1,4 @@
-package dandi.dandi.weather.adapter.out.kma;
+package dandi.dandi.weather.adapter.out.kma.client;
 
 import feign.codec.Decoder;
 import org.springframework.beans.factory.ObjectFactory;

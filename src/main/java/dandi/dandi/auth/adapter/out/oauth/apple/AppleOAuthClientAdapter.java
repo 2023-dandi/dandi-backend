@@ -1,25 +1,27 @@
 package dandi.dandi.auth.adapter.out.oauth.apple;
 
 import dandi.dandi.auth.adapter.out.jwt.JwtParser;
+import dandi.dandi.auth.adapter.out.oauth.apple.client.AppleApiCaller;
 import dandi.dandi.auth.adapter.out.oauth.apple.dto.ApplePublicKeys;
 import dandi.dandi.auth.application.port.out.oauth.OAuthClientPort;
 import dandi.dandi.auth.exception.UnauthorizedException;
 import io.jsonwebtoken.Claims;
-import java.security.PublicKey;
-import java.util.Map;
 import org.springframework.stereotype.Component;
 
+import java.security.PublicKey;
+import java.util.Map;
+
 @Component
-public class AppleOAuthClientPort implements OAuthClientPort {
+public class AppleOAuthClientAdapter implements OAuthClientPort {
 
     private final JwtParser jwtParser;
     private final AppleApiCaller appleApiCaller;
     private final AppleOAuthPublicKeyGenerator appleOAuthPublicKeyGenerator;
     private final AppleJwtClaimValidator appleJwtClaimValidator;
 
-    public AppleOAuthClientPort(JwtParser jwtParser, AppleApiCaller appleApiCaller,
-                                AppleOAuthPublicKeyGenerator appleOAuthPublicKeyGenerator,
-                                AppleJwtClaimValidator appleJwtClaimValidator) {
+    public AppleOAuthClientAdapter(JwtParser jwtParser, AppleApiCaller appleApiCaller,
+                                   AppleOAuthPublicKeyGenerator appleOAuthPublicKeyGenerator,
+                                   AppleJwtClaimValidator appleJwtClaimValidator) {
         this.jwtParser = jwtParser;
         this.appleApiCaller = appleApiCaller;
         this.appleOAuthPublicKeyGenerator = appleOAuthPublicKeyGenerator;

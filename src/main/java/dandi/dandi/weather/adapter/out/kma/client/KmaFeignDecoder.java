@@ -1,5 +1,7 @@
-package dandi.dandi.weather.adapter.out.kma;
+package dandi.dandi.weather.adapter.out.kma.client;
 
+import dandi.dandi.weather.adapter.out.kma.DataPortalErrorWeatherResponse;
+import dandi.dandi.weather.adapter.out.kma.WeatherResponses;
 import dandi.dandi.weather.adapter.out.kma.code.KmaResponseCode;
 import dandi.dandi.weather.adapter.out.kma.dto.KmaWeatherResponses;
 import dandi.dandi.weather.adapter.out.kma.dto.WeatherResponse;
