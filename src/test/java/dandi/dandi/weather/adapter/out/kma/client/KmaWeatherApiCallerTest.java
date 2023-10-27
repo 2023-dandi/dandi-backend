@@ -1,16 +1,15 @@
-package dandi.dandi.weather.adapter.out.kma;
+package dandi.dandi.weather.adapter.out.kma.client;
 
-import static dandi.dandi.weather.adapter.out.kma.KmaConstant.*;
-
-import java.time.LocalDate;
-
+import dandi.dandi.weather.adapter.out.kma.dto.WeatherRequest;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import dandi.dandi.weather.adapter.out.kma.dto.WeatherRequest;
+import java.time.LocalDate;
+
+import static dandi.dandi.weather.adapter.out.kma.KmaConstant.KMA_DATE_FORMATTER;
 
 @SpringBootTest
 @Disabled
